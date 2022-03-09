@@ -96,7 +96,7 @@
         <version.dao-impl>4.0.0-PR.8</version.dao-impl>
         <version.springframework.security>5.6.2</version.springframework.security>
         <version.springframework>5.3.16</version.springframework>
-        <version.springframework.data>2.6.1</version.springframework.data>
+        <version.springframework.data>2.6.2</version.springframework.data>
         <version.aspectj>1.9.8</version.aspectj>
         <version.saxon>11.2</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>

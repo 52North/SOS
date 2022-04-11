@@ -52,7 +52,7 @@
         <module>handler</module>
         <module>extensions</module>
         <module>spring</module>
-        <module>statistics</module>
+        <!-- <module>statistics</module> -->
         <module>webapp</module>
     </modules>
 
@@ -82,7 +82,7 @@
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>26.3</version.geotools>
-        <version.jackson>2.13.2</version.jackson>
+        <version.jackson>2.13.2.20220328</version.jackson>
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
@@ -1556,24 +1556,11 @@
                 <version>4.6.0</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
                 <version>${version.jackson}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${version.jackson}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${version.jackson}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-cbor</artifactId>
-                <version>${version.jackson}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

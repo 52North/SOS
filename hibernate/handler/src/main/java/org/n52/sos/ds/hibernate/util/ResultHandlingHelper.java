@@ -63,6 +63,7 @@ import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ObservationType;
 import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.values.ProfileLevel;
 import org.n52.shetland.ogc.om.values.ProfileValue;
@@ -812,9 +813,10 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         return new SweField(OmConstants.OM_PARAMETER, record);
     }
 
-    public static SweVector createSamplingGeometryVector() {
+    public static SweVector createSamplingGeometryVector(String referenceFrame) {
         SweVector vector = new SweVector();
         vector.setDefinition(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        vector.setReferenceFrame(referenceFrame);
         List<SweCoordinate<BigDecimal>> coordinates = new LinkedList<>();
         coordinates.add(new SweCoordinate<>(SweCoordinateNames.LATITUDE,
                 createSweQuantityLatLon(SweCoordinateNames.LATITUDE, "lat")));
@@ -822,6 +824,10 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 createSweQuantityLatLon(SweCoordinateNames.LONGITUDE, "lon")));
         vector.setCoordinates(coordinates);
         return vector;
+    }
+
+    public static SweVector createSamplingGeometryVector() {
+        return createSamplingGeometryVector(OGCConstants.URL_DEF_CRS_EPSG + 4326);
     }
 
     private static SweQuantity createSweQuantityLatLon(String definition, String axis) {

@@ -712,26 +712,50 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             boolean feature) throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
         if (observation.isSamplingTimePeriod()) {
-            record.addField(new SweField(PHENOMENON_TIME, new SweTimeRange().setUom(OmConstants.PHEN_UOM_ISO8601)
-                    .setDefinition(OmConstants.PHENOMENON_TIME)));
+            record.addField(createPhenomenonTimeRange());
         } else {
-            record.addField(new SweField(PHENOMENON_TIME, new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
-                    .setDefinition(OmConstants.PHENOMENON_TIME)));
+            record.addField(createPhenomenonTimeField());
         }
-        record.addField(new SweField("resultTime", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
-                .setDefinition(OmConstants.RESULT_TIME)));
+        record.addField(createResultTimeField());
         createObservedPropertyField(observation).stream()
                 .forEach(f -> record.addField(f));
         if (procedure) {
-            record.addField(new SweField("procedure", new SweText().setDefinition(OM_PROCEDURE)));
+            record.addField(createProcedureField());
         }
         if (feature) {
-            record.addField(new SweField("featureOfInterest", new SweText().setDefinition(OM_FEATURE_OF_INTEREST)));
+            record.addField(createFeatureOfInterestField());
         }
         if (observation.isSetGeometryEntity()) {
-            record.addField(new SweField("samplingGeometry", createSamplingGeometryVector()));
+            record.addField(createSamplingGeometryField());
         }
         return record;
+    }
+
+    public static SweField createPhenomenonTimeRange() {
+        return new SweField(PHENOMENON_TIME, new SweTimeRange().setUom(OmConstants.PHEN_UOM_ISO8601)
+                .setDefinition(OmConstants.PHENOMENON_TIME));
+    }
+
+    public static SweField createPhenomenonTimeField() {
+        return new SweField(PHENOMENON_TIME, new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
+                .setDefinition(OmConstants.PHENOMENON_TIME));
+    }
+
+    public static SweField createResultTimeField() {
+        return new SweField("resultTime", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
+                .setDefinition(OmConstants.RESULT_TIME));
+    }
+
+    public static SweField createProcedureField() {
+        return new SweField("procedure", new SweText().setDefinition(OM_PROCEDURE));
+    }
+
+    public static SweField createFeatureOfInterestField() {
+        return new SweField("featureOfInterest", new SweText().setDefinition(OM_FEATURE_OF_INTEREST));
+    }
+
+    public static SweField createSamplingGeometryField() {
+        return new SweField("samplingGeometry", createSamplingGeometryVector());
     }
 
     private List<SweField> createObservedPropertyField(DataEntity<?> observation) throws OwsExceptionReport {
@@ -826,7 +850,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         return new SweField(OmConstants.OM_PARAMETER, record);
     }
 
-    private SweVector createSamplingGeometryVector() {
+    public static SweVector createSamplingGeometryVector() {
         SweVector vector = new SweVector();
         vector.setDefinition(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         List<SweCoordinate<BigDecimal>> coordinates = new LinkedList<>();
@@ -838,11 +862,11 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         return vector;
     }
 
-    private SweQuantity createSweQuantityLatLon(String definition, String axis) {
+    private static SweQuantity createSweQuantityLatLon(String definition, String axis) {
         return createSweQuantity(definition, axis, "deg");
     }
 
-    private SweQuantity createSweQuantity(String definition, String axis, String unit) {
+    private static SweQuantity createSweQuantity(String definition, String axis, String unit) {
         return (SweQuantity) new SweQuantity().setAxisID(axis)
                 .setUom(unit)
                 .setDefinition(definition);

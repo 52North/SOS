@@ -148,10 +148,14 @@ public class ObservationUnfolder {
 
     private GeometryHandler geometryHandler;
 
-    public ObservationUnfolder(OmObservation multiObservation, SweHelper sweHelper, GeometryHandler geometryHandler) {
+    private int trajectoryDetectionTimeGap;
+
+    public ObservationUnfolder(OmObservation multiObservation, SweHelper sweHelper, GeometryHandler geometryHandler,
+            int trajectoryDetectionTimeGap) {
         this.multiObservation = multiObservation;
         this.helper = sweHelper;
         this.geometryHandler = geometryHandler;
+        this.trajectoryDetectionTimeGap = trajectoryDetectionTimeGap;
     }
 
     public List<OmObservation> unfold() throws OwsExceptionReport {
@@ -410,7 +414,7 @@ public class ObservationUnfolder {
                     return observations;
                 } else {
                     List<OmObservation> observations = new ArrayList<>();
-                    for (ObservationStream stream : getLists(observationCollection, 1)) {
+                    for (ObservationStream stream : getLists(observationCollection)) {
                         observations.addAll(toList(stream));
                     }
                     return observations;
@@ -428,19 +432,16 @@ public class ObservationUnfolder {
         return observations;
     }
 
-    private List<ObservationStream> getLists(List<OmObservation> observationCollection) throws OwsExceptionReport {
-        return getLists(observationCollection, 5);
-    }
-
-    private List<ObservationStream> getLists(List<OmObservation> observationCollection, int time)
+    private List<ObservationStream> getLists(List<OmObservation> observationCollection)
             throws OwsExceptionReport {
         List<ObservationStream> list = new ArrayList<>();
         Map<DateTime, List<OmObservation>> map = getMap(observationCollection);
         DateTime currentTime = null;
+        String currentFeature = null;
+        String currentProcedure = null;
         List<OmObservation> currentObservations = new ArrayList<>();
         for (Entry<DateTime, List<OmObservation>> entry : map.entrySet()) {
-            if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey())
-                    .getMinutes() > time) {
+            if (checkForNewTrajectory(currentTime, currentFeature, currentProcedure, entry)) {
                 list.add(ObservationStream.of(currentObservations)
                         .merge(ObservationMergeIndicator.sameObservationConstellation()));
                 currentObservations.clear();
@@ -451,6 +452,16 @@ public class ObservationUnfolder {
         list.add(ObservationStream.of(currentObservations)
                 .merge(ObservationMergeIndicator.sameObservationConstellation()));
         return list;
+    }
+
+    private boolean checkForNewTrajectory(DateTime currentTime, String currentFeature, String currentProcedure,
+            Entry<DateTime, List<OmObservation>> entry) {
+        OmObservation observation = entry.getValue().iterator().next();
+        OmObservationConstellation oc = observation.getObservationConstellation();
+        return !oc.getFeatureOfInterest().getIdentifier().equalsIgnoreCase(currentFeature)
+                || !oc.getProcedure().getIdentifier().equalsIgnoreCase(currentProcedure)
+                || (trajectoryDetectionTimeGap > 0 && currentTime != null && Minutes
+                        .minutesBetween(currentTime, entry.getKey()).getMinutes() > trajectoryDetectionTimeGap);
     }
 
     private Map<DateTime, List<OmObservation>> getMap(List<OmObservation> observationCollection) {

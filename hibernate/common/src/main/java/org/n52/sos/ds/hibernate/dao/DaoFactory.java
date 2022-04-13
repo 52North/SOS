@@ -98,6 +98,7 @@ public class DaoFactory {
     private ObservationHelper observationHelper;
     private boolean insertAdditionallyAsProfile;
     private boolean updateFeatureGeometry;
+    private int trajectoryDetectionTimeGap = -1;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -191,6 +192,15 @@ public class DaoFactory {
 
     public boolean isUpdateFeatureGeometry() {
         return updateFeatureGeometry;
+    }
+
+    @Setting(SosSettings.TRAJECTORY_DETECTION_TIME_GAP)
+    public void setTrajectoryDetectionTimeGap(int trajectoryDetectionTimeGap) {
+        this.trajectoryDetectionTimeGap = trajectoryDetectionTimeGap;
+    }
+
+    public int getTrajectoryDetectionTimeGap() {
+        return trajectoryDetectionTimeGap;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {

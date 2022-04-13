@@ -590,8 +590,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             AbstractFeatureEntity feature, OmObservation containerObservation,
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
             Map<String, FormatEntity> formatCache, Session session) throws OwsExceptionReport {
-        List<OmObservation> unfoldObservations = new ObservationUnfolder(containerObservation,
-                getDaoFactory().getSweHelper(), getDaoFactory().getGeometryHandler()).unfold();
+        List<OmObservation> unfoldObservations =
+                new ObservationUnfolder(containerObservation, getDaoFactory().getSweHelper(),
+                        getDaoFactory().getGeometryHandler(), getDaoFactory().getTrajectoryDetectionTimeGap())
+                                .unfold();
         for (OmObservation sosObservation : unfoldObservations) {
             DatasetEntity dataset = insertObservationSingleValue(observationConstellation, feature, sosObservation,
                     codespaceCache, unitCache, formatCache, session);

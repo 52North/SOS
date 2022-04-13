@@ -105,5 +105,13 @@
 	        <property name="group" ref="transactionalSettingsDefinitionGroup" />
 	        <property name="defaultValue" value="true" />
 	    </bean>
+	     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+	        <property name="key" value="service.transactional.trajectoryDetectionTimeGap" />
+	        <property name="title" value="Time gap to detect two different trajectories in minutes" />
+	        <property name="description" value="The time between two observations to detect as different trajectories." />
+	        <property name="order" value="27.0" />
+	        <property name="group" ref="transactionalSettingsDefinitionGroup" />
+	        <property name="defaultValue" value="-1" />
+	    </bean>
     </beans>
 </beans>

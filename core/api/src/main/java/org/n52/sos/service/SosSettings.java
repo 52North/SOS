@@ -43,4 +43,5 @@ public interface SosSettings {
     String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
     String STA_SUPPORTS_URLS = "service.sta.supports.urls";
     String INSERT_ADDITIONALLY_AS_PROFILE = "service.transactional.insertadditionallyasprofile";
+    String TRAJECTORY_DETECTION_TIME_GAP = "service.transactional.trajectoryDetectionTimeGap";
 }

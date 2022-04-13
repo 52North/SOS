@@ -338,10 +338,10 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             throws OwsExceptionReport {
         try {
             return new ObservationUnfolder(observation, getDaoFactory().getSweHelper(),
-                    getDaoFactory().getGeometryHandler()).unfold(getContext());
+                    getDaoFactory().getGeometryHandler(), getDaoFactory().getTrajectoryDetectionTimeGap())
+                            .unfold(getContext());
         } catch (final Exception e) {
-            throw new InvalidParameterValueException().causedBy(e)
-                    .at(Sos2Constants.InsertResultParams.resultValues)
+            throw new InvalidParameterValueException().causedBy(e).at(Sos2Constants.InsertResultParams.resultValues)
                     .withMessage(
                             "The resultValues format does not comply to the resultStructure of the resultTemplate!");
         }

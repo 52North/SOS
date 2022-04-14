@@ -441,10 +441,14 @@ public class ObservationUnfolder {
         String currentProcedure = null;
         List<OmObservation> currentObservations = new ArrayList<>();
         for (Entry<DateTime, List<OmObservation>> entry : map.entrySet()) {
-            if (checkForNewTrajectory(currentTime, currentFeature, currentProcedure, entry)) {
+            OmObservation observation = entry.getValue().iterator().next();
+            OmObservationConstellation oc = observation.getObservationConstellation();
+            if (checkForNewTrajectory(currentTime, currentFeature, currentProcedure, entry.getKey(), oc)) {
                 list.add(ObservationStream.of(currentObservations)
                         .merge(ObservationMergeIndicator.sameObservationConstellation()));
                 currentObservations.clear();
+                currentFeature = oc.getFeatureOfInterestIdentifier();
+                currentProcedure = oc.getProcedureIdentifier();
             }
             currentObservations.addAll(entry.getValue());
             currentTime = entry.getKey();
@@ -455,13 +459,11 @@ public class ObservationUnfolder {
     }
 
     private boolean checkForNewTrajectory(DateTime currentTime, String currentFeature, String currentProcedure,
-            Entry<DateTime, List<OmObservation>> entry) {
-        OmObservation observation = entry.getValue().iterator().next();
-        OmObservationConstellation oc = observation.getObservationConstellation();
-        return !oc.getFeatureOfInterest().getIdentifier().equalsIgnoreCase(currentFeature)
-                || !oc.getProcedure().getIdentifier().equalsIgnoreCase(currentProcedure)
-                || (trajectoryDetectionTimeGap > 0 && currentTime != null && Minutes
-                        .minutesBetween(currentTime, entry.getKey()).getMinutes() > trajectoryDetectionTimeGap);
+            DateTime time, OmObservationConstellation oc) {
+        return (currentFeature != null && !oc.getFeatureOfInterestIdentifier().equalsIgnoreCase(currentFeature))
+                || (currentProcedure != null && !oc.getProcedureIdentifier().equalsIgnoreCase(currentProcedure))
+                || (trajectoryDetectionTimeGap > 0 && currentTime != null
+                        && Minutes.minutesBetween(currentTime, time).getMinutes() > trajectoryDetectionTimeGap);
     }
 
     private Map<DateTime, List<OmObservation>> getMap(List<OmObservation> observationCollection) {

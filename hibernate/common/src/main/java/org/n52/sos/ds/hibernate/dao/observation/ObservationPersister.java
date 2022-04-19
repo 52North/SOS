@@ -53,6 +53,7 @@ import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
@@ -168,8 +169,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             Map<String, FormatEntity> formatCache, Set<OfferingEntity> hOfferings, Session session)
             throws OwsExceptionReport {
         this(daoFactory, new DAOs(observationDao, daoFactory),
-                new Caches(codespaceCache, unitCache, formatCache, null), sosObservation, hDataset, hFeature, null,
-                hOfferings, session, null);
+                new Caches(codespaceCache, unitCache, formatCache, null, null), sosObservation, hDataset, hFeature,
+                null, hOfferings, session, null);
     }
 
     private ObservationPersister(DaoFactory daoFactory, DAOs daos, Caches caches, OmObservation observation,
@@ -814,6 +815,12 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 observationContext.setCategory(caches.category());
             }
         }
+        if (omObservation.isSetPlatformParameter()) {
+            NamedValue<String> platformParameter = (NamedValue<String>) omObservation.getPlatformParameter();
+            caches.setPlatform(daos.platform().getOrInsertPlatform((SweText) platformParameter.getValue(), session));
+            omObservation.removeCategoryParameter();
+            observationContext.setPlatform(caches.platform());
+        }
         // currently only profiles with one observedProperty are supported
         if (parent != null && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
@@ -1064,13 +1071,15 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         private final Map<UoM, UnitEntity> units;
         private final Map<String, FormatEntity> formats;
         private CategoryEntity category;
+        private PlatformEntity platform;
 
         Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units, Map<String, FormatEntity> formats,
-                CategoryEntity category) {
+                CategoryEntity category, PlatformEntity platform) {
             this.codespaces = codespaces;
             this.units = units;
             this.formats = formats;
             this.category = category;
+            this.platform = platform;
         }
 
         public Map<String, CodespaceEntity> codespaces() {
@@ -1091,6 +1100,14 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         public void setCategory(CategoryEntity category) {
             this.category = category;
+        }
+
+        public PlatformEntity platform() {
+            return platform;
+        }
+
+        public void setPlatform(PlatformEntity platform) {
+            this.platform = platform;
         }
 
     }

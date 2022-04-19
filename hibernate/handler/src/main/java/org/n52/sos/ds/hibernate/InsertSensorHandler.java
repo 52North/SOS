@@ -57,6 +57,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
@@ -68,6 +69,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -123,8 +125,6 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_REFERENCE_VALUES);
 
     private static final String REFERENCE_VALUE = "_referencevalue";
-
-    private static final String CATEGORY = "category";
 
     @Inject
     private ConnectionProvider connectionProvider;
@@ -209,11 +209,15 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                                 }
 
                                 CategoryEntity hCategory = getCategory(request, session);
+                                Optional<PlatformEntity> platform = getPlatform(request, session);
                                 for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
                                     ObservationContext ctx = new ObservationContext().setCategory(hCategory)
                                             .setOffering(hOffering).setPhenomenon(hObservableProperty)
                                             .setProcedure(hProcedure).setPublish(false)
                                             .setHiddenChild(!assignedOffering.isParentOffering());
+                                    if (platform.isPresent()) {
+                                        ctx.setPlatform(platform.get());
+                                    }
                                     checkForMobileInsituFlags(ctx,
                                             request.getProcedureDescription().getProcedureDescription());
                                     if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
@@ -453,14 +457,25 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
     }
 
     private CategoryEntity getCategory(InsertSensorRequest request, Session session) {
-        if (request.hasExtension(CATEGORY)) {
-            Optional<Extension<?>> extension = request.getExtension(CATEGORY);
+        if (request.hasExtension(OmConstants.PARAMETER_NAME_CATEGORY)) {
+            Optional<Extension<?>> extension = request.getExtension(OmConstants.PARAMETER_NAME_CATEGORY);
             if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
                 return getDaoFactory().getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(),
                         session);
             }
         }
         return getDaoFactory().getCategoryDAO().getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
+    }
+
+    private Optional<PlatformEntity> getPlatform(InsertSensorRequest request, Session session) {
+        if (request.hasExtension(OmConstants.PARAMETER_NAME_PLATFORM)) {
+            Optional<Extension<?>> extension = request.getExtension(OmConstants.PARAMETER_NAME_PLATFORM);
+            if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
+                return Optional.of(getDaoFactory().getPlatformDAO()
+                        .getOrInsertPlatform((SweText) extension.get().getValue(), session));
+            }
+        }
+        return Optional.empty();
     }
 
     private Set<String> getAllParentOfferings(ProcedureEntity hProcedure) {

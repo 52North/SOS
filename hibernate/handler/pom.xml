@@ -6,7 +6,7 @@
         <version>5.4.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-      <artifactId>sos-hibernate-handler</artifactId>
+    <artifactId>sos-hibernate-handler</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate Handler</name>
     <description>52°North Sensor Observation Service Hibernate Handler module</description>

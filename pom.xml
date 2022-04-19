@@ -71,18 +71,17 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-
         <version.postgresql>42.3.3</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.5.0.0</version.ojdbc8>
-        <version.sqljdbc>10.2.0.jre8</version.sqljdbc>
+        <version.sqljdbc>11.1.0.jre8-preview</version.sqljdbc>
         <version.mysql>8.0.28</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.6.1.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>26.3</version.geotools>
+        <version.geotools>26.4</version.geotools>
         <version.jackson>2.13.2.20220328</version.jackson>
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>
@@ -94,11 +93,11 @@
         <version.helgoland.api>3.5.0-PR.6</version.helgoland.api>
         <version.db-model>4.0.0-PR.7</version.db-model>
         <version.dao-impl>4.0.0-PR.8</version.dao-impl>
-        <version.springframework.security>5.6.2</version.springframework.security>
-        <version.springframework>5.3.18</version.springframework>
-        <version.springframework.data>2.6.2</version.springframework.data>
-        <version.aspectj>1.9.8</version.aspectj>
-        <version.saxon>11.2</version.saxon>
+        <version.springframework>5.3.19</version.springframework>
+        <version.springframework.security>5.6.3</version.springframework.security>
+        <version.springframework.data>2.6.3</version.springframework.data>
+        <version.aspectj>1.9.9.1</version.aspectj>
+        <version.saxon>11.3</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
@@ -1982,7 +1981,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.10.0</version>
+                <version>5.11.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>

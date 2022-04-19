@@ -70,7 +70,7 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <version.postgresql>42.3.3</version.postgresql>
+        <version.postgresql>42.3.4</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.5.0.0</version.ojdbc8>
         <version.sqljdbc>11.1.0.jre8-preview</version.sqljdbc>
@@ -80,7 +80,7 @@
         <version.hibernate>5.6.3.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>26.3</version.geotools>
+        <version.geotools>26.4</version.geotools>
         <version.jackson>2.13.2.20220328</version.jackson>
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>
@@ -92,8 +92,8 @@
         <version.helgoland.api>3.4.2</version.helgoland.api>
         <version.dao-impl>3.5.2</version.dao-impl>
         <version.db-model>3.1.4-SNAPSHOT</version.db-model>
+        <version.springframework>5.3.19</version.springframework>
         <version.springframework.security>5.6.3</version.springframework.security>
-        <version.springframework>5.3.18</version.springframework>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>
@@ -1863,7 +1863,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.10.0</version>
+                <version>5.11.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>

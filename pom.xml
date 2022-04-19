@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.4.3-SNAPSHOT</version>
+    <version>6.0.0-PR.3</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -92,7 +92,7 @@
         <version.helgoland.api>3.4.2</version.helgoland.api>
         <version.dao-impl>3.5.2</version.dao-impl>
         <version.db-model>3.1.4-SNAPSHOT</version.db-model>
-        <version.springframework.security>5.6.2</version.springframework.security>
+        <version.springframework.security>5.6.3</version.springframework.security>
         <version.springframework>5.3.18</version.springframework>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>

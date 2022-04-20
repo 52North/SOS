@@ -70,7 +70,7 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <version.postgresql>42.3.3</version.postgresql>
+        <version.postgresql>42.3.4</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.5.0.0</version.ojdbc8>
         <version.sqljdbc>11.1.0.jre8-preview</version.sqljdbc>
@@ -770,7 +770,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.4.0</version>
+                <version>4.5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -786,7 +786,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.8</version>
+                 <version>1.12.9</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -851,7 +851,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.6</version>
+                <version>3.1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -2099,7 +2099,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.8</version>
+                    <version>11.0.9</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

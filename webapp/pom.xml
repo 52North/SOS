@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sos-parent</artifactId>
         <groupId>org.n52.sensorweb-server.sos</groupId>
-        <version>5.4.2-SNAPSHOT</version>
+        <version>5.4.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-webapp</artifactId>
@@ -11,10 +11,11 @@
     <name>52°North SOS - Webapp</name>
     <description>52°North Sensor Observation Service WAR</description>
     <properties>
-        <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
+        <webappConfigurationFolder>${project.build.directory}/${project.build.finalName}/WEB-INF/config</webappConfigurationFolder>
+        <settingsConfigurationSourceFile>${project.parent.basedir}/misc/conf/default_settings.json</settingsConfigurationSourceFile>
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
+        <settingsConfigurationTargetFile>${webappConfigurationFolder}/configuration.json</settingsConfigurationTargetFile>
         <helgoland.version>2.2.0</helgoland.version>
         <jetty.port.http>9090</jetty.port.http>
         <jetty.port.stop>9091</jetty.port.stop>
@@ -965,6 +966,10 @@
               <groupId>org.geotools</groupId>
               <artifactId>gt-metadata</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>com.neovisionaries</groupId>
+              <artifactId>nv-i18n</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
@@ -1166,7 +1171,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/config/datasource.properties" />
+                                        <copy file="${databaseConfigurationFile}" tofile="${webappConfigurationFolder}/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -1192,8 +1197,8 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <delete quiet="true" file="${sqliteSettingDatabaseTargetFile}" />
-                                        <copy file="${sqliteSettingDatabase}" tofile="${sqliteSettingDatabaseTargetFile}" />
+                                        <delete quiet="true" file="${settingsConfigurationTargetFile}" />
+                                        <copy file="${settingsConfigurationSourceFile}" tofile="${settingsConfigurationTargetFile}" />
                                     </tasks>
                                 </configuration>
                             </execution>

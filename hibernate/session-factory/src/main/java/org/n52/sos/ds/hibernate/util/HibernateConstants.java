@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -173,4 +173,5 @@ public interface HibernateConstants {
 
     String JDBC_TIME_ZONE = AvailableSettings.JDBC_TIME_ZONE;
 
+    String HBM2DDL_CHARSET_NAME = AvailableSettings.HBM2DDL_CHARSET_NAME;
 }

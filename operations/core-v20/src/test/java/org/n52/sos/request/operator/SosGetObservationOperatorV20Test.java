@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -34,9 +34,9 @@ import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.hamcrest.core.IsCollectionContaining;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.n52.sos.cache.SosContentCache;
 
@@ -56,7 +56,7 @@ public class SosGetObservationOperatorV20Test {
     @Test
     public void should_return_empty_list_for_bad_parameters() {
         final SosGetObservationOperatorV20 operator = Mockito.mock(SosGetObservationOperatorV20.class);
-        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
+        Mockito.when(operator.addChildFeatures(ArgumentMatchers.anyCollection())).thenCallRealMethod();
 
         // null
         List<String> childFeatures = operator.addChildFeatures(null);
@@ -73,17 +73,17 @@ public class SosGetObservationOperatorV20Test {
         final SosContentCache cache = Mockito.mock(SosContentCache.class);
         final Set<String> myChildFeatures = new HashSet<String>(1);
         myChildFeatures.add(CHILD_FEATURE);
-        Mockito.when(cache.getChildFeatures(Matchers.anyString(), Matchers.anyBoolean(), Matchers.anyBoolean()))
+        Mockito.when(cache.getChildFeatures(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean()))
                 .thenReturn(myChildFeatures);
         Mockito.when(operator.getCache()).thenReturn(cache);
-        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
+        Mockito.when(operator.addChildFeatures(ArgumentMatchers.anyCollection())).thenCallRealMethod();
 
         final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList(FEATURE));
 
        MatcherAssert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.FALSE));
        MatcherAssert.assertThat(childFeatures.size(), Is.is(2));
-       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(CHILD_FEATURE));
-       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(FEATURE));
+       MatcherAssert.assertThat(childFeatures, IsIterableContaining.hasItem(CHILD_FEATURE));
+       MatcherAssert.assertThat(childFeatures, IsIterableContaining.hasItem(FEATURE));
     }
 
 }

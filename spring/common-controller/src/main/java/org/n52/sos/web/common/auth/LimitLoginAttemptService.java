@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,6 +27,7 @@
  */
 package org.n52.sos.web.common.auth;
 
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -119,6 +120,7 @@ public class LimitLoginAttemptService implements Constructable {
 
     @Setting(value = LOGIN_LOCK_TIME_UNIT_KEY, required = false)
     public void setTimeUnit(String timeUnit) {
-        this.timeUnit = timeUnit != null && !timeUnit.isEmpty() ? TimeUnit.valueOf(timeUnit) : TimeUnit.DAYS;
+        this.timeUnit = timeUnit != null && !timeUnit.isEmpty() ? TimeUnit.valueOf(timeUnit.toUpperCase(Locale.ROOT))
+                : TimeUnit.DAYS;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -30,7 +30,7 @@ package org.n52.sos.ds.datasource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -448,7 +448,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
                     .setOutputFile(createTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, m);
-            List<String> readAllLines = Files.readAllLines(createTempFile, Charset.defaultCharset());
+            List<String> readAllLines = Files.readAllLines(createTempFile);
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
             String[] post = getPostSchemaScript();
@@ -557,6 +557,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (registry != null) {
             checkPostCreation();
         }
+        settings.put(HibernateConstants.HBM2DDL_CHARSET_NAME, StandardCharsets.UTF_8.name());
         CustomConfiguration config = getConfig(settings);
         StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
         settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
@@ -1016,14 +1017,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn)
             throws SQLException {
-        String catalog = checkCatalog(conn);
-        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
         List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
-                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
+                // TODO check if this works
+                names.add(table.getQualifiedTableName().render());
+//                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
             }
         }
         return names;

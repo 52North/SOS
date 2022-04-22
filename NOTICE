@@ -186,7 +186,6 @@ This project includes:
   JUL to SLF4J bridge under MIT License
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
-  LZ4 and xxHash under The Apache Software License, Version 2.0
   Main module under Lesser General Public License (LGPL)
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
@@ -261,6 +260,7 @@ This project includes:
   org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
+  org.apiguardian:apiguardian-api under The Apache License, Version 2.0
   org.locationtech.jts:jts-core under Eclipse Public License, Version 2.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   PostGIS Geometry under GNU Lesser General Public License

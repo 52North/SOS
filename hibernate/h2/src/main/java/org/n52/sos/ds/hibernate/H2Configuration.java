@@ -74,7 +74,7 @@ import geodb.GeoDB;
  * @since 4.0.0
  *
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
+@SuppressFBWarnings({"EI_EXPOSE_REP", "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
 public final class H2Configuration implements ConnectionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 

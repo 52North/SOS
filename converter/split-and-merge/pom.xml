@@ -16,6 +16,10 @@
             <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-api</artifactId>
             <classifier>tests</classifier>

@@ -38,7 +38,10 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.quartz.SchedulerException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class HibernateDataSourceHarvestJobFactory {
 
     private String cronExpression;

@@ -35,6 +35,9 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.util.GeometryHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class FeatureVisitorContext {
     private Session session;
 

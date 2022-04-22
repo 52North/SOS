@@ -75,6 +75,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract generator class for SensorML procedure descriptions
  *
@@ -83,6 +85,7 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         extends AbstractHibernateProcedureDescriptionGenerator {
 

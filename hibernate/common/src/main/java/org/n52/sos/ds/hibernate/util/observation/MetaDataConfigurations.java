@@ -30,7 +30,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"MS_EXPOSE_REP"})
 public class MetaDataConfigurations {
 
     private static MetaDataConfigurations instance;

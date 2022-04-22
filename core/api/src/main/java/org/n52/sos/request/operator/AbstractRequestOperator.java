@@ -109,6 +109,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @param <D>
  *            the OperationDAO of this operator
@@ -121,6 +123,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractRequestOperator<D extends OperationHandler,
                                                 Q extends OwsServiceRequest,
                                                 A extends OwsServiceResponse>
@@ -882,8 +885,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
             throws OwsExceptionReport {
         if (temporalFilters != null) {
             for (TemporalFilter temporalFilter : temporalFilters) {
-                if (temporalFilter.getValueReference() == null || (temporalFilter.getValueReference() != null
-                        && temporalFilter.getValueReference().isEmpty())) {
+                if (temporalFilter.getValueReference() == null || temporalFilter.getValueReference() != null
+                        && temporalFilter.getValueReference().isEmpty()) {
                     throw new MissingValueReferenceException();
                 } else if (!VALID_TEMPORAL_FILTER_VALUE_REFERENCES.contains(temporalFilter.getValueReference())) {
                     throw new InvalidValueReferenceException(temporalFilter.getValueReference());

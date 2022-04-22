@@ -36,6 +36,8 @@ import org.hibernate.Session;
 
 import com.google.common.collect.AbstractIterator;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@code Iterator}-Wrapper for {@link ScrollableResults}. This class implements {@link AutoCloseable} and will close
  * the {@code ScrollableResults} as well as the unterlying {@link Session}.
@@ -44,6 +46,7 @@ import com.google.common.collect.AbstractIterator;
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ScrollableResultsIterator<T> extends AbstractIterator<T> implements Iterator<T>, AutoCloseable {
     private final ScrollableResults results;
     private final Session session;

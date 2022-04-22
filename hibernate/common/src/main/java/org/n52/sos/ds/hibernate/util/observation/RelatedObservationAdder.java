@@ -46,6 +46,9 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class RelatedObservationAdder {
 
     private OmObservation observation;

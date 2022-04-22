@@ -58,12 +58,15 @@ import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation of the interface CacheFeederDAO
  *
  * @since 4.0.0
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SosCacheFeederHandler implements CacheFeederHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederHandler.class);

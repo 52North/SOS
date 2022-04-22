@@ -99,10 +99,13 @@ import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ResultHandlingHelper implements HibernateUnproxy {
 
     public static final String OM_PROCEDURE = "om:procedure";

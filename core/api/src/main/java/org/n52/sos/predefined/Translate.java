@@ -27,6 +27,8 @@
  */
 package org.n52.sos.predefined;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public abstract class Translate {
@@ -34,11 +36,13 @@ public abstract class Translate {
     private Set<I18n> translations;
 
     public Set<I18n> getTranslations() {
-        return translations;
+        return Collections.unmodifiableSet(translations);
     }
 
     public void setTranslations(Set<I18n> translations) {
-        this.translations = translations;
+        if (translations != null) {
+            this.translations = new LinkedHashSet<>(translations);
+        }
     }
 
     public boolean hasTranslations() {

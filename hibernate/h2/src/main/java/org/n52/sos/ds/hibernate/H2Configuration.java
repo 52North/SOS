@@ -67,12 +67,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import geodb.GeoDB;
 
 /**
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
 public final class H2Configuration implements ConnectionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 

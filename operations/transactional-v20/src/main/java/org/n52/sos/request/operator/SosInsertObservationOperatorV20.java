@@ -149,7 +149,7 @@ public class SosInsertObservationOperatorV20 extends
     private void checkAndAddOfferingToObservationConstallation(final InsertObservationRequest request)
             throws OwsExceptionReport {
         // TODO: Check requirement for this case in SOS 2.0 specification
-        if (request.getOfferings() == null || (request.getOfferings() != null && request.getOfferings().isEmpty())) {
+        if (request.getOfferings() == null || request.getOfferings() != null && request.getOfferings().isEmpty()) {
             throw new MissingOfferingParameterException();
         } else {
             final CompositeOwsException exceptions = new CompositeOwsException();

@@ -42,6 +42,9 @@ import org.n52.sos.util.GeometryHandler;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     private T procedure;

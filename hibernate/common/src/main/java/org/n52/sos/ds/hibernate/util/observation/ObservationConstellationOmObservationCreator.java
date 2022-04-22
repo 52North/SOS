@@ -27,6 +27,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,12 +57,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ObservationConstellationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationConstellationOmObservationCreator.class);
 
@@ -75,7 +80,8 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
             OmObservationCreatorContext creatorContext, Session session) {
         super(request, language, pdf, creatorContext, session);
         this.oc = observationConstellation;
-        this.featureIds = featureOfInterestIdentifiers;
+        this.featureIds = featureOfInterestIdentifiers != null ? new LinkedList<>(featureOfInterestIdentifiers)
+                : new LinkedList<>();
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -173,6 +179,6 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
      * @return the featureIds
      */
     protected List<String> getFeatureIds() {
-        return featureIds;
+        return Collections.unmodifiableList(featureIds);
     }
 }

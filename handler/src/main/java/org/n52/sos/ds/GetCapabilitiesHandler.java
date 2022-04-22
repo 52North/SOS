@@ -331,8 +331,8 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         Collection<OfferingEntity> allOfferings = offeringDao.get(new DbQuery(IoParameters.createDefaults()));
         Collection<DatasetEntity> datasets = new DatasetDao(session).get(new DbQuery(IoParameters.createDefaults()));
         Set<OfferingEntity> notVisibleOfferings = datasets.stream()
-                .filter(d -> d.isDeleted() || (!d.isPublished() && !d.getDatasetType()
-                        .equals(DatasetType.not_initialized)))
+                .filter(d -> d.isDeleted() || !d.isPublished() && !d.getDatasetType()
+                        .equals(DatasetType.not_initialized))
                 .map(d -> d.getOffering())
                 .collect(Collectors.toSet());
         offerings.addAll(

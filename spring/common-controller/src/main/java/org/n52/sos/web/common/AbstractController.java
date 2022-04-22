@@ -41,11 +41,14 @@ import org.n52.iceland.service.DatabaseSettingsHandler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @since 4.0.0
  *
  */
 @Controller
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class AbstractController {
 
     @Inject

@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class UpdateSensorRequestHandler extends AbstractSosRequestHandler<UpdateSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(UpdateSensorRequest request) {
         put(SosDataMapping.US_PROCEDURE_IDENTIFIER, request.getProcedureIdentifier());
         put(SosDataMapping.US_PROCEDURE_DESCRIPTION_FORMAT, request.getProcedureDescriptionFormat());
     }

@@ -28,6 +28,7 @@
 package org.n52.sos.predefined;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public abstract class AbstractPredefined<T extends Translate> {
     }
 
     public List<T> getValues() {
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
     public AbstractPredefined<T> setValues(Collection<T> values) {

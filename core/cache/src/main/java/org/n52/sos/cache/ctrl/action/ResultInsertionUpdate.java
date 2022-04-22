@@ -38,6 +38,8 @@ import org.n52.sos.cache.InMemoryCacheImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
  * are added, settings are updated in cache:
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
  *         J&uuml;rrens</a>
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultInsertionUpdate.class);
 

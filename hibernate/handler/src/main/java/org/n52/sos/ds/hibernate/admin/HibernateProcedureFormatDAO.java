@@ -38,9 +38,12 @@ import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
 
     private HibernateSessionHolder sessionHolder;

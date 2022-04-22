@@ -35,6 +35,9 @@ import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class EReportingObservationContext extends ObservationContext {
     private EReportingSamplingPointEntity samplingPoint;
 

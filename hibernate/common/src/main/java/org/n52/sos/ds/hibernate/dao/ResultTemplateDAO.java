@@ -81,12 +81,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate data access class for featureofInterest types
  *
  * @author CarstenHollmann
  * @since 4.0.0
  */
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class ResultTemplateDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDAO.class);
@@ -333,8 +336,10 @@ public class ResultTemplateDAO {
                             createSosResultEncoding(storedResultTemplate.getObservationEncoding());
 
                     if (request instanceof InternalInsertResultTemplateRequest) {
-                        ((InternalInsertResultTemplateRequest) request).getObservationStructure().clearXml();
-                        ((InternalInsertResultTemplateRequest) request).getObservationEncoding().clearXml();
+                        ((InternalInsertResultTemplateRequest) request).getObservationStructure()
+                                .clearXml();
+                        ((InternalInsertResultTemplateRequest) request).getObservationEncoding()
+                                .clearXml();
                         if (storedObservationStructure != null && !storedObservationStructure
                                 .equals(((InternalInsertResultTemplateRequest) request).getObservationStructure())) {
                             throw new InvalidParameterValueException()
@@ -490,16 +495,16 @@ public class ResultTemplateDAO {
     private ResultTemplateEntity setObservationStructureEncoding(ResultTemplateEntity resultTemplate,
             InternalInsertResultTemplateRequest request) throws EncodingException {
         if (request.isSetObservationEncoding()) {
-                resultTemplate.setObservationEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20,
-                        request.getObservationEncoding()
-                                .get()
-                                .get()));
+            resultTemplate.setObservationEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20,
+                    request.getObservationEncoding()
+                            .get()
+                            .get()));
         }
         if (request.isSetObservationStructure()) {
-                resultTemplate.setObservationStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20,
-                        request.getObservationStructure()
-                                .get()
-                                .get()));
+            resultTemplate.setObservationStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20,
+                    request.getObservationStructure()
+                            .get()
+                            .get()));
         }
         return resultTemplate;
     }

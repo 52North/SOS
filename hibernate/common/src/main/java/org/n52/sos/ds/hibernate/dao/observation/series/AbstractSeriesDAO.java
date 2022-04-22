@@ -335,8 +335,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 series.setDatasetType(DatasetType.trajectory);
             }
         }
-        if (series == null || (series.isSetFeature() && ctx.isSetFeatureOfInterest()
-                && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
+        if (series == null || series.isSetFeature() && ctx.isSetFeatureOfInterest()
+                && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier())) {
             series = (DatasetEntity) getDatasetFactory().visit(observation);
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
@@ -390,20 +390,20 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             if (dataset.getPlatform() != null) {
                 DatastreamEntity datastream = existsDatastream(dataset, session);
                 if (datastream != null) {
-                    if (datastream.getSamplingTimeStart() == null || (datastream.getSamplingTimeStart() != null
-                            && datastream.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
+                    if (datastream.getSamplingTimeStart() == null || datastream.getSamplingTimeStart() != null
+                            && datastream.getSamplingTimeStart().after(observation.getSamplingTimeStart())) {
                         datastream.setSamplingTimeStart(observation.getSamplingTimeStart());
                     }
-                    if (datastream.getSamplingTimeEnd() == null || (datastream.getSamplingTimeEnd() != null
-                            && datastream.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
+                    if (datastream.getSamplingTimeEnd() == null || datastream.getSamplingTimeEnd() != null
+                            && datastream.getSamplingTimeEnd().before(observation.getSamplingTimeEnd())) {
                         datastream.setSamplingTimeEnd(observation.getSamplingTimeEnd());
                     }
-                    if (datastream.getResultTimeStart() == null || (datastream.getResultTimeStart() != null
-                            && datastream.getResultTimeStart().after(observation.getResultTime()))) {
+                    if (datastream.getResultTimeStart() == null || datastream.getResultTimeStart() != null
+                            && datastream.getResultTimeStart().after(observation.getResultTime())) {
                         datastream.setResultTimeStart(observation.getResultTime());
                     }
-                    if (datastream.getResultTimeEnd() == null || (datastream.getResultTimeEnd() != null
-                            && datastream.getResultTimeEnd().before(observation.getResultTime()))) {
+                    if (datastream.getResultTimeEnd() == null || datastream.getResultTimeEnd() != null
+                            && datastream.getResultTimeEnd().before(observation.getResultTime())) {
                         datastream.setResultTimeEnd(observation.getResultTime());
                     }
                     datastream.addDataset(dataset);
@@ -916,14 +916,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public void updateSeriesWithFirstLatestValues(DatasetEntity dataset, DataEntity<?> hObservation, Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
-                && dataset.getFirstValueAt().after(hObservation.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || dataset.isSetFirstValueAt()
+                && dataset.getFirstValueAt().after(hObservation.getSamplingTimeStart())) {
             minChanged = true;
             dataset.setFirstValueAt(hObservation.getSamplingTimeStart());
             dataset.setFirstObservation(hObservation);
         }
         if (!dataset.isSetLastValueAt()
-                || (dataset.isSetLastValueAt() && dataset.getLastValueAt().before(hObservation.getSamplingTimeEnd()))) {
+                || dataset.isSetLastValueAt() && dataset.getLastValueAt().before(hObservation.getSamplingTimeEnd())) {
             maxChanged = true;
             dataset.setLastValueAt(hObservation.getSamplingTimeEnd());
             dataset.setLastObservation(hObservation);

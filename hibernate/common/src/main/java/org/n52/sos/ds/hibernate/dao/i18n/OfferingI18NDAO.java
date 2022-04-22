@@ -40,6 +40,9 @@ import org.n52.series.db.beans.i18n.I18nOfferingEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<OfferingEntity,
                                                                 I18NOfferingMetadata,
                                                                 I18nOfferingEntity> {

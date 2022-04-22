@@ -27,17 +27,22 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.action.ThreadableAction;
 import org.n52.sos.cache.SosWritableContentCache;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class DatasourceCacheUpdate extends ThreadableAction {
 
     private SosWritableContentCache cache;
@@ -49,7 +54,7 @@ public abstract class DatasourceCacheUpdate extends ThreadableAction {
     }
 
     public List<OwsExceptionReport> getErrors() {
-        return errors;
+        return Collections.unmodifiableList(errors);
     }
 
     public void setCache(SosWritableContentCache cache) {
@@ -57,7 +62,7 @@ public abstract class DatasourceCacheUpdate extends ThreadableAction {
     }
 
     public void setErrors(List<OwsExceptionReport> errors) {
-        this.errors = errors;
+        this.errors = new LinkedList<>(errors);
     }
 
     @Override

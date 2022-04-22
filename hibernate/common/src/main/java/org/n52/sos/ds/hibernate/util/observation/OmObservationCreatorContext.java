@@ -54,7 +54,10 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.DecoderRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class OmObservationCreatorContext {
 
     private OwsServiceMetadataRepository serviceMetadataRepository;

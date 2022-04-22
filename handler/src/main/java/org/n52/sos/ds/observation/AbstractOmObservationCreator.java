@@ -74,6 +74,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractOmObservationCreator implements I18nNameDescriptionAdder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmObservationCreator.class);

@@ -76,7 +76,10 @@ import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.n52.svalbard.util.SweHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ObservationHelper implements Constructable {
 
     private DecoderRepository decoderRepository;

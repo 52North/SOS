@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class GetDataAvailabilityRequestHandler extends AbstractSosRequestHandler<GetDataAvailabilityRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetDataAvailabilityRequest request) {
         put(SosDataMapping.GDA_FEATURES_OF_INTEREST, request.getFeaturesOfInterest());
         put(SosDataMapping.GDA_OBSERVED_PROPERTIES, request.getObservedProperties());
         put(SosDataMapping.GDA_OFFERINGS, request.getOfferings());

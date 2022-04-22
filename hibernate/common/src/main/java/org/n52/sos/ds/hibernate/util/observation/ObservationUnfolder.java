@@ -113,11 +113,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ObservationUnfolder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationUnfolder.class);

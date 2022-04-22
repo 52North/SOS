@@ -38,6 +38,9 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements ProcedureDescriptionGeneratorFactory {
 
     private final SettingsService settingsService;

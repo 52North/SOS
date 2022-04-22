@@ -84,12 +84,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractOmObservationCreator implements I18nNameDescriptionAdder {
     protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES =
             "getUnitForObservablePropertyProcedureSeries";

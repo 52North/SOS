@@ -32,6 +32,9 @@ import org.n52.janmayen.similar.Similar;
 
 import com.google.common.base.Objects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class AdditionalObservationCreatorKey implements Similar<AdditionalObservationCreatorKey> {
 
     private final String namespace;

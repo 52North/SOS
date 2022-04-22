@@ -45,6 +45,9 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.config.json.JsonReportingHeaderDao;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public final class ReportObligationRepository implements EReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
 

@@ -73,6 +73,8 @@ import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.util.SweHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate data access factory.
  *
@@ -81,6 +83,7 @@ import org.n52.svalbard.util.XmlOptionsHelper;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class DaoFactory {
 
     private Set<Integer> validityFlags;

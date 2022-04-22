@@ -56,6 +56,8 @@ import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRe
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
  *         HinderkJ&uuml;rrens</a>
@@ -68,6 +70,7 @@ import com.google.common.collect.Lists;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEntity> {
 
     private LocalizedProducer<OwsServiceProvider> serviceProvider;

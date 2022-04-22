@@ -698,33 +698,33 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
 
     public OfferingEntity updateOfferingMetadata(OfferingEntity offering, DataEntity<?> observation, Session session) {
         if (offering.getSamplingTimeStart() == null
-                || (offering.getSamplingTimeStart() != null && observation.getSamplingTimeStart() != null
-                        && offering.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
+                || offering.getSamplingTimeStart() != null && observation.getSamplingTimeStart() != null
+                        && offering.getSamplingTimeStart().after(observation.getSamplingTimeStart())) {
             offering.setSamplingTimeStart(observation.getSamplingTimeStart());
         }
         if (offering.getSamplingTimeEnd() == null
-                || (offering.getSamplingTimeEnd() != null && observation.getSamplingTimeEnd() != null
-                        && offering.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
+                || offering.getSamplingTimeEnd() != null && observation.getSamplingTimeEnd() != null
+                        && offering.getSamplingTimeEnd().before(observation.getSamplingTimeEnd())) {
             offering.setSamplingTimeEnd(observation.getSamplingTimeEnd());
         }
         if (offering.getResultTimeStart() == null
-                || (offering.getResultTimeStart() != null && observation.getResultTime() != null
-                        && offering.getResultTimeStart().after(observation.getResultTime()))) {
+                || offering.getResultTimeStart() != null && observation.getResultTime() != null
+                        && offering.getResultTimeStart().after(observation.getResultTime())) {
             offering.setResultTimeStart(observation.getResultTime());
         }
         if (offering.getResultTimeEnd() == null
-                || (offering.getResultTimeEnd() != null && observation.getResultTime() != null
-                        && offering.getResultTimeEnd().before(observation.getResultTime()))) {
+                || offering.getResultTimeEnd() != null && observation.getResultTime() != null
+                        && offering.getResultTimeEnd().before(observation.getResultTime())) {
             offering.setResultTimeEnd(observation.getResultTime());
         }
         if (offering.getValidTimeStart() == null
-                || (offering.getValidTimeStart() != null && observation.getValidTimeStart() != null
-                        && offering.getValidTimeStart().after(observation.getValidTimeStart()))) {
+                || offering.getValidTimeStart() != null && observation.getValidTimeStart() != null
+                        && offering.getValidTimeStart().after(observation.getValidTimeStart())) {
             offering.setValidTimeStart(observation.getValidTimeStart());
         }
         if (offering.getValidTimeEnd() == null
-                || (offering.getValidTimeEnd() != null && observation.getValidTimeEnd() != null
-                        && offering.getValidTimeEnd().before(observation.getValidTimeEnd()))) {
+                || offering.getValidTimeEnd() != null && observation.getValidTimeEnd() != null
+                        && offering.getValidTimeEnd().before(observation.getValidTimeEnd())) {
             offering.setValidTimeEnd(observation.getValidTimeEnd());
         }
         if (observation.isSetGeometryEntity()) {

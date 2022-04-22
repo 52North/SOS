@@ -53,6 +53,8 @@ import org.n52.shetland.util.CollectionHelper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Class that creates and adds a {@link Criteria} for om:parameter to the query.
  *
@@ -60,6 +62,7 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ExtensionFesFilterCriteriaAdder {
 
     public static final String OM_PARAMETER = "om:parameter";

@@ -32,6 +32,10 @@
             <artifactId>faroe-annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
@@ -71,6 +75,11 @@
                     <artifactId>hamcrest-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

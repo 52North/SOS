@@ -84,6 +84,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ApiQueryHelper {
 
     private HibernateSessionStore sessionStore;

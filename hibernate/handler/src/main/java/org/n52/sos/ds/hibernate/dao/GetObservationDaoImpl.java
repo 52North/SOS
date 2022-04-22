@@ -75,7 +75,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetObservationDaoImpl extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDaoImpl.class);
 

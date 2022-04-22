@@ -50,6 +50,8 @@ import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation of {@link SosObservationOfferingExtensionProvider} for INSPIRE
  *
@@ -58,6 +60,7 @@ import com.google.common.base.Strings;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class InspireOfferingExtensionProvider extends AbstractInspireProvider
         implements SosObservationOfferingExtensionProvider {
     private static final Set<SosObservationOfferingExtensionKey> KEYS = Collections

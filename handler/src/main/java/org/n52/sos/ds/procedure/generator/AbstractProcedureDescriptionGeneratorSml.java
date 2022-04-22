@@ -76,6 +76,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract generator class for SensorML procedure descriptions
  *
@@ -85,6 +87,7 @@ import com.google.common.collect.Maps;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractProcedureDescriptionGenerator {
 
     protected static final String POSITION_NAME = "sensorPosition";

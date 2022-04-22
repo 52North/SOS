@@ -32,6 +32,7 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -40,11 +41,16 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard</artifactId>
+            <scope>test</scope>
         </dependency>
          <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
          </dependency>
+         <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
@@ -86,11 +92,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

@@ -47,7 +47,10 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public class DeleteObservationHandler extends AbstractDeleteObservationHandler implements DeleteObservationHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationHandler.class);

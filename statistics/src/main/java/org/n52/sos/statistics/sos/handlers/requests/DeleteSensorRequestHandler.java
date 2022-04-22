@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class DeleteSensorRequestHandler extends AbstractSosRequestHandler<DeleteSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(DeleteSensorRequest request) {
         put(SosDataMapping.DELS_PROCEDURE_IDENTIFIER, request.getProcedureIdentifier());
     }
 

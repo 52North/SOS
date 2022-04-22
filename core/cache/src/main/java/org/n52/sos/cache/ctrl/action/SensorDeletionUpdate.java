@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
  * are deleted, settings are updated in cache:
@@ -52,6 +54,7 @@ import com.google.common.collect.Sets;
  *         J&uuml;rrens</a>
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorDeletionUpdate.class);
 

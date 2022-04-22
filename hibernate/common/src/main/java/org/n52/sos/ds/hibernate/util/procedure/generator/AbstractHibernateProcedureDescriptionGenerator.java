@@ -66,6 +66,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract generator class for procedure descriptions
  *
@@ -74,6 +76,7 @@ import com.google.common.collect.Lists;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractHibernateProcedureDescriptionGenerator
         implements HibernateProcedureDescriptionGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGenerator.class);

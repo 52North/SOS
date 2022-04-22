@@ -44,7 +44,10 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetFeatureOfInterestDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;

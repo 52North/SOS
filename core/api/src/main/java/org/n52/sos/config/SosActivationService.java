@@ -40,6 +40,9 @@ import org.n52.iceland.util.activation.FunctionalActivationListener;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class SosActivationService extends ActivationService {
 
     private SosActivationDao activationDao;

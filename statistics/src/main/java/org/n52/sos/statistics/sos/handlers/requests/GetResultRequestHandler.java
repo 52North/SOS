@@ -35,7 +35,7 @@ import org.n52.sos.statistics.sos.models.TimeEsModel;
 public class GetResultRequestHandler extends AbstractSosRequestHandler<GetResultRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetResultRequest request) {
         put(SosDataMapping.GR_FEATURE_IDENTIFIERS, request.getFeatureIdentifiers());
         put(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER, request.getObservationTemplateIdentifier());
         put(SosDataMapping.GR_OBSERVATION_PROPERTY, request.getObservedProperty());

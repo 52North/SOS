@@ -63,12 +63,15 @@ import org.n52.sos.util.GeometryHandler;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate
         implements ApiQueryHelper, DatabaseQueryHelper, DatasourceCacheUpdateHelper {
 

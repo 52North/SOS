@@ -48,7 +48,10 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public class DeleteDeletedDataHandler implements AbstractDeleteDeletedDataHandler, DeleteDataHelper, Constructable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteDeletedDataHandler.class);

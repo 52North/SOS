@@ -40,11 +40,14 @@ import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class WaterMLMetadataAdder extends SeriesMetadataAdder {
 
     public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity dataset) {

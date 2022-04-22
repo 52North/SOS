@@ -87,7 +87,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class HibernateFeatureQueryHandler
         implements FeatureQueryHandler, HibernateSqlQueryConstants {
 

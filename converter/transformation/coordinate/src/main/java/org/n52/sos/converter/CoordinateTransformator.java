@@ -129,6 +129,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Class that transforms geometries in the requests to the stored EPSG code and
  * transforms geometries in the responses to the default response or requested
@@ -139,6 +141,7 @@ import com.google.common.collect.Lists;
  * @since 4.1.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class CoordinateTransformator implements RequestResponseModifier, Constructable {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
@@ -1065,7 +1068,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      * @return the northingNames
      */
     public Set<String> getNorthingNames() {
-        return northingNames;
+        return Collections.unmodifiableSet(northingNames);
     }
 
     /**
@@ -1094,7 +1097,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      * @return the eastingNames
      */
     public Set<String> getEastingNames() {
-        return eastingNames;
+        return Collections.unmodifiableSet(eastingNames);
     }
 
     /**
@@ -1123,7 +1126,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      * @return the altitudeNames
      */
     public Set<String> getAltitudeNames() {
-        return altitudeNames;
+        return Collections.unmodifiableSet(altitudeNames);
     }
 
     /**

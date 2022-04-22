@@ -39,9 +39,12 @@ import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescr
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Strategy to generate a description.
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GeneratedDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     @Override

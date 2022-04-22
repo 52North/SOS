@@ -47,10 +47,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SosAuthenticationProvider implements AuthenticationProvider {
     private static final String BAD_CREDENTIALS = "Bad Credentials";
 

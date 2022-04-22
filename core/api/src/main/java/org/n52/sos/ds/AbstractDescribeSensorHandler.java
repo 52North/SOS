@@ -48,6 +48,8 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * interface for getting procedure description for a passed DescribeSensor
  * request from the data source
@@ -56,6 +58,7 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
  *
  * @since 5.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractDescribeSensorHandler extends AbstractSosOperationHandler {
 
     private ProcedureDescriptionFormatRepository descriptionFormatRepository;

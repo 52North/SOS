@@ -115,6 +115,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
@@ -140,6 +141,7 @@ import ucar.nc2.jni.netcdf.Nc4Iosp;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractNetcdfEncoder
         implements ObservationEncoder<BinaryAttachmentResponse, Object>, NetCDFUtil {
 
@@ -655,8 +657,8 @@ public abstract class AbstractNetcdfEncoder
     protected CDMNode addSummary(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         String summary;
         if (sensorDataset.getSensor().isSetSensorDescription()
-                && sensorDataset.getSensor().getSensorDescritpion().isSetDescription()) {
-            summary = sensorDataset.getSensor().getSensorDescritpion().getDescription();
+                && sensorDataset.getSensor().getSensorDescription().isSetDescription()) {
+            summary = sensorDataset.getSensor().getSensorDescription().getDescription();
         } else {
             summary =
                     "Sensor observations for " + sensorDataset.getSensorIdentifier() + ", feature type "
@@ -1249,7 +1251,7 @@ public abstract class AbstractNetcdfEncoder
 
     protected boolean addPublisher(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            AbstractSensorML sml = sensorDataset.getSensor().getSensorDescritpion();
+            AbstractSensorML sml = sensorDataset.getSensor().getSensorDescription();
             if (addPublisher(sml, getNetcdfHelper().getPublisher(), writer)) {
                 return true;
             }
@@ -1294,7 +1296,7 @@ public abstract class AbstractNetcdfEncoder
 
     protected boolean addContributor(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            AbstractSensorML sml = sensorDataset.getSensor().getSensorDescritpion();
+            AbstractSensorML sml = sensorDataset.getSensor().getSensorDescription();
             if (addContributor(sml, getNetcdfHelper().getContributor(), writer)) {
                 return true;
             } else if (addContributor(sml, CiRoleCodes.CI_RoleCode_principalInvestigator, writer)) {

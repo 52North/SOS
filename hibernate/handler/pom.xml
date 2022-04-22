@@ -35,10 +35,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
              <artifactId>sos-cache</artifactId>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
              <artifactId>sos-handler</artifactId>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -65,6 +67,7 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -121,7 +124,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
@@ -195,6 +198,7 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sweCommon-v20</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

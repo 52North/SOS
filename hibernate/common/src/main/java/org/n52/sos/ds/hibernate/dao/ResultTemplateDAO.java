@@ -82,12 +82,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate data access class for featureofInterest types
  *
  * @author CarstenHollmann
  * @since 4.0.0
  */
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class ResultTemplateDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDAO.class);

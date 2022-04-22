@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52</groupId>
         <artifactId>parent</artifactId>
-        <version>21</version>
+        <version>24</version>
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
@@ -74,7 +74,7 @@
         <version.postgresql>42.3.4</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.5.0.0</version.ojdbc8>
-        <version.sqljdbc>11.1.0.jre8-preview</version.sqljdbc>
+        <version.sqljdbc>11.1.1.jre8-preview</version.sqljdbc>
         <version.mysql>8.0.28</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -837,7 +837,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.5.0</version>
+                <version>4.5.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -1703,6 +1703,10 @@
                         <groupId>javax.servlet</groupId>
                         <artifactId>servlet-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.jvnet.staxex</groupId>
+                        <artifactId>stax-ex</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1725,6 +1729,12 @@
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
                 <version>${version.sqljdbc}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.osgi</groupId>
+                        <artifactId>org.osgi.core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- geotools -->
             <dependency>
@@ -2387,6 +2397,23 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dependency</id>
+            <build>
+                <plugins>
+                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>analyze-dependencies</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>  
                 </plugins>
             </build>
         </profile>

@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract class for Hibernate streaming values
  *
@@ -62,6 +64,7 @@ import com.google.common.collect.Maps;
  * @since 4.1.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractHibernateStreamingValue extends StreamingValue<DataEntity<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);

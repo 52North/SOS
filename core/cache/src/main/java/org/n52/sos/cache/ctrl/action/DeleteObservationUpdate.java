@@ -31,11 +31,14 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.CacheFeederHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 1.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class DeleteObservationUpdate extends CacheFeederDAOCacheUpdate {
     private final OmObservation observation;
 

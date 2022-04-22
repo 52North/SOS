@@ -37,11 +37,14 @@ import org.n52.shetland.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilitiesExtensionProvider {
 
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;

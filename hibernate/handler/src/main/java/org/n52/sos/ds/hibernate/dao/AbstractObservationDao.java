@@ -78,7 +78,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractObservationDao extends AbstractDaoImpl {
 
     private static final String LOG_BINARY_LOGIC_INVALID = "The requested binary logic filter operator is invalid!";

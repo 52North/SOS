@@ -29,6 +29,9 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class EReportingObservationContext extends ObservationContext {
 
 }

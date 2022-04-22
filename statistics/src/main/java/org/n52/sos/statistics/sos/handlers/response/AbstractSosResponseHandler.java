@@ -30,10 +30,14 @@ package org.n52.sos.statistics.sos.handlers.response;
 import java.util.Map;
 
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractSosResponseHandler<T extends OwsServiceResponse>
         extends AbstractElasticSearchDataHolder
         implements StatisticsServiceEventHandler<OwsServiceResponse> {

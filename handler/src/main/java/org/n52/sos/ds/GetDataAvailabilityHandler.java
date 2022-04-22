@@ -28,6 +28,7 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +69,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler
         implements ApiQueryHelper, DatabaseQueryHelper {
 
@@ -272,8 +276,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
-        return (request.isSetResponseFormat()
-                && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat()))
+        return request.isSetResponseFormat()
+                && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat())
                 || GetDataAvailabilityConstants.NS_GDA_20.equals(request.getNamespace()) || isForceGDAv20Response();
     }
 
@@ -475,19 +479,19 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
 
         public Map<String, ReferenceType> getFeaturesOfInterest() {
-            return featuresOfInterest;
+            return Collections.unmodifiableMap(featuresOfInterest);
         }
 
         public Map<String, ReferenceType> getObservableProperties() {
-            return observableProperties;
+            return Collections.unmodifiableMap(observableProperties);
         }
 
         public Map<String, ReferenceType> getProcedures() {
-            return procedures;
+            return Collections.unmodifiableMap(procedures);
         }
 
         public Map<String, ReferenceType> getOfferings() {
-            return offerings;
+            return Collections.unmodifiableMap(offerings);
         }
 
         public GDARequestContext setDataAvailabilityList(List<DataAvailability> dataAvailabilityValues) {

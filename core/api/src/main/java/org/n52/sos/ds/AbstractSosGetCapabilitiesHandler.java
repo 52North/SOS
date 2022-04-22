@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -120,11 +121,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosGetCapabilitiesHandler.class);
@@ -360,7 +364,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                         .values())
                 .flatMap(Collection::stream)
                 .filter(o -> !(o instanceof AbstractTransactionalRequestOperator)
-                        || (o instanceof AbstractTransactionalRequestOperator && showTransactionalOperations))
+                        || o instanceof AbstractTransactionalRequestOperator && showTransactionalOperations)
                 .filter(c -> c instanceof ConformanceClass)
                 .map(c -> (ConformanceClass) c)
                 .map(c -> c.getConformanceClasses(service, version))
@@ -1009,8 +1013,8 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                 .map(getRequestOperatorRepository()::getRequestOperator)
                 .map(operator -> {
                     if (!(operator instanceof AbstractTransactionalRequestOperator)
-                            || (operator instanceof AbstractTransactionalRequestOperator
-                                    && showTransactionalOperations)) {
+                            || operator instanceof AbstractTransactionalRequestOperator
+                                    && showTransactionalOperations) {
                         try {
                             return operator.getOperationMetadata(service, version);
                         } catch (OwsExceptionReport ex) {
@@ -1151,12 +1155,12 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         }
 
         public SectionSpecificContentObject setRequestedExtensionSections(Set<String> requestedExtensionSections) {
-            this.requestedExtensionSections = requestedExtensionSections;
+            this.requestedExtensionSections = new LinkedHashSet<>(requestedExtensionSections);
             return this;
         }
 
         public Set<String> getRequestedExtensionSesctions() {
-            return requestedExtensionSections;
+            return Collections.unmodifiableSet(requestedExtensionSections);
         }
 
         public SectionSpecificContentObject setRequestedSections(int requestedSections) {

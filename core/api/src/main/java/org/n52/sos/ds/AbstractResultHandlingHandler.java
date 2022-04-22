@@ -46,6 +46,8 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract class for Result Handling operation Handlers to provide common
  * methods
@@ -56,6 +58,7 @@ import org.n52.svalbard.util.XmlHelper;
  * @since 5.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractResultHandlingHandler extends AbstractSosOperationHandler {
 
     private DecoderRepository decodingRepository;

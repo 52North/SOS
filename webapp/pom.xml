@@ -278,30 +278,37 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -310,6 +317,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -319,11 +327,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
        <dependency>
              <groupId>net.bytebuddy</groupId>
@@ -333,18 +342,22 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sos-v20</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-swes-v20</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-ows-v110</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-soap-v12</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
@@ -384,6 +397,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.common</groupId>
@@ -435,6 +449,7 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+             <scope>runtime</scope>
         </dependency>
 
         <!-- LOGGING -->
@@ -442,14 +457,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -529,6 +547,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-common</artifactId>
+             <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -714,6 +733,7 @@
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
             <artifactId>cors-filter</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

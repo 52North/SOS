@@ -41,6 +41,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.n52.faroe.ConfigurationError;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
@@ -53,6 +55,7 @@ import org.n52.sos.service.DriverCleanupListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class UnspecifiedSessionFactoryProvider
         extends AbstractSessionFactoryProvider
         implements DataConnectionProvider,

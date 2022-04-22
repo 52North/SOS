@@ -57,12 +57,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Create {@link OmObservation}s from series
  *
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesOmObservationCreator.class);

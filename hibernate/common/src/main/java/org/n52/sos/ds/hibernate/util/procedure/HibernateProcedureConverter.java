@@ -67,6 +67,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
  *         HinderkJ&uuml;rrens</a>
@@ -79,6 +81,7 @@ import com.google.common.collect.Lists;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class HibernateProcedureConverter extends AbstractProcedureConverter<ProcedureEntity>
         implements HibernateSqlQueryConstants {
 
@@ -228,7 +231,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
     @VisibleForTesting
     boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat procedure,
             String requestedFormat, String descriptionFormat) throws OwsExceptionReport {
-        if ((procedure instanceof HasXml && descriptionFormat != null && ((HasXml) procedure).isSetXml())
+        if (procedure instanceof HasXml && descriptionFormat != null && ((HasXml) procedure).isSetXml()
                 || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat)
                     || existConverter(descriptionFormat, requestedFormat)) {

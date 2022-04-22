@@ -69,7 +69,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);

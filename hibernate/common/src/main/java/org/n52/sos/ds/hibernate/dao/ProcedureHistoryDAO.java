@@ -50,12 +50,15 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate data access class for valid procedure time
  *
  * @author CarstenHollmann
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ProcedureHistoryDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureHistoryDAO.class);

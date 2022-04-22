@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.n52.series.db.beans.parameter.ParameterEntity;
@@ -35,6 +36,9 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.parameter.ParameterVisitor;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class DatasetParameterAdder {
 
     private OmObservation observation;
@@ -42,7 +46,7 @@ public class DatasetParameterAdder {
 
     public DatasetParameterAdder(OmObservation observation, Set<ParameterEntity<?>> hParameters) {
         this.observation = observation;
-        this.hParameters = hParameters;
+        this.hParameters = hParameters != null ? new LinkedHashSet<>(hParameters) : new LinkedHashSet<>();
     }
 
     public void add() throws OwsExceptionReport {

@@ -29,6 +29,8 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -88,18 +90,19 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     public EReportingObservationDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags,
             DaoFactory daoFactory) {
         super(daoFactory);
-        this.verificationFlags = verificationFlags;
-        this.validityFlags = validityFlags;
+        this.verificationFlags =
+                verificationFlags != null ? new LinkedHashSet<>(verificationFlags) : new LinkedHashSet<>();
+        this.validityFlags = validityFlags != null ? new LinkedHashSet<>(validityFlags) : new LinkedHashSet<>();
     }
 
     @Override
     public Set<Integer> getVerificationFlags() {
-        return this.verificationFlags;
+        return Collections.unmodifiableSet(verificationFlags);
     }
 
     @Override
     public Set<Integer> getValidityFlags() {
-        return this.validityFlags;
+        return Collections.unmodifiableSet(validityFlags);
     }
 
     @SuppressWarnings("unchecked")
@@ -221,16 +224,22 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                         remove.add(namedValue);
                     }
                 }
-                omObservation.getParameter().removeAll(remove);
+                omObservation.getParameter()
+                        .removeAll(remove);
                 EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
                 ectx.setPlatform(dao.getOrInsert(samplingPoint, session));
             }
-            if (samplingPoint == null && omObservation.getObservationConstellation().isSetFeatureOfInterest()) {
+            if (samplingPoint == null && omObservation.getObservationConstellation()
+                    .isSetFeatureOfInterest()) {
                 samplingPoint = new AqdSamplingPoint();
-                AbstractFeature featureOfInterest = omObservation.getObservationConstellation().getFeatureOfInterest();
+                AbstractFeature featureOfInterest = omObservation.getObservationConstellation()
+                        .getFeatureOfInterest();
                 addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint,
-                        new ReferenceValue(new ReferenceType(featureOfInterest.getIdentifier(),
-                                featureOfInterest.isSetName() ? featureOfInterest.getFirstName().getValue() : "")));
+                        new ReferenceValue(new ReferenceType(
+                                featureOfInterest.getIdentifier(), featureOfInterest.isSetName()
+                                        ? featureOfInterest.getFirstName()
+                                                .getValue()
+                                        : "")));
                 EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
                 ectx.setPlatform(dao.getOrInsert(samplingPoint, session));
             }
@@ -264,9 +273,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
             for (NamedValue<?> namedValue : observation.getParameter()) {
                 Value<?> value = namedValue.getValue();
                 if (value instanceof ReferenceValue) {
-                    return ((ReferenceValue) value).getValue().getHref();
+                    return ((ReferenceValue) value).getValue()
+                            .getHref();
                 } else if (value instanceof HrefAttributeValue) {
-                    return ((HrefAttributeValue) value).getValue().getHref();
+                    return ((HrefAttributeValue) value).getValue()
+                            .getHref();
                 }
             }
         }
@@ -291,21 +302,23 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     private AqdSamplingPoint addAssessmentTypeParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
             Value<?> value) {
         if (value instanceof ReferenceValue) {
-            samplingPoint
-                    .setAssessmentType(AssessmentType.fromConceptURI(((ReferenceValue) value).getValue().getHref()));
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((ReferenceValue) value).getValue()
+                    .getHref()));
         } else if (value instanceof HrefAttributeValue) {
-            samplingPoint.setAssessmentType(
-                    AssessmentType.fromConceptURI(((HrefAttributeValue) value).getValue().getHref()));
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((HrefAttributeValue) value).getValue()
+                    .getHref()));
         }
         return samplingPoint;
     }
 
     private boolean checkForSamplingPoint(ReferenceType name) {
-        return name.isSetHref() && AqdConstants.ProcessParameter.SamplingPoint.getConceptURI().equals(name.getHref());
+        return name.isSetHref() && AqdConstants.ProcessParameter.SamplingPoint.getConceptURI()
+                .equals(name.getHref());
     }
 
     private boolean checkForAssessmentType(ReferenceType name) {
-        return name.isSetHref() && AqdConstants.ProcessParameter.AssessmentType.getConceptURI().equals(name.getHref());
+        return name.isSetHref() && AqdConstants.ProcessParameter.AssessmentType.getConceptURI()
+                .equals(name.getHref());
     }
 
     @Override

@@ -46,6 +46,9 @@ import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.observation.EReportingHelper;
 import org.n52.svalbard.util.SweHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(

@@ -58,6 +58,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     private HibernateSessionStore sessionStore;

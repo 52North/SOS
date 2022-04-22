@@ -59,6 +59,8 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.util.SosHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * interface for getting observations for a passed getObservation request from
  * the data source
@@ -68,6 +70,7 @@ import org.n52.sos.util.SosHelper;
  * @since 5.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractGetObservationHandler extends AbstractSosOperationHandler {
 
     private ResponseFormatRepository responseFormatRepository;

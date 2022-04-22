@@ -76,6 +76,8 @@ import org.n52.sos.util.SosHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Provider for the INSPIRE ExtendedCapabilities
  *
@@ -84,6 +86,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
         implements OwsOperationMetadataExtensionProvider {
 

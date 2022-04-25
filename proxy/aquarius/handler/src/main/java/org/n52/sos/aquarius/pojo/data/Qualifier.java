@@ -28,8 +28,6 @@
 package org.n52.sos.aquarius.pojo.data;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -37,8 +35,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.Interval;
 import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -64,9 +60,6 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
 
     @JsonProperty("EndTime")
     private String endTime;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonIgnore
     private QualifierKey key;
@@ -140,16 +133,6 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
         this.endTime = endTime;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @JsonIgnore
     public QualifierKey getKey() {
         return key;
@@ -184,7 +167,6 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
                 .append("user", user)
                 .append("startTime", startTime)
                 .append("endTime", endTime)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -193,7 +175,6 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
         return new HashCodeBuilder().append(identifier)
                 .append(startTime)
                 .append(endTime)
-                .append(additionalProperties)
                 .append(dateApplied)
                 .append(user)
                 .toHashCode();
@@ -211,7 +192,6 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
         return new EqualsBuilder().append(identifier, rhs.identifier)
                 .append(startTime, rhs.startTime)
                 .append(endTime, rhs.endTime)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(dateApplied, rhs.dateApplied)
                 .append(user, rhs.user)
                 .isEquals();

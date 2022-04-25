@@ -808,10 +808,10 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         observationContext.setObservationType(getObservationType(observationType, session));
 
         if (dataset != null) {
-            if ((!isTrajectoryObservation(dataset) && !isProfileObservation(dataset)
-                    && !isDataArrayObservation(dataset)) || (isProfileObservation(dataset) && parent == null)
-                    || (isTrajectoryObservation(dataset) && parent == null)
-                    || (isDataArrayObservation(dataset) && parent == null)) {
+            if (!isTrajectoryObservation(dataset) && !isProfileObservation(dataset)
+                    && !isDataArrayObservation(dataset) || isProfileObservation(dataset) && parent == null
+                    || isTrajectoryObservation(dataset) && parent == null
+                    || isDataArrayObservation(dataset) && parent == null) {
                 offerings.add(dataset.getOffering());
                 if (!daos.dataset()
                         .checkObservationType(dataset, observationType, session)) {

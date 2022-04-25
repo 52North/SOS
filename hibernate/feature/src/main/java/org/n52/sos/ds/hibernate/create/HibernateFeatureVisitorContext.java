@@ -30,6 +30,9 @@ package org.n52.sos.ds.hibernate.create;
 import org.n52.sos.ds.feature.create.FeatureVisitorContext;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class HibernateFeatureVisitorContext extends FeatureVisitorContext {
     private DaoFactory daoFactory;
 

@@ -29,18 +29,15 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.n52.sos.aquarius.pojo.location.Tag;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -76,9 +73,6 @@ public class LocationDescription implements Serializable {
     @JsonProperty("Tags")
     private List<Tag> tags = new ArrayList<Tag>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -87,16 +81,16 @@ public class LocationDescription implements Serializable {
     }
 
     public LocationDescription(String name, String identifier, String uniqueId, Boolean isExternalLocation,
-            String primaryFolder, List<String> secondaryFolders, String lastModified, List<Tag> tags) {
+            String primaryFolder, Collection<String> secondaryFolders, String lastModified, Collection<Tag> tags) {
         super();
         this.name = name;
         this.identifier = identifier;
         this.uniqueId = uniqueId;
         this.isExternalLocation = isExternalLocation;
         this.primaryFolder = primaryFolder;
-        this.secondaryFolders = secondaryFolders;
+        setSecondaryFolders(secondaryFolders);
         this.lastModified = lastModified;
-        this.tags = tags;
+        setTags(tags);
     }
 
     @JsonProperty("Name")
@@ -151,12 +145,15 @@ public class LocationDescription implements Serializable {
 
     @JsonProperty("SecondaryFolders")
     public List<String> getSecondaryFolders() {
-        return secondaryFolders;
+        return Collections.unmodifiableList(secondaryFolders);
     }
 
     @JsonProperty("SecondaryFolders")
-    public void setSecondaryFolders(List<String> secondaryFolders) {
-        this.secondaryFolders = secondaryFolders;
+    public void setSecondaryFolders(Collection<String> secondaryFolders) {
+        this.secondaryFolders.clear();
+        if (secondaryFolders != null) {
+            this.secondaryFolders.addAll(secondaryFolders);
+        }
     }
 
     @JsonProperty("LastModified")
@@ -171,50 +168,29 @@ public class LocationDescription implements Serializable {
 
     @JsonProperty("Tags")
     public List<Tag> getTags() {
-        return tags;
+        return Collections.unmodifiableList(tags);
     }
 
     @JsonProperty("Tags")
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setTags(Collection<Tag> tags) {
+        this.tags.clear();
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("name", name)
-                .append("identifier", identifier)
-                .append("uniqueId", uniqueId)
-                .append("isExternalLocation", isExternalLocation)
-                .append("primaryFolder", primaryFolder)
-                .append("secondaryFolders", secondaryFolders)
-                .append("lastModified", lastModified)
-                .append("tags", tags)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("name", name).append("identifier", identifier)
+                .append("uniqueId", uniqueId).append("isExternalLocation", isExternalLocation)
+                .append("primaryFolder", primaryFolder).append("secondaryFolders", secondaryFolders)
+                .append("lastModified", lastModified).append("tags", tags).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(secondaryFolders)
-                .append(identifier)
-                .append(isExternalLocation)
-                .append(name)
-                .append(primaryFolder)
-                .append(lastModified)
-                .append(additionalProperties)
-                .append(uniqueId)
-                .append(tags)
-                .toHashCode();
+        return new HashCodeBuilder().append(secondaryFolders).append(identifier).append(isExternalLocation)
+                .append(name).append(primaryFolder).append(lastModified).append(uniqueId).append(tags).toHashCode();
     }
 
     @Override
@@ -226,16 +202,10 @@ public class LocationDescription implements Serializable {
             return false;
         }
         LocationDescription rhs = (LocationDescription) other;
-        return new EqualsBuilder().append(secondaryFolders, rhs.secondaryFolders)
-                .append(identifier, rhs.identifier)
-                .append(isExternalLocation, rhs.isExternalLocation)
-                .append(name, rhs.name)
-                .append(primaryFolder, rhs.primaryFolder)
-                .append(lastModified, rhs.lastModified)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(uniqueId, rhs.uniqueId)
-                .append(tags, rhs.tags)
-                .isEquals();
+        return new EqualsBuilder().append(secondaryFolders, rhs.secondaryFolders).append(identifier, rhs.identifier)
+                .append(isExternalLocation, rhs.isExternalLocation).append(name, rhs.name)
+                .append(primaryFolder, rhs.primaryFolder).append(lastModified, rhs.lastModified)
+                .append(uniqueId, rhs.uniqueId).append(tags, rhs.tags).isEquals();
     }
 
 }

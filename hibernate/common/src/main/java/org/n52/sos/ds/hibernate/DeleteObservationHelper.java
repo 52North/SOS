@@ -423,8 +423,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                 boolean update = false;
                 if (minMaxTimes.containsKey(dataset.getId())) {
                     SeriesTimeExtrema extrema = minMaxTimes.get(dataset.getId());
-                    if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt() && !DateTimeHelper
-                            .makeDateTime(dataset.getFirstValueAt()).equals(extrema.getMinPhenomenonTime()))) {
+                    if (!dataset.isSetFirstValueAt() || dataset.isSetFirstValueAt() && !DateTimeHelper
+                            .makeDateTime(dataset.getFirstValueAt()).equals(extrema.getMinPhenomenonTime())) {
                         dataset.setFirstValueAt(extrema.getMinPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(
@@ -438,8 +438,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                         update = true;
                     }
                     if (!dataset.isSetLastValueAt()
-                            || (dataset.isSetLastValueAt() && !DateTimeHelper.makeDateTime(dataset.getLastValueAt())
-                                    .equals(extrema.getMaxPhenomenonTime()))) {
+                            || dataset.isSetLastValueAt() && !DateTimeHelper.makeDateTime(dataset.getLastValueAt())
+                                    .equals(extrema.getMaxPhenomenonTime())) {
                         dataset.setLastValueAt(extrema.getMaxPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(
@@ -453,15 +453,15 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                         }
                         update = true;
                     }
-                    if (!dataset.isSetResultTimeStart() || (dataset.isSetResultTimeStart() && !DateTimeHelper
-                            .makeDateTime(dataset.getResultTimeEnd()).equals(extrema.getMinResultTime()))) {
+                    if (!dataset.isSetResultTimeStart() || dataset.isSetResultTimeStart() && !DateTimeHelper
+                            .makeDateTime(dataset.getResultTimeEnd()).equals(extrema.getMinResultTime())) {
                         dataset.setFirstValueAt(extrema.getMinResultTime()
                                 .toDate());
                         update = true;
                     }
                     if (!dataset.isSetResultTimeEnd()
-                            || (dataset.isSetResultTimeEnd() && !DateTimeHelper.makeDateTime(dataset.getResultTimeEnd())
-                                    .equals(extrema.getMaxResultTime()))) {
+                            || dataset.isSetResultTimeEnd() && !DateTimeHelper.makeDateTime(dataset.getResultTimeEnd())
+                                    .equals(extrema.getMaxResultTime())) {
                         dataset.setResultTimeEnd(extrema.getMaxResultTime()
                                 .toDate());
                         update = true;

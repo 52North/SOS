@@ -66,6 +66,9 @@ import org.n52.sos.web.HttpClientHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class AquariusConnector implements AccessorConnector {
 
     private HttpClientHandler httpClientHandler;

@@ -174,17 +174,17 @@ public interface AccessorConnector {
 
     default boolean featureIsInFilter(Geometry geometry, List<EnvelopeOrGeometry> envelopes) {
         return geometry != null && !geometry.isEmpty() && envelopes.stream()
-                .anyMatch(e -> (e.isGeometry() && e.getGeometry()
+                .anyMatch(e -> e.isGeometry() && e.getGeometry()
                         .isPresent()
                         && e.getGeometry()
                                 .get()
-                                .contains(geometry))
-                        || (e.isEnvelope() && e.getEnvelope()
+                                .contains(geometry)
+                        || e.isEnvelope() && e.getEnvelope()
                                 .isPresent()
                                 && e.getEnvelope()
                                         .get()
                                         .toGeometry()
-                                        .contains(geometry)));
+                                        .contains(geometry));
     }
 
     default Geometry getGeomtery(final Location location) throws OwsExceptionReport {

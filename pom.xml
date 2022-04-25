@@ -90,19 +90,19 @@
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.5.1</version.arctic-sea>
-        <version.helgoland.api>3.5.0-PR.6</version.helgoland.api>
-        <version.db-model>4.0.0-PR.7</version.db-model>
-        <version.dao-impl>4.0.0-PR.8</version.dao-impl>
+        <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
+        <version.db-model>4.0.0-SNAPSHOT</version.db-model>
+        <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.springframework>5.3.19</version.springframework>
         <version.springframework.security>5.6.3</version.springframework.security>
-        <version.springframework.data>2.6.3</version.springframework.data>
+        <version.springframework.data>2.6.4</version.springframework.data>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>
         <version.elasticsearch>7.17.3</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
-        <version.junit>5.6.2</version.junit>
+        <version.junit>5.8.2</version.junit>
         <version.exificient>1.0.4</version.exificient>
         <version.jaxb>2.3.0</version.jaxb>
     </properties>
@@ -1881,6 +1881,10 @@
                     <exclusion>
                         <groupId>javax.measure</groupId>
                         <artifactId>unit-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apiguardian</groupId>
+                        <artifactId>apiguardian-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

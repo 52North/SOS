@@ -28,16 +28,11 @@
 package org.n52.sos.aquarius.pojo.data;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -56,9 +51,6 @@ public class Grade implements Serializable {
 
     @JsonProperty("EndTime")
     private String endTime;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -104,22 +96,11 @@ public class Grade implements Serializable {
         this.endTime = endTime;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("gradeCode", gradeCode)
                 .append("startTime", startTime)
                 .append("endTime", endTime)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -128,7 +109,6 @@ public class Grade implements Serializable {
         return new HashCodeBuilder().append(startTime)
                 .append(gradeCode)
                 .append(endTime)
-                .append(additionalProperties)
                 .toHashCode();
     }
 
@@ -144,7 +124,6 @@ public class Grade implements Serializable {
         return new EqualsBuilder().append(startTime, rhs.startTime)
                 .append(gradeCode, rhs.gradeCode)
                 .append(endTime, rhs.endTime)
-                .append(additionalProperties, rhs.additionalProperties)
                 .isEquals();
     }
 

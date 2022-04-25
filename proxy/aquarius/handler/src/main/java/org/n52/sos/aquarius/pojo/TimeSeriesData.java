@@ -29,9 +29,9 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -47,18 +47,19 @@ import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.TimeRange;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.collect.Iterables;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "UniqueId", "Parameter", "Label", "LocationIdentifier", "NumPoints", "Unit", "Approvals",
         "Qualifiers", "Methods", "Grades", "GapTolerances", "InterpolationTypes", "Notes", "TimeRange", "Points",
         "ResponseVersion", "ResponseTime", "Summary" })
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class TimeSeriesData implements Serializable {
 
     private static final long serialVersionUID = -1300064642777536708L;
@@ -120,9 +121,6 @@ public class TimeSeriesData implements Serializable {
     @JsonIgnore
     private QualifierChecker checker = new QualifierChecker();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -131,10 +129,10 @@ public class TimeSeriesData implements Serializable {
     }
 
     public TimeSeriesData(String uniqueId, String parameter, String label, String locationIdentifier, String numPoints,
-            String unit, List<Approval> approvals, List<Qualifier> qualifiers, List<Method> methods,
-            List<Grade> grades, List<GapTolerance> gapTolerances, List<InterpolationType> interpolationTypes,
-            List<Note> notes, TimeRange timeRange, List<Point> points, Integer responseVersion, String responseTime,
-            String summary) {
+            String unit, Collection<Approval> approvals, Collection<Qualifier> qualifiers, Collection<Method> methods,
+            Collection<Grade> grades, Collection<GapTolerance> gapTolerances,
+            Collection<InterpolationType> interpolationTypes, Collection<Note> notes, TimeRange timeRange,
+            Collection<Point> points, Integer responseVersion, String responseTime, String summary) {
         super();
         this.uniqueId = uniqueId;
         this.parameter = parameter;
@@ -142,15 +140,15 @@ public class TimeSeriesData implements Serializable {
         this.locationIdentifier = locationIdentifier;
         this.numPoints = numPoints;
         this.unit = unit;
-        this.approvals = approvals;
-        this.qualifiers = qualifiers;
-        this.methods = methods;
-        this.grades = grades;
-        this.gapTolerances = gapTolerances;
-        this.interpolationTypes = interpolationTypes;
-        this.notes = notes;
+        setApprovals(approvals);
+        setQualifiers(qualifiers);
+        setMethods(methods);
+        setGrades(grades);
+        setGapTolerances(gapTolerances);
+        setInterpolationTypes(interpolationTypes);
+        setNotes(notes);
         this.timeRange = timeRange;
-        this.points = points;
+        setPoints(points);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -218,22 +216,28 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Approvals")
     public List<Approval> getApprovals() {
-        return approvals;
+        return Collections.unmodifiableList(approvals);
     }
 
     @JsonProperty("Approvals")
-    public void setApprovals(List<Approval> approvals) {
-        this.approvals = approvals;
+    public void setApprovals(Collection<Approval> approvals) {
+        this.approvals.clear();
+        if (approvals != null) {
+            this.approvals.addAll(approvals);
+        }
     }
 
     @JsonProperty("Qualifiers")
     public List<Qualifier> getQualifiers() {
-        return qualifiers;
+        return Collections.unmodifiableList(qualifiers);
     }
 
     @JsonProperty("Qualifiers")
-    public void setQualifiers(List<Qualifier> qualifiers) {
-        this.qualifiers = qualifiers;
+    public void setQualifiers(Collection<Qualifier> qualifiers) {
+        this.qualifiers.clear();
+        if (qualifiers != null) {
+            this.qualifiers.addAll(qualifiers);
+        }
     }
 
     @JsonIgnore
@@ -243,42 +247,54 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Methods")
     public List<Method> getMethods() {
-        return methods;
+        return Collections.unmodifiableList(methods);
     }
 
     @JsonProperty("Methods")
-    public void setMethods(List<Method> methods) {
-        this.methods = methods;
+    public void setMethods(Collection<Method> methods) {
+        this.methods.clear();
+        if (methods != null) {
+            this.methods.addAll(methods);
+        }
     }
 
     @JsonProperty("Grades")
     public List<Grade> getGrades() {
-        return grades;
+        return Collections.unmodifiableList(grades);
     }
 
     @JsonProperty("Grades")
-    public void setGrades(List<Grade> grades) {
-        this.grades = grades;
+    public void setGrades(Collection<Grade> grades) {
+        this.grades.clear();
+        if (grades != null) {
+            this.grades.addAll(grades);
+        }
     }
 
     @JsonProperty("GapTolerances")
     public List<GapTolerance> getGapTolerances() {
-        return gapTolerances;
+        return Collections.unmodifiableList(gapTolerances);
     }
 
     @JsonProperty("GapTolerances")
-    public void setGapTolerances(List<GapTolerance> gapTolerances) {
-        this.gapTolerances = gapTolerances;
+    public void setGapTolerances(Collection<GapTolerance> gapTolerances) {
+        this.gapTolerances.clear();
+        if (gapTolerances != null) {
+            this.gapTolerances.addAll(gapTolerances);
+        }
     }
 
     @JsonProperty("InterpolationTypes")
     public List<InterpolationType> getInterpolationTypes() {
-        return interpolationTypes;
+        return Collections.unmodifiableList(interpolationTypes);
     }
 
     @JsonProperty("InterpolationTypes")
-    public void setInterpolationTypes(List<InterpolationType> interpolationTypes) {
-        this.interpolationTypes = interpolationTypes;
+    public void setInterpolationTypes(Collection<InterpolationType> interpolationTypes) {
+        this.interpolationTypes.clear();
+        if (interpolationTypes != null) {
+            this.interpolationTypes.addAll(interpolationTypes);
+        }
     }
 
     public boolean hasInterpolationTypes() {
@@ -287,12 +303,15 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Notes")
     public List<Note> getNotes() {
-        return notes;
+        return Collections.unmodifiableList(notes);
     }
 
     @JsonProperty("Notes")
-    public void setNotes(List<Note> notes) {
-        this.notes = notes;
+    public void setNotes(Collection<Note> notes) {
+        this.notes.clear();
+        if (notes != null) {
+            this.notes.addAll(notes);
+        }
     }
 
     @JsonProperty("TimeRange")
@@ -307,12 +326,15 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Points")
     public List<Point> getPoints() {
-        return checker.check(points);
+        return Collections.unmodifiableList(checker.check(points));
     }
 
     @JsonProperty("Points")
-    public void setPoints(List<Point> points) {
-        this.points = points;
+    public void setPoints(Collection<Point> points) {
+        this.points.clear();
+        if (points != null) {
+            this.points.addAll(points);
+        }
     }
 
     @JsonIgnore
@@ -348,16 +370,6 @@ public class TimeSeriesData implements Serializable {
     @JsonProperty("Summary")
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
     @JsonIgnore
@@ -401,7 +413,6 @@ public class TimeSeriesData implements Serializable {
                 .append("responseVersion", responseVersion)
                 .append("responseTime", responseTime)
                 .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -420,7 +431,6 @@ public class TimeSeriesData implements Serializable {
                 .append(responseVersion)
                 .append(parameter)
                 .append(approvals)
-                .append(additionalProperties)
                 .append(gapTolerances)
                 .append(interpolationTypes)
                 .append(uniqueId)
@@ -451,7 +461,6 @@ public class TimeSeriesData implements Serializable {
                 .append(responseVersion, rhs.responseVersion)
                 .append(parameter, rhs.parameter)
                 .append(approvals, rhs.approvals)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(gapTolerances, rhs.gapTolerances)
                 .append(interpolationTypes, rhs.interpolationTypes)
                 .append(uniqueId, rhs.uniqueId)

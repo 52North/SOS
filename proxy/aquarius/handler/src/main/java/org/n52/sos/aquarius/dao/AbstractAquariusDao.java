@@ -42,6 +42,9 @@ import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.ds.dao.DefaultDao;
 import org.n52.sos.service.profile.ProfileHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractAquariusDao implements DefaultDao {
 
     private AquariusConnectionFactory connectorFactory;

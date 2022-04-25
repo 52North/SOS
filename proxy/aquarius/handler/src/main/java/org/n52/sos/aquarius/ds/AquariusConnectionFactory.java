@@ -45,6 +45,9 @@ import org.n52.sos.web.HttpClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class AquariusConnectionFactory implements Constructable, Destroyable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnectionFactory.class);

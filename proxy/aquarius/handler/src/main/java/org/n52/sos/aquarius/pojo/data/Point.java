@@ -28,22 +28,21 @@
 package org.n52.sos.aquarius.pojo.data;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Timestamp", "Value" })
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class Point implements Serializable {
 
     private static final long serialVersionUID = -7566570989032058426L;
@@ -53,9 +52,6 @@ public class Point implements Serializable {
 
     @JsonProperty("Value")
     private Value value;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonIgnore
     private Qualifier qualifier;
@@ -93,16 +89,6 @@ public class Point implements Serializable {
         this.value = value;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @JsonIgnore
     public Point setQualifier(Qualifier qualifier) {
         this.qualifier = qualifier;
@@ -121,18 +107,12 @@ public class Point implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("timestamp", timestamp)
-                .append("value", value)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("timestamp", timestamp).append("value", value).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(additionalProperties)
-                .append(value)
-                .append(timestamp)
-                .toHashCode();
+        return new HashCodeBuilder().append(value).append(timestamp).toHashCode();
     }
 
     @Override
@@ -144,10 +124,7 @@ public class Point implements Serializable {
             return false;
         }
         Point rhs = (Point) other;
-        return new EqualsBuilder().append(additionalProperties, rhs.additionalProperties)
-                .append(value, rhs.value)
-                .append(timestamp, rhs.timestamp)
-                .isEquals();
+        return new EqualsBuilder().append(value, rhs.value).append(timestamp, rhs.timestamp).isEquals();
     }
 
 }

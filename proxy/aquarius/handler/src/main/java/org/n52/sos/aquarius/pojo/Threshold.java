@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -71,9 +68,6 @@ public class Threshold implements Serializable {
     @JsonProperty("Periods")
     private List<Period> periods = new ArrayList<Period>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -82,7 +76,7 @@ public class Threshold implements Serializable {
     }
 
     public Threshold(String name, String description, String referenceCode, Integer severity, String type,
-            String displayColor, List<Period> periods) {
+            String displayColor, Collection<Period> periods) {
         super();
         this.name = name;
         this.description = description;
@@ -90,7 +84,7 @@ public class Threshold implements Serializable {
         this.severity = severity;
         this.type = type;
         this.displayColor = displayColor;
-        this.periods = periods;
+        setPeriods(periods);
     }
 
     @JsonProperty("Name")
@@ -155,22 +149,15 @@ public class Threshold implements Serializable {
 
     @JsonProperty("Periods")
     public List<Period> getPeriods() {
-        return periods;
+        return Collections.unmodifiableList(periods);
     }
 
     @JsonProperty("Periods")
-    public void setPeriods(List<Period> periods) {
-        this.periods = periods;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setPeriods(Collection<Period> periods) {
+        this.periods.clear();
+        if (periods != null) {
+            this.periods.addAll(periods);
+        }
     }
 
     @Override
@@ -182,7 +169,6 @@ public class Threshold implements Serializable {
                 .append("type", type)
                 .append("displayColor", displayColor)
                 .append("periods", periods)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -193,7 +179,6 @@ public class Threshold implements Serializable {
                 .append(description)
                 .append(periods)
                 .append(displayColor)
-                .append(additionalProperties)
                 .append(referenceCode)
                 .append(type)
                 .toHashCode();
@@ -213,7 +198,6 @@ public class Threshold implements Serializable {
                 .append(description, rhs.description)
                 .append(periods, rhs.periods)
                 .append(displayColor, rhs.displayColor)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(referenceCode, rhs.referenceCode)
                 .append(type, rhs.type)
                 .isEquals();

@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -62,9 +59,6 @@ public class Parameters implements Serializable {
     @JsonProperty("Summary")
     private String summary;
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -72,9 +66,9 @@ public class Parameters implements Serializable {
     public Parameters() {
     }
 
-    public Parameters(List<Parameter> parameters, Integer responseVersion, String responseTime, String summary) {
+    public Parameters(Collection<Parameter> parameters, Integer responseVersion, String responseTime, String summary) {
         super();
-        this.parameters = parameters;
+        setParameters(parameters);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -82,12 +76,15 @@ public class Parameters implements Serializable {
 
     @JsonProperty("Parameters")
     public List<Parameter> getParameters() {
-        return parameters;
+        return Collections.unmodifiableList(parameters);
     }
 
     @JsonProperty("Parameters")
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
+    public void setParameters(Collection<Parameter> parameters) {
+        this.parameters.clear();
+        if (parameters != null) {
+            this.parameters.addAll(parameters);
+        }
     }
 
     public boolean hasParameters() {
@@ -124,23 +121,12 @@ public class Parameters implements Serializable {
         this.summary = summary;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("parameters", parameters)
                 .append("responseVersion", responseVersion)
                 .append("responseTime", responseTime)
                 .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -148,7 +134,6 @@ public class Parameters implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder().append(summary)
                 .append(responseVersion)
-                .append(additionalProperties)
                 .append(parameters)
                 .append(responseTime)
                 .toHashCode();
@@ -165,7 +150,6 @@ public class Parameters implements Serializable {
         Parameters rhs = (Parameters) other;
         return new EqualsBuilder().append(summary, rhs.summary)
                 .append(responseVersion, rhs.responseVersion)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(parameters, rhs.parameters)
                 .append(responseTime, rhs.responseTime)
                 .isEquals();

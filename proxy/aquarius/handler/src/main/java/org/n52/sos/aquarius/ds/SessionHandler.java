@@ -61,6 +61,9 @@ import org.xml.sax.InputSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SessionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionHandler.class);

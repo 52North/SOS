@@ -71,6 +71,9 @@ import org.n52.sos.proxy.harvest.Harvester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public abstract class AbstractAquariusHarvester implements Harvester, AquariusEntityBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvester.class);

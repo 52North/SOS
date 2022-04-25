@@ -44,6 +44,8 @@ import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract Hibernate series streaming value class for the series concept
  *
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.2
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);

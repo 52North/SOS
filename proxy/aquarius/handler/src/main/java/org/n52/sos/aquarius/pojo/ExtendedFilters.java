@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.pojo;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class ExtendedFilters {
     }
 
     public Map<String, String> getFilter() {
-        return filter;
+        return Collections.unmodifiableMap(filter);
     }
 
     public boolean hasFilters() {

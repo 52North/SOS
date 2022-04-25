@@ -355,8 +355,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 ctx.setMobile(true);
             }
         }
-        if (dataset == null || (dataset.isSetFeature() && ctx.isSetFeatureOfInterest()
-                && !dataset.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
+        if (dataset == null || dataset.isSetFeature() && ctx.isSetFeatureOfInterest()
+                && !dataset.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier())) {
             dataset = (DatasetEntity) getDatasetFactory().visit(observation);
             ctx.addValuesToSeries(dataset);
             dataset.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
@@ -879,14 +879,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
-                && dataset.getFirstValueAt().after(observation.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || dataset.isSetFirstValueAt()
+                && dataset.getFirstValueAt().after(observation.getSamplingTimeStart())) {
             minChanged = true;
             dataset.setFirstValueAt(observation.getSamplingTimeStart());
             dataset.setFirstObservation(observation);
         }
         if (!dataset.isSetLastValueAt()
-                || (dataset.isSetLastValueAt() && dataset.getLastValueAt().before(observation.getSamplingTimeEnd()))) {
+                || dataset.isSetLastValueAt() && dataset.getLastValueAt().before(observation.getSamplingTimeEnd())) {
             maxChanged = true;
             dataset.setLastValueAt(observation.getSamplingTimeEnd());
             dataset.setLastObservation(observation);
@@ -899,12 +899,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 dataset.setLastQuantityValue(((QuantityDataEntity) observation).getValue());
             }
         }
-        if (!dataset.isSetResultTimeStart() || (dataset.isSetResultTimeStart()
-                && dataset.getResultTimeStart().after(observation.getResultTime()))) {
+        if (!dataset.isSetResultTimeStart() || dataset.isSetResultTimeStart()
+                && dataset.getResultTimeStart().after(observation.getResultTime())) {
             dataset.setResultTimeStart(observation.getResultTime());
         }
         if (!dataset.isSetResultTimeEnd()
-                || (dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd().before(observation.getResultTime()))) {
+                || dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd().before(observation.getResultTime())) {
             dataset.setResultTimeEnd(observation.getResultTime());
         }
         if (observation.isSetGeometryEntity()) {

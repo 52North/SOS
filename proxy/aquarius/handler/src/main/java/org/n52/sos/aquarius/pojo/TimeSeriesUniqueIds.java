@@ -29,9 +29,10 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
 import javax.annotation.Generated;
 import javax.validation.Valid;
 
@@ -39,9 +40,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -73,10 +71,6 @@ public class TimeSeriesUniqueIds implements Serializable {
     @JsonProperty("Summary")
     private String summary;
 
-    @JsonIgnore
-    @Valid
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -84,12 +78,13 @@ public class TimeSeriesUniqueIds implements Serializable {
     public TimeSeriesUniqueIds() {
     }
 
-    public TimeSeriesUniqueIds(Boolean tokenExpired, String nextToken, List<TimeSeriesUniqueId> timeSeriesUniqueIds,
-            Integer responseVersion, String responseTime, String summary) {
+    public TimeSeriesUniqueIds(Boolean tokenExpired, String nextToken,
+            Collection<TimeSeriesUniqueId> timeSeriesUniqueIds, Integer responseVersion, String responseTime,
+            String summary) {
         super();
         this.tokenExpired = tokenExpired;
         this.nextToken = nextToken;
-        this.timeSeriesUniqueIds = timeSeriesUniqueIds;
+        setTimeSeriesUniqueIds(timeSeriesUniqueIds);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -127,16 +122,22 @@ public class TimeSeriesUniqueIds implements Serializable {
 
     @JsonProperty("TimeSeriesUniqueIds")
     public List<TimeSeriesUniqueId> getTimeSeriesUniqueIds() {
-        return timeSeriesUniqueIds;
+        return Collections.unmodifiableList(timeSeriesUniqueIds);
     }
 
     @JsonProperty("TimeSeriesUniqueIds")
-    public void setTimeSeriesUniqueIds(List<TimeSeriesUniqueId> timeSeriesUniqueIds) {
-        this.timeSeriesUniqueIds = timeSeriesUniqueIds;
+    public void setTimeSeriesUniqueIds(Collection<TimeSeriesUniqueId> timeSeriesUniqueIds) {
+        this.timeSeriesUniqueIds.clear();
+        if (timeSeriesUniqueIds != null) {
+            this.timeSeriesUniqueIds.addAll(timeSeriesUniqueIds);
+        }
     }
 
-    public TimeSeriesUniqueIds withTimeSeriesUniqueIds(List<TimeSeriesUniqueId> timeSeriesUniqueIds) {
-        this.timeSeriesUniqueIds = timeSeriesUniqueIds;
+    public TimeSeriesUniqueIds withTimeSeriesUniqueIds(Collection<TimeSeriesUniqueId> timeSeriesUniqueIds) {
+        this.timeSeriesUniqueIds.clear();
+        if (timeSeriesUniqueIds != null) {
+            this.timeSeriesUniqueIds.addAll(timeSeriesUniqueIds);
+        }
         return this;
     }
 
@@ -189,44 +190,17 @@ public class TimeSeriesUniqueIds implements Serializable {
         return this;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
-    public TimeSeriesUniqueIds withAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-        return this;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("tokenExpired", tokenExpired)
-                .append("nextToken", nextToken)
-                .append("timeSeriesUniqueIds", timeSeriesUniqueIds)
-                .append("responseVersion", responseVersion)
-                .append("responseTime", responseTime)
-                .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("tokenExpired", tokenExpired).append("nextToken", nextToken)
+                .append("timeSeriesUniqueIds", timeSeriesUniqueIds).append("responseVersion", responseVersion)
+                .append("responseTime", responseTime).append("summary", summary).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(summary)
-                .append(responseVersion)
-                .append(additionalProperties)
-                .append(timeSeriesUniqueIds)
-                .append(responseTime)
-                .append(nextToken)
-                .append(tokenExpired)
-                .toHashCode();
+        return new HashCodeBuilder().append(summary).append(responseVersion).append(timeSeriesUniqueIds)
+                .append(responseTime).append(nextToken).append(tokenExpired).toHashCode();
     }
 
     @Override
@@ -238,13 +212,9 @@ public class TimeSeriesUniqueIds implements Serializable {
             return false;
         }
         TimeSeriesUniqueIds rhs = (TimeSeriesUniqueIds) other;
-        return new EqualsBuilder().append(summary, rhs.summary)
-                .append(responseVersion, rhs.responseVersion)
-                .append(nextToken, rhs.nextToken)
-                .append(tokenExpired, rhs.tokenExpired)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(timeSeriesUniqueIds, rhs.timeSeriesUniqueIds)
-                .append(responseTime, rhs.responseTime)
+        return new EqualsBuilder().append(summary, rhs.summary).append(responseVersion, rhs.responseVersion)
+                .append(nextToken, rhs.nextToken).append(tokenExpired, rhs.tokenExpired)
+                .append(timeSeriesUniqueIds, rhs.timeSeriesUniqueIds).append(responseTime, rhs.responseTime)
                 .isEquals();
     }
 

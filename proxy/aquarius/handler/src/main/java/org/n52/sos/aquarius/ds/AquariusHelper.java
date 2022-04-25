@@ -337,7 +337,7 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     private GetLocationDescriptionList getBaseLocationDescriptionListRequest() {
         if (isExtendendAttributeLocation()
-                || (isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries())) {
+                || isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries()) {
             return new GetLocationDescriptionList(getExtendedFilterMapLocation());
         }
         return new GetLocationDescriptionList();

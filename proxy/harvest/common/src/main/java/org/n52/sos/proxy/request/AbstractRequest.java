@@ -30,6 +30,9 @@ package org.n52.sos.proxy.request;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public abstract class AbstractRequest {
 
     private Map<String, String> header = new LinkedHashMap<>();

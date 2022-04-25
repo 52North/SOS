@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -119,9 +116,6 @@ public class TimeSeriesDescription implements Serializable {
     @JsonProperty("Thresholds")
     private List<Threshold> thresholds = new ArrayList<Threshold>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -134,7 +128,7 @@ public class TimeSeriesDescription implements Serializable {
             String rawEndTime, String correctedStartTime, String correctedEndTime, String timeSeriesType, String label,
             String comment, String description, Boolean publish, String computationIdentifier,
             String computationPeriodIdentifier, String subLocationIdentifier,
-            List<ExtendedAttribute> extendedAttributes, List<Threshold> thresholds) {
+            Collection<ExtendedAttribute> extendedAttributes, Collection<Threshold> thresholds) {
         super();
         this.identifier = identifier;
         this.uniqueId = uniqueId;
@@ -156,8 +150,8 @@ public class TimeSeriesDescription implements Serializable {
         this.computationIdentifier = computationIdentifier;
         this.computationPeriodIdentifier = computationPeriodIdentifier;
         this.subLocationIdentifier = subLocationIdentifier;
-        this.extendedAttributes = extendedAttributes;
-        this.thresholds = thresholds;
+        setExtendedAttributes(extendedAttributes);
+        setThresholds(thresholds);
     }
 
     @JsonProperty("Identifier")
@@ -370,32 +364,28 @@ public class TimeSeriesDescription implements Serializable {
 
     @JsonProperty("ExtendedAttributes")
     public List<ExtendedAttribute> getExtendedAttributes() {
-        return extendedAttributes;
+        return Collections.unmodifiableList(extendedAttributes);
     }
 
     @JsonProperty("ExtendedAttributes")
-    public void setExtendedAttributes(List<ExtendedAttribute> extendedAttributes) {
-        this.extendedAttributes = extendedAttributes;
+    public void setExtendedAttributes(Collection<ExtendedAttribute> extendedAttributes) {
+        this.extendedAttributes.clear();
+        if (extendedAttributes != null) {
+            this.extendedAttributes.addAll(extendedAttributes);
+        }
     }
 
     @JsonProperty("Thresholds")
     public List<Threshold> getThresholds() {
-        return thresholds;
+        return Collections.unmodifiableList(thresholds);
     }
 
     @JsonProperty("Thresholds")
-    public void setThresholds(List<Threshold> thresholds) {
-        this.thresholds = thresholds;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setThresholds(Collection<Threshold> thresholds) {
+        this.thresholds.clear();
+        if (thresholds != null) {
+            this.thresholds.addAll(thresholds);
+        }
     }
 
     @Override
@@ -422,7 +412,6 @@ public class TimeSeriesDescription implements Serializable {
                 .append("subLocationIdentifier", subLocationIdentifier)
                 .append("extendedAttributes", extendedAttributes)
                 .append("thresholds", thresholds)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -446,7 +435,6 @@ public class TimeSeriesDescription implements Serializable {
                 .append(rawEndTime)
                 .append(comment)
                 .append(lastModified)
-                .append(additionalProperties)
                 .append(uniqueId)
                 .append(locationIdentifier)
                 .append(utcOffsetIsoDuration)
@@ -481,7 +469,6 @@ public class TimeSeriesDescription implements Serializable {
                 .append(rawEndTime, rhs.rawEndTime)
                 .append(comment, rhs.comment)
                 .append(lastModified, rhs.lastModified)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(uniqueId, rhs.uniqueId)
                 .append(locationIdentifier, rhs.locationIdentifier)
                 .append(utcOffsetIsoDuration, rhs.utcOffsetIsoDuration)

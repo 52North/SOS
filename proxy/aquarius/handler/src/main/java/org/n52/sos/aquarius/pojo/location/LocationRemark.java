@@ -28,16 +28,11 @@
 package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -65,9 +60,6 @@ public class LocationRemark implements Serializable {
 
     @JsonProperty("Remark")
     private String remark;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -147,16 +139,6 @@ public class LocationRemark implements Serializable {
         this.remark = remark;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("createTime", createTime)
@@ -165,7 +147,6 @@ public class LocationRemark implements Serializable {
                 .append("typeName", typeName)
                 .append("description", description)
                 .append("remark", remark)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -176,7 +157,6 @@ public class LocationRemark implements Serializable {
                 .append(typeName)
                 .append(description)
                 .append(remark)
-                .append(additionalProperties)
                 .append(toTime)
                 .toHashCode();
     }
@@ -195,7 +175,6 @@ public class LocationRemark implements Serializable {
                 .append(typeName, rhs.typeName)
                 .append(description, rhs.description)
                 .append(remark, rhs.remark)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(toTime, rhs.toTime)
                 .isEquals();
     }

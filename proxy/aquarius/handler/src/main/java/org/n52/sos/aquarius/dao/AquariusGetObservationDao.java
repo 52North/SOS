@@ -92,6 +92,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class AquariusGetObservationDao extends AbstractAquariusDao
         implements GetObservationDao, ValueConnector, ApiQueryHelper, AquariusTimeHelper, AquariusEntityBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusGetObservationDao.class);
@@ -188,8 +191,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
                     checkAndAdd(data,
                             connection.getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(identifier)));
                 }
-                if (!data.isEmpty() || (data.isEmpty() && getProfileHandler().getActiveProfile()
-                        .isShowMetadataOfEmptyObservations())) {
+                if (!data.isEmpty() || data.isEmpty() && getProfileHandler().getActiveProfile()
+                        .isShowMetadataOfEmptyObservations()) {
                     AquariusStreamingValue streamingValue = new AquariusStreamingValue(observationHelper);
                     List<DataEntity<?>> dataEntities = new LinkedList<>();
                     for (TimeSeriesData timeSeriesData : data) {

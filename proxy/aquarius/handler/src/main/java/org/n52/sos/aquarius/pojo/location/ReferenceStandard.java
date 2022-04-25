@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -56,9 +53,6 @@ public class ReferenceStandard implements Serializable {
     @JsonProperty("ReferenceStandardOffsets")
     private List<ReferenceStandardOffset> referenceStandardOffsets = new ArrayList<ReferenceStandardOffset>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -66,10 +60,10 @@ public class ReferenceStandard implements Serializable {
     public ReferenceStandard() {
     }
 
-    public ReferenceStandard(String referenceStandard, List<ReferenceStandardOffset> referenceStandardOffsets) {
+    public ReferenceStandard(String referenceStandard, Collection<ReferenceStandardOffset> referenceStandardOffsets) {
         super();
         this.referenceStandard = referenceStandard;
-        this.referenceStandardOffsets = referenceStandardOffsets;
+        setReferenceStandardOffsets(referenceStandardOffsets);
     }
 
     @JsonProperty("ReferenceStandard")
@@ -84,38 +78,26 @@ public class ReferenceStandard implements Serializable {
 
     @JsonProperty("ReferenceStandardOffsets")
     public List<ReferenceStandardOffset> getReferenceStandardOffsets() {
-        return referenceStandardOffsets;
+        return Collections.unmodifiableList(referenceStandardOffsets);
     }
 
     @JsonProperty("ReferenceStandardOffsets")
-    public void setReferenceStandardOffsets(List<ReferenceStandardOffset> referenceStandardOffsets) {
-        this.referenceStandardOffsets = referenceStandardOffsets;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setReferenceStandardOffsets(Collection<ReferenceStandardOffset> referenceStandardOffsets) {
+        this.referenceStandardOffsets.clear();
+        if (referenceStandardOffsets != null) {
+            this.referenceStandardOffsets.addAll(referenceStandardOffsets);
+        }
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("referenceStandard", referenceStandard)
-                .append("referenceStandardOffsets", referenceStandardOffsets)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+                .append("referenceStandardOffsets", referenceStandardOffsets).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(referenceStandard)
-                .append(additionalProperties)
-                .append(referenceStandardOffsets)
-                .toHashCode();
+        return new HashCodeBuilder().append(referenceStandard).append(referenceStandardOffsets).toHashCode();
     }
 
     @Override
@@ -128,9 +110,7 @@ public class ReferenceStandard implements Serializable {
         }
         ReferenceStandard rhs = (ReferenceStandard) other;
         return new EqualsBuilder().append(referenceStandard, rhs.referenceStandard)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(referenceStandardOffsets, rhs.referenceStandardOffsets)
-                .isEquals();
+                .append(referenceStandardOffsets, rhs.referenceStandardOffsets).isEquals();
     }
 
 }

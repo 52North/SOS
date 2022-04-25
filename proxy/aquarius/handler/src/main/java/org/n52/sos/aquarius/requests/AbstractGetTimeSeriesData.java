@@ -33,6 +33,9 @@ import org.joda.time.DateTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractGetTimeSeriesData extends AbstractAquariusGetRequest {
 
     private final String timeSeriesUniqueId;

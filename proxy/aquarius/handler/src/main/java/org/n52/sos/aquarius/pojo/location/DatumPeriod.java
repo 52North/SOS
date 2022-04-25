@@ -28,23 +28,21 @@
 package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Standard", "TimeRange", "UnitIdentifier", "OffsetToStandard", "Uncertainty",
         "MeasurementDirection", "Comments", "AppliedTimeUtc", "User" })
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class DatumPeriod implements Serializable {
 
     private static final long serialVersionUID = 3821922609155300279L;
@@ -75,9 +73,6 @@ public class DatumPeriod implements Serializable {
 
     @JsonProperty("User")
     private String user;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -190,16 +185,6 @@ public class DatumPeriod implements Serializable {
         this.user = user;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("standard", standard)
@@ -211,7 +196,6 @@ public class DatumPeriod implements Serializable {
                 .append("comments", comments)
                 .append("appliedTimeUtc", appliedTimeUtc)
                 .append("user", user)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -222,7 +206,6 @@ public class DatumPeriod implements Serializable {
                 .append(comments)
                 .append(appliedTimeUtc)
                 .append(measurementDirection)
-                .append(additionalProperties)
                 .append(uncertainty)
                 .append(user)
                 .append(timeRange)
@@ -244,7 +227,6 @@ public class DatumPeriod implements Serializable {
                 .append(comments, rhs.comments)
                 .append(appliedTimeUtc, rhs.appliedTimeUtc)
                 .append(measurementDirection, rhs.measurementDirection)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(uncertainty, rhs.uncertainty)
                 .append(user, rhs.user)
                 .append(timeRange, rhs.timeRange)

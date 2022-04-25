@@ -463,10 +463,10 @@ public class ObservationUnfolder {
 
     private boolean checkForNewTrajectory(DateTime currentTime, String currentFeature, String currentProcedure,
             DateTime time, OmObservationConstellation oc) {
-        return (currentFeature != null && !oc.getFeatureOfInterestIdentifier().equalsIgnoreCase(currentFeature))
-                || (currentProcedure != null && !oc.getProcedureIdentifier().equalsIgnoreCase(currentProcedure))
-                || (trajectoryDetectionTimeGap > 0 && currentTime != null
-                        && Minutes.minutesBetween(currentTime, time).getMinutes() > trajectoryDetectionTimeGap);
+        return currentFeature != null && !oc.getFeatureOfInterestIdentifier().equalsIgnoreCase(currentFeature)
+                || currentProcedure != null && !oc.getProcedureIdentifier().equalsIgnoreCase(currentProcedure)
+                || trajectoryDetectionTimeGap > 0 && currentTime != null
+                        && Minutes.minutesBetween(currentTime, time).getMinutes() > trajectoryDetectionTimeGap;
     }
 
     private Map<DateTime, List<OmObservation>> getMap(List<OmObservation> observationCollection) {
@@ -778,12 +778,12 @@ public class ObservationUnfolder {
     }
 
     private boolean isProfileObservations(ParameterHolder parameterHolder) {
-        if (isProfileObservations() || (multiObservation.getObservationConstellation()
+        if (isProfileObservations() || multiObservation.getObservationConstellation()
                 .isSetObservationType()
                 && multiObservation.getObservationConstellation()
                         .getObservationType()
                         .equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)
-                && parameterHolder.isSetHeightDepthParameter())) {
+                && parameterHolder.isSetHeightDepthParameter()) {
             multiObservation.getObservationConstellation()
                     .setObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
             return true;
@@ -800,12 +800,12 @@ public class ObservationUnfolder {
     }
 
     private boolean isTrajectoryObservations(ParameterHolder parameterHolder) {
-        if (isTrajectoryObservations() || (multiObservation.getObservationConstellation()
+        if (isTrajectoryObservations() || multiObservation.getObservationConstellation()
                 .isSetObservationType()
                 && multiObservation.getObservationConstellation()
                         .getObservationType()
                         .equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)
-                && parameterHolder.isSetSpatialFilteringProfileParameter())) {
+                && parameterHolder.isSetSpatialFilteringProfileParameter()) {
             multiObservation.getObservationConstellation()
                     .setObservationType(OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
             return true;

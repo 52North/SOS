@@ -28,6 +28,7 @@
 package org.n52.sos.aquarius.requests;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class GetTimeSeriesDescriptionsByUniqueId extends AbstractAquariusGetRequ
      * @return the unique ids
      */
     public Set<String> getUniqueIds() {
-        return uniqueIds;
+        return Collections.unmodifiableSet(uniqueIds);
     }
 
     public void addUniqueId(String uniqueId) {

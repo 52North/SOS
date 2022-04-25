@@ -32,6 +32,9 @@ import org.hibernate.criterion.Criterion;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ValueQueryContext {
 
     private DatasetEntity dataset;

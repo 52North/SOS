@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -72,9 +69,6 @@ public class LocationNote implements Serializable {
     @JsonProperty("LastModifiedByUser")
     private String lastModifiedByUser;
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -83,14 +77,14 @@ public class LocationNote implements Serializable {
     }
 
     public LocationNote(String uniqueId, String lastModifiedUtc, String fromTimeUtc, String toTimeUtc, String details,
-            List<Tag> tags, String lastModifiedByUser) {
+            Collection<Tag> tags, String lastModifiedByUser) {
         super();
         this.uniqueId = uniqueId;
         this.lastModifiedUtc = lastModifiedUtc;
         this.fromTimeUtc = fromTimeUtc;
         this.toTimeUtc = toTimeUtc;
         this.details = details;
-        this.tags = tags;
+        setTags(getTags());
         this.lastModifiedByUser = lastModifiedByUser;
     }
 
@@ -146,12 +140,14 @@ public class LocationNote implements Serializable {
 
     @JsonProperty("Tags")
     public List<Tag> getTags() {
-        return tags;
+        return Collections.unmodifiableList(tags);
     }
 
     @JsonProperty("Tags")
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
+    public void setTags(Collection<Tag> tags) {
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
     }
 
     @JsonProperty("LastModifiedByUser")
@@ -164,40 +160,17 @@ public class LocationNote implements Serializable {
         this.lastModifiedByUser = lastModifiedByUser;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("uniqueId", uniqueId)
-                .append("lastModifiedUtc", lastModifiedUtc)
-                .append("fromTimeUtc", fromTimeUtc)
-                .append("toTimeUtc", toTimeUtc)
-                .append("details", details)
-                .append("tags", tags)
-                .append("lastModifiedByUser", lastModifiedByUser)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("uniqueId", uniqueId).append("lastModifiedUtc", lastModifiedUtc)
+                .append("fromTimeUtc", fromTimeUtc).append("toTimeUtc", toTimeUtc).append("details", details)
+                .append("tags", tags).append("lastModifiedByUser", lastModifiedByUser).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(toTimeUtc)
-                .append(lastModifiedUtc)
-                .append(fromTimeUtc)
-                .append(details)
-                .append(additionalProperties)
-                .append(uniqueId)
-                .append(tags)
-                .append(lastModifiedByUser)
-                .toHashCode();
+        return new HashCodeBuilder().append(toTimeUtc).append(lastModifiedUtc).append(fromTimeUtc).append(details)
+                .append(uniqueId).append(tags).append(lastModifiedByUser).toHashCode();
     }
 
     @Override
@@ -209,15 +182,9 @@ public class LocationNote implements Serializable {
             return false;
         }
         LocationNote rhs = (LocationNote) other;
-        return new EqualsBuilder().append(toTimeUtc, rhs.toTimeUtc)
-                .append(lastModifiedUtc, rhs.lastModifiedUtc)
-                .append(fromTimeUtc, rhs.fromTimeUtc)
-                .append(details, rhs.details)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(uniqueId, rhs.uniqueId)
-                .append(tags, rhs.tags)
-                .append(lastModifiedByUser, rhs.lastModifiedByUser)
-                .isEquals();
+        return new EqualsBuilder().append(toTimeUtc, rhs.toTimeUtc).append(lastModifiedUtc, rhs.lastModifiedUtc)
+                .append(fromTimeUtc, rhs.fromTimeUtc).append(details, rhs.details).append(uniqueId, rhs.uniqueId)
+                .append(tags, rhs.tags).append(lastModifiedByUser, rhs.lastModifiedByUser).isEquals();
     }
 
 }

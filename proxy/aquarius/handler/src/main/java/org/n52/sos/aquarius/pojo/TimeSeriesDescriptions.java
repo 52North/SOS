@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -62,9 +59,6 @@ public class TimeSeriesDescriptions implements Serializable {
     @JsonProperty("Summary")
     private String summary;
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -72,10 +66,10 @@ public class TimeSeriesDescriptions implements Serializable {
     public TimeSeriesDescriptions() {
     }
 
-    public TimeSeriesDescriptions(List<TimeSeriesDescription> timeSeriesDescriptions, Integer responseVersion,
+    public TimeSeriesDescriptions(Collection<TimeSeriesDescription> timeSeriesDescriptions, Integer responseVersion,
             String responseTime, String summary) {
         super();
-        this.timeSeriesDescriptions = timeSeriesDescriptions;
+        setTimeSeriesDescriptions(timeSeriesDescriptions);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -83,12 +77,15 @@ public class TimeSeriesDescriptions implements Serializable {
 
     @JsonProperty("TimeSeriesDescriptions")
     public List<TimeSeriesDescription> getTimeSeriesDescriptions() {
-        return timeSeriesDescriptions;
+        return Collections.unmodifiableList(timeSeriesDescriptions);
     }
 
     @JsonProperty("TimeSeriesDescriptions")
-    public void setTimeSeriesDescriptions(List<TimeSeriesDescription> timeSeriesDescriptions) {
-        this.timeSeriesDescriptions = timeSeriesDescriptions;
+    public void setTimeSeriesDescriptions(Collection<TimeSeriesDescription> timeSeriesDescriptions) {
+        this.timeSeriesDescriptions.clear();
+        if (timeSeriesDescriptions != null) {
+            this.timeSeriesDescriptions.addAll(timeSeriesDescriptions);
+        }
     }
 
     public boolean hasTimeSeriesDescriptions() {
@@ -125,23 +122,12 @@ public class TimeSeriesDescriptions implements Serializable {
         this.summary = summary;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("timeSeriesDescriptions", timeSeriesDescriptions)
                 .append("responseVersion", responseVersion)
                 .append("responseTime", responseTime)
                 .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -149,7 +135,6 @@ public class TimeSeriesDescriptions implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder().append(summary)
                 .append(responseVersion)
-                .append(additionalProperties)
                 .append(timeSeriesDescriptions)
                 .append(responseTime)
                 .toHashCode();
@@ -166,7 +151,6 @@ public class TimeSeriesDescriptions implements Serializable {
         TimeSeriesDescriptions rhs = (TimeSeriesDescriptions) other;
         return new EqualsBuilder().append(summary, rhs.summary)
                 .append(responseVersion, rhs.responseVersion)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(timeSeriesDescriptions, rhs.timeSeriesDescriptions)
                 .append(responseTime, rhs.responseTime)
                 .isEquals();

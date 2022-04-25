@@ -55,6 +55,9 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResultTemplateDao, Constructable {
 
     private HibernateSessionHolder sessionHolder;

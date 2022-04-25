@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -78,9 +75,6 @@ public class ReferencePoint implements Serializable {
     @JsonProperty("ReferencePointPeriods")
     private List<ReferencePointPeriod> referencePointPeriods = new ArrayList<ReferencePointPeriod>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -90,7 +84,7 @@ public class ReferencePoint implements Serializable {
 
     public ReferencePoint(String uniqueId, String name, String description, String decommissionedDate,
             String decommissionedReason, String primarySinceDate, Integer latitude, Integer longitude,
-            List<ReferencePointPeriod> referencePointPeriods) {
+            Collection<ReferencePointPeriod> referencePointPeriods) {
         super();
         this.uniqueId = uniqueId;
         this.name = name;
@@ -100,7 +94,7 @@ public class ReferencePoint implements Serializable {
         this.primarySinceDate = primarySinceDate;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.referencePointPeriods = referencePointPeriods;
+        setReferencePointPeriods(referencePointPeriods);
     }
 
     @JsonProperty("UniqueId")
@@ -185,22 +179,15 @@ public class ReferencePoint implements Serializable {
 
     @JsonProperty("ReferencePointPeriods")
     public List<ReferencePointPeriod> getReferencePointPeriods() {
-        return referencePointPeriods;
+        return Collections.unmodifiableList(referencePointPeriods);
     }
 
     @JsonProperty("ReferencePointPeriods")
-    public void setReferencePointPeriods(List<ReferencePointPeriod> referencePointPeriods) {
-        this.referencePointPeriods = referencePointPeriods;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setReferencePointPeriods(Collection<ReferencePointPeriod> referencePointPeriods) {
+        this.referencePointPeriods.clear();
+        if (referencePointPeriods != null) {
+            this.referencePointPeriods.addAll(referencePointPeriods);
+        }
     }
 
     @Override
@@ -214,7 +201,6 @@ public class ReferencePoint implements Serializable {
                 .append("latitude", latitude)
                 .append("longitude", longitude)
                 .append("referencePointPeriods", referencePointPeriods)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -227,7 +213,6 @@ public class ReferencePoint implements Serializable {
                 .append(name)
                 .append(description)
                 .append(primarySinceDate)
-                .append(additionalProperties)
                 .append(uniqueId)
                 .append(longitude)
                 .toHashCode();
@@ -249,7 +234,6 @@ public class ReferencePoint implements Serializable {
                 .append(name, rhs.name)
                 .append(description, rhs.description)
                 .append(primarySinceDate, rhs.primarySinceDate)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(uniqueId, rhs.uniqueId)
                 .append(longitude, rhs.longitude)
                 .isEquals();

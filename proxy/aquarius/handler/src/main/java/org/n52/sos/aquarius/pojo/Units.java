@@ -29,17 +29,14 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -62,9 +59,6 @@ public class Units implements Serializable {
     @JsonProperty("Summary")
     private String summary;
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -72,9 +66,9 @@ public class Units implements Serializable {
     public Units() {
     }
 
-    public Units(List<Unit> units, Integer responseVersion, String responseTime, String summary) {
+    public Units(Collection<Unit> units, Integer responseVersion, String responseTime, String summary) {
         super();
-        this.units = units;
+        setUnits(units);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -82,12 +76,15 @@ public class Units implements Serializable {
 
     @JsonProperty("Units")
     public List<Unit> getUnits() {
-        return units;
+        return Collections.unmodifiableList(units);
     }
 
     @JsonProperty("Units")
-    public void setUnits(List<Unit> units) {
-        this.units = units;
+    public void setUnits(Collection<Unit> units) {
+        this.units.clear();
+        if (units != null) {
+            this.units.addAll(units);
+        }
     }
 
     public boolean hasUnits() {
@@ -124,33 +121,15 @@ public class Units implements Serializable {
         this.summary = summary;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("units", units)
-                .append("responseVersion", responseVersion)
-                .append("responseTime", responseTime)
-                .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("units", units).append("responseVersion", responseVersion)
+                .append("responseTime", responseTime).append("summary", summary).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(summary)
-                .append(units)
-                .append(responseVersion)
-                .append(additionalProperties)
-                .append(responseTime)
+        return new HashCodeBuilder().append(summary).append(units).append(responseVersion).append(responseTime)
                 .toHashCode();
     }
 
@@ -163,12 +142,8 @@ public class Units implements Serializable {
             return false;
         }
         Units rhs = (Units) other;
-        return new EqualsBuilder().append(summary, rhs.summary)
-                .append(units, rhs.units)
-                .append(responseVersion, rhs.responseVersion)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(responseTime, rhs.responseTime)
-                .isEquals();
+        return new EqualsBuilder().append(summary, rhs.summary).append(units, rhs.units)
+                .append(responseVersion, rhs.responseVersion).append(responseTime, rhs.responseTime).isEquals();
     }
 
 }

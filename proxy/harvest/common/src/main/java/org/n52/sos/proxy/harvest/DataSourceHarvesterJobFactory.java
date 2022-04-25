@@ -47,7 +47,10 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class DataSourceHarvesterJobFactory implements Constructable {
 
     public static final String PROXY_FULL_HARVEST_UPDATE = "proxy.harvest.full";
@@ -130,7 +133,7 @@ public class DataSourceHarvesterJobFactory implements Constructable {
     }
 
     private void reschedule(boolean update) {
-        if ((!initialized && !update) || (initialized && update)) {
+        if (!initialized && !update || initialized && update) {
             for (ScheduledJob job : getScheduledJobs()) {
                 if (jobs.contains(job.getJobName())) {
                     boolean updateJob = false;
@@ -160,9 +163,9 @@ public class DataSourceHarvesterJobFactory implements Constructable {
     }
 
     private boolean checkCronExpression(ScheduledJob job, String cronExpression) {
-        if (job.getCronExpression() == null || (job.getCronExpression() != null && !job.getCronExpression()
+        if (job.getCronExpression() == null || job.getCronExpression() != null && !job.getCronExpression()
                 .isEmpty() && !job.getCronExpression()
-                        .equals(cronExpression))) {
+                        .equals(cronExpression)) {
             job.setCronExpression(cronExpression);
             return true;
         }

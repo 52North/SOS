@@ -29,9 +29,9 @@ package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -44,18 +44,18 @@ import org.n52.sos.aquarius.pojo.location.LocationRemark;
 import org.n52.sos.aquarius.pojo.location.ReferencePoint;
 import org.n52.sos.aquarius.pojo.location.Tag;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "LocationName", "Description", "Identifier", "UniqueId", "LocationType", "IsExternalLocation",
         "Latitude", "Longitude", "Srid", "ElevationUnits", "Elevation", "UtcOffset", "Tags", "ExtendedAttributes",
         "LocationRemarks", "LocationNotes", "Attachments", "LocationDatum", "ReferencePoints", "ResponseVersion",
         "ResponseTime", "Summary" })
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class Location implements Serializable {
 
     private static final long serialVersionUID = -8891399059182138893L;
@@ -126,9 +126,6 @@ public class Location implements Serializable {
     @JsonProperty("Summary")
     private String summary;
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -138,10 +135,10 @@ public class Location implements Serializable {
 
     public Location(String locationName, String description, String identifier, String uniqueId, String locationType,
             Boolean isExternalLocation, Double latitude, Double longitude, Integer srid, String elevationUnits,
-            Double elevation, Double utcOffset, List<Tag> tags, List<ExtendedAttribute> extendedAttributes,
-            List<LocationRemark> locationRemarks, List<LocationNote> locationNotes, List<Attachment> attachments,
-            LocationDatum locationDatum, List<ReferencePoint> referencePoints, Double responseVersion,
-            String responseTime, String summary) {
+            Double elevation, Double utcOffset, Collection<Tag> tags, Collection<ExtendedAttribute> extendedAttributes,
+            Collection<LocationRemark> locationRemarks, Collection<LocationNote> locationNotes,
+            Collection<Attachment> attachments, LocationDatum locationDatum,
+            Collection<ReferencePoint> referencePoints, Double responseVersion, String responseTime, String summary) {
         super();
         this.locationName = locationName;
         this.description = description;
@@ -155,13 +152,13 @@ public class Location implements Serializable {
         this.elevationUnits = elevationUnits;
         this.elevation = elevation;
         this.utcOffset = utcOffset;
-        this.tags = tags;
-        this.extendedAttributes = extendedAttributes;
-        this.locationRemarks = locationRemarks;
-        this.locationNotes = locationNotes;
-        this.attachments = attachments;
+        setTags(tags);
+        setExtendedAttributes(extendedAttributes);
+        setLocationRemarks(locationRemarks);
+        setLocationNotes(locationNotes);
+        setAttachments(attachments);
         this.locationDatum = locationDatum;
-        this.referencePoints = referencePoints;
+        setReferencePoints(referencePoints);
         this.responseVersion = responseVersion;
         this.responseTime = responseTime;
         this.summary = summary;
@@ -289,52 +286,67 @@ public class Location implements Serializable {
 
     @JsonProperty("Tags")
     public List<Tag> getTags() {
-        return tags;
+        return Collections.unmodifiableList(tags);
     }
 
     @JsonProperty("Tags")
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
+    public void setTags(Collection<Tag> tags) {
+        this.tags.clear();
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
     }
 
     @JsonProperty("ExtendedAttributes")
     public List<ExtendedAttribute> getExtendedAttributes() {
-        return extendedAttributes;
+        return Collections.unmodifiableList(extendedAttributes);
     }
 
     @JsonProperty("ExtendedAttributes")
-    public void setExtendedAttributes(List<ExtendedAttribute> extendedAttributes) {
-        this.extendedAttributes = extendedAttributes;
+    public void setExtendedAttributes(Collection<ExtendedAttribute> extendedAttributes) {
+        this.extendedAttributes.clear();
+        if (extendedAttributes != null) {
+            this.extendedAttributes.addAll(extendedAttributes);
+        }
     }
 
     @JsonProperty("LocationRemarks")
     public List<LocationRemark> getLocationRemarks() {
-        return locationRemarks;
+        return Collections.unmodifiableList(locationRemarks);
     }
 
     @JsonProperty("LocationRemarks")
-    public void setLocationRemarks(List<LocationRemark> locationRemarks) {
-        this.locationRemarks = locationRemarks;
+    public void setLocationRemarks(Collection<LocationRemark> locationRemarks) {
+        this.locationRemarks.clear();
+        if (locationRemarks != null) {
+            this.locationRemarks.addAll(locationRemarks);
+        }
     }
 
     @JsonProperty("LocationNotes")
     public List<LocationNote> getLocationNotes() {
-        return locationNotes;
+        return Collections.unmodifiableList(locationNotes);
     }
 
     @JsonProperty("LocationNotes")
-    public void setLocationNotes(List<LocationNote> locationNotes) {
-        this.locationNotes = locationNotes;
+    public void setLocationNotes(Collection<LocationNote> locationNotes) {
+        this.locationNotes.clear();
+        if (locationNotes != null) {
+            this.locationNotes.addAll(locationNotes);
+        }
     }
 
     @JsonProperty("Attachments")
     public List<Attachment> getAttachments() {
-        return attachments;
+        return Collections.unmodifiableList(attachments);
     }
 
     @JsonProperty("Attachments")
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
+    public void setAttachments(Collection<Attachment> attachments) {
+        this.attachments.clear();
+        if (attachments != null) {
+            this.attachments.addAll(attachments);
+        }
     }
 
     @JsonProperty("LocationDatum")
@@ -349,12 +361,15 @@ public class Location implements Serializable {
 
     @JsonProperty("ReferencePoints")
     public List<ReferencePoint> getReferencePoints() {
-        return referencePoints;
+        return Collections.unmodifiableList(referencePoints);
     }
 
     @JsonProperty("ReferencePoints")
-    public void setReferencePoints(List<ReferencePoint> referencePoints) {
-        this.referencePoints = referencePoints;
+    public void setReferencePoints(Collection<ReferencePoint> referencePoints) {
+        this.referencePoints.clear();
+        if (referencePoints != null) {
+            this.referencePoints.addAll(referencePoints);
+        }
     }
 
     @JsonProperty("ResponseVersion")
@@ -387,70 +402,27 @@ public class Location implements Serializable {
         this.summary = summary;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("locationName", locationName)
-                .append("description", description)
-                .append("identifier", identifier)
-                .append("uniqueId", uniqueId)
-                .append("locationType", locationType)
-                .append("isExternalLocation", isExternalLocation)
-                .append("latitude", latitude)
-                .append("longitude", longitude)
-                .append("srid", srid)
-                .append("elevationUnits", elevationUnits)
-                .append("elevation", elevation)
-                .append("utcOffset", utcOffset)
-                .append("tags", tags)
-                .append("extendedAttributes", extendedAttributes)
-                .append("locationRemarks", locationRemarks)
-                .append("locationNotes", locationNotes)
-                .append("attachments", attachments)
-                .append("locationDatum", locationDatum)
-                .append("referencePoints", referencePoints)
-                .append("responseVersion", responseVersion)
-                .append("responseTime", responseTime)
-                .append("summary", summary)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+        return new ToStringBuilder(this).append("locationName", locationName).append("description", description)
+                .append("identifier", identifier).append("uniqueId", uniqueId).append("locationType", locationType)
+                .append("isExternalLocation", isExternalLocation).append("latitude", latitude)
+                .append("longitude", longitude).append("srid", srid).append("elevationUnits", elevationUnits)
+                .append("elevation", elevation).append("utcOffset", utcOffset).append("tags", tags)
+                .append("extendedAttributes", extendedAttributes).append("locationRemarks", locationRemarks)
+                .append("locationNotes", locationNotes).append("attachments", attachments)
+                .append("locationDatum", locationDatum).append("referencePoints", referencePoints)
+                .append("responseVersion", responseVersion).append("responseTime", responseTime)
+                .append("summary", summary).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(elevation)
-                .append(summary)
-                .append(identifier)
-                .append(locationName)
-                .append(utcOffset)
-                .append(attachments)
-                .append(responseTime)
-                .append(latitude)
-                .append(description)
-                .append(locationType)
-                .append(extendedAttributes)
-                .append(srid)
-                .append(tags)
-                .append(elevationUnits)
-                .append(responseVersion)
-                .append(locationRemarks)
-                .append(locationNotes)
-                .append(isExternalLocation)
-                .append(referencePoints)
-                .append(additionalProperties)
-                .append(uniqueId)
-                .append(longitude)
-                .append(locationDatum)
-                .toHashCode();
+        return new HashCodeBuilder().append(elevation).append(summary).append(identifier).append(locationName)
+                .append(utcOffset).append(attachments).append(responseTime).append(latitude).append(description)
+                .append(locationType).append(extendedAttributes).append(srid).append(tags).append(elevationUnits)
+                .append(responseVersion).append(locationRemarks).append(locationNotes).append(isExternalLocation)
+                .append(referencePoints).append(uniqueId).append(longitude).append(locationDatum).toHashCode();
     }
 
     @Override
@@ -462,29 +434,16 @@ public class Location implements Serializable {
             return false;
         }
         Location rhs = (Location) other;
-        return new EqualsBuilder().append(elevation, rhs.elevation)
-                .append(summary, rhs.summary)
-                .append(identifier, rhs.identifier)
-                .append(locationName, rhs.locationName)
-                .append(utcOffset, rhs.utcOffset)
-                .append(attachments, rhs.attachments)
-                .append(responseTime, rhs.responseTime)
-                .append(latitude, rhs.latitude)
-                .append(description, rhs.description)
-                .append(locationType, rhs.locationType)
-                .append(extendedAttributes, rhs.extendedAttributes)
-                .append(srid, rhs.srid)
-                .append(tags, rhs.tags)
-                .append(elevationUnits, rhs.elevationUnits)
-                .append(responseVersion, rhs.responseVersion)
-                .append(locationRemarks, rhs.locationRemarks)
-                .append(locationNotes, rhs.locationNotes)
-                .append(isExternalLocation, rhs.isExternalLocation)
-                .append(referencePoints, rhs.referencePoints)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(uniqueId, rhs.uniqueId)
-                .append(longitude, rhs.longitude)
-                .append(locationDatum, rhs.locationDatum)
-                .isEquals();
+        return new EqualsBuilder().append(elevation, rhs.elevation).append(summary, rhs.summary)
+                .append(identifier, rhs.identifier).append(locationName, rhs.locationName)
+                .append(utcOffset, rhs.utcOffset).append(attachments, rhs.attachments)
+                .append(responseTime, rhs.responseTime).append(latitude, rhs.latitude)
+                .append(description, rhs.description).append(locationType, rhs.locationType)
+                .append(extendedAttributes, rhs.extendedAttributes).append(srid, rhs.srid).append(tags, rhs.tags)
+                .append(elevationUnits, rhs.elevationUnits).append(responseVersion, rhs.responseVersion)
+                .append(locationRemarks, rhs.locationRemarks).append(locationNotes, rhs.locationNotes)
+                .append(isExternalLocation, rhs.isExternalLocation).append(referencePoints, rhs.referencePoints)
+                .append(uniqueId, rhs.uniqueId).append(longitude, rhs.longitude)
+                .append(locationDatum, rhs.locationDatum).isEquals();
     }
 }

@@ -27,6 +27,9 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class Session {
 
     private final String token;

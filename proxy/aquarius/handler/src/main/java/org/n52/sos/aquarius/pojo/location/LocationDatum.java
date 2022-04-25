@@ -29,23 +29,23 @@ package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "ReferenceStandard", "DatumPeriods" })
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class LocationDatum implements Serializable {
 
     private static final long serialVersionUID = -1614312491511942106L;
@@ -56,9 +56,6 @@ public class LocationDatum implements Serializable {
     @JsonProperty("DatumPeriods")
     private List<DatumPeriod> datumPeriods = new ArrayList<DatumPeriod>();
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
     /**
      * No args constructor for use in serialization
      *
@@ -66,10 +63,10 @@ public class LocationDatum implements Serializable {
     public LocationDatum() {
     }
 
-    public LocationDatum(ReferenceStandard referenceStandard, List<DatumPeriod> datumPeriods) {
+    public LocationDatum(ReferenceStandard referenceStandard, Collection<DatumPeriod> datumPeriods) {
         super();
         this.referenceStandard = referenceStandard;
-        this.datumPeriods = datumPeriods;
+        setDatumPeriods(getDatumPeriods());
     }
 
     @JsonProperty("ReferenceStandard")
@@ -84,38 +81,26 @@ public class LocationDatum implements Serializable {
 
     @JsonProperty("DatumPeriods")
     public List<DatumPeriod> getDatumPeriods() {
-        return datumPeriods;
+        return Collections.unmodifiableList(datumPeriods);
     }
 
     @JsonProperty("DatumPeriods")
-    public void setDatumPeriods(List<DatumPeriod> datumPeriods) {
-        this.datumPeriods = datumPeriods;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setDatumPeriods(Collection<DatumPeriod> datumPeriods) {
+        this.datumPeriods.clear();
+        if (datumPeriods != null) {
+            this.datumPeriods.addAll(datumPeriods);
+        }
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("referenceStandard", referenceStandard)
-                .append("datumPeriods", datumPeriods)
-                .append("additionalProperties", additionalProperties)
-                .toString();
+                .append("datumPeriods", datumPeriods).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(referenceStandard)
-                .append(additionalProperties)
-                .append(datumPeriods)
-                .toHashCode();
+        return new HashCodeBuilder().append(referenceStandard).append(datumPeriods).toHashCode();
     }
 
     @Override
@@ -128,9 +113,7 @@ public class LocationDatum implements Serializable {
         }
         LocationDatum rhs = (LocationDatum) other;
         return new EqualsBuilder().append(referenceStandard, rhs.referenceStandard)
-                .append(additionalProperties, rhs.additionalProperties)
-                .append(datumPeriods, rhs.datumPeriods)
-                .isEquals();
+                .append(datumPeriods, rhs.datumPeriods).isEquals();
     }
 
 }

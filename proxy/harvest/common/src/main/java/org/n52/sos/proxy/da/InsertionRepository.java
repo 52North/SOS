@@ -223,13 +223,13 @@ public class InsertionRepository {
         data.setDataset(dataset);
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt() && dataset.getFirstValueAt()
-                .after(data.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || dataset.isSetFirstValueAt() && dataset.getFirstValueAt()
+                .after(data.getSamplingTimeStart())) {
             minChanged = true;
             dataset.setFirstValueAt(data.getSamplingTimeStart());
         }
-        if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt() && dataset.getLastValueAt()
-                .before(data.getSamplingTimeEnd()))) {
+        if (!dataset.isSetLastValueAt() || dataset.isSetLastValueAt() && dataset.getLastValueAt()
+                .before(data.getSamplingTimeEnd())) {
             maxChanged = true;
             dataset.setLastValueAt(data.getSamplingTimeEnd());
         }
@@ -247,10 +247,10 @@ public class InsertionRepository {
                 dataset.setLastObservation(insertedData);
             } else {
                 if (dataset.getLastObservation() != null && (dataset.getFirstObservation() == null
-                        || (dataset.getFirstObservation() != null && !dataset.getFirstObservation()
+                        || dataset.getFirstObservation() != null && !dataset.getFirstObservation()
                                 .getId()
                                 .equals(dataset.getLastObservation()
-                                        .getId())))) {
+                                        .getId()))) {
                     data.setId(dataset.getLastObservation()
                             .getId());
                 }

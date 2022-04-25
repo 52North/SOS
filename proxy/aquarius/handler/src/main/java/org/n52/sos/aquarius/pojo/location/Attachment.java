@@ -28,16 +28,11 @@
 package org.n52.sos.aquarius.pojo.location;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -81,9 +76,6 @@ public class Attachment implements Serializable {
 
     @JsonProperty("Url")
     private String url;
-
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -219,16 +211,6 @@ public class Attachment implements Serializable {
         this.url = url;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("attachmentType", attachmentType)
@@ -242,7 +224,6 @@ public class Attachment implements Serializable {
                 .append("gpsLatitude", gpsLatitude)
                 .append("gpsLongitude", gpsLongitude)
                 .append("url", url)
-                .append("additionalProperties", additionalProperties)
                 .toString();
     }
 
@@ -258,7 +239,6 @@ public class Attachment implements Serializable {
                 .append(uploadedByUser)
                 .append(dateLastAccessed)
                 .append(comment)
-                .append(additionalProperties)
                 .append(gpsLatitude)
                 .toHashCode();
     }
@@ -282,7 +262,6 @@ public class Attachment implements Serializable {
                 .append(uploadedByUser, rhs.uploadedByUser)
                 .append(dateLastAccessed, rhs.dateLastAccessed)
                 .append(comment, rhs.comment)
-                .append(additionalProperties, rhs.additionalProperties)
                 .append(gpsLatitude, rhs.gpsLatitude)
                 .isEquals();
     }

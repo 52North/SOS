@@ -40,8 +40,11 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.PersistJobDataAfterExecution;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
 
     @Inject

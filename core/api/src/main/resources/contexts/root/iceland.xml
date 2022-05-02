@@ -4,7 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <bean id="eventBus" class="org.n52.janmayen.event.EventBus">
-        <property name="async" value="false" />
+        <constructor-arg name="async" value="false" />
     </bean>
 
     <bean class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor">

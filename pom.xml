@@ -103,7 +103,6 @@
         <version.exificient>1.0.4</version.exificient>
         <version.jaxb>2.3.0</version.jaxb>
         <version.exificient>1.0.4</version.exificient>
-        <version.jaxb>2.3.0</version.jaxb>
     </properties>
 
     <dependencyManagement>

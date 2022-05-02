@@ -310,7 +310,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
             context.addProcedures(identifier, referenceType);
         }
-        return context.getProcedures(identifier);
+        return context.getProcedure(identifier);
     }
 
     private ReferenceType getObservedPropertyReference(DatasetEntity entity, GDARequestContext context) {
@@ -322,7 +322,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
             context.addObservableProperties(identifier, referenceType);
         }
-        return context.getObservableProperties(identifier);
+        return context.getObservableProperty(identifier);
     }
 
     private ReferenceType getFeatureOfInterestReference(DatasetEntity entity, GDARequestContext context) {
@@ -334,7 +334,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
             context.addFeaturesOfInterest(identifier, referenceType);
         }
-        return context.getFeaturesOfInterest(identifier);
+        return context.getFeatureOfInterest(identifier);
     }
 
     private ReferenceType getOfferingReference(DatasetEntity entity, GDARequestContext context) {
@@ -346,7 +346,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
             context.addOfferings(identifier, referenceType);
         }
-        return context.getOfferings(identifier);
+        return context.getOffering(identifier);
     }
 
     /**
@@ -481,7 +481,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             featuresOfInterest.put(key, reference);
         }
 
-        public ReferenceType getFeaturesOfInterest(String key) {
+        public ReferenceType getFeatureOfInterest(String key) {
             return featuresOfInterest.get(key);
         }
 
@@ -497,7 +497,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             observableProperties.put(key, reference);
         }
 
-        public ReferenceType getObservableProperties(String key) {
+        public ReferenceType getObservableProperty(String key) {
             return observableProperties.get(key);
         }
 
@@ -513,7 +513,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             procedures.put(key, reference);
         }
 
-        public ReferenceType getProcedures(String key) {
+        public ReferenceType getProcedure(String key) {
             return procedures.get(key);
         }
 
@@ -529,7 +529,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             offerings.put(key, reference);
         }
 
-        public ReferenceType getOfferings(String key) {
+        public ReferenceType getOffering(String key) {
             return offerings.get(key);
         }
 

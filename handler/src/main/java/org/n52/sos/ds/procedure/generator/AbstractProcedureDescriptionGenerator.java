@@ -43,6 +43,7 @@ import org.n52.iceland.i18n.I18NSettings;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.old.dao.PhenomenonDao;
@@ -63,6 +64,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract generator class for procedure descriptions
  *
@@ -71,6 +74,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractProcedureDescriptionGenerator
         implements ProcedureDescriptionGenerator, I18nNameDescriptionAdder {
 
@@ -90,10 +94,13 @@ public abstract class AbstractProcedureDescriptionGenerator
 
     private ProcedureDescriptionSettings procedureSettings;
 
+    private DbQueryFactory dbQueryFactory;
+
     public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
-            ContentCacheController cacheController) {
+            ContentCacheController cacheController, DbQueryFactory dbQueryFactory) {
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
+        this.dbQueryFactory = dbQueryFactory;
 
     }
 
@@ -200,7 +207,11 @@ public abstract class AbstractProcedureDescriptionGenerator
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    protected DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
     @VisibleForTesting

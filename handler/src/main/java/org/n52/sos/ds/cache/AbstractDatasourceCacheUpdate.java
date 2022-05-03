@@ -28,6 +28,10 @@
 package org.n52.sos.ds.cache;
 
 import org.hibernate.Session;
+import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
+import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.DatasourceCacheUpdate;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -38,8 +42,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 4.0.0
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public abstract class AbstractDatasourceCacheUpdate extends DatasourceCacheUpdate {
+public abstract class AbstractDatasourceCacheUpdate extends DatasourceCacheUpdate implements ApiQueryHelper {
     private Session session;
+    private DbQueryFactory dbQueryFactory;
 
     public Session getSession() {
         return session;
@@ -47,6 +52,19 @@ public abstract class AbstractDatasourceCacheUpdate extends DatasourceCacheUpdat
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
+    public DbQueryFactory getDbQueryFactory() {
+        return dbQueryFactory;
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return getDbQueryFactory().createFrom(parameters);
     }
 
 }

@@ -35,15 +35,14 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.sos.ds.procedure.ProcedureConverter;
+import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import org.n52.sos.ds.procedure.ProcedureConverter;
-import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
 @Configurable
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2"})

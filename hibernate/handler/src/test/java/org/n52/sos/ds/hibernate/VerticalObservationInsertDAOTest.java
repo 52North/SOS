@@ -196,7 +196,7 @@ public class VerticalObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
         OmObservation omObservation = getObservation(getObsResponse);
@@ -211,7 +211,7 @@ public class VerticalObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
         OmObservation omObservation = getObservation(getObsResponse);

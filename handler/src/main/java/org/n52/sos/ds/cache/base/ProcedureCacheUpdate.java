@@ -31,10 +31,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.old.HibernateSessionStore;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.ProcedureDao;
+import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  */
 public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<ProcedureCacheUpdateTask>
-        implements DatasourceCacheUpdateHelper {
+        implements DatasourceCacheUpdateHelper, ApiQueryHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdate.class);
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
@@ -61,9 +62,11 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
      *
      * @param threads
      *            Thread count
+     * @param dbQueryFactory The db query factory
      */
-    public ProcedureCacheUpdate(int threads, HibernateSessionStore sessionStore) {
+    public ProcedureCacheUpdate(int threads, HibernateSessionStore sessionStore, DbQueryFactory dbQueryFactory) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
+        setDbQueryFactory(dbQueryFactory);
     }
 
     @Override
@@ -71,7 +74,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         // single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        procedures = new ProcedureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+        procedures.clear();
+        procedures.addAll(new ProcedureDao(getSession()).get(createDbQuery(IoParameters.createDefaults())));
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // multi-threaded execution

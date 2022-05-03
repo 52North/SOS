@@ -29,7 +29,6 @@ package org.n52.sos.ds.cache.base;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.old.dao.RelatedFeatureDao;
@@ -52,7 +51,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
         startStopwatch();
         try {
             for (RelatedFeatureEntity relatedFeature : new RelatedFeatureDao(getSession())
-                    .getAllInstances(new DbQuery(IoParameters.createDefaults()))) {
+                    .getAllInstances(createDbQuery(IoParameters.createDefaults()))) {
                 String identifier = relatedFeature.getFeature().getIdentifier();
                 for (OfferingEntity offering : relatedFeature.getOfferings()) {
                     getCache().addRelatedFeatureForOffering(offering.getIdentifier(), identifier);

@@ -66,6 +66,8 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
+import org.n52.sensorweb.server.db.old.dao.DefaultDbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.filter.FilterConstants;
@@ -323,6 +325,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     protected final TestingSosContentCacheControllerImpl contentCacheController =
             new TestingSosContentCacheControllerImpl();
 
+    protected DbQueryFactory dbQueryFactory = new DefaultDbQueryFactory("4326");
+
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
     @Parameterized.Parameters
@@ -370,6 +374,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         cacheFeeder.setConnectionProvider(holder);
         cacheFeeder.setI18NDAORepository(i18NDAORepository);
         cacheFeeder.setGeometryHandler(geometryHandler);
+        cacheFeeder.setDbQueryFactory(dbQueryFactory);
         initEncoder();
         initDecoder();
         bindingRepository.setComponentFactories(Optional.empty());
@@ -395,7 +400,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         serviceEventBus.register(defaultContentModificationListener);
         ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factoryRepository,
                 i18NDAORepository, daoFactory, converterRepository, null, bindingRepository, null,
-                contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
+                contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class), dbQueryFactory);
 
         observationCtx = new HibernateOmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository,
                 daoFactory, sosHelper, new ProfileHanlderMock(), additionalObservationCreatorRepository,
@@ -475,10 +480,12 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getResultTemplateHandler.setObservationHelper(daoFactory.getObservationHelper());
         getResultTemplateHandler.setGetResultTemplateDao(Optional.of(getResultTemplateDAO));
         getResultTemplateHandler.setGetResultHandler(getResultHandler);
+        getResultTemplateHandler.setDbQueryFactory(dbQueryFactory);
         getResultHandler.setConnectionProvider(sessionHolder);
         getResultHandler.setDecoderRepository(decoderRepository);
         getResultHandler.setGetResultDao(Optional.of(getResultDAO));
         getResultHandler.setProfileHandler(new ProfileHanlderMock());
+        getResultHandler.setDbQueryFactory(dbQueryFactory);
     }
 
     private void initEncoder() {
@@ -675,7 +682,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection()
                 .hasNext(), is(true));
@@ -723,7 +730,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         return observation;
     }
 
-    protected GetObservationResponse getGetObservationRequest(GetObservationRequest req) {
+    protected GetObservationResponse getGetObservationResponse(GetObservationRequest req) {
         return new GetObservationResponse(req.getService(), req.getVersion());
     }
 
@@ -741,7 +748,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         return getObsResponse;
     }
@@ -751,7 +758,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, timeStart, timeEnd, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         return getObsResponse;
     }
@@ -767,7 +774,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, timeStart, timeEnd, feature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         OmObservation omObservation = getObservation(getObsResponse);
         return checkSamplingGeometry(omObservation, geometry);
@@ -831,7 +838,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(reqOffering, reqProcedure, reqObsProp, time, obsFeature);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection()
                 .hasNext(), is(true));

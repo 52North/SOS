@@ -34,6 +34,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -59,9 +60,9 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
 
     ProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
-            boolean isAddOutputsToSensorML) {
+            boolean isAddOutputsToSensorML, DbQueryFactory dbQueryFactory) {
         super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
-                isAddOutputsToSensorML);
+                isAddOutputsToSensorML, dbQueryFactory);
     }
 
     @Override

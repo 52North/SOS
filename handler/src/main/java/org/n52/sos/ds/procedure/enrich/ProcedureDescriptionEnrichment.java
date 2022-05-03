@@ -31,11 +31,14 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
@@ -53,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
+public abstract class ProcedureDescriptionEnrichment implements I18NHelper, ApiQueryHelper {
 
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
     private SosProcedureDescription<?> description;
@@ -160,6 +163,12 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
 
     public boolean isApplicable() {
         return true;
+    }
+
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return ctx.getDbQueryFactory().createFrom(parameters);
     }
 
     public abstract void enrich()

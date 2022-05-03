@@ -28,11 +28,13 @@
 package org.n52.sos.ds.cache;
 
 import org.hibernate.Session;
+import org.n52.sos.ds.ApiQueryHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDatasourceCacheUpdate {
+public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDatasourceCacheUpdate
+        implements ApiQueryHelper {
     private ThreadLocalSessionFactory sessionFactory;
 
     public ThreadLocalSessionFactory getSessionFactory() {

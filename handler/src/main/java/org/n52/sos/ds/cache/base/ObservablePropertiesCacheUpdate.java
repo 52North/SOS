@@ -31,11 +31,11 @@ import java.util.Collection;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
@@ -59,7 +59,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         startStopwatch();
         try {
             Collection<PhenomenonEntity> observableProperties =
-                    new PhenomenonDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+                    new PhenomenonDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
                 Collection<DatasetEntity> datasets =
                         new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
@@ -96,6 +96,6 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
         IoParameters parameters = IoParameters.createDefaults();
-        return new DbQuery(parameters.extendWith(IoParameters.PHENOMENA, Long.toString(observableProperty.getId())));
+        return createDbQuery(parameters.extendWith(IoParameters.PHENOMENA, Long.toString(observableProperty.getId())));
     }
 }

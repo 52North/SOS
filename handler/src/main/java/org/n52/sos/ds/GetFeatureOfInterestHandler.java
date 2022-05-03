@@ -52,6 +52,7 @@ import org.n52.iceland.i18n.I18NSettings;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
@@ -103,6 +104,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
 
     private ContentCacheController contentCacheController;
 
+    private DbQueryFactory dbQueryFactory;
+
     public GetFeatureOfInterestHandler() {
         super(SosConstants.SOS);
     }
@@ -129,10 +132,14 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         this.i18NDAORepository = i18NDAORepository;
     }
 
-
     @Inject
     public void setContentCacheController(ContentCacheController ctrl) {
         this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
@@ -263,44 +270,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return Collections.emptySet();
     }
 
-    private DbQuery createDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
-        Map<String, String> map = Maps.newHashMap();
-        if (req.isSetFeatureOfInterestIdentifiers()) {
-            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
-        }
-        if (req.isSetProcedures()) {
-            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
-        }
-        if (req.isSetObservableProperties()) {
-            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
-        }
-        if (req.isSetSpatialFilters()) {
-            Envelope envelope = null;
-            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
-                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    Envelope toAdd = getEnvelope(spatialFilter.getGeometry());
-                    if (toAdd != null) {
-                        if (envelope == null) {
-                            envelope = toAdd;
-                        } else {
-                            envelope.expandToInclude(toAdd);
-                        }
-                    }
-                }
-            }
-            if (envelope != null) {
-                List<Double> bbox = Lists.newArrayList();
-                bbox.add(envelope.getMinX());
-                bbox.add(envelope.getMinY());
-                bbox.add(envelope.getMaxX());
-                bbox.add(envelope.getMaxY());
-                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-            }
-        }
-        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
-    }
-
     private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
         if (req.isSetFeatureOfInterestIdentifiers()) {
@@ -330,7 +299,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Envelope getEnvelope(EnvelopeOrGeometry envelopeOrGeometry) throws OwsExceptionReport {
@@ -390,6 +359,49 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
 
     protected GeometryHandler getGeometryHandler() {
         return geometryHandler;
+    }
+
+    private DbQuery createDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
+        Map<String, String> map = Maps.newHashMap();
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
+        }
+        if (req.isSetProcedures()) {
+            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
+        }
+        if (req.isSetObservableProperties()) {
+            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
+        }
+        if (req.isSetSpatialFilters()) {
+            Envelope envelope = null;
+            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
+                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
+                    Envelope toAdd = getEnvelope(spatialFilter.getGeometry());
+                    if (toAdd != null) {
+                        if (envelope == null) {
+                            envelope = toAdd;
+                        } else {
+                            envelope.expandToInclude(toAdd);
+                        }
+                    }
+                }
+            }
+            if (envelope != null) {
+                List<Double> bbox = Lists.newArrayList();
+                bbox.add(envelope.getMinX());
+                bbox.add(envelope.getMinY());
+                bbox.add(envelope.getMaxX());
+                bbox.add(envelope.getMaxY());
+                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
+            }
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
 }

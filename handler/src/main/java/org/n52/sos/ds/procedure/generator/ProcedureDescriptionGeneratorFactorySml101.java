@@ -38,6 +38,7 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
@@ -64,6 +65,7 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
     private final ProfileHandler profileHandler;
     private String srsNamePrefixUrn = "";
     private BindingRepository bindingRepository;
+    private DbQueryFactory dbQueryFactory;
 
     @Inject
     public ProcedureDescriptionGeneratorFactorySml101(SettingsService settingsService,
@@ -71,13 +73,15 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
                                                                I18NDAORepository i18NDAORepository,
                                                                ContentCacheController cacheController,
                                                                ProfileHandler profileHandler,
-                                                               BindingRepository bindingRepository) {
+                                                               BindingRepository bindingRepository,
+                                                               DbQueryFactory dbQueryFactory) {
         this.settingsService = settingsService;
         this.geometryHandler = geometryHandler;
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
         this.profileHandler = profileHandler;
         this.bindingRepository = bindingRepository;
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Setting(CodingSettings.SRS_NAME_PREFIX_URN)
@@ -100,7 +104,8 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
                                                            getI18NDAORepository(),
                                                            getCacheController(),
                                                            getSrsNamePrefixUrn(),
-                                                           bindingRepository.isActive(MediaTypes.APPLICATION_KVP));
+                                                           bindingRepository.isActive(MediaTypes.APPLICATION_KVP),
+                                                           getDbQueryFactory());
         getSettingsService().configureOnce(key);
         return generator;
     }
@@ -127,5 +132,9 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
 
     public String getSrsNamePrefixUrn() {
         return srsNamePrefixUrn;
+    }
+
+    public DbQueryFactory getDbQueryFactory() {
+        return dbQueryFactory;
     }
 }

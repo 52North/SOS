@@ -45,6 +45,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -86,6 +87,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionStore sessionStore;
     private GeometryHandler geometryHandler;
+    private DbQueryFactory dbQueryFactory;
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -112,6 +114,11 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         this.geometryHandler = geometryHandler;
     }
 
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
     @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
@@ -130,7 +137,8 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                     this.i18NDAORepository,
                     this.sessionStore,
                     this.serviceMetadataRepository,
-                    geometryHandler);
+                    geometryHandler,
+                    dbQueryFactory);
             session = this.sessionStore.getSession();
             update.setCache(cache);
             update.setErrors(errors);
@@ -172,7 +180,8 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                 this.cacheThreadCount,
                 this.defaultLocale,
                 this.geometryHandler,
-                this.sessionStore);
+                this.sessionStore,
+                dbQueryFactory);
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);

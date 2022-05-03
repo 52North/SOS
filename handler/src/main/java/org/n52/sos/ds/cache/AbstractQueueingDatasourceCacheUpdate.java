@@ -77,6 +77,7 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
                     action.setCache(getCache());
                     action.setErrors(getErrors());
                     action.setSessionFactory(sessionFactory);
+                    action.setDbQueryFactory(null);
                 }
 
                 @Override

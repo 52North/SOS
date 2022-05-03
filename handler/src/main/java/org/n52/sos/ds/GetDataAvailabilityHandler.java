@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -79,6 +80,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
 
     private Optional<GetDataAvailabilityDao> dao = Optional.empty();
 
+    private DbQueryFactory dbQueryFactory;
+
     public GetDataAvailabilityHandler() {
         super(SosConstants.SOS);
     }
@@ -93,6 +96,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         if (getDataAvailabilityDao != null) {
             this.dao = getDataAvailabilityDao;
         }
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -139,24 +147,6 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         } finally {
             sessionStore.returnSession(session);
         }
-    }
-
-    private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
-        Map<String, String> map = Maps.newHashMap();
-        if (req.isSetFeaturesOfInterest()) {
-            map.put(IoParameters.FEATURES, listToString(req.getFeaturesOfInterest()));
-        }
-        if (req.isSetProcedures()) {
-            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
-        }
-        if (req.isSetObservedProperties()) {
-            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
-        }
-        if (req.isSetOfferings()) {
-            map.put(IoParameters.OFFERINGS, listToString(req.getOfferings()));
-        }
-        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DataAvailability defaultProcessDataAvailability(DatasetEntity entity, GDARequestContext context,
@@ -449,6 +439,29 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             parentDataAvailabilities.add(childDataAvailability.copy());
         }
         return notContained;
+    }
+
+    private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
+        Map<String, String> map = Maps.newHashMap();
+        if (req.isSetFeaturesOfInterest()) {
+            map.put(IoParameters.FEATURES, listToString(req.getFeaturesOfInterest()));
+        }
+        if (req.isSetProcedures()) {
+            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
+        }
+        if (req.isSetObservedProperties()) {
+            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
+        }
+        if (req.isSetOfferings()) {
+            map.put(IoParameters.OFFERINGS, listToString(req.getOfferings()));
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
     public static class GDARequestContext {

@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import org.n52.faroe.SettingsService;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -48,18 +49,21 @@ public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements Proced
     private final I18NDAORepository i18NDAORepository;
     private final ContentCacheController cacheController;
     private final ProfileHandler profileHandler;
+    private DbQueryFactory dbQueryFactory;
 
     @Inject
     public ProcedureDescriptionGeneratorFactoryInspireOmpr30(SettingsService settingsService,
                                                                GeometryHandler geometryHandler,
                                                                I18NDAORepository i18NDAORepository,
                                                                ContentCacheController cacheController,
-                                                               ProfileHandler profileHandler) {
+                                                               ProfileHandler profileHandler,
+                                                               DbQueryFactory dbQueryFactory) {
         this.settingsService = settingsService;
         this.geometryHandler = geometryHandler;
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
         this.profileHandler = profileHandler;
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -73,7 +77,8 @@ public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements Proced
                 = new ProcedureDescriptionGeneratorInspireOmpr30(getProfileHandler(),
                                                                    getGeometryHandler(),
                                                                    getI18NDAORepository(),
-                                                                   getCacheController());
+                                                                   getCacheController(),
+                                                                   getDbQueryFactory());
         getSettingsService().configureOnce(key);
         return generator;
     }
@@ -96,5 +101,9 @@ public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements Proced
 
     public ProfileHandler getProfileHandler() {
         return profileHandler;
+    }
+
+    public DbQueryFactory getDbQueryFactory() {
+        return dbQueryFactory;
     }
 }

@@ -36,9 +36,10 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.old.HibernateSessionStore;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -56,6 +57,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GetObservationHandler extends AbstractGetObservationHandler implements ApiQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
@@ -63,6 +67,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     private HibernateSessionStore sessionStore;
 
     private GetObservationDao dao;
+
+    private DbQueryFactory dbQueryFactory;
 
     public GetObservationHandler() {
         super(SosConstants.SOS);
@@ -76,6 +82,11 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     @Inject
     public void setGetObservationDao(GetObservationDao getObservationDao) {
         this.dao = getObservationDao;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -143,7 +154,12 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
             }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
 }

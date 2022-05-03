@@ -50,7 +50,6 @@ import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.DecoderRepository;
 
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})

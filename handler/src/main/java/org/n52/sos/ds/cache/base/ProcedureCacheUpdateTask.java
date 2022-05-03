@@ -35,11 +35,11 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.SosContentCache;
@@ -166,7 +166,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate i
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure));
         map.put(IoParameters.EXPANDED, "true");
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @Override

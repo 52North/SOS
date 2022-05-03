@@ -41,13 +41,14 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -104,8 +105,8 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix,
-            boolean isAddOutputsToSensorML) {
-        super(i18NDAORepository, cacheController);
+            boolean isAddOutputsToSensorML, DbQueryFactory dbQueryFactory) {
+        super(i18NDAORepository, cacheController, dbQueryFactory);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
         this.profileHandler = profileHandler;
@@ -250,20 +251,20 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQueryWithLimit(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         map.put(IoParameters.LIMIT, Long.toString(1));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     protected boolean isStation(ProcedureEntity procedure, Session session) {

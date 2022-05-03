@@ -34,6 +34,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.inspire.base2.Contact;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
@@ -54,8 +55,9 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
                     new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS));
 
     public ProcedureDescriptionGeneratorInspireOmpr30(ProfileHandler profileHandler, GeometryHandler geometryHandler,
-            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController) {
-        super(i18ndaoRepository, cacheController);
+            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController,
+            DbQueryFactory dbQueryFactory) {
+        super(i18ndaoRepository, cacheController, dbQueryFactory);
     }
 
     @Override
@@ -64,8 +66,8 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
     }
 
     /**
-     * Generate procedure description from Hibernate procedure entity if no
-     * description (file, XML text) is available
+     * Generate procedure description from Hibernate procedure entity if no description (file, XML text) is
+     * available
      *
      * @param procedure
      *            Hibernate procedure entity

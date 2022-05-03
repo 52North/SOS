@@ -33,6 +33,9 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -69,6 +72,8 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
 
     private ObservationHelper observationHelper;
 
+    private DbQueryFactory dbQueryFactory;
+
     public GetResultTemplateHandler() {
         super(SosConstants.SOS);
     }
@@ -91,6 +96,11 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     @Inject
     public void setObservationHelper(ObservationHelper observationHelper) {
         this.observationHelper = observationHelper;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -151,5 +161,9 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
         return observationHelper;
     }
 
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
+    }
 
 }

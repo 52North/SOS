@@ -39,9 +39,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.old.HibernateSessionStore;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
@@ -61,13 +62,15 @@ import com.google.common.collect.Maps;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
+public class DescribeSensorHandler extends AbstractDescribeSensorHandler implements ApiQueryHelper {
 
     private HibernateSessionStore sessionStore;
 
     private DescribeSensorDao dao;
 
     private ProcedureConverter procedureConverter;
+
+    private DbQueryFactory dbQueryFactory;
 
     public DescribeSensorHandler() {
         super(SosConstants.SOS);
@@ -98,6 +101,11 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
     @Inject
     public void setProcedureConverter(ProcedureConverter procedureConverter) {
         this.procedureConverter = procedureConverter;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -151,6 +159,11 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
         map.put(IoParameters.EXPANDED, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 }

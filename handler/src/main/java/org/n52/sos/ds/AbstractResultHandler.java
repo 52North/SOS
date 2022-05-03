@@ -104,6 +104,6 @@ public interface AbstractResultHandler extends HibernateUnproxy, ApiQueryHelper 
             map.put(IoParameters.OFFERINGS, listToString(offering));
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

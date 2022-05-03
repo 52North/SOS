@@ -53,6 +53,7 @@ import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sensorweb.server.db.assembler.core.DatasetAssembler;
 import org.n52.sensorweb.server.db.assembler.value.ValueConnector;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.UnitEntity;
@@ -109,6 +110,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
     private DatasetAssembler assembler;
 
+    private DbQueryFactory dbQueryFactory;
+
     @Inject
     public void setDatasetAssembler(DatasetAssembler assembler) {
         this.assembler = assembler;
@@ -132,6 +135,11 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     @Inject
     public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Override
@@ -231,24 +239,6 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
     protected DatasetAssembler getDatasetAssembler() {
         return assembler;
-    }
-
-    private DbQuery createDbQuery(GetObservationRequest request) {
-        Map<String, String> map = Maps.newHashMap();
-        if (request.isSetFeatureOfInterest()) {
-            map.put(IoParameters.FEATURES, listToString(request.getFeatureIdentifiers()));
-        }
-        if (request.isSetProcedure()) {
-            map.put(IoParameters.PROCEDURES, listToString(request.getProcedures()));
-        }
-        if (request.isSetObservableProperty()) {
-            map.put(IoParameters.PHENOMENA, listToString(request.getObservedProperties()));
-        }
-        if (request.isSetOffering()) {
-            map.put(IoParameters.OFFERINGS, listToString(request.getOfferings()));
-        }
-        map.put(IoParameters.MATCH_DOMAIN_IDS, "true");
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private TimeSeriesData queryForTemporalFilter(String identifier, IndeterminateValue temporalFilter,
@@ -394,6 +384,29 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
     private DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter) {
         return createDataEntity(dataset, point, counter, aquariusHelper.isSetApplyRounding());
+    }
+
+    private DbQuery createDbQuery(GetObservationRequest request) {
+        Map<String, String> map = Maps.newHashMap();
+        if (request.isSetFeatureOfInterest()) {
+            map.put(IoParameters.FEATURES, listToString(request.getFeatureIdentifiers()));
+        }
+        if (request.isSetProcedure()) {
+            map.put(IoParameters.PROCEDURES, listToString(request.getProcedures()));
+        }
+        if (request.isSetObservableProperty()) {
+            map.put(IoParameters.PHENOMENA, listToString(request.getObservedProperties()));
+        }
+        if (request.isSetOffering()) {
+            map.put(IoParameters.OFFERINGS, listToString(request.getOfferings()));
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, "true");
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
 }

@@ -117,7 +117,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment
             map.put(IoParameters.FEATURES, listToString(featureOfInterestIDs));
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities)

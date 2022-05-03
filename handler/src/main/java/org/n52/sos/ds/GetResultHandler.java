@@ -41,6 +41,7 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.FeatureDao;
@@ -62,6 +63,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation of the abstract class AbstractGetResultHandler
  *
@@ -69,6 +72,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GetResultHandler extends AbstractGetResultHandler implements ApiQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultHandler.class);
@@ -78,6 +82,8 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
     private Optional<GetResultDao> dao;
 
     private boolean strictSpatialFilteringProfile;
+
+    private DbQueryFactory dbQueryFactory;
 
     public GetResultHandler() {
         super(SosConstants.SOS);
@@ -91,6 +97,11 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
+    }
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Setting(SosSettings.STRICT_SPATIAL_FILTERING_PROFILE)
@@ -171,7 +182,12 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
             }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
 }

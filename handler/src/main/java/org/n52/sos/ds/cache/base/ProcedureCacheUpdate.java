@@ -74,8 +74,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         // single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        procedures.clear();
-        procedures.addAll(new ProcedureDao(getSession()).get(createDbQuery(IoParameters.createDefaults())));
+        procedures = new ProcedureDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // multi-threaded execution

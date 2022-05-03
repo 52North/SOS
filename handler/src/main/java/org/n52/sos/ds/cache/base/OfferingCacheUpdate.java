@@ -65,7 +65,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
 
-    private Collection<OfferingEntity> offeringsToUpdate = Lists.newArrayList();
+    private Collection<OfferingEntity> offeringsToUpdate;
 
     private final Locale defaultLanguage;
 
@@ -110,8 +110,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     public void execute() {
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        offeringsToUpdate.clear();
-        this.offeringsToUpdate.addAll(getOfferingsToUpdate());
+        this.offeringsToUpdate = getOfferingsToUpdate();
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // execute multi-threaded updates

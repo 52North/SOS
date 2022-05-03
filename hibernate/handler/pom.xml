@@ -52,9 +52,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.n52.sensorweb-server.dao-impl</groupId>
             <artifactId>dao-impl-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repo</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>

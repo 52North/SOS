@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,6 +28,7 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +70,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler
         implements ApiQueryHelper, DatabaseQueryHelper {
 
@@ -162,11 +166,9 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             Session session) throws OwsExceptionReport {
         TimePeriod timePeriod = createTimePeriod(entity);
         if (timePeriod != null && !timePeriod.isEmpty()) {
-            DataAvailability dataAvailability =
-                    new DataAvailability(getProcedureReference(entity, context.getProcedures()),
-                            getObservedPropertyReference(entity, context.getObservableProperties()),
-                            getFeatureOfInterestReference(entity, context.getFeaturesOfInterest()),
-                            getOfferingReference(entity, context.getOfferings()), timePeriod);
+            DataAvailability dataAvailability = new DataAvailability(getProcedureReference(entity, context),
+                    getObservedPropertyReference(entity, context), getFeatureOfInterestReference(entity, context),
+                    getOfferingReference(entity, context), timePeriod);
             if (isShowCount(context.getRequest()) && entity.getObservationCount() >= 0) {
                 dataAvailability.setCount(entity.getObservationCount());
             }
@@ -182,8 +184,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each series
      *
      * @param entity
-     *            the {@link DatasetEntity} to get
-     *            {@link DataAvailability}s for
+     *            the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
      * @param session
@@ -203,8 +204,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each offering of a series
      *
      * @param entity
-     *            the {@link DatasetEntity} to get
-     *            {@link DataAvailability}s for
+     *            the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
      * @throws OwsExceptionReport
@@ -275,8 +275,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
-        return (request.isSetResponseFormat()
-                && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat()))
+        return request.isSetResponseFormat()
+                && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat())
                 || GetDataAvailabilityConstants.NS_GDA_20.equals(request.getNamespace()) || isForceGDAv20Response();
     }
 
@@ -301,54 +301,52 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         return checked;
     }
 
-    private ReferenceType getProcedureReference(DatasetEntity entity, Map<String, ReferenceType> procedures) {
+    private ReferenceType getProcedureReference(DatasetEntity entity, GDARequestContext context) {
         String identifier = entity.getProcedure().getIdentifier();
-        if (!procedures.containsKey(identifier)) {
+        if (!context.hasProcedures(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
             if (entity.getProcedure().isSetName()) {
                 referenceType.setTitle(entity.getProcedure().getName());
             }
-            procedures.put(identifier, referenceType);
+            context.addProcedures(identifier, referenceType);
         }
-        return procedures.get(identifier);
+        return context.getProcedure(identifier);
     }
 
-    private ReferenceType getObservedPropertyReference(DatasetEntity entity,
-            Map<String, ReferenceType> observableProperties) {
+    private ReferenceType getObservedPropertyReference(DatasetEntity entity, GDARequestContext context) {
         String identifier = entity.getPhenomenon().getIdentifier();
-        if (!observableProperties.containsKey(identifier)) {
+        if (!context.hasObservableProperties(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
             if (entity.getPhenomenon().isSetName()) {
                 referenceType.setTitle(entity.getPhenomenon().getName());
             }
-            observableProperties.put(identifier, referenceType);
+            context.addObservableProperties(identifier, referenceType);
         }
-        return observableProperties.get(identifier);
+        return context.getObservableProperty(identifier);
     }
 
-    private ReferenceType getFeatureOfInterestReference(DatasetEntity entity,
-            Map<String, ReferenceType> featuresOfInterest) {
+    private ReferenceType getFeatureOfInterestReference(DatasetEntity entity, GDARequestContext context) {
         String identifier = entity.getFeature().getIdentifier();
-        if (!featuresOfInterest.containsKey(identifier)) {
+        if (!context.hasFeaturesOfInterest(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
             if (entity.getFeature().isSetName()) {
                 referenceType.setTitle(entity.getFeature().getName());
             }
-            featuresOfInterest.put(identifier, referenceType);
+            context.addFeaturesOfInterest(identifier, referenceType);
         }
-        return featuresOfInterest.get(identifier);
+        return context.getFeatureOfInterest(identifier);
     }
 
-    private ReferenceType getOfferingReference(DatasetEntity entity, Map<String, ReferenceType> offerings) {
+    private ReferenceType getOfferingReference(DatasetEntity entity, GDARequestContext context) {
         String identifier = entity.getOffering().getIdentifier();
-        if (!offerings.containsKey(identifier)) {
+        if (!context.hasOfferings(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
             if (entity.getOffering().isSetName()) {
                 referenceType.setTitle(entity.getOffering().getName());
             }
-            offerings.put(identifier, referenceType);
+            context.addOfferings(identifier, referenceType);
         }
-        return offerings.get(identifier);
+        return context.getOffering(identifier);
     }
 
     /**
@@ -381,13 +379,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     /**
-     * Check if extensions contains a temporal filter with valueReference
-     * phenomenonTime
+     * Check if extensions contains a temporal filter with valueReference phenomenonTime
      *
      * @param extensions
      *            Extensions to check
-     * @return <code>true</code>, if extensions contains a temporal filter with
-     *         valueReference phenomenonTime
+     * @return <code>true</code>, if extensions contains a temporal filter with valueReference phenomenonTime
      */
     private boolean hasPhenomenonTimeFilter(Extensions extensions) {
         boolean hasFilter = false;
@@ -478,19 +474,67 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
 
         public Map<String, ReferenceType> getFeaturesOfInterest() {
-            return featuresOfInterest;
+            return Collections.unmodifiableMap(featuresOfInterest);
+        }
+
+        public void addFeaturesOfInterest(String key, ReferenceType reference) {
+            featuresOfInterest.put(key, reference);
+        }
+
+        public ReferenceType getFeatureOfInterest(String key) {
+            return featuresOfInterest.get(key);
+        }
+
+        public boolean hasFeaturesOfInterest(String key) {
+            return featuresOfInterest.containsKey(key);
         }
 
         public Map<String, ReferenceType> getObservableProperties() {
-            return observableProperties;
+            return Collections.unmodifiableMap(observableProperties);
+        }
+
+        public void addObservableProperties(String key, ReferenceType reference) {
+            observableProperties.put(key, reference);
+        }
+
+        public ReferenceType getObservableProperty(String key) {
+            return observableProperties.get(key);
+        }
+
+        public boolean hasObservableProperties(String key) {
+            return observableProperties.containsKey(key);
         }
 
         public Map<String, ReferenceType> getProcedures() {
-            return procedures;
+            return Collections.unmodifiableMap(procedures);
+        }
+
+        public void addProcedures(String key, ReferenceType reference) {
+            procedures.put(key, reference);
+        }
+
+        public ReferenceType getProcedure(String key) {
+            return procedures.get(key);
+        }
+
+        public boolean hasProcedures(String key) {
+            return procedures.containsKey(key);
         }
 
         public Map<String, ReferenceType> getOfferings() {
-            return offerings;
+            return Collections.unmodifiableMap(offerings);
+        }
+
+        public void addOfferings(String key, ReferenceType reference) {
+            offerings.put(key, reference);
+        }
+
+        public ReferenceType getOffering(String key) {
+            return offerings.get(key);
+        }
+
+        public boolean hasOfferings(String key) {
+            return offerings.containsKey(key);
         }
 
         public GDARequestContext setDataAvailabilityList(List<DataAvailability> dataAvailabilityValues) {

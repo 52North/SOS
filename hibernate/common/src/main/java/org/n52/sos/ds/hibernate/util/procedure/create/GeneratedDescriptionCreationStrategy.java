@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -39,9 +39,12 @@ import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescr
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Strategy to generate a description.
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GeneratedDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     @Override

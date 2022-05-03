@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -78,10 +78,9 @@ public class RelatedProceduresEnrichment
                         if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
                             continue;
                         }
-
                         if (childHistory == null || cph.getEndTime() == null
-                                || (cph.getEndTime() != null && childHistory.getEndTime() != null
-                                        && cph.getEndTime().after(childHistory.getEndTime()))) {
+                                || cph.getEndTime() != null && childHistory.getEndTime() != null
+                                        && cph.getEndTime().after(childHistory.getEndTime())) {
                             childHistory = cph;
                         }
                     }

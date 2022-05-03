@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-coding</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-coding-kvp</artifactId>
@@ -43,6 +43,10 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -85,7 +89,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
@@ -97,7 +101,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

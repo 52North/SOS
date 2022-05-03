@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,6 +28,7 @@
 package org.n52.sos.predefined;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public abstract class AbstractPredefined<T extends Translate> {
     }
 
     public List<T> getValues() {
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
     public AbstractPredefined<T> setValues(Collection<T> values) {

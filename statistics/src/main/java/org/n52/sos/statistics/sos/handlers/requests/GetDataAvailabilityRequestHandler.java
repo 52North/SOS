@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class GetDataAvailabilityRequestHandler extends AbstractSosRequestHandler<GetDataAvailabilityRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetDataAvailabilityRequest request) {
         put(SosDataMapping.GDA_FEATURES_OF_INTEREST, request.getFeaturesOfInterest());
         put(SosDataMapping.GDA_OBSERVED_PROPERTIES, request.getObservedProperties());
         put(SosDataMapping.GDA_OFFERINGS, request.getOfferings());

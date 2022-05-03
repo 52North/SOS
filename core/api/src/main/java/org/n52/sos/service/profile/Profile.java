@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,6 +28,7 @@
 package org.n52.sos.service.profile;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -195,7 +196,7 @@ public class Profile {
     }
 
     public Map<String, Boolean> getEncodeProcedureInObservation() {
-        return encodeProcedureInObservation;
+        return Collections.unmodifiableMap(encodeProcedureInObservation);
     }
 
     public Profile setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(boolean value) {
@@ -228,7 +229,7 @@ public class Profile {
     }
 
     public Map<String, String> getObservationTypesForEncoding() {
-        return observationTypesForEncoding;
+        return Collections.unmodifiableMap(observationTypesForEncoding);
     }
 
     public boolean isObservationTypesForEncoding() {
@@ -304,7 +305,7 @@ public class Profile {
     }
 
     public Set<String> getNoDataPlaceholder() {
-        return noDataPlaceholder;
+        return Collections.unmodifiableSet(noDataPlaceholder);
     }
 
     public boolean isSetNoDataPlaceholder() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -29,11 +29,14 @@ package org.n52.sos.netcdf.data.dataset;
 
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class DatasetSensor implements Comparable<DatasetSensor> {
 
     private AbstractSensorML description;
@@ -44,12 +47,12 @@ public abstract class DatasetSensor implements Comparable<DatasetSensor> {
         this.description = description;
     }
 
-    public AbstractSensorML getSensorDescritpion() {
+    public AbstractSensorML getSensorDescription() {
         return description;
     }
 
     public boolean isSetSensorDescription() {
-        return getSensorDescritpion() != null;
+        return getSensorDescription() != null;
     }
 
     public boolean equals(Object anObject) {

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <artifactId>sos-install-controller</artifactId>
     <name>52°North SOS - Web Install Controller</name>
@@ -44,6 +44,10 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

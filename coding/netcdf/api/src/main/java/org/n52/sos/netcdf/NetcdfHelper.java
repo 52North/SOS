@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -42,6 +42,7 @@ import com.axiomalaska.cf4j.CFStandardNames;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ucar.nc2.NetcdfFileWriter.Version;
 
 /**
@@ -52,6 +53,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public class NetcdfHelper {
 
     private Version version;
@@ -228,7 +230,7 @@ public class NetcdfHelper {
      * @return the latitude
      */
     public Set<String> getLatitude() {
-        return latitude;
+        return Collections.unmodifiableSet(latitude);
     }
 
     /**
@@ -247,7 +249,7 @@ public class NetcdfHelper {
      * @return the longitude
      */
     public Set<String> getLongitude() {
-        return longitude;
+        return Collections.unmodifiableSet(longitude);
     }
 
     /**
@@ -266,7 +268,7 @@ public class NetcdfHelper {
      * @return the z
      */
     public Set<String> getZ() {
-        return z;
+        return Collections.unmodifiableSet(z);
     }
 
     /**

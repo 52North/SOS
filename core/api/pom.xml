@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-core</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-api</artifactId>
@@ -30,6 +30,7 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -57,6 +58,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -165,7 +170,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
@@ -176,7 +181,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     

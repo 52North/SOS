@@ -3,10 +3,10 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-hibernate</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-      <artifactId>sos-hibernate-handler</artifactId>
+    <artifactId>sos-hibernate-handler</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate Handler</name>
     <description>52°North Sensor Observation Service Hibernate Handler module</description>
@@ -35,10 +35,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
              <artifactId>sos-cache</artifactId>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
              <artifactId>sos-handler</artifactId>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -65,6 +67,7 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -97,6 +100,10 @@
         <dependency>
             <groupId>org.n52.sensorweb-server.helgoland</groupId>
             <artifactId>helgoland-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -139,7 +146,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
@@ -213,6 +220,7 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sweCommon-v20</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.n52.series.db.beans.parameter.ParameterEntity;
@@ -34,6 +35,9 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class DatasetParameterAdder {
 
     private OmObservation observation;
@@ -41,7 +45,7 @@ public class DatasetParameterAdder {
 
     public DatasetParameterAdder(OmObservation observation, Set<ParameterEntity<?>> hParameters) {
         this.observation = observation;
-        this.hParameters = hParameters;
+        this.hParameters = hParameters != null ? new LinkedHashSet<>(hParameters) : new LinkedHashSet<>();
     }
 
     public void add() throws OwsExceptionReport {

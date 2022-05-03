@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 
 import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
+import org.n52.hibernate.spatial.dialect.mysql.TimestampMySQL8SpatialDialect;
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
@@ -170,7 +170,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
 
     @Override
     protected Dialect createDialect() {
-        return new MySQLSpatial5InnoDBTimestampDialect();
+        return new TimestampMySQL8SpatialDialect();
     }
 
     @Override

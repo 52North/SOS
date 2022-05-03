@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,6 +28,8 @@
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -56,11 +58,11 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
 
     private final Set<Integer> validityFlags;
 
-    public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags,
-            DaoFactory daoFactory) {
+    public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags, DaoFactory daoFactory) {
         super(daoFactory);
-        this.verificationFlags = verificationFlags;
-        this.validityFlags = validityFlags;
+        this.verificationFlags =
+                verificationFlags != null ? new LinkedHashSet<>(verificationFlags) : new LinkedHashSet<>();
+        this.validityFlags = validityFlags != null ? new LinkedHashSet<>(validityFlags) : new LinkedHashSet<>();
     }
 
     @Override
@@ -99,12 +101,12 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
 
     @Override
     public Set<Integer> getVerificationFlags() {
-        return this.verificationFlags;
+        return Collections.unmodifiableSet(verificationFlags);
     }
 
     @Override
     public Set<Integer> getValidityFlags() {
-        return this.validityFlags;
+        return Collections.unmodifiableSet(validityFlags);
     }
 
     private void addPhenomenonTimeProjection(Criteria c) {

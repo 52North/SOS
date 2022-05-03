@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -62,12 +62,15 @@ import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterExceptio
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class UVFRequestModifier
         extends AbstractRequestResponseModifier {
 
@@ -104,13 +107,13 @@ public class UVFRequestModifier
             checkResponseFormat(((AbstractObservationRequest) request).getResponseFormat(), request.getService(),
                     request.getVersion());
         }
-        if ((request.getRequestContext().getAcceptType().isPresent()
-                && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF))
-                || (request instanceof ResponseFormat && ((ResponseFormat) request).isSetResponseFormat()
+        if (request.getRequestContext().getAcceptType().isPresent()
+                && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF)
+                || request instanceof ResponseFormat && ((ResponseFormat) request).isSetResponseFormat()
                         && ((ResponseFormat) request).getResponseFormat()
                                 .contains(UVFConstants.CONTENT_TYPE_UVF.getSubtype())
                         && UVFConstants.CONTENT_TYPE_UVF
-                                .isCompatible(MediaType.parse(((ResponseFormat) request).getResponseFormat())))) {
+                                .isCompatible(MediaType.parse(((ResponseFormat) request).getResponseFormat()))) {
             if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs)
                     && request.getExtension(OWSConstants.AdditionalRequestParams.crs).isPresent()
                     && request.getExtension(OWSConstants.AdditionalRequestParams.crs).get()

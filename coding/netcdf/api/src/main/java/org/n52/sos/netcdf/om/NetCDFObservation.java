@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -38,6 +38,9 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 
 import com.google.common.collect.Lists;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.locationtech.jts.geom.Envelope;
 
 import ucar.nc2.constants.CF;
@@ -51,6 +54,7 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class NetCDFObservation {
     // for metadata block
     private CF.FeatureType featureType;
@@ -89,7 +93,7 @@ public class NetCDFObservation {
     }
 
     public Set<OmObservableProperty> getPhenomena() {
-        return phenomena;
+        return Collections.unmodifiableSet(phenomena);
     }
 
     public Envelope getEnvelope() {

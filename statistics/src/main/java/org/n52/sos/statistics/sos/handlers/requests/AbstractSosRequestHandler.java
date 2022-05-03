@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,12 +27,15 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
@@ -42,19 +45,17 @@ import org.n52.janmayen.net.IPAddress;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.statistics.sos.models.ExtensionEsModel;
 
-
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractSosRequestHandler<T extends OwsServiceRequest>
         extends AbstractElasticSearchDataHolder
         implements StatisticsServiceEventHandler<T> {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractSosRequestHandler.class);
 
-    protected T request;
-
     @Inject
     protected IStatisticsLocationUtil locationUtil;
 
-    private AbstractSosRequestHandler<?> init() {
+    private AbstractSosRequestHandler<?> init(T request) {
 
         // Global constants
         put(ServiceEventDataMapping.SR_SERVICE_FIELD, request.getService());
@@ -83,12 +84,11 @@ public abstract class AbstractSosRequestHandler<T extends OwsServiceRequest>
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> resolveAsMap(OwsServiceRequest request) {
-        this.request = (T) request;
-        init();
-        resolveConcreteRequest();
-        return dataMap;
+        init((T) request);
+        resolveConcreteRequest((T) request);
+        return Collections.unmodifiableMap(dataMap);
     }
 
-    protected abstract void resolveConcreteRequest();
+    protected abstract void resolveConcreteRequest(T request);
 
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
     <artifactId>sos-common-controller</artifactId>
     <name>52°North SOS - Web Common Controller</name>
@@ -40,6 +40,10 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -116,6 +120,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

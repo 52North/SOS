@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -31,6 +31,7 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.svalbard.decode.OperationDecoderKey;
@@ -48,6 +49,10 @@ public class GetCapabilitiesKvpDecoder extends AbstractSosKvpDecoder<GetCapabili
                 new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP),
                 new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION, OWSConstants.Operations.GetCapabilities,
+                        MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+                        OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(null, Sos1Constants.SERVICEVERSION, OWSConstants.Operations.GetCapabilities,
                         MediaTypes.APPLICATION_KVP),
                 // FIXME isn't this the only one needed?
                 new OperationDecoderKey(null, null, OWSConstants.Operations.GetCapabilities,

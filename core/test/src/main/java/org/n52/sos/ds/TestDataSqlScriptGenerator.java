@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -45,11 +45,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.0.0
  */
 @SuppressWarnings("UncommentedMain")
+@SuppressFBWarnings({"DMI_RANDOM_USED_ONLY_ONCE"})
 public final class TestDataSqlScriptGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDataSqlScriptGenerator.class);
     private static final int FEATURE_COUNT_INDEX = 0;
@@ -80,6 +83,7 @@ public final class TestDataSqlScriptGenerator {
               "'test_feature_%s', '%s', '%s'), %s);";
     private static final String HEADER_FILE_NAME = "/generate-test-data-header.sql";
     private static final String FOOTER_FILE_NAME = "/generate-test-data-footer.sql";
+    private static final Random RANDOM = new Random(System.currentTimeMillis());
 
     private TestDataSqlScriptGenerator() {
     }
@@ -266,9 +270,8 @@ public final class TestDataSqlScriptGenerator {
 
     private static Double[] generateRandomCoordinateTuple(double yMin, double yMax, double xMin, double xMax) {
         if (xMax > xMin && yMax > yMin) {
-            Random randomizer = new Random(System.currentTimeMillis());
-            double xCoord = xMin + (randomizer.nextDouble() * (Math.abs(xMax) + Math.abs(xMin)));
-            double yCoord = yMin + (randomizer.nextDouble() * (Math.abs(yMax) + Math.abs(yMin)));
+            double xCoord = xMin + (RANDOM.nextDouble() * (Math.abs(xMax) + Math.abs(xMin)));
+            double yCoord = yMin + (RANDOM.nextDouble() * (Math.abs(yMax) + Math.abs(yMin)));
             Double[] result = new Double[2];
             result[X_COORD_INDEX] = xCoord;
             result[Y_COORD_INDEX] = yCoord;
@@ -299,8 +302,7 @@ public final class TestDataSqlScriptGenerator {
 
     private static double generateRandomResult(double min, double max) {
         if (max > min) {
-            Random randomizer = new Random(System.currentTimeMillis());
-            return min + (randomizer.nextDouble() * (Math.abs(max) + Math.abs(min)));
+            return min + (RANDOM.nextDouble() * (Math.abs(max) + Math.abs(min)));
         }
         throw new IllegalArgumentException(String.format("Give parameter values wrong: max: %s, min:%s", max, min));
     }

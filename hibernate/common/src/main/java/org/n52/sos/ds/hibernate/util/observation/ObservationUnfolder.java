@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -107,11 +107,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ObservationUnfolder {
 
     private static final String TO = "to";
@@ -667,10 +670,10 @@ public class ObservationUnfolder {
 
     private boolean isProfileObservations(ParameterHolder parameterHolder) {
         if (isProfileObservations()
-                || (multiObservation.getObservationConstellation().isSetObservationType()
+                || multiObservation.getObservationConstellation().isSetObservationType()
                         && multiObservation.getObservationConstellation().getObservationType()
                                 .equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)
-                        && parameterHolder.isSetHeightDepthParameter())) {
+                        && parameterHolder.isSetHeightDepthParameter()) {
             multiObservation.getObservationConstellation()
                     .setObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
             return true;

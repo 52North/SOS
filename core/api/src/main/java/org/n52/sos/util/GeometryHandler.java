@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -447,7 +447,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      */
     public boolean isNorthingFirstEpsgCode(int epsgCode) throws CodedException {
         try {
-            return AxisOrder.NORTH_EAST.equals(CRS.getAxisOrder(CRS.decode(EPSG_PREFIX + epsgCode))) ? true : false;
+            return AxisOrder.NORTH_EAST.equals(CRS.getAxisOrder(CRS.decode(EPSG_PREFIX + epsgCode)));
         } catch (FactoryException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage("The EPSG '%d' is invalid", epsgCode);
         }

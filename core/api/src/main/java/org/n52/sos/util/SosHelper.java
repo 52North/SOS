@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -214,7 +214,7 @@ public class SosHelper {
         // avoid an OutOfMemoryError
         long freeMem = runtime.freeMemory();
         LOGGER.trace("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
-        if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
+        if (runtime.totalMemory() == runtime.maxMemory() && freeMem < KILO_BYTES_256) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException()
                     .withMessage("The observation response is to big for the maximal heap size of %d Byte of the "
@@ -442,7 +442,7 @@ public class SosHelper {
             default:
                 break;
         }
-        if ((unit == null) || unit.isEmpty()) {
+        if (unit == null || unit.isEmpty()) {
             unit = SosConstants.NOT_DEFINED;
         }
         return new OmObservableProperty(identifier, description, unit, valueType);

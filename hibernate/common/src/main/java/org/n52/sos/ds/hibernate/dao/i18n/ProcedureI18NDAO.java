@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -42,11 +42,14 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.i18n.I18nProcedureEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ProcedureI18NDAO
         extends AbstractHibernateI18NDAO<ProcedureEntity, I18NProcedureMetadata, I18nProcedureEntity> {
     private DaoFactory daoFactory;

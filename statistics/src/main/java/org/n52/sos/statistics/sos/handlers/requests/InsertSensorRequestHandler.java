@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class InsertSensorRequestHandler extends AbstractSosRequestHandler<InsertSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(InsertSensorRequest request) {
         put(SosDataMapping.IS_ASSIGNED_OFFERINGS, request.getAssignedOfferings());
         put(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS, request.getAssignedProcedureIdentifier());
         put(SosDataMapping.IS_OBSERVABLE_PROPERTY, request.getObservableProperty());

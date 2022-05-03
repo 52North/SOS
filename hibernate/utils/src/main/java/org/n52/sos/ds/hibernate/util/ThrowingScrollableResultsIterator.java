@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -35,6 +35,8 @@ import org.n52.janmayen.AbstractThrowingIterator;
 import org.n52.janmayen.ThrowingIterator;
 import org.n52.janmayen.function.ThrowingFunction;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@code ThrowingIterator}-Wrapper for {@link ScrollableResults}. This class implements {@link AutoCloseable} and will
  * close the {@code ScrollableResults} as well as the unterlying {@link Session}.
@@ -45,6 +47,7 @@ import org.n52.janmayen.function.ThrowingFunction;
  * @author Christian Autermann
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ThrowingScrollableResultsIterator<T, X extends Exception> extends AbstractThrowingIterator<T, X>
         implements ThrowingIterator<T, X>, AutoCloseable {
 

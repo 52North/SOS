@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-parent</artifactId>
-        <version>5.4.2</version>
+        <version>5.4.3</version>
     </parent>
      <artifactId>sos-handler</artifactId>
     <packaging>jar</packaging>
@@ -15,6 +15,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

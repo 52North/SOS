@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,6 +27,7 @@
  */
 package org.n52.sos.statistics.sos.resolvers;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.n52.iceland.event.events.ResponseEvent;
@@ -63,7 +64,7 @@ public class SosResponseEventResolver implements StatisticsServiceEventResolver<
 
     @Override
     public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
-        this.handlers = handlers;
+        this.handlers = handlers != null ? new LinkedHashMap<>(handlers) : new LinkedHashMap<>();
     }
 
 }

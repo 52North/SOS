@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -34,7 +34,7 @@ import org.n52.sos.statistics.sos.models.TimeEsModel;
 public class DescribeSensorRequestHandler extends AbstractSosRequestHandler<DescribeSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(DescribeSensorRequest request) {
         put(SosDataMapping.DS_PROCEDURE, request.getProcedure());
         put(SosDataMapping.DS_PROCEDURE_DESC_FORMAT, request.getProcedureDescriptionFormat());
         if (request.getValidTime() != null) {

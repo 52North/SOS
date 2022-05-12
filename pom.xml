@@ -92,7 +92,7 @@
         <version.helgoland.api>3.4.2</version.helgoland.api>
         <version.dao-impl>3.5.2</version.dao-impl>
         <version.db-model>3.1.4</version.db-model>
-        <version.springframework>5.3.19</version.springframework>
+        <version.springframework>5.3.20</version.springframework>
         <version.springframework.security>5.6.3</version.springframework.security>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>

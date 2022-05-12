@@ -71,7 +71,7 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <version.postgresql>42.3.4</version.postgresql>
+        <version.postgresql>42.3.5</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.5.0.0</version.ojdbc8>
         <version.sqljdbc>11.1.1.jre8-preview</version.sqljdbc>
@@ -93,7 +93,7 @@
         <version.helgoland.api>3.5.0-PR.7</version.helgoland.api>
         <version.db-model>4.0.0-PR.8</version.db-model>
         <version.dao-impl>4.0.0-PR.9</version.dao-impl>
-        <version.springframework>5.3.19</version.springframework>
+        <version.springframework>5.3.20</version.springframework>
         <version.springframework.security>5.6.3</version.springframework.security>
         <version.springframework.data>2.6.4</version.springframework.data>
         <version.aspectj>1.9.9.1</version.aspectj>
@@ -1670,7 +1670,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.6.0</version>
+                <version>4.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>

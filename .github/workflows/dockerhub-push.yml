@@ -6,7 +6,6 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 jobs:
   push_to_registry:
@@ -24,6 +23,11 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: 52north/sos
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1

@@ -20,7 +20,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for tagging Docker Image
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: 52north/sos
           tags: |

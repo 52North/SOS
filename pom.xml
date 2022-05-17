@@ -28,11 +28,6 @@
         <url>https://github.com/52North/SOS/issues?state=open</url>
     </issueManagement>
 
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/52North/SOS</url>
-    </ciManagement>
-
     <licenses>
         <license>
             <name>GPLv2</name>

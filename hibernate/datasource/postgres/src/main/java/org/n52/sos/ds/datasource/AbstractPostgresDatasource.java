@@ -40,6 +40,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.boot.Metadata;
+import org.hibernate.boot.model.relational.SqlStringGenerationContext;
+import org.hibernate.boot.model.relational.internal.SqlStringGenerationContextImpl;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.n52.faroe.ConfigurationError;
@@ -216,14 +218,16 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             conn = openConnection(settings);
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
-            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
+            Metadata metadata = getMetadata(conn, settings);
+            SqlStringGenerationContext sqlStringGenerationContext =
+                    SqlStringGenerationContextImpl.forBackwardsCompatibility(createDialect(), null, schema);
+            Iterator<Table> tables = metadata.collectTableMappings().iterator();
             List<String> names = new LinkedList<String>();
             while (tables.hasNext()) {
                 Table table = tables.next();
                 if (table.isPhysicalTable()) {
-                    // TODO check if this works since 5.6.2
-                    // names.add(table.getQualifiedTableName().render());
-                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                    // TODO check if this works
+                    names.add(table.getQualifiedName(sqlStringGenerationContext));
                 }
             }
             if (!names.isEmpty()) {

@@ -159,6 +159,12 @@
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+             <exclusions>
+                <exclusion>
+                    <groupId>javax.annotations</groupId>
+                   <artifactId>javax.annotations-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate.common</groupId>

@@ -204,6 +204,7 @@ This project includes:
   Protocol Buffers [Core] under 3-Clause BSD License
   QDox under The Apache Software License, Version 2.0
   quartz under The Apache Software License, Version 2.0
+  RE2/J under Go License
   Referencing services under Lesser General Public License (LGPL)
   Sensor Web Server DAO Impl - DAO under GNU General Public License, Version 2.0
   Sensor Web Server DAO Impl - Webapp under GNU General Public License, Version 2.0

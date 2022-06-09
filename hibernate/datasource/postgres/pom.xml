@@ -18,6 +18,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-session-factory</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -42,6 +43,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

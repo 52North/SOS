@@ -3,6 +3,14 @@
 name: Publish Docker image
 
 on:
+  workflow_dispatch:
+    inputs:
+      # https://docs.github.com/en/actions/learn-github-actions/contexts#inputs-context
+      tags:
+        description: "Please provide a git tag value, e.g. v3.2.1-manually-triggered.1"
+        required: true
+        type: string
+        default: "v3.2.1-manually-triggered.1"
   push:
     tags:
       - 'v*'
@@ -27,7 +35,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+             type=match,pattern=v(.*),group=1,value=${{ github.event.inputs.tags }}
+
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2

@@ -35,9 +35,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.cosium.spring.data.jpa.entity.graph.repository.support.EntityGraphJpaRepositoryFactoryBean;
+
 @Configuration
-@EnableJpaRepositories(basePackages = "org.n52.sensorweb.server.db")
-@ComponentScan(basePackages = {"org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv"})
+@EnableJpaRepositories(repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class,
+        basePackages = "org.n52.sensorweb.server.db")
+@ComponentScan(basePackages = { "org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv" })
 public class SpiImplConfig {
 
     @Bean

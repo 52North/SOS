@@ -1051,8 +1051,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
-        String catalog = checkCatalog(conn);
-        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         SqlStringGenerationContext sqlStringGenerationContext =
                 SqlStringGenerationContextImpl.forBackwardsCompatibility(createDialect(), null, schema);
         List<String> names = new LinkedList<String>();

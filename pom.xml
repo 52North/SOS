@@ -68,7 +68,7 @@
 
         <version.postgresql>42.4.0</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
-        <version.ojdbc8>21.5.0.0</version.ojdbc8>
+        <version.ojdbc8>21.6.0.0.1</version.ojdbc8>
         <version.sqljdbc>11.1.1.jre8-preview</version.sqljdbc>
         <version.mysql>8.0.29</version.mysql>
         <version.h2>2.1.214</version.h2>
@@ -81,7 +81,7 @@
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
-        <version.jts>1.18.2</version.jts>
+        <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.6.0-SNAPSHOT</version.arctic-sea>
@@ -89,7 +89,7 @@
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <version.dao-impl>4.0.0-PR.9</version.dao-impl>
         <version.springframework>5.3.21</version.springframework>
-        <version.springframework.security>5.7.1</version.springframework.security>
+        <version.springframework.security>5.7.2</version.springframework.security>
         <version.springframework.data>2.6.4</version.springframework.data>
         <version.spring-data-entity-graph>2.6.1</version.spring-data-entity-graph>
         <version.aspectj>1.9.9.1</version.aspectj>
@@ -2249,7 +2249,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.9</version>
+                    <version>11.0.10</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

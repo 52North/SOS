@@ -5,7 +5,7 @@
 [![CodeAQL analysis](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/alerts/)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/context:java)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=52North/SOS)](https://dependabot.com)
+[![Open Source](https://badges.frapsoft.com/os/v3/open-source.png?v=103)](https://opensource.org/)
 
 ## Description
 

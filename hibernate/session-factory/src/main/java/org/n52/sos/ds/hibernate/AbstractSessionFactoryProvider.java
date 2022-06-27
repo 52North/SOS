@@ -45,18 +45,10 @@ public abstract class AbstractSessionFactoryProvider implements Destroyable, Con
     @Override
     public void destroy() {
         SessionFactory sessionFactory = getSessionFactory();
-
         if (sessionFactory == null || sessionFactory.isClosed()) {
             return;
         }
-
         try {
-            // if (SessionFactoryImpl.class.isInstance(sessionFactory)
-            // && Stoppable.class.isInstance(((SessionFactoryImpl)
-            // sessionFactory).getConnectionProvider())) {
-            // ((Stoppable) ((SessionFactoryImpl)
-            // sessionFactory).getConnectionProvider()).stop();
-            // }
             sessionFactory.close();
             LOG.info("Connection provider closed successfully!");
         } catch (HibernateException he) {

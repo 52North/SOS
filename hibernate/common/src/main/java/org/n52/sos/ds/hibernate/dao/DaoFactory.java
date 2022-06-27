@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ParameterCreator;
 import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.SosSettings;
@@ -313,8 +314,8 @@ public class DaoFactory {
         return new OfferingDAO(this);
     }
 
-    public ParameterDAO getParameterDAO() {
-        return new ParameterDAO();
+    public ParameterCreator getParameterDAO() {
+        return new ParameterCreator();
     }
 
     public FormatDAO getProcedureDescriptionFormatDAO() {

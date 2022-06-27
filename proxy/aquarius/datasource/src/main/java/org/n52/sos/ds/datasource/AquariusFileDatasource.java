@@ -56,7 +56,7 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
 
     private static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:h2:(.+)$");
 
-    private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
+    private static final String JDBC_URL_FORMAT = "jdbc:h2:file:%s";
 
     private static final String USER_HOME = "user.home";
 

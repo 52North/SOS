@@ -25,10 +25,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao;
+package org.n52.sos.ds.hibernate.util;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,6 +88,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
+import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ValueCreatingSweDataComponentVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,20 +102,38 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class ParameterDAO {
+public class ParameterCreator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ParameterDAO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterCreator.class);
 
-    public Set<ParameterEntity<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache,
-           DescribableEntity entity, Session session) throws OwsExceptionReport {
+    public Set<ParameterEntity<?>> createParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache,
+            DescribableEntity entity, Session session) throws OwsExceptionReport {
         Set<ParameterEntity<?>> parameters = new HashSet<>();
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                ParameterPersister persister = new ParameterPersister(this, namedValue, unitCache, entity, session);
-                parameters.add(namedValue.getValue().accept(persister));
+                ParameterVisitor persister = new ParameterVisitor(this, namedValue, unitCache, entity, session);
+                checkParameter(entity, namedValue.getValue().accept(persister), parameters);
             }
         }
+        entity.addParameters(parameters);
         return parameters;
+    }
+
+    private <
+            T extends DataEntity<?>> void checkParameter(DescribableEntity entity, ParameterEntity<?> parameter,
+                    Set<ParameterEntity<?>> newParams) {
+        if (parameter instanceof ComplexParameterEntity && parameter.getValue() != null) {
+            ComplexParameterEntity<?> complex = (ComplexParameterEntity<?>) parameter;
+            for (Object v : (Set<?>) complex.getValue()) {
+                if (v instanceof ParameterEntity) {
+                    ParameterEntity<?> child = (ParameterEntity<?>) v;
+                    checkParameter(entity, child, newParams);
+                    child.setParent((ParameterEntity<?>) complex);
+                }
+            }
+            complex.setValue(null);
+        }
+        newParams.add(parameter);
     }
 
     /**
@@ -155,7 +175,7 @@ public class ParameterDAO {
         }
     }
 
-    public static class ParameterPersister implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
+    public static class ParameterVisitor implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
         private final Caches caches;
 
         private final Session session;
@@ -166,20 +186,20 @@ public class ParameterDAO {
 
         private DescribableEntity entity;
 
-        private Long parent;
+        private ParameterEntity<?> parent;
 
-        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, Map<UoM, UnitEntity> unitCache,
+        public ParameterVisitor(ParameterCreator parameterDAO, NamedValue<?> namedValue, Map<UoM, UnitEntity> unitCache,
                 DescribableEntity entity, Session session) {
             this(new DAOs(parameterDAO), new Caches(unitCache), namedValue, entity, session);
         }
 
-        public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, DescribableEntity entity,
+        public ParameterVisitor(DAOs daos, Caches caches, NamedValue<?> namedValue, DescribableEntity entity,
                 Session session) {
            this(daos, namedValue, caches, entity, null, session);
         }
 
-        public ParameterPersister(DAOs daos, NamedValue<?> namedValue, Caches caches,
-                DescribableEntity entity, Long parent, Session session) {
+        public ParameterVisitor(DAOs daos, NamedValue<?> namedValue, Caches caches,
+                DescribableEntity entity, ParameterEntity<?> parent, Session session) {
             this.caches = caches;
             this.session = session;
             this.daos = daos;
@@ -208,7 +228,8 @@ public class ParameterDAO {
             ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.COMPLEX);
             ((ComplexParameterEntity) param).setValue(new HashSet<ValuedParameter<?>>());
             ParameterEntity<?> complexyDataEntity = persist(param);
-            persistChildren(value.getValue(), complexyDataEntity);
+            Set<ParameterEntity<?>> persistChildren = persistChildren(value.getValue(), complexyDataEntity);
+            ((ComplexParameterEntity) param).setValue(persistChildren);
             return param;
         }
 
@@ -329,22 +350,22 @@ public class ParameterDAO {
             throw notSupported(value);
         }
 
-        private void persistChildren(SweAbstractDataRecord dataRecord, ParameterEntity<?> parameter)
+        private Set<ParameterEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, ParameterEntity<?> parameter)
                 throws HibernateException, OwsExceptionReport {
+            Set<ParameterEntity<?>> children = new LinkedHashSet<>();
             for (SweField field : dataRecord.getFields()) {
                 String name = field.getName().getValue();
                 Value<?> value = field.accept(ValueCreatingSweDataComponentVisitor.getInstance());
-                ParameterPersister childPersister =
+                ParameterVisitor childPersister =
                         createChildPersister(new NamedValue<>(new ReferenceType(name), value), parameter);
-                value.accept(childPersister);
+                children.add(value.accept(childPersister));
             }
-            session.flush();
+            return children;
         }
 
-        private ParameterPersister createChildPersister(NamedValue<?> namedValue, ParameterEntity<?> parameter) {
-            return new ParameterPersister(this.daos, namedValue, caches, entity, parameter.getId(), session);
+        private ParameterVisitor createChildPersister(NamedValue<?> namedValue, ParameterEntity<?> parameter) {
+            return new ParameterVisitor(this.daos, namedValue, caches, entity, parameter, session);
         }
-
 
         private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
             throw new NoApplicableCodeException().withMessage("Unsupported om:parameter value %s", value.getClass()
@@ -378,7 +399,7 @@ public class ParameterDAO {
             }
             parameter.setName(namedValue.getName().getHref());
             parameter.setDescribeableEntity(entity);
-            session.saveOrUpdate(parameter);
+//            session.saveOrUpdate(parameter);
             return parameter;
         }
 
@@ -395,13 +416,13 @@ public class ParameterDAO {
         }
 
         private static class DAOs {
-            private final ParameterDAO parameter;
+            private final ParameterCreator parameter;
 
-            DAOs(ParameterDAO parameter) {
+            DAOs(ParameterCreator parameter) {
                 this.parameter = parameter;
             }
 
-            public ParameterDAO parameter() {
+            public ParameterCreator parameter() {
                 return this.parameter;
             }
         }

@@ -57,7 +57,6 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.feature.SpecimenEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -79,6 +78,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.ParameterCreator;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author CarstenHollmann
  * @since 4.0.0
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureOfInterestDAO.class);
@@ -141,7 +141,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session Hibernate session
      * @return FeatureOfInterest identifiers for observation constellation
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     @SuppressWarnings("unchecked")
     public List<String> getIdentifiers(DatasetEntity oc, Session session) throws OwsExceptionReport {
@@ -171,7 +172,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session Hibernate session
      * @return FeatureOfInterest identifiers for offering
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     @SuppressWarnings({ "unchecked" })
     public List<String> getIdentifiersForOffering(String offering, Session session) throws OwsExceptionReport {
@@ -241,12 +243,12 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     /**
-     * Load FOI identifiers and parent ids for use in the cache. Just loading
-     * the ids allows us to not load the geometry columns, XML, etc.
+     * Load FOI identifiers and parent ids for use in the cache. Just loading the ids allows us to not load
+     * the geometry columns, XML, etc.
      *
-     * @param session the session
-     * @return Map keyed by FOI identifiers, with value collections of parent
-     *         FOI identifiers if supported
+     * @param session
+     *            the session
+     * @return Map keyed by FOI identifiers, with value collections of parent FOI identifiers if supported
      */
     public Map<String, Collection<String>> getIdentifiersWithParents(Session session) {
         Criteria criteria = session.createCriteria(FeatureEntity.class)
@@ -322,8 +324,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     /**
-     * Insert featureOfInterest/related feature relations if relatedFeatures
-     * exists for offering.
+     * Insert featureOfInterest/related feature relations if relatedFeatures exists for offering.
      *
      * @param featureOfInterest
      *            FeatureOfInerest
@@ -338,7 +339,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 .filter(relatedFeature -> !featureOfInterest.getIdentifier()
                         .equals(relatedFeature.getFeature().getIdentifier()))
                 .forEachOrdered(
-                    relatedFeature -> insertRelationship(relatedFeature.getFeature(), featureOfInterest, session));
+                        relatedFeature -> insertRelationship(relatedFeature.getFeature(), featureOfInterest, session));
 
     }
 
@@ -351,8 +352,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *            Hibernate session
      * @return FeatureOfInterest object
      * @throws NoApplicableCodeException
-     *             If SOS feature type is not supported (with status
-     *             {@link HTTPStatus}.BAD_REQUEST
+     *             If SOS feature type is not supported (with status {@link HTTPStatus}.BAD_REQUEST
      */
     public AbstractFeatureEntity checkOrInsert(AbstractFeature featureOfInterest, Session session)
             throws OwsExceptionReport {
@@ -550,16 +550,15 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                         feature.setParents(parents);
                     }
                 }
-                session.saveOrUpdate(feature);
-                session.flush();
-                session.refresh(feature);
                 if (abstractFeature instanceof AbstractSamplingFeature
                         && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
+                    new ParameterCreator().createParameter(
                             ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, feature, session);
-                    feature.addParameters(parameter);
                 }
+                session.saveOrUpdate(feature);
+                session.flush();
+                session.refresh(feature);
             }
             return feature;
         }

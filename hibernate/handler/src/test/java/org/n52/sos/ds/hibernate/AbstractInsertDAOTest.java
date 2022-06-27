@@ -36,6 +36,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -72,6 +73,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -84,6 +86,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -99,9 +102,11 @@ import org.n52.shetland.ogc.sos.SosInsertionMetadata;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swe.SweConstants;
@@ -113,10 +118,12 @@ import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.ctrl.DefaultContentModificationListener;
 import org.n52.sos.cache.ctrl.SosContentCacheControllerImpl;
+import org.n52.sos.ds.GetFeatureOfInterestHandler;
 import org.n52.sos.ds.GetResultHandler;
 import org.n52.sos.ds.GetResultTemplateHandler;
 import org.n52.sos.ds.SosCacheFeederHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDaoImpl;
 import org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl;
 import org.n52.sos.ds.hibernate.dao.GetResultDaoImpl;
 import org.n52.sos.ds.hibernate.dao.GetResultTemplateDaoImpl;
@@ -274,11 +281,15 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected final DeleteSensorHandler deleteSensorDAO = new DeleteSensorHandler();
 
+    protected final InsertFeatureOfInterestHandler insertFeatureDAO = new InsertFeatureOfInterestHandler();
+
     protected final InsertObservationHandler insertObservationDAO = new InsertObservationHandler();
 
     protected final InsertResultTemplateHandler insertResultTemplateDAO = new InsertResultTemplateHandler();
 
     protected final InsertResultHandler insertResultDAO = new InsertResultHandler();
+
+    protected final GetFeatureOfInterestDaoImpl getFeatDAO = new GetFeatureOfInterestDaoImpl();
 
     protected final GetObservationDaoImpl getObsDAO = new GetObservationDaoImpl();
 
@@ -451,6 +462,9 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         deleteSensorDAO.initForTesting(daoFactory, this);
         deleteSensorDAO.setCacheController(contentCacheController);
         deleteSensorDAO.init();
+        insertFeatureDAO.initForTesting(daoFactory, this);
+        insertFeatureDAO.setCacheController(contentCacheController);
+        insertFeatureDAO.init();
         insertObservationDAO.initForTesting(daoFactory, this);
         insertObservationDAO.setCacheController(contentCacheController);
         insertObservationDAO.init();
@@ -461,6 +475,9 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         insertResultDAO.setCacheController(contentCacheController);
         insertResultDAO.setDecoderRepository(decoderRepository);
         insertResultDAO.init();
+        getFeatDAO.setConnectionProvider(this);
+        getFeatDAO.setDefaultLanguage("eng");
+        getFeatDAO.setFeatureQueryHandler(daoFactory.getFeatureQueryHandler());
         getObsDAO.setConnectionProvider(this);
         getObsDAO.setDaoFactory(daoFactory);
         getObsDAO.setEncoderRepository(encoderRepository);
@@ -677,6 +694,14 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         obs.addParameter(createTextParameter(TEXT_PARAM_NAME, TEXT_PARAM_VALUE));
     }
 
+    protected void addParameter(SamplingFeature feature) {
+        feature.addParameter(createBooleanParameter(BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE));
+        feature.addParameter(createCategoryParameter(CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT));
+        feature.addParameter(createCountParameter(COUNT_PARAM_NAME, COUNT_PARAM_VALUE));
+        feature.addParameter(createQuantityParameter(QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT));
+        feature.addParameter(createTextParameter(TEXT_PARAM_NAME, TEXT_PARAM_VALUE));
+    }
+
     protected void checkOmParameter(String offering, String procedure, String obsprop, String feature,
             DateTime obsTimeParam) throws OwsExceptionReport {
         GetObservationRequest getObsReq =
@@ -714,6 +739,39 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         }
     }
 
+    protected void checkOmParameterForFeature(String feature) throws OwsExceptionReport {
+        GetFeatureOfInterestRequest req =
+                createDefaultGetFeatureRequest(feature);
+        Map<String, AbstractFeature> resp =
+                getFeatDAO.getFeatureOfInterest(req);
+        assertThat(resp, notNullValue());
+        assertThat(resp.values(), notNullValue());
+        assertThat(resp.values().size(), is(1));
+
+        for (AbstractFeature foi : resp.values()) {
+            if (foi instanceof AbstractSamplingFeature) {
+                AbstractSamplingFeature asf = (AbstractSamplingFeature) foi;
+                assertThat(asf.isSetParameter(), is(true));
+                assertThat(asf.getParameters().size(), is(5));
+                for (NamedValue<?> namedValue : asf.getParameters()) {
+                    assertThat(namedValue.isSetName(), is(true));
+                    assertThat(namedValue.getName().isSetHref(), is(true));
+                    if (BOOLEAN_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                        checkNamedValue(namedValue, BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE, null);
+                    } else if (CATEGORY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                        checkNamedValue(namedValue, CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT);
+                    } else if (COUNT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                        checkNamedValue(namedValue, COUNT_PARAM_NAME, COUNT_PARAM_VALUE, null);
+                    } else if (QUANTITY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                        checkNamedValue(namedValue, QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT);
+                    } else if (TEXT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                        checkNamedValue(namedValue, TEXT_PARAM_NAME, TEXT_PARAM_VALUE, null);
+                    }
+                }
+            }
+        }
+    }
+
     protected OmObservation getObservation(GetObservationResponse getObsResponse)
             throws NoSuchElementException, OwsExceptionReport {
         OmObservation observation = getObsResponse.getObservationCollection()
@@ -728,6 +786,10 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
             return omObservation;
         }
         return observation;
+    }
+
+    protected GetFeatureOfInterestResponse getGetFeatureResponse(GetFeatureOfInterestRequest req) {
+        return new GetFeatureOfInterestResponse(req.getService(), req.getVersion());
     }
 
     protected GetObservationResponse getGetObservationResponse(GetObservationRequest req) {
@@ -786,6 +848,14 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
                 geometry, null);
         return omObservation;
+    }
+
+    protected GetFeatureOfInterestRequest createDefaultGetFeatureRequest(String feature) {
+        GetFeatureOfInterestRequest req = new GetFeatureOfInterestRequest();
+//        req.setFeatureIdentifiers(Sets.newHashSet(feature));
+        req.setService(SosConstants.SOS);
+        req.setVersion(Sos2Constants.SERVICEVERSION);
+        return req;
     }
 
     protected GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure,

@@ -145,6 +145,22 @@ public class InsertionRepository {
         dataRepository.deleteByDataset(dataset);
     }
 
+    public synchronized void removeFeature(AbstractFeatureEntity<?> entity) {
+        featureAssembler.getParameterRepository().delete(entity);
+    }
+
+    public void removeFeature(Set<Long> features) {
+        featureAssembler.getParameterRepository().deleteAllById(features);
+    }
+
+    public synchronized void removePlatform(PlatformEntity entity) {
+        platformAssembler.getParameterRepository().delete(entity);
+    }
+
+    public void removePlatform(Set<Long> platforms) {
+        platformAssembler.getParameterRepository().deleteAllById(platforms);
+    }
+
     public synchronized DatasetEntity insertDataset(DatasetEntity dataset) {
         ProcedureEntity procedure = insertProcedure(dataset.getProcedure());
         CategoryEntity category = insertCategory(dataset.getCategory());

@@ -38,32 +38,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HibernateConfig {
 
-//    private static final String SIMPLE = "simple";
-//
-//    private static final String EREPORTING = "ereporting";
-//
-//    private static final String TRANSACTIONAL = "transactional";
-//
-//    private static final String DATASET = "dataset";
-//
-//    private static final String SAMPLING = "sampling";
-
     @Inject
     private SessionFactoryProvider provider;
-
-//    @Bean
-//    public EntityManagerFactory entityManagerFactory() {
-//        Properties p = provider.getConfiguration()
-//                .getProperties();
-//        Map<String, String> map = new HashMap<>();
-//        for (Entry<Object, Object> entry : p.entrySet()) {
-//            map.put(entry.getKey()
-//                    .toString(),
-//                    entry.getValue()
-//                            .toString());
-//        }
-//        return (EntityManagerFactory) sessionFactory();
-//    }
 
     @Bean(name = {"sessionFactory", "entityManagerFactory"})
     public SessionFactory sessionFactory() {
@@ -78,23 +54,5 @@ public class HibernateConfig {
                 .getService(ConnectionProvider.class);
         return cp.unwrap(DataSource.class);
     }
-
-//    private String getPersitenceUnit(Properties p) {
-//        return p.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY)
-//                ? getPersitenceUnit(p.getProperty(HibernateDatasourceConstants.HIBERNATE_DIRECTORY))
-//                : getPersitenceUnit("");
-//    }
-//
-//    private String getPersitenceUnit(String value) {
-//        return getConcept(value) + "-" + getExtension(value);
-//    }
-//
-//    private String getConcept(String value) {
-//        return value.contains(SIMPLE) ? SIMPLE : value.contains(EREPORTING) ? EREPORTING : TRANSACTIONAL;
-//    }
-//
-//    private String getExtension(String value) {
-//        return value.contains(SAMPLING) ? SAMPLING : DATASET;
-//    }
 
 }

@@ -84,10 +84,10 @@
         <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.6.0-SNAPSHOT</version.arctic-sea>
-        <version.helgoland.api>3.5.0-PR.7</version.helgoland.api>
-        <version.db-model>4.0.0-SNAPSHOT</version.db-model>
-        <version.dao-impl>4.0.0-PR.9</version.dao-impl>
+        <version.arctic-sea>9.6.0</version.arctic-sea>
+        <version.helgoland.api>3.5.0-PR.8</version.helgoland.api>
+        <version.db-model>4.0.0-PR.9</version.db-model>
+        <version.dao-impl>4.0.0-PR.10</version.dao-impl>
         <version.springframework>5.3.21</version.springframework>
         <version.springframework.security>5.7.2</version.springframework.security>
         <version.springframework.data>2.6.4</version.springframework.data>
@@ -1683,7 +1683,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.7.0</version>
+                <version>4.7.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>

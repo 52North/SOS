@@ -1,5 +1,7 @@
 # 52°North Sensor Observation Service (SOS)
 
+[![Develop Build Status](https://github.com/52North/SOS/actions/workflows/daily.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/daily.yml)
+[![Develop Build Status](https://github.com/52North/SOS/actions/workflows/pull.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/pull.yml)
 [![Develop Build Status](https://github.com/52North/SOS/actions/workflows/push.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/push.yml)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](license)
 [![CodeAQL analysis](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml)

@@ -73,7 +73,7 @@
         <version.mysql>8.0.29</version.mysql>
         <version.h2>2.1.214</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.6.9.Final</version.hibernate>
+        <version.hibernate>5.6.10.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>27.0</version.geotools>
@@ -94,7 +94,7 @@
         <version.spring-data-entity-graph>2.6.1</version.spring-data-entity-graph>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>
-        <version.elasticsearch>7.17.4</version.elasticsearch>
+        <version.elasticsearch>7.17.5</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -827,7 +827,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.6.0</version>
+                <version>7.6.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -2012,7 +2012,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.12.0</version>
+                <version>5.12.1</version>
             </dependency>
             <!-- EXI -->
             <dependency>

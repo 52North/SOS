@@ -29,9 +29,9 @@ package org.n52.sos.aquarius.harvest;
 
 import javax.inject.Inject;
 
+import org.n52.bjornoya.schedule.FullHarvesterJob;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.proxy.harvest.FullHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
@@ -52,5 +52,4 @@ public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob imple
         harvester.harvest(connector);
         return true;
     }
-
 }

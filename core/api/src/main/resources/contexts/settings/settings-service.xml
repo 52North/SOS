@@ -87,6 +87,14 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="service.requiredGetObservationRequestParameters" />
+        <property name="title" value="Define the required GetObservation parameters (CSV)" />
+        <property name="description" value="Define the required parameters which should be contained in GetObservation requests (CSV)" />
+        <property name="order" value="12.1" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.exposeChildObservableProperties" />
         <property name="title" value="Should this SOS expose child observable properties?" />

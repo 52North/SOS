@@ -58,14 +58,14 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
 
     public AbstractAquariusH2Datasource() {
         super();
-        setServiceUsernameDefault(AQUARIUS_USERNAME_DEFAULT_VALUE);
-        setServiceUsernameDescription(PROXY_USERNAME_DESCRIPTION);
-        setServicePasswordDefault(AQUARIUS_PASSWORD_DEFAULT_VALUE);
-        setServicePasswordDescription(PROXY_PASSWORD_DESCRIPTION);
-        setServiceHostDefault(AQUARIUS_HOST_DEFAULT_VALUE);
-        setServiceHostDescription(HOST_DESCRIPTION);
-//        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
-//        setServicePathDescription(PROXY_PATH_DESCRIPTION);
+        setServiceUsernameDefault(getProxyUsernameDefaultValue());
+        setServiceUsernameDescription(getProxyUsernameDescription());
+        setServicePasswordDefault(getProxyPasswordDefaultValue());
+        setServicePasswordDescription(getProxyPasswordDescription());
+        setServiceHostDefault(getProxyHostDefaultValue());
+        setServiceHostDescription(getProxyHostDescription());
+//        setServicePathDefault(getProxyPathDefaultValue());
+//        setServicePathDescription(getProxyPathDescription());
     }
 
     @Override

@@ -97,11 +97,13 @@ public abstract class AbstractProcedureDescriptionGenerator
     private DbQueryFactory dbQueryFactory;
 
     public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
-            ContentCacheController cacheController, DbQueryFactory dbQueryFactory) {
+            ContentCacheController cacheController,
+            ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
+        this.procedureSettings = procedureSettings;
         this.dbQueryFactory = dbQueryFactory;
-
     }
 
     public abstract SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,

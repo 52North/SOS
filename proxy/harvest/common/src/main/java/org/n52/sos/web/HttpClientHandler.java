@@ -31,6 +31,10 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,20 +46,23 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.n52.iceland.service.DatabaseSettingsHandler;
+import org.n52.iceland.service.DatasourceSettingsHandler;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
@@ -63,7 +70,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.datasource.AbstractH2ProxyDatasource;
+import org.n52.sos.ds.datasource.ProxyDatasource;
 import org.n52.sos.proxy.Response;
 import org.n52.sos.proxy.request.AbstractDeleteRequest;
 import org.n52.sos.proxy.request.AbstractGetRequest;
@@ -91,15 +98,13 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     private RequestConfig requestConfig;
 
-    private PoolingHttpClientConnectionManager cm;
-
     private CloseableHttpClient client;
 
-    private DatabaseSettingsHandler databaseSettingsHandler;
+    private DatasourceSettingsHandler datasourceSettingsHandler;
 
     @Inject
-    public void setDatabaseSettingsHandler(DatabaseSettingsHandler databaseSettingsHandler) {
-        this.databaseSettingsHandler = databaseSettingsHandler;
+    public void setDatabaseSettingsHandler(DatasourceSettingsHandler datasourceSettingsHandler) {
+        this.datasourceSettingsHandler = datasourceSettingsHandler;
     }
 
     public Response execute(URI url, AbstractRequest request) throws OwsExceptionReport {
@@ -202,8 +207,6 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     private Response getContent(CloseableHttpResponse response) throws IOException {
         try {
-            LOGGER.trace(cm.getTotalStats()
-                    .toString());
             return response != null ? new Response(response.getStatusLine()
                     .getStatusCode(),
                     response.getEntity() != null ? EntityUtils.toString(response.getEntity(), "UTF-8") : null)
@@ -216,7 +219,7 @@ public class HttpClientHandler implements Constructable, Destroyable {
     }
 
     private URI getGetUrl(URI url, Map<String, String> parameters) throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder(url);
+        URIBuilder uriBuilder = new URIBuilder(url, StandardCharsets.UTF_8);
         if (CollectionHelper.isNotEmpty(parameters)) {
             for (Entry<String, String> entry : parameters.entrySet()) {
                 uriBuilder.addParameter(entry.getKey(), entry.getValue());
@@ -232,21 +235,39 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     private URI getPathUrl(URI url, String path) throws URISyntaxException {
         if (!Strings.isNullOrEmpty(path)) {
-            URIBuilder uriBuilder = new URIBuilder(url.toString() + path);
+            URIBuilder uriBuilder = new URIBuilder(url.toString() + path, StandardCharsets.UTF_8);
             return uriBuilder.build();
         }
         return url;
     }
 
     private HttpHost getHost() {
-        Properties properties = this.databaseSettingsHandler.getAll();
-        String host = properties.getProperty(AbstractH2ProxyDatasource.PROXY_HOST_KEY,
-                AbstractH2ProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
+        Properties properties = getProperties();
+        String host = properties.getProperty(ProxyDatasource.PROXY_HOST_KEY,
+                ProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
         return new HttpHost(host, 80);
+    }
+
+    private HttpHost getProxyHost() {
+        Properties properties = getProperties();
+        String host = properties.getProperty(ProxyDatasource.PROXY_PROXY_HOST_KEY);
+        String portValue = properties.getProperty(ProxyDatasource.PROXY_PROXY_PORT_KEY);
+        if (portValue != null && !portValue.isEmpty()) {
+            return new HttpHost(host, Integer.parseInt(portValue));
+        }
+        return new HttpHost(host);
+    }
+
+    private boolean isProxyDefined() {
+        return getProperties().containsKey(ProxyDatasource.PROXY_PROXY_HOST_KEY);
     }
 
     private CloseableHttpClient getClient() {
         return client;
+    }
+
+    private Properties getProperties() {
+        return this.datasourceSettingsHandler.getAll();
     }
 
     private void logRequest(URI request) {
@@ -259,29 +280,47 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     @Override
     public void init() {
-        cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(200);
-        // Increase default max connection per route to 20
-        cm.setDefaultMaxPerRoute(20);
-        // Increase max connections for localhost:80 to 50
-        cm.setMaxPerRoute(new HttpRoute(getHost()), 50);
         this.cacheConfig = CacheConfig.custom()
                 .setMaxCacheEntries(1000)
                 .setMaxObjectSize(8192)
                 .build();
-        this.requestConfig = RequestConfig.custom()
-                .setConnectTimeout(30000)
-                .setSocketTimeout(30000)
-                .build();
         this.client = CachingHttpClients.custom()
                 .setCacheConfig(cacheConfig)
-                .setDefaultRequestConfig(requestConfig)
-                .setConnectionManager(cm)
+                .setDefaultRequestConfig(getRequestConfig())
+                .setSSLSocketFactory(getSSLSocketFactory())
+                .setMaxConnTotal(200)
+                .setMaxConnPerRoute(50)
                 .useSystemProperties()
                 .build();
+    }
 
-        // httpclient = HttpClients.custom().setConnectionManager(new
-        // PoolingHttpClientConnectionManager()).setConnectionManagerShared(true).build();
+
+    private SSLConnectionSocketFactory getSSLSocketFactory() {
+        if (isIgnoreSSLHostnameValidation()) {
+            LOGGER.debug("Noop hostname verifier enabled!");
+            try {
+                return new SSLConnectionSocketFactory(
+                        SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build(),
+                        NoopHostnameVerifier.INSTANCE);
+            } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
+                LOGGER.error("Error creating SSL connnection socket factory!", e);
+            }
+        }
+        return null;
+    }
+
+    private boolean isIgnoreSSLHostnameValidation() {
+        return Boolean.parseBoolean(getProperties().getProperty(ProxyDatasource.PROXY_PROXY_SSL_KEY, "false"));
+    }
+
+    private RequestConfig getRequestConfig() {
+        Builder builder = RequestConfig.custom()
+        .setConnectTimeout(30000)
+        .setSocketTimeout(30000);
+        if (isProxyDefined()) {
+            builder.setProxy(getProxyHost());
+        }
+        return builder.build();
     }
 
     @Override
@@ -291,9 +330,6 @@ public class HttpClientHandler implements Constructable, Destroyable {
         }
         if (cacheConfig != null) {
             cacheConfig = null;
-        }
-        if (cm != null) {
-            cm.close();
         }
     }
 }

@@ -81,6 +81,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.service.SosSettings;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,8 @@ public class HibernateFeatureQueryHandler
 
     private ContentCacheController contentCacheController;
 
+    private ProfileHandler profileHandler;
+
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -130,6 +133,11 @@ public class HibernateFeatureQueryHandler
     @Inject
     public void setContentCacheController(ContentCacheController ctrl) {
         this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
@@ -405,7 +413,8 @@ public class HibernateFeatureQueryHandler
         .setUpdateFeatureGeometry(updateFeatureGeometry)
         .setCreateFeatureGeometryFromSamplingGeometries(createFeatureGeometryFromSamplingGeometries)
         .setI18NDAORepository(i18NDAORepository)
-        .setCache((SosContentCache) contentCacheController.getCache());
+        .setCache((SosContentCache) contentCacheController.getCache())
+        .setActiveProfile(profileHandler.getActiveProfile());
         return context;
     }
 

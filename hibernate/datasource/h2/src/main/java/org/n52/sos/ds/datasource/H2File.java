@@ -25,16 +25,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sensorweb.server.db;
+package org.n52.sos.ds.datasource;
 
-import org.n52.sensorweb.server.db.repositories.ParameterDataRepository;
-import org.n52.series.db.beans.ServiceEntity;
-import org.springframework.context.annotation.Profile;
-import org.springframework.transaction.annotation.Transactional;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-@Transactional
-@Profile("proxy")
-public interface ServiceRepository extends ParameterDataRepository<ServiceEntity> {
+import org.n52.faroe.ConfigurationError;
 
-    ServiceEntity findByNameAndUrlAndType(String name, String url, String type);
+public interface H2File extends HibernateDatasource {
+
+    Pattern JDBC_URL_PATTERN = Pattern
+            .compile("^jdbc:h2:file:(.+)$");
+
+    String JDBC_URL_FORMAT = "jdbc:h2:file:%s";
+
+    String USER_HOME = "user.home";
+
+    default boolean checkTableSize(Map<String, Object> settings, Connection conn) {
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            stmt.execute("show tables");
+            ResultSet resultSet = stmt.getResultSet();
+            resultSet.last();
+            return resultSet.getRow() <= 1;
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(stmt);
+        }
+    }
 }

@@ -405,11 +405,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -1087,6 +1082,47 @@
             <artifactId>jaxb-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- CVE fixes -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <scope>runtime</scope>
+        </dependency> 
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -1246,7 +1282,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${webappConfigurationFolder}/datasource.properties" />
+                                        <copy file="${datasourceConfigurationFile}" tofile="${webappConfigurationFolder}/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

@@ -170,8 +170,7 @@ public interface EntityBuilder {
         entity.setIdentifier(identifier);
         entity.setName(name);
         entity.setDescription(description);
-        entity.setStaIdentifier(UUID.randomUUID()
-                .toString());
+        entity.setStaIdentifier(UUID.randomUUID().toString());
         entity.setService(service);
     }
 }

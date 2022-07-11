@@ -40,14 +40,11 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class AquariusInMemoryDatasource extends AbstractAquariusH2Datasource {
+public class AquariusInMemoryDatasource extends AbstractAquariusH2Datasource implements H2InMemory {
 
     private static final long serialVersionUID = 1L;
 
     private static final String DIALECT = "Proxy Aquarius (in-memory)";
-
-    private static final String JDBC_URL =
-            "jdbc:h2:mem:aq;DB_CLOSE_DELAY=-1";
 
     @Override
     public String getDialectName() {
@@ -76,9 +73,14 @@ public class AquariusInMemoryDatasource extends AbstractAquariusH2Datasource {
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = super.parseDatasourceProperties(current);
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
-        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_CONCEPT_KEY, current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
+    }
+
+    @Override
+    public boolean needsSchema() {
+        return false;
     }
 
     @Override

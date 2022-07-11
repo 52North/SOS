@@ -48,10 +48,6 @@ public interface AquariusDatasource extends ProxyDatasource {
 
     String SPRING_PROFILE = "aquarius";
 
-    String PROXY_USERNAME_KEY = "proxy.aquarius.username";
-
-    String PROXY_PASSWORD_KEY = "proxy.aquarius.password";
-
     String AQUARIUS_PATH_DEFAULT_VALUE = "/AQUARIUS/Publish/v2/";
 
     String CONNECTOR_KEY = "proxy.aquarius.connector";
@@ -68,13 +64,11 @@ public interface AquariusDatasource extends ProxyDatasource {
 
     String AQUARIUS_PASSWORD_DEFAULT_VALUE = "passsword";
 
-    String PROXY_HOST_DESCRIPTION =
+    String AQUARIUS_HOST_DESCRIPTION =
             "Set this to the IP/net location of Aquarius data server. The default value for Aquarius is "
                     + "\"https://aquarius.aquaticinformatics.com\".";
 
     String AQUARIUS_HOST_DEFAULT_VALUE = "https://aquarius.aquaticinformatics.com";
-
-    String PROXY_PATH_DESCRIPTION = "Set this to the path of the REST API.";
 
     @Override
     default Set<String> getSpringProfiles() {
@@ -189,4 +183,30 @@ public interface AquariusDatasource extends ProxyDatasource {
             throw new ConfigurationError(CONGIF_ERROR, e);
         }
     }
+
+    @Override
+    default String getProxyHostDescription() {
+        return AQUARIUS_HOST_DESCRIPTION;
+    }
+
+    @Override
+    default String getProxyHostDefaultValue() {
+        return AQUARIUS_HOST_DEFAULT_VALUE;
+    }
+
+    @Override
+    default String getProxyPathDefaultValue() {
+        return AQUARIUS_PATH_DEFAULT_VALUE;
+    }
+
+    @Override
+    default String getProxyUsernameDefaultValue() {
+        return AQUARIUS_USERNAME_DEFAULT_VALUE;
+    }
+
+    @Override
+    default String getProxyPasswordDefaultValue() {
+        return AQUARIUS_PASSWORD_DEFAULT_VALUE;
+    }
+
 }

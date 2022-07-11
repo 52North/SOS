@@ -228,6 +228,7 @@ public interface AccessorConnector {
     }
 
     default URI getURL(String host) throws URISyntaxException {
+//        new URIBuilder(host.startsWith("http") ? host : "http://" + host, StandardCharsets.UTF_8).build();
         return new URI(host.startsWith("http") ? host : "http://" + host);
     }
 

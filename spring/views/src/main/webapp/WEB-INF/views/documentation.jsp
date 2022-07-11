@@ -30,10 +30,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<jsp:include page="common/header.jsp">
+<jsp:include page="./common/header.jsp">
     <jsp:param name="activeMenu" value="documentation" />
 </jsp:include>
-<jsp:include page="common/logotitle.jsp">
+<jsp:include page="./common/logotitle.jsp">
 	<jsp:param name="title" value="52&deg;North SOS Documentation" />
 	<jsp:param name="leadParagraph" value="Documentation of the 52&deg;North Sensor Observation Service" />
 </jsp:include>
@@ -53,4 +53,4 @@
 </p>
 
 
-<jsp:include page="common/footer.jsp" />
+<jsp:include page="./common/footer.jsp" />

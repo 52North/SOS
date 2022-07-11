@@ -288,7 +288,10 @@ public class ParameterCreator {
 
         @Override
         public ParameterEntity<?> visit(TimeValue value) throws OwsExceptionReport {
-            throw notSupported(value);
+            ParameterEntity<?> param = ParameterFactory.from(entity, ValueType.TEMPORAL);
+            ((TemporalParameterEntity) param).setValue(new TimeRange(value.getValue()
+                    .toDate()));
+            return persist(param);
         }
 
         @Override

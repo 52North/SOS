@@ -365,10 +365,10 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
             queryObject.setI18N(getRequestedLanguage());
         }
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
-        if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
-                .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
-            feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
-        }
+//        if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
+//                .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
+//            feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
+//        }
         if (!getActiveProfile().isEncodeFeatureOfInterestInObservations()
                 && feature instanceof AbstractSamplingFeature) {
             ((AbstractSamplingFeature) feature).setEncode(false);

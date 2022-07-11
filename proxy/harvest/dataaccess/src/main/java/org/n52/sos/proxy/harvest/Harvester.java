@@ -28,18 +28,23 @@
 package org.n52.sos.proxy.harvest;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.n52.janmayen.event.EventBus;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.query.DatasetQuerySpecifications;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ServiceEntity;
-import org.n52.sos.proxy.da.InsertionRepository;
+import org.n52.sos.proxy.da.CRUDRepository;
 import org.slf4j.Logger;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface Harvester {
 
@@ -52,13 +57,14 @@ public interface Harvester {
         return serviceEntity;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     default ServiceEntity getOrInsertServiceEntity() {
-        return getInsertionRepository().insertService(getServiceEntity());
+        return unproxy(getCRUDRepository().insertService(getServiceEntity()));
     }
 
     default Specification<DatasetEntity> getDatasetServicQS(ServiceEntity service) {
-        DatasetQuerySpecifications dQs = getInsertionRepository().getDatasetQuerySpecification();
-        return dQs.matchServices(Long.toString(service.getId())).and(dQs.matchProcedures());
+        DatasetQuerySpecifications dQs = getCRUDRepository().getDatasetQuerySpecification();
+        return dQs.matchServices(Long.toString(service.getId())).and(dQs.notNullIdentifier());
     }
 
     default List<DatasetEntity> getAllDatasets(ServiceEntity service) {
@@ -73,27 +79,36 @@ public interface Harvester {
         return datasets;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     default void deleteObsoleteData(Map<String, DatasetEntity> datasets) {
         if (!datasets.isEmpty()) {
             getLogger().debug("Start removing datasets/timeSeries!");
+            Set<Long> features = new LinkedHashSet<>();
+            Set<Long> platforms = new LinkedHashSet<>();
             for (Entry<String, DatasetEntity> entry : datasets.entrySet()) {
                 getLogger().debug("Removing timeSeries with id '{}' from metadata!", entry.getKey());
                 DatasetEntity dataset = entry.getValue();
                 if (getProxyHelper().isDeletePhysically()) {
-                    getInsertionRepository().removeRelatedData(dataset);
+                    getCRUDRepository().removeRelatedData(dataset);
+                    features.add(dataset.getFeature().getId());
+                    platforms.add(dataset.getPlatform().getId());
+                    PlatformEntity platform = dataset.getPlatform();
                     getDatasetRepository().delete(dataset);
+
                 } else {
                     dataset.setDeleted(true);
                     getDatasetRepository().saveAndFlush(dataset);
                 }
             }
+            getCRUDRepository().removeFeature(features);
+            getCRUDRepository().removePlatform(platforms);
             getLogger().debug("Finished removing datasets/timeSeries!");
         }
     }
 
     <T> T unproxy(T entity);
 
-    InsertionRepository getInsertionRepository();
+    CRUDRepository getCRUDRepository();
 
     ServiceEntityFactory getServiceEntityFactory();
 
@@ -102,6 +117,8 @@ public interface Harvester {
     String getConnectorName();
 
     AbstractProxyHelper getProxyHelper();
+
+    EventBus getEventBus();
 
     Logger getLogger();
 

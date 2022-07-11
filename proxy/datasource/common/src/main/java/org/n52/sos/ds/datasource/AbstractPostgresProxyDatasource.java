@@ -99,7 +99,7 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
     @Override
     public void validatePrerequisites(Map<String, Object> settings) {
         settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.PROXY.name());
-        settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        settings.put(FEATURE_CONCEPT_KEY, getFeatureConcept());
         settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
         settings.put(HibernateConstants.CONNECTION_USERNAME, USERNAME_DEFAULT_VALUE);
         settings.put(HibernateConstants.CONNECTION_PASSWORD, PASSWORD_DEFAULT_VALUE);
@@ -110,4 +110,9 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
     public void validateConnection(Map<String, Object> settings) {
         super.validateConnection(settings);
     }
+
+    protected String getFeatureConcept() {
+        return FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
+    }
+
 }

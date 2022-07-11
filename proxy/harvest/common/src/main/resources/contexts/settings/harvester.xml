@@ -16,7 +16,7 @@
             <property name="order" value="15.0" />
         </bean>
         <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.harvest.full" />
+            <property name="key" value="harvest.full" />
             <property name="title" value="Cron expression for execution of full update" />
             <property name="description" value="Definition the cron expression for the execution of the full update. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
             <property name="order" value="1.0" />
@@ -24,20 +24,12 @@
             <property name="defaultValue" value="0 0 03 * * ?" />
         </bean>
         <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.harvest.temporal" />
+            <property name="key" value="harvest.temporal" />
             <property name="title" value="Cron expression for execution of temporal update" />
             <property name="description" value="Definition the cron expression for the execution of the temporal update. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
             <property name="order" value="1.1" />
             <property name="group" ref="proxySettingDefinitionGroup" />
             <property name="defaultValue" value="0 0/5 * * * ?" />
-        </bean>
-        <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-            <property name="key" value="proxy.harvest.delete.physically" />
-            <property name="title" value="Should removed datasets physically deleted from metadata" />
-            <property name="description" value="Define whether the datasets should be physically deleted from metadata or only marked as deleted." />
-            <property name="order" value="2.0" />
-            <property name="group" ref="proxySettingDefinitionGroup" />
-            <property name="defaultValue" value="true" />
         </bean>
     </beans>
 </beans>

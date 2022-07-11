@@ -368,6 +368,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         featureQueryHandler.setI18NDAORepository(i18NDAORepository);
         featureQueryHandler.setGeometryHandler(geometryHandler);
         featureQueryHandler.setContentCacheController(contentCacheController);
+        featureQueryHandler.setProfileHandler(new ProfileHanlderMock());
         ObservationHelper observationHelper = new ObservationHelper();
         observationHelper.setBindingRepository(bindingRepository);
         observationHelper.setDecoderRepository(decoderRepository);
@@ -483,6 +484,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getObsDAO.setEncoderRepository(encoderRepository);
         getObsDAO.setDefaultLanguage("eng");
         getObsDAO.setOmObservationCreatorContext(observationCtx);
+        getObsDAO.setProfileHandler(new ProfileHanlderMock());
         getResultTemplateDAO.setConnectionProvider(this);
         getResultTemplateDAO.setDecoderRepository(decoderRepository);
         getResultTemplateDAO.setDaoFactory(daoFactory);

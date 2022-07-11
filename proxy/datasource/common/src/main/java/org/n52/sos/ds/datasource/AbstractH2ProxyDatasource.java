@@ -36,6 +36,8 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
 
     private static final long serialVersionUID = 1L;
 
+    private static final String GEODB_INNIT_CONNECTION_CUSTOMIZER = "org.n52.c3p0.GeoDBInitConnectionCustomizer";
+
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
         precheck(settings);
@@ -47,6 +49,7 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         p.put(HibernateConstants.C3P0_MAX_SIZE, "200");
         p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
+        p.put(HibernateConstants.C3P0_CONNECTION_CUSTOMIZER_CLASS_NAME, GEODB_INNIT_CONNECTION_CUSTOMIZER);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
@@ -62,22 +65,21 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
 
     private void precheck(Map<String, Object> settings) {
         settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.PROXY.name());
-        settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        settings.put(FEATURE_CONCEPT_KEY, getFeatureConcept());
         settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
     }
 
     @Override
     public void validatePrerequisites(Map<String, Object> settings) {
         settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.PROXY.name());
-        settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        settings.put(FEATURE_CONCEPT_KEY, getFeatureConcept());
         settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
         settings.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
         settings.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         super.validatePrerequisites(settings);
     }
 
-    @Override
-    public boolean needsSchema() {
-        return false;
+    protected String getFeatureConcept() {
+        return FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
     }
 }

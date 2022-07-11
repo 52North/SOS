@@ -89,7 +89,7 @@ public class EnvironmentalMonitoringFacilityCreator
             // emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
 
             addObservingCapabilities(emFeature, f);
-             addHasObservations(emFeature, f);
+            addHasObservations(emFeature, f);
 
             // final Set<FeatureOfInterest> parentFeatures = emf.getParents();
             // if (parentFeatures != null && !parentFeatures.isEmpty()) {

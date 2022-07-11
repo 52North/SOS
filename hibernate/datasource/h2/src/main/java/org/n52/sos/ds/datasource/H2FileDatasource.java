@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
@@ -50,21 +49,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import com.google.common.collect.Sets;
 
-
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
-public class H2FileDatasource extends AbstractH2Datasource {
+public class H2FileDatasource extends AbstractH2Datasource implements H2File {
     private static final String DIALECT = "H2/GeoDB (file based)";
-
-    private static final Pattern JDBC_URL_PATTERN = Pattern
-            .compile("^jdbc:h2:(.+)$");
-
-    private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
-
-    private static final String USER_HOME = "user.home";
 
     private static final String SOS = "sos";
 
@@ -90,11 +81,11 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
-                DESCRIPTION).setDefaultValue(
-                System.getProperty(USER_HOME) + File.separator + SOS);
-        return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
-                getDatabaseExtensionDefinition(), getFeatureConceptDefinition());
+        AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(DESCRIPTION)
+                .setDefaultValue(System.getProperty(USER_HOME) + File.separator + SOS);
+        return Sets.<
+                SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
+                        getDatabaseExtensionDefinition(), getFeatureConceptDefinition());
     }
 
     private StringSettingDefinition getDatabaseDefinition() {
@@ -113,11 +104,12 @@ public class H2FileDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         p.put(HibernateConstants.CONNECTION_POOL_SIZE, "1");
-        p.put(HibernateConstants.CONNECTION_RELEASE_MODE, HibernateConstants.CONNECTION_RELEASE_MODE_AFTER_TRANSACTION);
+        p.put(HibernateConstants.CONNECTION_RELEASE_MODE,
+                HibernateConstants.CONNECTION_RELEASE_MODE_AFTER_TRANSACTION);
         p.put(HibernateConstants.CURRENT_SESSION_CONTEXT, HibernateConstants.THREAD_LOCAL_SESSION_CONTEXT);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
-        p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
+        p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -199,8 +191,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    public void validateSchema(Properties current,
-                               Map<String, Object> changed) {
+    public void validateSchema(Properties current, Map<String, Object> changed) {
         /* can not be validated */
     }
 }

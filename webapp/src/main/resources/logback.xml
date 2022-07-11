@@ -53,7 +53,7 @@
 
     <logger name="org.n52" level="${config.logger.level.main.n52}" />
     <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
-    <logger name="org.hibernate.SQL" level="ERROR" />
+    <logger name="org.hibernate.SQL" level="${config.logger.level.main.sql}" />
     <logger name="org.hibernate.type.descriptor.sql" level="ERROR" />
 
     <root level="${config.logger.level.main.global}">

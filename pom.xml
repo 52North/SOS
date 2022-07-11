@@ -62,6 +62,7 @@
         <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
         <config.logger.level.test.global>ERROR</config.logger.level.test.global>
         <config.logger.level.main.n52>INFO</config.logger.level.main.n52>
+        <config.logger.level.main.sql>ERROR</config.logger.level.main.sql>
         <config.logger.level.main.global>WARN</config.logger.level.main.global>
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
@@ -101,6 +102,7 @@
         <version.junit>5.8.2</version.junit>
         <version.exificient>1.0.4</version.exificient>
         <version.jaxb>2.3.0</version.jaxb>
+        <version.netty>4.1.70.Final</version.netty>
     </properties>
 
     <dependencyManagement>
@@ -141,6 +143,11 @@
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland-statistics-geolocation</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>bjornoya</artifactId>
                 <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
@@ -203,6 +210,34 @@
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-handler</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-buffer</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-codec-http</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-resolver</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-transport</artifactId>
+                    </exclusion>                   
                 </exclusions>
             </dependency>
             <dependency>
@@ -239,6 +274,30 @@
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-lang3</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.thrift</groupId>
+                        <artifactId>libthrift</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-base</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-iri</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-arq</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.jena</groupId>
+                        <artifactId>jena-shaded-guava</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -337,6 +396,10 @@
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-commons</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -355,6 +418,10 @@
                     <exclusion>
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-commons</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -567,12 +634,39 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>sos-proxy-harvest-dataaccess</artifactId>
+                 <version>${project.version}</version>
+            </dependency>
+            <!-- Aquarius -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>sos-proxy-aquarius-datasource</artifactId>
                  <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>sos-proxy-aquarius-handler</artifactId>
+                 <version>${project.version}</version>
+            </dependency>
+            <!-- PegelOnline -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-proxy-pegelonline-datasource</artifactId>
+                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-proxy-pegelonline-handler</artifactId>
+                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-proxy-pegelonline-core</artifactId>
+                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-proxy-pegelonline-connector</artifactId>
                  <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -827,7 +921,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.6.1</version>
+                <version>7.6.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1329,6 +1423,17 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
+                <version>${version.springframework}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
                 <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
@@ -2049,6 +2154,55 @@
                 <artifactId>jaxb-impl</artifactId>
                 <version>${version.jaxb}</version>
             </dependency>
+            <!-- CVE fixes -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${version.netty}</version>
+                <scope>runtime</scope>
+            </dependency> 
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>0.15.0</version>
+                <scope>runtime</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -2329,6 +2483,7 @@
             <properties>
                 <config.logger.level.main.global>INFO</config.logger.level.main.global>
                 <config.logger.level.main.n52>DEBUG</config.logger.level.main.n52>
+                <config.logger.level.main.sql>DEBUG</config.logger.level.main.sql>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>
         </profile>

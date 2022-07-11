@@ -232,7 +232,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                 .setShowAllLanguages(showAllLanguages)
                 .setDefaultLanguage(defaultLocale)
                 .setI18NDAORepository(i18NDAORepository)
-                .setCache((SosContentCache) contentCacheController.getCache());
+                .setCache((SosContentCache) contentCacheController.getCache())
+                .setActiveProfile(getProfileHandler().getActiveProfile());
         return context;
     }
 

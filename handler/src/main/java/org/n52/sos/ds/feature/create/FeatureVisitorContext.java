@@ -32,6 +32,7 @@ import java.util.Locale;
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 
@@ -64,6 +65,8 @@ public class FeatureVisitorContext {
     private I18NDAORepository i18NDAORepository;
 
     private SosContentCache cache;
+
+    private Profile activeProfile;
 
     /**
      * @return the session
@@ -141,7 +144,7 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param daoFactory
+     * @param sosHelper
      *            the sosHelper to set
      * @return This {@link FeatureVisitorContext}
      */
@@ -269,6 +272,15 @@ public class FeatureVisitorContext {
      */
     public SosContentCache getCache() {
         return cache;
+    }
+
+    public Profile getActiveProfile() {
+        return activeProfile;
+    }
+
+    public FeatureVisitorContext setActiveProfile(Profile activeProfile) {
+        this.activeProfile = activeProfile;
+        return this;
     }
 
     public String getServiceURL() {

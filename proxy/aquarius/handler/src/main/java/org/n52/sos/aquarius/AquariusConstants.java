@@ -117,7 +117,8 @@ public interface AquariusConstants {
         InstantaneousValues,
         DiscreteValues,
         InstantaneousTotals,
-        PrecedingTotals, Default;
+        PrecedingTotals,
+        Default;
 
         public static InterpolationTypes getFrom(String value) {
             for (InterpolationTypes identifier : values()) {

@@ -45,6 +45,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -55,8 +56,8 @@ class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGen
 
     ProcedureDescriptionGeneratorWml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController,
-            DbQueryFactory dbQueryFactory) {
-        super(i18ndaoRepository, cacheController, dbQueryFactory);
+            ProcedureDescriptionSettings procedureSettings, DbQueryFactory dbQueryFactory) {
+        super(i18ndaoRepository, cacheController, procedureSettings, dbQueryFactory);
     }
 
     @Override

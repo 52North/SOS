@@ -31,7 +31,7 @@ public class AquariusPostgresDatasource extends AbstractAquariusPostgresDatasour
 
     private static final long serialVersionUID = 1L;
 
-    private static final String DIALECT = "Proxy Aquarius Postgres";
+    private static final String DIALECT = "Proxy Aquarius (Postgres)";
 
     public AquariusPostgresDatasource() {
         super();

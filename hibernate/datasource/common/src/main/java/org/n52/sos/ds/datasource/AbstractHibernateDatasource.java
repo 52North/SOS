@@ -86,12 +86,12 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
-public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
+public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource
+        implements SQLConstants, HibernateDatasource {
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
 
@@ -145,7 +145,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private static final String SETTING_NOT_FOUND_TEMPLATE =
             "Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'. "
-            + "If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n";
+                    + "If this produces no error, please add the following setting to "
+                    + "your datasource properties: '{}={}'\n\n";
 
     private static final String TMP_FILE_ENDING = ".tmp";
 
@@ -205,12 +206,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setGroup(ADVANCED_GROUP);
         def.setOrder(2);
         def.setKey(DATABASE_CONCEPT_KEY);
-        def.addOption(DatabaseConcept.SIMPLE.name(),
-                      DatabaseConcept.SIMPLE.getDisplayName());
-        def.addOption(DatabaseConcept.EREPORTING.name(),
-                      DatabaseConcept.EREPORTING.getDisplayName());
-        def.addOption(DatabaseConcept.TRANSACTIONAL.name(),
-                DatabaseConcept.TRANSACTIONAL.getDisplayName());
+        def.addOption(DatabaseConcept.SIMPLE.name(), DatabaseConcept.SIMPLE.getDisplayName());
+        def.addOption(DatabaseConcept.EREPORTING.name(), DatabaseConcept.EREPORTING.getDisplayName());
+        def.addOption(DatabaseConcept.TRANSACTIONAL.name(), DatabaseConcept.TRANSACTIONAL.getDisplayName());
         def.setDefaultValue(DatabaseConcept.TRANSACTIONAL.name());
         return def;
     }
@@ -222,22 +220,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setGroup(ADVANCED_GROUP);
         def.setOrder(3);
         def.setKey(DATABASE_EXTENSION_KEY);
-        def.addOption(DatabaseExtension.DATASOURCE.name(),
-                    DatabaseExtension.DATASOURCE.getDisplayName());
-        def.addOption(DatabaseExtension.SAMPLING.name(),
-                    DatabaseExtension.SAMPLING.getDisplayName());
+        def.addOption(DatabaseExtension.DATASOURCE.name(), DatabaseExtension.DATASOURCE.getDisplayName());
+        def.addOption(DatabaseExtension.SAMPLING.name(), DatabaseExtension.SAMPLING.getDisplayName());
         def.setDefaultValue(DatabaseExtension.DATASOURCE.name());
         return def;
     }
 
     protected ChoiceSettingDefinition createFeatureConceptDefinition() {
         ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
-        choiceSettingDefinition
-                .setTitle(FEATURE_CONCEPT_TITLE)
-                .setDescription(FEATURE_CONCEPT_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP)
-                .setKey(FEATURE_CONCEPT_KEY)
-                .setOrder(4);
+        choiceSettingDefinition.setTitle(FEATURE_CONCEPT_TITLE).setDescription(FEATURE_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP).setKey(FEATURE_CONCEPT_KEY).setOrder(4);
         choiceSettingDefinition.addOption(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name(),
                 FeatureConcept.DEFAULT_FEATURE_CONCEPT.getDisplayName());
         choiceSettingDefinition.addOption(FeatureConcept.EXTENDED_FEATURE_CONCEPT.name(),
@@ -330,9 +322,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
                 concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
             }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
-                    featureConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
-                    featureConceptDefinition.getKey(), concept);
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE, featureConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept, featureConceptDefinition.getKey(),
+                    concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
             case EXTENDED_FEATURE_CONCEPT:
@@ -389,9 +381,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
                 concept = DatabaseConcept.PROXY.name();
             }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
-                    databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
-                    databaseConceptDefinition.getKey(), concept);
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE, databaseConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept, databaseConceptDefinition.getKey(),
+                    concept);
         }
         return DatabaseConcept.valueOf(concept);
     }
@@ -440,9 +432,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_SAMPLING_PATH)) {
                 extension = DatabaseExtension.SAMPLING.name();
             }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
-                    databaseExtensionDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, extension,
-                    databaseExtensionDefinition.getKey(), extension);
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE, databaseExtensionDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY, extension, databaseExtensionDefinition.getKey(),
+                    extension);
         }
         return DatabaseExtension.valueOf(extension);
     }
@@ -811,38 +803,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * Close SQL connection
-     *
-     * @param conn
-     *            SQL connection to close
-     */
-    protected void close(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                LOG.error("Error closing connection", e);
-            }
-        }
-    }
-
-    /**
-     * Close SQL statement
-     *
-     * @param stmt
-     *            SQL statement to close
-     */
-    protected void close(Statement stmt) {
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                LOG.error("Error closing statement", e);
-            }
-        }
-    }
-
-    /**
      * Add mapping files directories to properties
      *
      * @param settings
@@ -959,13 +919,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * Remove duplicated foreign key definition for table observationHasOffering
-     * otherwise database model creation fails in Oracle
+     * Remove duplicated foreign key definition for table observationHasOffering otherwise database model
+     * creation fails in Oracle
      *
      * @param script
      *            Create and not checked script.
-     * @return Checked script without duplicate foreign key for
-     *         observationHasOffering
+     * @return Checked script without duplicate foreign key for observationHasOffering
      */
     protected String[] checkCreateSchema(String[] script) {
         return checkScriptForGeneratedAndDuplicatedEntries(script);
@@ -1011,21 +970,19 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * Create the beginning character of a generated foreign key from a table
-     * name hasCode()
+     * Create the beginning character of a generated foreign key from a table name hasCode()
      *
      * @param tableName
      *            Table name
-     * @return Beginning characters of a generated foreign key like "FK + table
-     *         name hasCode()"
+     * @return Beginning characters of a generated foreign key like "FK + table name hasCode()"
      */
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
 
     /**
-     * Check if drop schema contains alter table ... drop constraint ... . Due
-     * to dynamic generation some constraints are generated and differ.
+     * Check if drop schema contains alter table ... drop constraint ... . Due to dynamic generation some
+     * constraints are generated and differ.
      *
      * @param dropSchema
      *            Schema to check
@@ -1084,10 +1041,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * Workaround for Java {@link DriverManager} issue with more than one
-     * registered drivers. Only the first {@link SQLException} is catched and
-     * thrown instead of the {@link SQLException} related to the driver which is
-     * valid for the URL.
+     * Workaround for Java {@link DriverManager} issue with more than one registered drivers. Only the first
+     * {@link SQLException} is catched and thrown instead of the {@link SQLException} related to the driver
+     * which is valid for the URL.
      *
      * @param url
      *            DB connection URL
@@ -1095,7 +1051,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *            User name
      * @param password
      *            Password
-     * @throws SQLException If an error occurs
+     * @throws SQLException
+     *             If an error occurs
      */
     protected void precheckDriver(String url, String user, String password) throws SQLException {
         Driver driver = DriverManager.getDriver(url);
@@ -1109,6 +1066,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
             driver.connect(url, info).close();
         }
+    }
+
+    @Override
+    public Logger getLogger() {
+        return LOG;
     }
 
     /**

@@ -28,10 +28,10 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<jsp:include page="common/header.jsp">
+<jsp:include page="./common/header.jsp">
 	<jsp:param name="activeMenu" value="home" />
 </jsp:include>
-<jsp:include page="common/logotitle.jsp">
+<jsp:include page="./common/logotitle.jsp">
 	<jsp:param name="title" value="52&deg;North SOS" />
 	<jsp:param name="leadParagraph" value="Open Source Sensor Observation Service" />
 </jsp:include>
@@ -555,4 +555,4 @@
 	</tbody>
 </table>
 
-<jsp:include page="common/footer.jsp" />
+<jsp:include page="./common/footer.jsp" />

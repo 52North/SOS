@@ -1552,7 +1552,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
                         getMaxPhenomenonTimeForOffering(offering)))
                 .reduce(Functions.mergeLeft((a, b) -> a.extend(b, Comparator.naturalOrder()))).orElseGet(MinMax::new);
         if (!getOfferings().isEmpty() && minMax.getMinimum() == null || minMax.getMaximum() == null) {
-            LOG.error("Error in cache! Reset of global temporal bounding box failed. Max: '{}'; Min: '{}'",
+            LOG.info("Reset of global temporal bounding box has missing values. Max: '{}'; Min: '{}'",
                     minMax.getMaximum(), minMax.getMinimum());
         }
         setPhenomenonTime(minMax.getMinimum(), minMax.getMaximum());

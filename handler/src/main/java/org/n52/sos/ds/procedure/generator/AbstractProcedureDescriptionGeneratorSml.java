@@ -69,6 +69,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.JavaHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -105,8 +106,9 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix,
-            boolean isAddOutputsToSensorML, DbQueryFactory dbQueryFactory) {
-        super(i18NDAORepository, cacheController, dbQueryFactory);
+            boolean isAddOutputsToSensorML, ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
+        super(i18NDAORepository, cacheController, procedureSettings, dbQueryFactory);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
         this.profileHandler = profileHandler;

@@ -31,14 +31,11 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
@@ -48,17 +45,11 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
+public class AquariusFileDatasource extends AbstractAquariusH2Datasource implements H2File {
 
     private static final long serialVersionUID = 1L;
 
     private static final String DIALECT = "Proxy Aquarius (file based)";
-
-    private static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:h2:(.+)$");
-
-    private static final String JDBC_URL_FORMAT = "jdbc:h2:file:%s";
-
-    private static final String USER_HOME = "user.home";
 
     private static final String AQ = "aq";
 
@@ -146,21 +137,15 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
         }
     }
 
-    private boolean checkTableSize(Map<String, Object> settings) {
+    private  boolean checkTableSize(Map<String, Object> settings) {
         Connection conn = null;
-        Statement stmt = null;
         try {
             conn = openConnection(settings);
-            stmt = conn.createStatement();
-            stmt.execute("show tables");
-            ResultSet resultSet = stmt.getResultSet();
-            resultSet.last();
-            return resultSet.getRow() <= 1;
+            return checkTableSize(settings, conn);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
             close(conn);
-            close(stmt);
         }
     }
 
@@ -177,11 +162,6 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
     @Override
     protected String[] parseURL(String url) {
         return new String[0];
-    }
-
-    @Override
-    public boolean needsSchema() {
-        return true;
     }
 
 }

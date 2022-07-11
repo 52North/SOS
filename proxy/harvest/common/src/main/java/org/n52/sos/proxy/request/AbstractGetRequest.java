@@ -30,6 +30,7 @@ package org.n52.sos.proxy.request;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AbstractGetRequest extends AbstractRequest {
 
@@ -47,6 +48,8 @@ public abstract class AbstractGetRequest extends AbstractRequest {
     public abstract Map<String, String> getQueryParameters();
 
     protected String toCSV(Collection<String> values) {
-        return String.join(",", values);
+        return String.join(",", values.stream()
+                .map(v -> encode(v))
+                .collect(Collectors.toSet()));
     }
 }

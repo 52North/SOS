@@ -27,6 +27,8 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.Map;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
@@ -55,6 +57,8 @@ import org.n52.shetland.util.ReverseOf;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.ctrl.SosContentCacheControllerImpl;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 
@@ -101,6 +105,44 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         featureQueryHandler.setGeometryHandler(geometryHandler);
         featureQueryHandler.setContentCacheController(contentCacheController);
         featureQueryHandler.setI18NDAORepository(i18NDAORepository);
+        featureQueryHandler.setProfileHandler(new ProfileHandler() {
+
+            @Override
+            public void init() {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void reloadProfiles() {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public boolean isSetActiveProfile() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public Map<String, Profile> getAvailableProfiles() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Profile getActiveProfile() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public void activateProfile(String identifier) {
+                // TODO Auto-generated method stub
+
+            }
+        });
     }
 
     @Test

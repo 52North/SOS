@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-proxy-datasource</artifactId>
     <packaging>pom</packaging>
-    <name>52°North SOS - Proxy Datasources</name>
+    <name>52°North SOS - Proxy Datasource</name>
     <description>52°North Sensor Observation Service Proxy datasource module</description>
     <modules>
         <module>common</module>

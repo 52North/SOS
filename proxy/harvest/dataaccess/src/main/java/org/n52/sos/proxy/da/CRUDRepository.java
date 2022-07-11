@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import org.springframework.transaction.annotation.Transactional;
 
 import org.hibernate.Hibernate;
 import org.n52.io.request.IoParameters;
@@ -47,6 +46,11 @@ import org.n52.sensorweb.server.db.assembler.core.PlatformAssembler;
 import org.n52.sensorweb.server.db.assembler.core.ProcedureAssembler;
 import org.n52.sensorweb.server.db.assembler.core.ServiceAssembler;
 import org.n52.sensorweb.server.db.assembler.core.TagAssembler;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
+import org.n52.sensorweb.server.db.query.DatasetQuerySpecifications;
+import org.n52.sensorweb.server.db.repositories.core.DataRepository;
+import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
+import org.n52.sensorweb.server.db.repositories.core.UnitRepository;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
@@ -59,18 +63,14 @@ import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.TagEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
-import org.n52.sensorweb.server.db.query.DatasetQuerySpecifications;
-import org.n52.sensorweb.server.db.repositories.core.DataRepository;
-import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
-import org.n52.sensorweb.server.db.repositories.core.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class InsertionRepository {
+public class CRUDRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InsertionRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CRUDRepository.class);
 
     @Inject
     private DbQueryFactory dbQueryFactory;
@@ -111,14 +111,10 @@ public class InsertionRepository {
     @Inject
     private DataRepository dataRepository;
 
-    public synchronized ServiceEntity insertService(ServiceEntity service) {
-        return serviceAssembler.getOrInsertInstance(service);
-    }
-
     public synchronized void removeServiceRelatedData(ServiceEntity service) {
         DatasetQuerySpecifications dsQS = getDatasetQuerySpecification();
         for (DatasetEntity dataset : datasetRepository.findAll(dsQS.matchServices(Long.toString(service.getId())))) {
-            dataRepository.deleteByDataset(datasetRepository.getById(dataset.getId()));
+            dataRepository.deleteByDataset(datasetRepository.getReferenceById(dataset.getId()));
         }
         datasetRepository.deleteByService(service);
         categoryAssembler.clearUnusedForService(service);
@@ -129,13 +125,19 @@ public class InsertionRepository {
         platformAssembler.clearUnusedForService(service);
     }
 
+
+    public synchronized ServiceEntity insertService(ServiceEntity service) {
+        return serviceAssembler.getOrInsertInstance(service);
+    }
+
     public synchronized void removeRelatedData(DatasetEntity dataset) {
-        if (dataset.hasReferenceValues()) {
-            for (DatasetEntity refDataset : dataset.getReferenceValues()) {
+        DatasetEntity instance = datasetRepository.getReferenceById(dataset.getId());
+        if (instance.hasReferenceValues()) {
+            for (DatasetEntity refDataset : instance.getReferenceValues()) {
                 removeData(refDataset);
             }
         }
-        dataRepository.deleteByDataset(dataset);
+        dataRepository.deleteByDataset(instance);
     }
 
     private void removeData(DatasetEntity dataset) {
@@ -176,9 +178,10 @@ public class InsertionRepository {
         return insertDataset(dataset, category, procedure, offering, feature, phenomenon, platform, unit, insertTags);
     }
 
-    private DatasetEntity insertDataset(DatasetEntity dataset, CategoryEntity category,
-            ProcedureEntity procedure, OfferingEntity offering, AbstractFeatureEntity<?> feature,
-            PhenomenonEntity phenomenon, PlatformEntity platform, UnitEntity unit, Set<TagEntity> tags) {
+
+    private DatasetEntity insertDataset(DatasetEntity dataset, CategoryEntity category, ProcedureEntity procedure,
+            OfferingEntity offering, AbstractFeatureEntity<?> feature, PhenomenonEntity phenomenon,
+            PlatformEntity platform, UnitEntity unit, Set<TagEntity> tags) {
         dataset.setCategory(category);
         dataset.setProcedure(procedure);
         dataset.setOffering(offering);
@@ -200,29 +203,39 @@ public class InsertionRepository {
         return unproxy(offeringAssembler.getOrInsertInstance(offering));
     }
 
+
     private ProcedureEntity insertProcedure(ProcedureEntity procedure) {
         return unproxy(procedureAssembler.getOrInsertInstance(procedure));
     }
+
 
     private CategoryEntity insertCategory(CategoryEntity category) {
         return unproxy(categoryAssembler.getOrInsertInstance(category));
     }
 
+
     private PhenomenonEntity insertPhenomenon(PhenomenonEntity phenomenon) {
         return unproxy(phenomenonAssembler.getOrInsertInstance(phenomenon));
     }
+
 
     private PlatformEntity insertPlatform(PlatformEntity platform) {
         return unproxy(platformAssembler.getOrInsertInstance(platform));
     }
 
+
     private Set<TagEntity> insertTags(Collection<TagEntity> tags) {
-        return tags.stream().filter(Objects::nonNull).map(t -> insertTag(t)).collect(Collectors.toSet());
+        return tags.stream()
+                .filter(Objects::nonNull)
+                .map(t -> insertTag(t))
+                .collect(Collectors.toSet());
     }
+
 
     private TagEntity insertTag(TagEntity tag) {
         return unproxy(tagAssembler.getOrInsertInstance(tag));
     }
+
 
     private UnitEntity insertUnit(UnitEntity unit) {
         if (unit != null && unit.isSetIdentifier()) {
@@ -235,7 +248,11 @@ public class InsertionRepository {
         return null;
     }
 
-    public synchronized <T extends DataEntity<?>> T insertData(DatasetEntity dataset, T  data) {
+    public synchronized <T extends DataEntity<?>> T insertData(DatasetEntity dataset, T data) {
+        return insertData(dataset, data, false);
+    }
+
+    public synchronized <T extends DataEntity<?>> T insertData(DatasetEntity dataset, T data, boolean forceMinChange) {
         data.setDataset(dataset);
         boolean minChanged = false;
         boolean maxChanged = false;
@@ -289,10 +306,12 @@ public class InsertionRepository {
         return (T) insertedData;
     }
 
+
     public synchronized DatasetEntity updateData(DatasetEntity dataset, DataEntity<?> data) {
         dataRepository.saveAndFlush(data);
         return updateDataset(dataset);
     }
+
 
     public synchronized DatasetEntity updateDataset(DatasetEntity dataset) {
         return unproxy(datasetRepository.saveAndFlush(dataset));

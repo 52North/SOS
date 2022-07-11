@@ -30,9 +30,9 @@ package org.n52.sos.aquarius.harvest;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
+import org.n52.bjornoya.schedule.TemporalHarvesterJob;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.proxy.harvest.TemporalHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -48,10 +48,6 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
 
     @Inject
     private AquariusTemporalUpdater updater;
-
-    public AquariusTemporalHarvesterJob() {
-        setTriggerAtStartup(isTriggerAtStartup());
-    }
 
     @Override
     protected boolean process(JobExecutionContext context, AquariusConnector connector) {

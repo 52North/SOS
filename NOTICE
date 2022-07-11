@@ -4,6 +4,7 @@ Licensed under GNU General Public License, Version 2.0
 
 This project includes: 
 
+  52°North Bjornoya under The Apache Software License, Version 2.0
   52°North Faroe under The Apache Software License, Version 2.0
   52°North Faroe Annotations under The Apache Software License, Version 2.0
   52°North Faroe JSON Backend under The Apache Software License, Version 2.0
@@ -55,10 +56,11 @@ This project includes:
   52°North SOS - Proxy Aquarius Datasource under GPLv2
   52°North SOS - Proxy Aquarius Handler under GPLv2
   52°North SOS - Proxy Aquarius Module under GPLv2
+  52°North SOS - Proxy Datasource under GPLv2
   52°North SOS - Proxy Datasource Common under GPLv2
-  52°North SOS - Proxy Datasources under GPLv2
   52°North SOS - Proxy Harvest under GPLv2
   52°North SOS - Proxy Harvest Common under GPLv2
+  52°North SOS - Proxy Harvest DataAccess under GPLv2
   52°North SOS - Proxy Module under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
@@ -92,7 +94,9 @@ This project includes:
   Apache FOP Events under The Apache Software License, Version 2.0
   Apache FOP Utilities under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
+  Apache HttpClient Cache under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
+  Apache Thrift under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
   AspectJ Weaver under Eclipse Public License - v 2.0
@@ -150,6 +154,7 @@ This project includes:
   javaee-api under CDDL + GPLv2 with classpath exception
   JavaMail API under CDDL/GPLv2+CE
   JavaMail API jar under CDDL or GPLv2+CE
+  javax.annotation API under CDDL + GPLv2 with classpath exception
   javax.inject under The Apache Software License, Version 2.0
   javax.persistence-api under Eclipse Public License v1.0 or Eclipse Distribution License v. 1.0
   JAXB Runtime under CDDL+GPL License
@@ -178,7 +183,6 @@ This project includes:
   Netty/Common under Apache License, Version 2.0
   Netty/Handler under Apache License, Version 2.0
   Netty/Resolver under Apache License, Version 2.0
-  Netty/TomcatNative [OpenSSL - Classes] under The Apache Software License, Version 2.0
   Netty/Transport under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   odata-commons-api under The Apache Software License, Version 2.0

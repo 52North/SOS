@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import org.n52.faroe.SettingsService;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -42,14 +43,7 @@ import org.n52.sos.util.GeometryHandler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements ProcedureDescriptionGeneratorFactory {
-
-    private final SettingsService settingsService;
-    private final GeometryHandler geometryHandler;
-    private final I18NDAORepository i18NDAORepository;
-    private final ContentCacheController cacheController;
-    private final ProfileHandler profileHandler;
-    private DbQueryFactory dbQueryFactory;
+public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 extends AbstractProcedureDescriptionGeneratorFactory {
 
     @Inject
     public ProcedureDescriptionGeneratorFactoryInspireOmpr30(SettingsService settingsService,
@@ -57,13 +51,11 @@ public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements Proced
                                                                I18NDAORepository i18NDAORepository,
                                                                ContentCacheController cacheController,
                                                                ProfileHandler profileHandler,
+                                                               ProcedureDescriptionSettings procedureSettings,
                                                                DbQueryFactory dbQueryFactory) {
-        this.settingsService = settingsService;
-        this.geometryHandler = geometryHandler;
-        this.i18NDAORepository = i18NDAORepository;
-        this.cacheController = cacheController;
-        this.profileHandler = profileHandler;
-        this.dbQueryFactory = dbQueryFactory;
+
+        super(settingsService, geometryHandler, i18NDAORepository, cacheController, profileHandler, procedureSettings,
+                dbQueryFactory);
     }
 
     @Override
@@ -78,32 +70,10 @@ public class ProcedureDescriptionGeneratorFactoryInspireOmpr30 implements Proced
                                                                    getGeometryHandler(),
                                                                    getI18NDAORepository(),
                                                                    getCacheController(),
+                                                                   getProcedureSettings(),
                                                                    getDbQueryFactory());
         getSettingsService().configureOnce(key);
         return generator;
     }
 
-    public SettingsService getSettingsService() {
-        return settingsService;
-    }
-
-    public GeometryHandler getGeometryHandler() {
-        return geometryHandler;
-    }
-
-    public I18NDAORepository getI18NDAORepository() {
-        return i18NDAORepository;
-    }
-
-    public ContentCacheController getCacheController() {
-        return cacheController;
-    }
-
-    public ProfileHandler getProfileHandler() {
-        return profileHandler;
-    }
-
-    public DbQueryFactory getDbQueryFactory() {
-        return dbQueryFactory;
-    }
 }

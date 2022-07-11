@@ -37,8 +37,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
-import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
-import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -65,16 +63,15 @@ import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.InterpolationType;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
-import org.n52.sos.proxy.da.InsertionRepository;
+import org.n52.sos.proxy.harvest.AbstractHarvester;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
-import org.n52.sos.proxy.harvest.Harvester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP"})
-public abstract class AbstractAquariusHarvester implements Harvester, AquariusEntityBuilder {
+public abstract class AbstractAquariusHarvester extends AbstractHarvester implements AquariusEntityBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvester.class);
 
@@ -99,15 +96,6 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     protected Map<String, Location> locations = new HashMap<>();
 
     @Inject
-    private ServiceEntityFactory serviceEntityFactory;
-
-    @Inject
-    private DatasetRepository datasetRepository;
-
-    @Inject
-    private InsertionRepository insertionRepository;
-
-    @Inject
     private AquariusHelper aquariusHelper;
 
     public AquariusHelper getAquariusHelper() {
@@ -117,21 +105,6 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     @Override
     public AbstractProxyHelper getProxyHelper() {
         return getAquariusHelper();
-    }
-
-    @Override
-    public InsertionRepository getInsertionRepository() {
-        return insertionRepository;
-    }
-
-    @Override
-    public ServiceEntityFactory getServiceEntityFactory() {
-        return serviceEntityFactory;
-    }
-
-    @Override
-    public DatasetRepository getDatasetRepository() {
-        return datasetRepository;
     }
 
     @Override
@@ -232,7 +205,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
                 LOGGER.debug("Removing timeSeries with id '{}' from metadata!", entry.getKey());
                 DatasetEntity dataset = entry.getValue();
                 if (getAquariusHelper().isDeletePhysically()) {
-                    getInsertionRepository().removeRelatedData(dataset);
+                    getCRUDRepository().removeRelatedData(dataset);
                     getDatasetRepository().delete(dataset);
                 } else {
                     dataset.setDeleted(true);
@@ -261,7 +234,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
                         TimeSeriesData firstTimeSeriesData =
                                 connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
                         addParameter(dataset, timeSeries, firstTimeSeriesData);
-                        DatasetEntity insertDataset = getInsertionRepository().insertDataset(dataset);
+                        DatasetEntity insertDataset = getCRUDRepository().insertDataset(dataset);
                         updateFirstLastObservation(insertDataset, firstTimeSeriesData, timeSeries, connector);
                     }
                 }
@@ -312,7 +285,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     }
 
     protected DataEntity<?> insertData(DatasetEntity dataset, DataEntity<?> data) {
-        return getInsertionRepository().insertData(dataset, data);
+        return getCRUDRepository().insertData(dataset, data);
     }
 
     protected void addParameter(DatasetEntity dataset, TimeSeriesDescription timeSeries,

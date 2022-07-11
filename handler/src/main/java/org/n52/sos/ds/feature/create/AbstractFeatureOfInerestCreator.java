@@ -74,6 +74,13 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> e
                 absSampFeat.setSampledFeatures(sampledFeatures);
             }
         }
+        if (getContext().getActiveProfile() != null && getContext().getActiveProfile()
+                .getEncodingNamespaceForFeatureOfInterest() != null && !absFeat.getDefaultElementEncoding()
+                        .equals(getContext().getActiveProfile()
+                                .getEncodingNamespaceForFeatureOfInterest())) {
+            absFeat.setDefaultElementEncoding(getContext().getActiveProfile()
+                    .getEncodingNamespaceForFeatureOfInterest());
+        }
         return absFeat;
     }
 

@@ -27,7 +27,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -56,14 +55,14 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
 
     public AbstractAquariusPostgresDatasource() {
         super();
-        setServiceUsernameDefault(AQUARIUS_USERNAME_DEFAULT_VALUE);
-        setServiceUsernameDescription(PROXY_USERNAME_DESCRIPTION);
-        setServicePasswordDefault(AQUARIUS_PASSWORD_DEFAULT_VALUE);
-        setServicePasswordDescription(PROXY_PASSWORD_DESCRIPTION);
-        setServiceHostDefault(AQUARIUS_HOST_DEFAULT_VALUE);
-        setServiceHostDescription(HOST_DESCRIPTION);
-//        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
-//        setServicePathDescription(PROXY_PATH_DESCRIPTION);
+        setServiceUsernameDefault(getProxyUsernameDefaultValue());
+        setServiceUsernameDescription(getProxyUsernameDescription());
+        setServicePasswordDefault(getProxyPasswordDefaultValue());
+        setServicePasswordDescription(getProxyPasswordDescription());
+        setServiceHostDefault(getProxyHostDefaultValue());
+        setServiceHostDescription(getProxyHostDescription());
+//        setServicePathDefault(getProxyPathDefaultValue());
+//        setServicePathDescription(getProxyPathDescription());
     }
 
     @Override
@@ -92,33 +91,25 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
     }
 
     @Override
-    public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
-        return getDatasourceProperties(mergeProperties(current, changed));
-    }
-
-    @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
         Properties p = super.getDatasourceProperties(settings);
         p.put(PROXY_USERNAME_KEY, settings.get(PROXY_USERNAME_KEY));
         p.put(PROXY_PASSWORD_KEY, settings.get(PROXY_PASSWORD_KEY));
-        p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
-//        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         return p;
     }
 
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
-        final Map<String, Object> settings = new HashMap<String, Object>(current.size());
+        final Map<String, Object> settings = super.parseDatasourceProperties(current);
         settings.put(PROXY_USERNAME_KEY, current.getProperty(PROXY_USERNAME_KEY));
         settings.put(PROXY_PASSWORD_KEY, current.getProperty(PROXY_PASSWORD_KEY));
-        settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
-//        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
         return settings;
     }
 
     @Override
     public void validateConnection(Map<String, Object> settings) {
         AquariusDatasource.super.validateConnection(settings);
+        super.validateConnection(settings);
     }
 
     @Override

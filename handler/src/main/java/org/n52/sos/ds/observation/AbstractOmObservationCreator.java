@@ -155,18 +155,18 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
         o.setTokenSeparator(getTokenSeparator());
         o.setTupleSeparator(getTupleSeparator());
         o.setDecimalSeparator(getDecimalSeparator());
-//        addMetadata(o);
+        // addMetadata(o);
     }
 
     public abstract ObservationStream create() throws OwsExceptionReport, ConverterException;
 
-//    private void addMetadata(OmObservation o) {
-//        if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
-//            CiOnlineResource ciOnlineResource = new CiOnlineResource(getServiceURL());
-//            ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
-//            o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
-//        }
-//    }
+    // private void addMetadata(OmObservation o) {
+    // if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
+    // CiOnlineResource ciOnlineResource = new CiOnlineResource(getServiceURL());
+    // ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
+    // o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
+    // }
+    // }
 
     protected String getServiceURL() {
         return getCreatorContext().getServiceURL();
@@ -311,10 +311,6 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
      */
     protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi) throws OwsExceptionReport {
         final AbstractFeature feature = new FeatureVisitorImpl(getFeatureVisitorContext()).visit(foi);
-        if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
-                .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
-            feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
-        }
         if (!getActiveProfile().isEncodeFeatureOfInterestInObservations()
                 && feature instanceof AbstractSamplingFeature) {
             ((AbstractSamplingFeature) feature).setEncode(false);
@@ -326,7 +322,8 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
         FeatureVisitorContext context = new FeatureVisitorContext().setGeometryHandler(getGeometryHandler())
                 .setDefaultLanguage(getI18N())
                 .setI18NDAORepository(getI18NDAORepository())
-                .setCache(getCache());
+                .setCache(getCache())
+                .setActiveProfile(getActiveProfile());
         return context;
     }
 

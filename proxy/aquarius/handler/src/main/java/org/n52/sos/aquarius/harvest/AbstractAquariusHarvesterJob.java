@@ -34,7 +34,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.AbstractHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -75,7 +74,7 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
             LOGGER.debug(context.getJobDetail()
                     .getKey() + " execution finished in {} ms.", System.currentTimeMillis() - start);
             if (processed) {
-                getEventBus().submit(new UpdateCache());
+                updateCache();
             }
         }
     }

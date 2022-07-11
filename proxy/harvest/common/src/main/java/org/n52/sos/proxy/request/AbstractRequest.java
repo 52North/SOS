@@ -27,8 +27,11 @@
  */
 package org.n52.sos.proxy.request;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.springframework.web.util.UriUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -58,6 +61,10 @@ public abstract class AbstractRequest {
 
     public boolean hasHeader() {
         return !getHeader().isEmpty();
+    }
+
+    protected String encode(String value) {
+        return UriUtils.encode(value, StandardCharsets.UTF_8);
     }
 
     public abstract String getPath();

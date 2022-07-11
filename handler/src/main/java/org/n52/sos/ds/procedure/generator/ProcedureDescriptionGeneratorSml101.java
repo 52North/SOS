@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -59,9 +60,11 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
 
     ProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
-            boolean isAddOutputsToSensorML, DbQueryFactory dbQueryFactory) {
-        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
-                isAddOutputsToSensorML, dbQueryFactory);
+            boolean isAddOutputsToSensorML, ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
+        super(profileHandler, geometryHandler, i18ndaoRepository,
+                cacheController, srsNamePrefixUrl,
+                isAddOutputsToSensorML, procedureSettings, dbQueryFactory);
     }
 
     @Override

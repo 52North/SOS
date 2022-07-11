@@ -25,14 +25,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.proxy.harvest;
+package org.n52.sos.ds.datasource;
 
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.PersistJobDataAfterExecution;
+public interface H2InMemory extends HibernateDatasource {
 
-@PersistJobDataAfterExecution
-@DisallowConcurrentExecution
-public interface FullHarvesterJob extends Job {
-
+    String JDBC_URL =
+            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;";
 }

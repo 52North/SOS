@@ -195,8 +195,13 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                                         observation.getSamplingTimeEnd(), noDataPlaceholder));
                                 break;
                             case OmConstants.RESULT_TIME:
-                                builder.append(
-                                        getTimeStringForResultTime(observation.getResultTime(), noDataPlaceholder));
+                                if (observation.hasResultTime()) {
+                                    builder.append(getTimeStringForResultTime(observation.getResultTime(),
+                                            noDataPlaceholder));
+                                } else {
+                                    builder.append(getTimeStringForResultTime(observation.getSamplingTimeEnd(),
+                                            noDataPlaceholder));
+                                }
                                 break;
                             case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
                                 builder.append(
@@ -802,7 +807,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 .equals(DatasetType.trajectory)
                 || observation.getDataset()
                         .getObservationType()
-                        .equals(ObservationType.trajectory)) && observation instanceof TrajectoryDataEntity) {
+                        .equals(ObservationType.trajectory))
+                && observation instanceof TrajectoryDataEntity) {
             TrajectoryValue trajectory =
                     (TrajectoryValue) new ObservationValueCreator(getObservationHelper()).visit(observation);
             TrajectoryElement element = trajectory.getValue()

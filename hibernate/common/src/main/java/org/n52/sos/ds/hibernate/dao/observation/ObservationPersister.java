@@ -138,6 +138,8 @@ import org.n52.sos.util.GeometryHandler;
 public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExceptionReport>,
         ProfileLevelVisitor<DataEntity<?>>, TrajectoryElementVisitor<DataEntity<?>>, HibernateUnproxy {
 
+    private static final int FLUSH_THRESHOLD = 50;
+
     private final DatasetEntity dataset;
 
     private final AbstractFeatureEntity<?> featureOfInterest;
@@ -520,17 +522,15 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private Set<DataEntity<?>> persistTrajectoryChildren(List<TrajectoryElement> values, Long parent)
             throws OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
+        // counter for batch flushing
+        int obsCount = 0;
         for (TrajectoryElement element : values) {
             if (element.isSetValue()) {
-                // for (Value<?> v : level.getValue()) {
-                // if (v instanceof SweAbstractDataComponent &&
-                // ((SweAbstractDataComponent) v).isSetDefinition()) {
-                // children.add(v.accept(createChildPersister(level,
-                // ((SweAbstractDataComponent) v).getDefinition())));
-                // } else {
                 children.addAll(element.accept(createChildPersister(element, parent)));
-                // }
-                // }
+                if (++obsCount % FLUSH_THRESHOLD == 0) {
+                    session.flush();
+                    session.clear();
+                }
             }
         }
         session.flush();

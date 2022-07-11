@@ -29,53 +29,57 @@ package org.n52.sos.proxy.harvest;
 
 import javax.inject.Inject;
 
-import org.n52.io.task.ScheduledJob;
+import org.hibernate.Hibernate;
 import org.n52.janmayen.event.EventBus;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
-import org.n52.sos.proxy.da.InsertionRepository;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.PersistJobDataAfterExecution;
+import org.n52.sos.event.events.UpdateCache;
+import org.n52.sos.proxy.da.CRUDRepository;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@PersistJobDataAfterExecution
-@DisallowConcurrentExecution
 @SuppressFBWarnings({"EI_EXPOSE_REP"})
-public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
+public abstract class AbstractHarvester implements Harvester {
 
     @Inject
-    private InsertionRepository insertionRepository;
-    @Inject
     private ServiceEntityFactory serviceEntityFactory;
+
     @Inject
     private DatasetRepository datasetRepository;
+
+    @Inject
+    private CRUDRepository insertionRepository;
+
     @Inject
     private EventBus eventBus;
 
     @Override
-    public JobDetail createJobDetails() {
-        return JobBuilder.newJob(this.getClass()).withIdentity(getJobName(), getGroup()).build();
-    }
-
-    protected abstract String getGroup();
-
-    public InsertionRepository getInsertionRepository() {
+    public CRUDRepository getCRUDRepository() {
         return insertionRepository;
     }
 
+    @Override
     public ServiceEntityFactory getServiceEntityFactory() {
         return serviceEntityFactory;
     }
 
+    @Override
     public DatasetRepository getDatasetRepository() {
         return datasetRepository;
     }
 
-    protected EventBus getEventBus() {
+    public EventBus getEventBus() {
         return eventBus;
     }
+
+    protected void updateCache() {
+        getEventBus().submit(new UpdateCache());
+    }
+
+
+    @Override
+    public <T> T unproxy(T entity) {
+        return (T) Hibernate.unproxy(entity);
+    }
+
 }

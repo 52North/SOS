@@ -134,5 +134,4 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
     public Logger getLogger() {
         return LOGGER;
     }
-
 }

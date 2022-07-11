@@ -29,11 +29,14 @@ package org.n52.sos.ds.datasource;
 
 import java.util.Set;
 
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.Datasource;
 
 import com.google.common.collect.Sets;
 
 public interface ProxyDatasource extends Datasource {
+
+    String CONGIF_ERROR = "An error occurs during instantiation of the connection!";
 
     String SPRING_PROFILE = "proxy";
 
@@ -41,17 +44,158 @@ public interface ProxyDatasource extends Datasource {
 
     String PROXY_HOST_DEFAULT_VALUE = "http://localhost";
 
+    String PROXY_HOST_TITLE = "Proxy Service host";
+
+    String PROXY_HOST_DESCRIPTION = "Set this to the IP/net location of proxy data server.";
+
     String PROXY_PATH_KEY = "proxy.path";
 
     String PROXY_PATH_DEFAULT_VALUE = "/path";
 
-    String PROXY_HOST_TITLE = "Proxy Service Host";
-
     String PROXY_PATH_TITLE = "Proxy Service Path";
+
+    String PROXY_PATH_DESCRIPTION = "Set this to the path of the REST API.";
+
+    String PROXY_USERNAME_KEY = "proxy.username";
+
+    String PROXY_USERNAME_DEFAULT_VALUE = "user";
+
+    String PROXY_USERNAME_TITLE = "User name";
+
+    String PROXY_USERNAME_DESCRIPTION = "Your proxy server user name. The default value for is \"user\".";
+
+    String PROXY_PASSWORD_DEFAULT_VALUE = "password";
+
+    String PROXY_PASSWORD_KEY = "proxy.password";
+
+    String PROXY_PASSWORD_TITLE = "Password";
+
+    String PROXY_PASSWORD_DESCRIPTION = "Your proxy server password. The default value is \"password\".";
+
+    String PROXY_PROXY_HOST_KEY = "proxy.proxy.host";
+
+    String PROXY_PROXY_HOST_TITLE = "Proxy host the proxy service is running behind";
+
+    String PROXY_PROXY_PORT_KEY = "proxy.proxy.port";
+
+    String PROXY_PROXY_PORT_TITLE = "Proxy port the proxy service is running behind";
+
+    String PROXY_PROXY_SSL_KEY = "proxy.proxy.ssl.ignore.hostname";
+
+    String PROXY_PROXY_SSL_TITLE = "Ignore SSL hostname validation";
 
     @Override
     default Set<String> getSpringProfiles() {
         return Sets.newHashSet(SPRING_PROFILE);
+    }
+
+    default StringSettingDefinition createServiceUsernameDefinition(String defaultValue, String description) {
+        StringSettingDefinition sd = createServiceUsernameDefinition();
+        return add(sd, defaultValue, description);
+    }
+
+    /**
+     * Create settings definition for username
+     *
+     * @return Username settings definition
+     */
+    default StringSettingDefinition createServiceUsernameDefinition() {
+        StringSettingDefinition sd = new StringSettingDefinition();
+        sd.setGroup(BASE_GROUP);
+        sd.setOrder(7);
+        sd.setKey(PROXY_USERNAME_KEY);
+        sd.setTitle(PROXY_USERNAME_TITLE);
+        return sd;
+    }
+
+    default StringSettingDefinition createServiceHostDefinition(String defaultValue, String description) {
+        StringSettingDefinition sd = createServiceHostDefinition();
+        return add(sd, defaultValue, description);
+    }
+
+    /**
+     * Create settings definition for host
+     *
+     * @return Host settings definition
+     */
+    default StringSettingDefinition createServiceHostDefinition() {
+        StringSettingDefinition sd = new StringSettingDefinition();
+        sd.setGroup(BASE_GROUP);
+        sd.setOrder(5);
+        sd.setKey(PROXY_HOST_KEY);
+        sd.setTitle(PROXY_HOST_TITLE);
+        return sd;
+    }
+
+    default StringSettingDefinition createServicePathDefinition(String defaultValue, String description) {
+        StringSettingDefinition sd = createServicePathDefinition();
+        return add(sd, defaultValue, description);
+    }
+
+    /**
+     * Create settings definition for REST path
+     *
+     * @return REST path settings definition
+     */
+    default StringSettingDefinition createServicePathDefinition() {
+        StringSettingDefinition sd = new StringSettingDefinition();
+        sd.setGroup(BASE_GROUP);
+        sd.setOrder(6);
+        sd.setKey(PROXY_PATH_KEY);
+        sd.setTitle(PROXY_PATH_TITLE);
+        return sd;
+    }
+
+    default StringSettingDefinition createServicePasswordDefinition(String defaultValue, String description) {
+        StringSettingDefinition sd = createServicePasswordDefinition();
+        return add(sd, defaultValue, description);
+    }
+
+    default StringSettingDefinition createServicePasswordDefinition() {
+        StringSettingDefinition sd = new StringSettingDefinition();
+        sd.setGroup(BASE_GROUP);
+        sd.setOrder(8);
+        sd.setKey(PROXY_PASSWORD_KEY);
+        sd.setTitle(PROXY_PASSWORD_TITLE);
+        return sd;
+    }
+
+    default StringSettingDefinition add(StringSettingDefinition setting, String defaultValue, String description) {
+        setting.setDescription(description);
+        setting.setDefaultValue(defaultValue);
+        return setting;
+    }
+
+    default String getProxyHostDescription() {
+        return PROXY_HOST_DESCRIPTION;
+    }
+
+    default String getProxyHostDefaultValue() {
+        return PROXY_HOST_DEFAULT_VALUE;
+    }
+
+    default String getProxyPathDescription() {
+        return PROXY_PATH_DESCRIPTION;
+    }
+
+    default String getProxyPathDefaultValue() {
+        return PROXY_PATH_DEFAULT_VALUE;
+    }
+
+    default String getProxyUsernameDescription() {
+        return PROXY_USERNAME_DESCRIPTION;
+    }
+
+    default String getProxyUsernameDefaultValue() {
+        return PROXY_USERNAME_DEFAULT_VALUE;
+    }
+
+    default String getProxyPasswordDescription() {
+        return PROXY_PASSWORD_DESCRIPTION;
+    }
+
+    default String getProxyPasswordDefaultValue() {
+        return PROXY_PASSWORD_DEFAULT_VALUE;
     }
 
 }

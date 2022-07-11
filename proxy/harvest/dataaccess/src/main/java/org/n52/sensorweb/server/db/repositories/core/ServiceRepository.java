@@ -25,26 +25,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.proxy.harvest;
+package org.n52.sensorweb.server.db.repositories.core;
 
-import org.joda.time.DateTime;
-import org.n52.shetland.util.DateTimeHelper;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.PersistJobDataAfterExecution;
+import org.n52.sensorweb.server.db.repositories.ParameterDataRepository;
+import org.n52.series.db.beans.ServiceEntity;
+import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.Transactional;
 
-@PersistJobDataAfterExecution
-@DisallowConcurrentExecution
-public interface TemporalHarvesterJob extends Job {
+@Transactional
+@Profile("proxy")
+public interface ServiceRepository extends ParameterDataRepository<ServiceEntity> {
 
-    default DateTime getLastUpdateTime(JobExecutionContext context) {
-        if (context.getPreviousFireTime() != null) {
-            return new DateTime(context.getPreviousFireTime());
-        }
-        return new DateTime(context.getFireTime())
-                .minus(DateTimeHelper.getMinutesSince(new DateTime(context.getFireTime()),
-                        new DateTime(context.getNextFireTime())));
-    }
-
+    ServiceEntity findByNameAndUrlAndType(String name, String url, String type);
 }

@@ -12,6 +12,7 @@
     <description>52°North Sensor Observation Service Proxy harvest module</description>
     <modules>
         <module>common</module>
+        <module>dataaccess</module>
     </modules>
     <dependencies>
         <dependency>

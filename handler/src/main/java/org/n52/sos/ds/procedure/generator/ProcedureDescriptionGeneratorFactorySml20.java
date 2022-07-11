@@ -38,6 +38,7 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -57,16 +58,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @Configurable
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescriptionGeneratorFactory {
+public class ProcedureDescriptionGeneratorFactorySml20 extends AbstractProcedureDescriptionGeneratorFactory {
 
-    private final SettingsService settingsService;
-    private final GeometryHandler geometryHandler;
-    private final I18NDAORepository i18NDAORepository;
-    private final ContentCacheController cacheController;
-    private final ProfileHandler profileHandler;
     private String srsNamePrefixUrl = "";
     private BindingRepository bindingRepository;
-    private DbQueryFactory dbQueryFactory;
 
     @Inject
     public ProcedureDescriptionGeneratorFactorySml20(SettingsService settingsService,
@@ -75,14 +70,11 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
                                                                ContentCacheController cacheController,
                                                                ProfileHandler profileHandler,
                                                                BindingRepository bindingRepository,
+                                                               ProcedureDescriptionSettings procedureSettings,
                                                                DbQueryFactory dbQueryFactory) {
-        this.settingsService = settingsService;
-        this.geometryHandler = geometryHandler;
-        this.i18NDAORepository = i18NDAORepository;
-        this.cacheController = cacheController;
-        this.profileHandler = profileHandler;
+        super(settingsService, geometryHandler, i18NDAORepository, cacheController, profileHandler, procedureSettings,
+                dbQueryFactory);
         this.bindingRepository = bindingRepository;
-        this.dbQueryFactory = dbQueryFactory;
     }
 
     @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
@@ -106,36 +98,13 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
                                                            getCacheController(),
                                                            getSrsNamePrefixUrl(),
                                                            bindingRepository.isActive(MediaTypes.APPLICATION_KVP),
+                                                           getProcedureSettings(),
                                                            getDbQueryFactory());
         getSettingsService().configureOnce(key);
         return generator;
     }
 
-    public SettingsService getSettingsService() {
-        return settingsService;
-    }
-
-    public GeometryHandler getGeometryHandler() {
-        return geometryHandler;
-    }
-
-    public I18NDAORepository getI18NDAORepository() {
-        return i18NDAORepository;
-    }
-
-    public ContentCacheController getCacheController() {
-        return cacheController;
-    }
-
-    public ProfileHandler getProfileHandler() {
-        return profileHandler;
-    }
-
     public String getSrsNamePrefixUrl() {
         return srsNamePrefixUrl;
-    }
-
-    public DbQueryFactory getDbQueryFactory() {
-        return dbQueryFactory;
     }
 }

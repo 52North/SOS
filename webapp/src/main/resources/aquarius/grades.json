@@ -1,0 +1,49 @@
+{
+  "Grades": [
+  {
+      "Identifier": "0",
+      "DisplayName": "UNDEF",
+      "Description": "Undefined",
+      "Color": ""
+    },
+    {
+      "Identifier": "100",
+      "DisplayName": "MISSING",
+      "Description": "Missing Record (NEMS)",
+      "Color": ""
+    },
+    {
+      "Identifier": "200",
+      "DisplayName": "NON-VERIFIED",
+      "Description": "No Quality or Non-Verified (NEMS)",
+      "Color": ""
+    },
+    {
+      "Identifier": "300",
+      "DisplayName": "SYNTHETIC",
+      "Description": "Calculated or Estimated data (NEMS)",
+      "Color": ""
+    },
+    {
+      "Identifier": "400",
+      "DisplayName": "QC400 (NEMS)",
+      "Description": "Compromised standards or significantly modfified data (NEMS)",
+      "Color": ""
+    },
+    {
+      "Identifier": "500",
+      "DisplayName": "QC500 (NEMS)",
+      "Description": "Partially meets operational standards or minor modifications in data (NEMS)",
+      "Color": ""
+    },
+    {
+      "Identifier": "600",
+      "DisplayName": "QC600 (NEMS)",
+      "Description": "Meets operational standards (NEMS)",
+      "Color": ""
+    }
+  ],
+  "ResponseVersion": 0,
+  "ResponseTime": "2022-07-27T12:00:00Z",
+  "Summary": ""
+}

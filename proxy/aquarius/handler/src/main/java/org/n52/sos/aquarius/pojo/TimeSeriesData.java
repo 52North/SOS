@@ -36,7 +36,8 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.n52.sos.aquarius.ds.QualifierChecker;
+import org.n52.sos.aquarius.ds.Checker;
+import org.n52.sos.aquarius.ds.CheckerHandler;
 import org.n52.sos.aquarius.pojo.data.Approval;
 import org.n52.sos.aquarius.pojo.data.GapTolerance;
 import org.n52.sos.aquarius.pojo.data.Grade;
@@ -119,7 +120,7 @@ public class TimeSeriesData implements Serializable {
     private String summary;
 
     @JsonIgnore
-    private QualifierChecker checker = new QualifierChecker();
+    private CheckerHandler checker = new CheckerHandler();
 
     /**
      * No args constructor for use in serialization
@@ -326,7 +327,7 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Points")
     public List<Point> getPoints() {
-        return Collections.unmodifiableList(checker.check(points));
+        return Collections.unmodifiableList(getChecker().check(points));
     }
 
     @JsonProperty("Points")
@@ -374,22 +375,22 @@ public class TimeSeriesData implements Serializable {
 
     @JsonIgnore
     public Point getFirstPoint() {
-        return hasPoints() ? checker.check(Iterables.getFirst(getPoints(), null)) : null;
+        return hasPoints() ? getChecker().check(Iterables.getFirst(getPoints(), null)) : null;
     }
 
     @JsonIgnore
     public Point getLastPoint() {
-        return hasPoints() ? checker.check(Iterables.getLast(getPoints())) : null;
+        return hasPoints() ? getChecker().check(Iterables.getLast(getPoints())) : null;
     }
 
     @JsonIgnore
-    public TimeSeriesData setQualifierChecker(QualifierChecker checker) {
-        this.checker = checker;
+    public TimeSeriesData addChecker(Checker checker) {
+        this.checker.addChecker(checker);
         return this;
     }
 
     @JsonIgnore
-    private QualifierChecker getChecker() {
+    private CheckerHandler getChecker() {
         return checker;
     }
 

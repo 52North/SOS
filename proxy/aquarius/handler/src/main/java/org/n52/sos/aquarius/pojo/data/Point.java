@@ -28,6 +28,7 @@
 package org.n52.sos.aquarius.pojo.data;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -54,7 +55,10 @@ public class Point implements Serializable {
     private Value value;
 
     @JsonIgnore
-    private Qualifier qualifier;
+    private Set<Qualifier> qualifiers;
+    
+    @JsonIgnore
+    private Set<Grade> grades;
 
     /**
      * No args constructor for use in serialization
@@ -90,21 +94,71 @@ public class Point implements Serializable {
     }
 
     @JsonIgnore
-    public Point setQualifier(Qualifier qualifier) {
-        this.qualifier = qualifier;
+    public Point setQualifier(Set<Qualifier> qualifiers) {
+        this.qualifiers.clear();
+        addQualifiers(qualifiers);
         return this;
     }
 
     @JsonIgnore
-    public Qualifier getQualifier() {
-        return qualifier;
+    public Point addQualifiers(Set<Qualifier> qualifiers) {
+        if (qualifiers != null) {
+            this.qualifiers.addAll(qualifiers);
+        }
+        return this;
     }
 
     @JsonIgnore
-    public boolean hasQualifier() {
-        return getQualifier() != null;
+    public Point addQualifier(Qualifier qualifier) {
+        if (qualifier != null) {
+            this.qualifiers.add(qualifier);
+        }
+        return this;
     }
 
+    @JsonIgnore
+    public Set<Qualifier> getQualifiers() {
+        return qualifiers;
+    }
+
+    @JsonIgnore
+    public boolean hasQualifiers() {
+        return getQualifiers() != null && !getQualifiers().isEmpty();
+    }
+
+    @JsonIgnore
+    public Point setGrade(Set<Grade> grades) {
+        this.grades.clear();
+        addGrades(grades);
+        return this;
+    }
+
+    @JsonIgnore
+    public Point addGrades(Set<Grade> grades) {
+        if (grades != null) {
+            this.grades.addAll(grades);
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public Point addGrade(Grade grade) {
+        if (grade != null) {
+            this.grades.add(grade);
+        }
+        return this;
+    }
+
+    @JsonIgnore
+    public Set<Grade> getGrades() {
+        return grades;
+    }
+
+    @JsonIgnore
+    public boolean hasGrades() {
+        return getGrades() != null && !getGrades().isEmpty();
+    }
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("timestamp", timestamp).append("value", value).toString();

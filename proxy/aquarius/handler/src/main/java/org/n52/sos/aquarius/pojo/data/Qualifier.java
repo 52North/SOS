@@ -39,6 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.common.base.Strings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Identifier", "DateApplied", "User", "StartTime", "EndTime" })
@@ -63,6 +64,12 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
 
     @JsonIgnore
     private QualifierKey key;
+    
+    @JsonIgnore
+    private String code;
+    
+    @JsonIgnore
+    private String displayName;
 
     @JsonIgnore
     private Interval interval;
@@ -144,9 +151,29 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
         return this;
     }
 
+    @JsonIgnore
+    public String getCode() {
+        return Strings.isNullOrEmpty(code) ? getIdentifier() : code;
+    }
+
+    @JsonIgnore
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @JsonIgnore
+    public String getDisplayName() {
+        return Strings.isNullOrEmpty(displayName) ? getIdentifier() : displayName;
+    }
+
+    @JsonIgnore
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public Point applyQualifier(Point point) {
         if (getInterval().contains(checkDateTimeStringFor24(point.getTimestamp()))) {
-            point.setQualifier(this);
+            point.addQualifier(this);
         }
         return point;
     }
@@ -162,22 +189,14 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("identifier", identifier)
-                .append("dateApplied", dateApplied)
-                .append("user", user)
-                .append("startTime", startTime)
-                .append("endTime", endTime)
-                .toString();
+        return new ToStringBuilder(this).append("identifier", identifier).append("dateApplied", dateApplied)
+                .append("user", user).append("startTime", startTime).append("endTime", endTime).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(identifier)
-                .append(startTime)
-                .append(endTime)
-                .append(dateApplied)
-                .append(user)
-                .toHashCode();
+        return new HashCodeBuilder().append(identifier).append(startTime).append(endTime).append(dateApplied)
+                .append(user).toHashCode();
     }
 
     @Override
@@ -189,16 +208,8 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
             return false;
         }
         Qualifier rhs = (Qualifier) other;
-        return new EqualsBuilder().append(identifier, rhs.identifier)
-                .append(startTime, rhs.startTime)
-                .append(endTime, rhs.endTime)
-                .append(dateApplied, rhs.dateApplied)
-                .append(user, rhs.user)
-                .isEquals();
-    }
-
-    public enum QualifierKey {
-        BELOW, ABOVE;
+        return new EqualsBuilder().append(identifier, rhs.identifier).append(startTime, rhs.startTime)
+                .append(endTime, rhs.endTime).append(dateApplied, rhs.dateApplied).append(user, rhs.user).isEquals();
     }
 
 }

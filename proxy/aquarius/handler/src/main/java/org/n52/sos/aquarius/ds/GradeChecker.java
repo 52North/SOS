@@ -31,29 +31,28 @@ import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.n52.sos.aquarius.pojo.data.Grade;
 import org.n52.sos.aquarius.pojo.data.Point;
-import org.n52.sos.aquarius.pojo.data.Qualifier;
 
-public class QualifierChecker implements Checker, Serializable {
+public class GradeChecker implements Checker, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<Qualifier> qualifiers = new LinkedHashSet<>();
+    private Set<Grade> grades = new LinkedHashSet<>();
 
-    public QualifierChecker addQualifier(Qualifier qualifier) {
-        if (qualifier != null) {
-            this.qualifiers.add(qualifier);
+    public GradeChecker addGrade(Grade grade) {
+        if (grade != null) {
+            this.grades.add(grade);
         }
         return this;
     }
 
     public Point check(Point point) {
         if (point != null) {
-            for (Qualifier qualifier : qualifiers) {
-                qualifier.applyQualifier(point);
+            for (Grade grade : grades) {
+                grade.applyGrade(point);
             }
         }
         return point;
     }
-
 }

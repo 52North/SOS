@@ -27,23 +27,35 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.io.FileUtils;
 import org.geotools.util.Range;
 import org.joda.time.DateTime;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
+import org.n52.sos.aquarius.pojo.Grades;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
+import org.n52.sos.aquarius.pojo.data.Grade;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
-import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
+import org.n52.sos.aquarius.pojo.data.QualifierKey;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesCorrectedData;
@@ -51,11 +63,16 @@ import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesRawData;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 @Configurable
 public class AquariusHelper extends AbstractProxyHelper {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusHelper.class);
 
     public static final String APPLY_ROUNDING = "proxy.aquarius.applyRounding";
 
@@ -83,6 +100,10 @@ public class AquariusHelper extends AbstractProxyHelper {
     private static final String BELOW_IDENTIFIER = "proxy.aquarius.detectionlimit.below";
 
     private static final String ABOVE_IDENTIFIER = "proxy.aquarius.detectionlimit.above";
+
+    private static final String ADDITIONAL_QUALIFIERS = "roxy.aquarius.qualifiers";
+    
+    private ObjectMapper om = new ObjectMapper();
 
     private Map<String, Parameter> parameters = new HashMap<>();
 
@@ -114,7 +135,13 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     private String aboveQualifier;
 
+    private Set<String> additionalQualifiers = new LinkedHashSet<>();
+
     private boolean createTemporal = Boolean.FALSE.booleanValue();
+
+    private Map<String, org.n52.sos.aquarius.pojo.Qualifier> qualifiers = new LinkedHashMap<>();
+
+    private Map<String, org.n52.sos.aquarius.pojo.Grade> grades = new LinkedHashMap<>();
 
     @Setting(APPLY_ROUNDING)
     public AquariusHelper setApplyRoundig(boolean applyRounding) {
@@ -176,6 +203,29 @@ public class AquariusHelper extends AbstractProxyHelper {
         return this;
     }
 
+    @Setting(ADDITIONAL_QUALIFIERS)
+    public AquariusHelper setAdditionalQualifiers(String additionalQualifiers) {
+        this.additionalQualifiers.clear();
+        if (!Strings.isNullOrEmpty(additionalQualifiers)) {
+            this.additionalQualifiers
+                    .addAll(Stream.of(additionalQualifiers.trim().split(",")).collect(Collectors.toSet()));
+        }
+        return this;
+    }
+    
+    @PostConstruct
+    public void init() {
+        try {
+            Grades grades = om.readValue(FileUtils.toFile(AquariusHelper.class.getResource("/aquarius/grades.json")), Grades.class);
+            if (grades != null) {
+                setGrades(grades.getGrades());
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while loading grades from file on startup!", e);
+        }
+    }
+    
+
     public String getBelowQualifier() {
         return belowQualifier;
     }
@@ -190,6 +240,14 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     public boolean isSetAboveQualifier() {
         return !Strings.isNullOrEmpty(getAboveQualifier());
+    }
+
+    public Set<String> getAdditionalQualifiers() {
+        return Collections.unmodifiableSet(additionalQualifiers);
+    }
+
+    public boolean isSetAdditionalQualifiers() {
+        return this.additionalQualifiers != null && !this.additionalQualifiers.isEmpty();
     }
 
     public boolean isSetApplyRounding() {
@@ -433,14 +491,6 @@ public class AquariusHelper extends AbstractProxyHelper {
         }
     }
 
-    public enum DataType {
-        RAW, CORRECTED;
-    }
-
-    public enum Published {
-        TURE, FALSE, ALL;
-    }
-
     public boolean checkForData(TimeSeriesDescription timeSeries) {
         switch (getDataType()) {
             case CORRECTED:
@@ -452,18 +502,89 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     public TimeSeriesData applyQualifierChecker(TimeSeriesData timeSeriesData) {
         QualifierChecker checker = new QualifierChecker();
-        if (isSetAboveQualifier() || isSetBelowQualifier() && timeSeriesData.hasQualifiers()) {
+        if (isSetAboveQualifier() || isSetBelowQualifier() || isSetAdditionalQualifiers() && timeSeriesData.hasQualifiers()) {
             for (Qualifier qualifier : timeSeriesData.getQualifiers()) {
-                if (isSetAboveQualifier() && qualifier.getIdentifier()
-                        .equalsIgnoreCase(getAboveQualifier())) {
-                    checker.addQualifier(qualifier.setKey(QualifierKey.ABOVE));
-                }
-                if (isSetBelowQualifier() && qualifier.getIdentifier()
-                        .equalsIgnoreCase(getBelowQualifier())) {
-                    checker.addQualifier(qualifier.setKey(QualifierKey.BELOW));
+                if (isSetAboveQualifier() && qualifier.getIdentifier().equalsIgnoreCase(getAboveQualifier())) {
+                    checker.addQualifier(qualifier.setKey(QualifierKey.of(QualifierKey.ABOVE)));
+                } else if (isSetBelowQualifier() && qualifier.getIdentifier().equalsIgnoreCase(getBelowQualifier())) {
+                    checker.addQualifier(qualifier.setKey(QualifierKey.of(QualifierKey.BELOW)));
+                } else if (isSetAdditionalQualifiers()
+                        && getAdditionalQualifiers().contains(qualifier.getIdentifier())) {
+                    checker.addQualifier(enhanceQualifier(qualifier));
                 }
             }
         }
-        return timeSeriesData.setQualifierChecker(checker);
+        return timeSeriesData.addChecker(checker);
+    }
+    
+    public TimeSeriesData applyGradeChecker(TimeSeriesData timeSeriesData) {
+        GradeChecker checker = new GradeChecker();
+        for (Grade grade : timeSeriesData.getGrades()) {
+            checker.addGrade(enhanceGrade(grade));
+        }
+        return timeSeriesData.addChecker(checker);
+    }
+
+    private Qualifier enhanceQualifier(Qualifier qualifier) {
+        qualifier.setKey(QualifierKey.of(qualifier.getIdentifier()));
+        if (getQualifiers().containsKey(qualifier.getIdentifier())) {
+            org.n52.sos.aquarius.pojo.Qualifier quali = getQualifier(qualifier.getIdentifier());
+            qualifier.setCode(quali.getCode());
+            qualifier.setDisplayName(quali.getDisplayName());
+        }
+        return qualifier;
+    }
+    
+    private Grade enhanceGrade(Grade grade) {
+        if (getGrades().containsKey(grade.getGradeCode())) {
+            org.n52.sos.aquarius.pojo.Grade g = getGrade(grade.getGradeCode());
+            grade.setDescription(g.getDescription());
+            grade.setDisplayName(g.getDisplayName());
+        }
+        return grade;
+    }
+
+    public Map<String, org.n52.sos.aquarius.pojo.Grade> getGrades() {
+        return this.grades;
+    }
+
+    public org.n52.sos.aquarius.pojo.Grade getGrade(String code) {
+        return getGrades().get(code);
+    }
+
+    public Map<String, org.n52.sos.aquarius.pojo.Qualifier> getQualifiers() {
+        return this.qualifiers;
+    }
+
+    public org.n52.sos.aquarius.pojo.Qualifier getQualifier(String identifier) {
+        return getQualifiers().get(identifier);
+    }
+
+    public void setGrades(List<org.n52.sos.aquarius.pojo.Grade> grades) {
+        Map<String, org.n52.sos.aquarius.pojo.Grade> map = new LinkedHashMap<>();
+        for (org.n52.sos.aquarius.pojo.Grade grade : grades) {
+            map.put(grade.getIdentifier(), grade);
+        }
+        this.grades.putAll(map);
+    }
+
+    public void setQualifiers(List<org.n52.sos.aquarius.pojo.Qualifier> qualifiers) {
+        Map<String, org.n52.sos.aquarius.pojo.Qualifier> map = new LinkedHashMap<>();
+        if (isSetAdditionalQualifiers()) {
+            for (org.n52.sos.aquarius.pojo.Qualifier qualifier : qualifiers) {
+                if (getAdditionalQualifiers().contains(qualifier.getIdentifier())) {
+                    map.put(qualifier.getIdentifier(), qualifier);
+                }
+            }
+        }
+        this.qualifiers.putAll(map);
+    }
+
+    public enum DataType {
+        RAW, CORRECTED;
+    }
+
+    public enum Published {
+        TURE, FALSE, ALL;
     }
 }

@@ -29,6 +29,7 @@ package org.n52.sos.ds.observation;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.Set;
 
 import org.n52.series.db.beans.BlobDataEntity;
 import org.n52.series.db.beans.BooleanDataEntity;
@@ -46,6 +47,7 @@ import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.quality.QualityEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -68,6 +70,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 
 public abstract class AbstractObservationValueCreator extends AbstractValuedObservationCreator<Value<?>> {
 
+    private static final ObservationQualityVisitorCreator QUALITY_CREATOR = new ObservationQualityVisitorCreator();
+
     public AbstractObservationValueCreator(ObservationHelper observationHelper) {
         super(observationHelper);
     }
@@ -76,17 +80,23 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         super(observationHelper, noValues);
     }
 
-
     @SuppressWarnings("rawtypes")
-    protected void addAdditonalDataEntity(DataEntity o, SweAbstractSimpleType v) {
-        if (o.hasValueIdentifier()) {
-            v.setIdentifier(o.getValueIdentifier());
+    protected void addAdditonalDataEntity(DataEntity d, SweAbstractSimpleType v) {
+        if (d.hasValueIdentifier()) {
+            v.setIdentifier(d.getValueIdentifier());
         }
-        if (o.hasValueName()) {
-            v.setName(o.getValueName());
+        if (d.hasValueName()) {
+            v.setName(d.getValueName());
         }
-        if (o.hasValueDescription()) {
-            v.setDescription(o.getValueDescription());
+        if (d.hasValueDescription()) {
+            v.setDescription(d.getValueDescription());
+        }
+        if (d.hasQuality()) {
+            SweQualityHolder holder = v.isSetQuality() ? v.getQuality() : new SweQualityHolder();
+            for (QualityEntity quality : (Set<QualityEntity<?>>) d.getQuality()) {
+                holder.addQuality(QUALITY_CREATOR.visit(quality));
+            }
+            v.setQuality(holder);
         }
     }
 
@@ -94,8 +104,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     protected void addDefinitionFromObservableProperty(DataEntity o, SweAbstractSimpleType v) {
         if (o instanceof HasObservablePropertyGetter) {
             if (((HasObservablePropertyGetter) o).getObservableProperty() != null) {
-                v.setDefinition(((HasObservablePropertyGetter) o).getObservableProperty()
-                        .getIdentifier());
+                v.setDefinition(((HasObservablePropertyGetter) o).getObservableProperty().getIdentifier());
             }
         }
     }
@@ -189,8 +198,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     public ReferenceValue visit(ReferencedDataEntity o, ReferenceValue v) {
         if (o.hasValueName()) {
-            v.getValue()
-                    .setTitle(o.getValueName());
+            v.getValue().setTitle(o.getValueName());
         }
         if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
@@ -214,17 +222,12 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     private NamedValue<?> createDetectionLimitNamedValue(SweQualityHolder quality) {
         final NamedValue<BigDecimal> namedValue = new NamedValue<>();
-        if (quality.getReferences()
-                .containsKey(WaterMLConstants.EN_CENSORED_REASON)) {
-            namedValue.setName(quality.getReferences()
-                    .get(WaterMLConstants.EN_CENSORED_REASON));
+        if (quality.getReferences().containsKey(WaterMLConstants.EN_CENSORED_REASON)) {
+            namedValue.setName(quality.getReferences().get(WaterMLConstants.EN_CENSORED_REASON));
         } else {
             return null;
         }
-        Optional<SweQuality> qual = quality.getQuality()
-                .stream()
-                .filter(q -> q instanceof SweQuantity)
-                .findFirst();
+        Optional<SweQuality> qual = quality.getQuality().stream().filter(q -> q instanceof SweQuantity).findFirst();
         if (qual.isPresent()) {
             SweQuality sweQuality = qual.get();
             if (sweQuality instanceof SweQuantity) {

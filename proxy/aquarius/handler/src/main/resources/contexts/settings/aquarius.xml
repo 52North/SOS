@@ -123,5 +123,14 @@
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
           </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.qualifiers" />
+            <property name="title" value="Definition of additional qualifier identifiers! (CSV list)" />
+            <property name="description" value="Define additional qualifier identifiers that should be processed! (CSV list)" />
+            <property name="order" value="8.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="Recreational,Recreational Repeats" />
+          </bean>
     </beans>
 </beans>

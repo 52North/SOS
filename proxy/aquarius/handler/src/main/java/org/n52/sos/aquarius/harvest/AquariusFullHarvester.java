@@ -49,6 +49,7 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester {
         platforms.clear();
         locations.clear();
         units.clear();
+        checkGradesAndQualifier(connector);
         try {
             ServiceEntity service = getOrInsertServiceEntity();
             parameters = getParameterList(connector);

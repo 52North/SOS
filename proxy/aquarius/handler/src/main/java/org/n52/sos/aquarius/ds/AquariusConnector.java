@@ -43,18 +43,22 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
+import org.n52.sos.aquarius.pojo.Grades;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.LocationDescriptions;
 import org.n52.sos.aquarius.pojo.Parameters;
+import org.n52.sos.aquarius.pojo.Qualifiers;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescriptions;
 import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
+import org.n52.sos.aquarius.requests.GetGradeList;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetParameterList;
+import org.n52.sos.aquarius.requests.GetQualifierList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
@@ -196,6 +200,30 @@ public class AquariusConnector implements AccessorConnector {
         } catch (URISyntaxException | IOException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying unit data");
+        }
+    }
+
+    @Override
+    public Grades getGradeList(GetGradeList request) throws OwsExceptionReport {
+        try {
+            Response response = query(request);
+            return response.getEntity() != null ? om.readValue(response.getEntity(), Grades.class)
+                    : new Grades();
+        } catch (URISyntaxException | IOException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying grade data");
+        }
+    }
+
+    @Override
+    public Qualifiers getQualifierList(GetQualifierList request) throws OwsExceptionReport {
+        try {
+            Response response = query(request);
+            return response.getEntity() != null ? om.readValue(response.getEntity(), Qualifiers.class)
+                    : new Qualifiers();
+        } catch (URISyntaxException | IOException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying qualifier data");
         }
     }
 

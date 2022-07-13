@@ -45,18 +45,22 @@ import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.aquarius.AquariusConstants;
+import org.n52.sos.aquarius.pojo.Grades;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
+import org.n52.sos.aquarius.pojo.Qualifiers;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
 import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
+import org.n52.sos.aquarius.requests.GetGradeList;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetParameterList;
+import org.n52.sos.aquarius.requests.GetQualifierList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.aquarius.requests.GetUnitList;
@@ -153,6 +157,18 @@ public interface AccessorConnector {
         }
         return null;
      }
+
+    default Grades getGradeList() throws OwsExceptionReport {
+        return getGradeList(new GetGradeList());
+    }
+
+    Grades getGradeList(GetGradeList request) throws OwsExceptionReport;
+
+    default Qualifiers getQualifierList() throws OwsExceptionReport {
+        return getQualifierList(new GetQualifierList());
+    }
+
+    Qualifiers getQualifierList(GetQualifierList request) throws OwsExceptionReport;
 
     default Map<String, String> createFilterForLocationQuery(Map<String, String> parameter) {
         if (parameter != null && !parameter.isEmpty()) {

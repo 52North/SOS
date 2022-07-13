@@ -53,15 +53,18 @@ import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.aquarius.ds.AquariusHelper;
+import org.n52.sos.aquarius.pojo.Grades;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
+import org.n52.sos.aquarius.pojo.Qualifiers;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.InterpolationType;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.requests.GetGradeList;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.proxy.harvest.AbstractHarvester;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
@@ -115,6 +118,25 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
     @Override
     public <T> T unproxy(T entity) {
         return (T) Hibernate.unproxy(entity);
+    }
+
+    protected void checkGradesAndQualifier(AquariusConnector connector) {
+        try {
+            Grades grades = connector.getGradeList();
+            if (grades != null) {
+                getAquariusHelper().setGrades(grades.getGrades());
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while querying grades!", e);
+        }
+        try {
+            Qualifiers qualifiers = connector.getQualifierList();
+            if (qualifiers != null) {
+                getAquariusHelper().setQualifiers(qualifiers.getQualifiers());
+            }
+        } catch (Exception e) {
+           LOGGER.error("Error while querying qualifiers!", e);
+        }
     }
 
     protected Map<String, Location> getLocations(AquariusConnector connector) throws OwsExceptionReport {

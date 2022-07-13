@@ -61,6 +61,10 @@ public interface AquariusConstants {
         String GET_TIME_SERIES_RAW_DATA = "GetTimeSeriesRawData";
 
         String GET_TIME_SERIES_UNIQUE_ID_LIST = "GetTimeSeriesUniqueIdList";
+
+        String GET_GRADE_LIST = "GetGradeList";
+
+        String GET_QUALIFIER_LIST = "GetQualifierList";
     }
 
     public interface Parameters {

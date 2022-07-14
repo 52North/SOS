@@ -212,15 +212,15 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     public void checkDetectionLimit(Value<?> value, OmObservation observation, String responseFormat) {
         if (!checkResponseFormat(responseFormat) && value != null && value instanceof SweAbstractSimpleType
-                && ((SweAbstractSimpleType) value).isSetQuality()) {
-            observation.addParameter(createDetectionLimitNamedValue(((SweAbstractSimpleType) value).getQuality()));
+                && ((SweAbstractSimpleType<?>) value).isSetQuality()) {
+            observation.addParameter(createDetectionLimitNamedValue(((SweAbstractSimpleType<?>) value).getQuality()));
         }
     }
 
-    private void checkDetectionLimit(Value value, DataEntity o) {
+    private void checkDetectionLimit(Value<?> value, DataEntity<?> o) {
         if (value instanceof SweAbstractSimpleType && o.hasDetectionLimit()) {
-            ((SweAbstractSimpleType) value).setQuality(createDetectionLimitQuality(
-                    ((SweAbstractSimpleType) value).getQuality(), o.getDetectionLimit(), value));
+            ((SweAbstractSimpleType<?>) value).setQuality(createDetectionLimitQuality(
+                    ((SweAbstractSimpleType<?>) value).getQuality(), o.getDetectionLimit(), value));
         }
     }
 
@@ -244,17 +244,8 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         return namedValue;
     }
 
-    protected NamedValue<?> createDetectionLimitNamedValue(DetectionLimitEntity detectionLimit, UoM uoM) {
-        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
-        final ReferenceType referenceType =
-                new ReferenceType(detectionLimit.getFlag() > 0 ? "exceed limit" : "below limit");
-        namedValue.setName(referenceType);
-        namedValue.setValue(new QuantityValue(detectionLimit.getDetectionLimit(), uoM));
-        return namedValue;
-    }
-
-    protected SweQualityHolder createDetectionLimitQuality(SweQualityHolder sweQualityHolder,
-            DetectionLimitEntity detectionLimit, Value value) {
+    private SweQualityHolder createDetectionLimitQuality(SweQualityHolder sweQualityHolder,
+            DetectionLimitEntity detectionLimit, Value<?> value) {
         SweQualityHolder holder = sweQualityHolder != null ? sweQualityHolder : new SweQualityHolder();
         if (value instanceof SweQuantity) {
             SweQuantity quantity = new SweQuantity(detectionLimit.getDetectionLimit(), value.getUnitObject());

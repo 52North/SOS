@@ -369,7 +369,6 @@ public class ObservationHelper implements Constructable {
         }
     }
 
-
     protected NamedValue<?> createDetectionLimit(DetectionLimitEntity detectionLimit, UoM uoM) {
         final NamedValue<BigDecimal> namedValue = new NamedValue<>();
         final ReferenceType referenceType =

@@ -66,6 +66,7 @@ import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.Unit;
+import org.n52.sos.aquarius.pojo.data.Grade;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.QualifierKey;
@@ -255,18 +256,11 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     }
 
     default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Long id, boolean applyRounding) {
-        DateTime time = checkDateTimeStringFor24(point.getTimestamp());
+        DateTime time = point.getDateTime();
         if (point.getValue().isNumeric()) {
             QuantityDataEntity dataEntity = createQuantityDataEntity(dataset, time, id);
-            if (point.hasQualifiers()) {
-                addQualifiers(dataEntity, point, applyRounding);
-            } else {
-                if (applyRounding && point.getValue().isDisplay()) {
-                    dataEntity.setValue(point.getValue().getDisplayAsBigDecimal());
-                } else {
-                    dataEntity.setValue(point.getValue().getNumericAsBigDecimal());
-                }
-            }
+            checkAndAddQualifiersAndValue(dataEntity, point, applyRounding);
+            checkAndAddGrades(dataEntity, point);
             return dataEntity;
         } else if (point.getValue().isDisplay()) {
             TextDataEntity dataEntity = createTextDataEntity(dataset, time, id);
@@ -290,26 +284,59 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return (TextDataEntity) addDefault(new TextDataEntity(), dataset, time, id);
     }
 
-    default void addQualifiers(QuantityDataEntity dataEntity, Point point, boolean applyRounding) {
-        for (Qualifier qualifier : point.getQualifiers()) {
-            if (qualifier.getKey().isEquals(QualifierKey.ABOVE) || qualifier.getKey().isEquals(QualifierKey.BELOW)) {
-                addDetectionLimit(dataEntity, point, qualifier, applyRounding);
-            } else {
-                addQualifier(dataEntity, qualifier);
+    default Point checkAndAddGrades(QuantityDataEntity dataEntity, Point point) {
+        if (point.hasGrades()) {
+            for (Grade grade : point.getGrades()) {
+                addGrade(dataEntity, grade);
             }
         }
+        return point;
     }
 
-    default void addQualifier(QuantityDataEntity dataEntity, Qualifier qualifier) {
+    default DataEntity<?> addGrade(QuantityDataEntity dataEntity, Grade grade) {
         TextQualityEntity textQualityEntity = new TextQualityEntity();
-        textQualityEntity.setIdentifier(qualifier.getIdentifier());
+//        textQualityEntity.setIdentifier(grade.getGradeCode());
+        textQualityEntity.setName(grade.getDisplayName());
+        textQualityEntity.setDescription(grade.getDescription());
+        textQualityEntity.setValue(grade.getGradeCode());
+        dataEntity.addQuality(textQualityEntity);
+        return dataEntity;
+    }
+
+    default Point checkAndAddQualifiersAndValue(QuantityDataEntity dataEntity, Point point, boolean applyRounding) {
+        boolean detectionLimitAdded = false;
+        if (point.hasQualifiers()) {
+            for (Qualifier qualifier : point.getQualifiers()) {
+                if (qualifier.getKey().isEquals(QualifierKey.ABOVE)
+                        || qualifier.getKey().isEquals(QualifierKey.BELOW)) {
+                    addDetectionLimit(dataEntity, point, qualifier, applyRounding);
+                    detectionLimitAdded = true;
+                } else {
+                    addQualifier(dataEntity, qualifier);
+                }
+            }
+        }
+        if (!detectionLimitAdded) {
+            if (applyRounding && point.getValue().isDisplay()) {
+                dataEntity.setValue(point.getValue().getDisplayAsBigDecimal());
+            } else {
+                dataEntity.setValue(point.getValue().getNumericAsBigDecimal());
+            }
+        }
+        return point;
+    }
+
+    default DataEntity<?> addQualifier(QuantityDataEntity dataEntity, Qualifier qualifier) {
+        TextQualityEntity textQualityEntity = new TextQualityEntity();
+//        textQualityEntity.setIdentifier(qualifier.getIdentifier());
         textQualityEntity.setName(qualifier.getIdentifier());
         textQualityEntity.setDescription(qualifier.getIdentifier());
         textQualityEntity.setValue(qualifier.getIdentifier());
         dataEntity.addQuality(textQualityEntity);
+        return dataEntity;
     }
 
-    default void addDetectionLimit(QuantityDataEntity dataEntity, Point point, Qualifier qualifier,
+    default DataEntity<?> addDetectionLimit(QuantityDataEntity dataEntity, Point point, Qualifier qualifier,
             boolean applyRounding) {
         DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
         if (applyRounding && point.getValue().isDisplay()) {
@@ -323,6 +350,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
             detectionLimitEntity.setFlag(Short.valueOf("-1"));
         }
         dataEntity.setDetectionLimit(detectionLimitEntity);
+        return dataEntity;
     }
 
     default DataEntity<?> addDefault(DataEntity<?> data, DatasetEntity dataset, DateTime time, Long id) {

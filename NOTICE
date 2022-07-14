@@ -256,6 +256,7 @@ This project includes:
   spring-security-crypto under Apache License, Version 2.0
   spring-security-taglibs under Apache License, Version 2.0
   spring-security-web under Apache License, Version 2.0
+  ThreeTen-Extra under BSD 3-clause
   TXW2 Runtime under CDDL+GPL License
   udunits under BSD 3-Clause License
   Units of Measurement API under BSD 3-Clause

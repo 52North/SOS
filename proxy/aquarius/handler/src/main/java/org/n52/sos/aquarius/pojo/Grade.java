@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
@@ -17,6 +44,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("jsonschema2pojo")
 public class Grade implements Serializable {
 
+    private static final long serialVersionUID = 358173135697378454L;
     @JsonProperty("Identifier")
     private String identifier;
     @JsonProperty("DisplayName")
@@ -25,7 +53,6 @@ public class Grade implements Serializable {
     private String description;
     @JsonProperty("Color")
     private String color;
-    private final static long serialVersionUID = 358173135697378454L;
 
     /**
      * No args constructor for use in serialization
@@ -37,9 +64,13 @@ public class Grade implements Serializable {
     /**
      *
      * @param identifier
+     *            The identifier
      * @param color
+     *            The color
      * @param displayName
+     *            The display name
      * @param description
+     *            The description
      */
     public Grade(String identifier, String displayName, String description, String color) {
         super();
@@ -126,10 +157,10 @@ public class Grade implements Serializable {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Grade) == false) {
+        if (!(other instanceof Grade)) {
             return false;
         }
-        Grade rhs = ((Grade) other);
+        Grade rhs = (Grade) other;
         return new EqualsBuilder().append(this.identifier, rhs.identifier).append(this.description, rhs.description)
                 .append(this.color, rhs.color).append(this.displayName, rhs.displayName).isEquals();
     }

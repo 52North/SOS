@@ -27,7 +27,14 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+
 import org.joda.time.DateTime;
+import org.threeten.extra.Interval;
 
 public interface AquariusTimeHelper {
 
@@ -35,8 +42,35 @@ public interface AquariusTimeHelper {
 
     String TWENTY_THREE = "T23:";
 
+    DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_DATE_TIME).toFormatter();
+
     default DateTime checkDateTimeStringFor24(String time) {
         return time.contains(TWENTY_FOUR) ? new DateTime(time.replace(TWENTY_FOUR, TWENTY_THREE)).plusDays(1)
                 : new DateTime(time);
+    }
+
+    default LocalDateTime toLocalDateTime(String time) {
+        return time.contains(TWENTY_FOUR) ? LocalDateTime.parse(time.replace(TWENTY_FOUR, TWENTY_THREE)).plusDays(1)
+                : LocalDateTime.parse(time, FORMATTER);
+    }
+
+    default Instant toInstant(String time) {
+        return toInstant(toLocalDateTime(time));
+    }
+
+    default Instant toInstant(LocalDateTime time) {
+        return time.toInstant(ZoneOffset.UTC);
+    }
+
+    default Interval toInterval(String start, String end) {
+        return toInterval(toInstant(start), toInstant(end));
+    }
+
+    default Interval toInterval(LocalDateTime start, LocalDateTime end) {
+        return toInterval(toInstant(start), toInstant(end));
+    }
+
+    default Interval toInterval(Instant start, Instant end) {
+        return Interval.of(start, end);
     }
 }

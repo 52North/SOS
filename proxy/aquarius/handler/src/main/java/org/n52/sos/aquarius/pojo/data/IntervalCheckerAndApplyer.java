@@ -25,34 +25,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.ds;
+package org.n52.sos.aquarius.pojo.data;
 
-import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import org.n52.sos.aquarius.ds.AquariusTimeHelper;
+import org.threeten.extra.Interval;
 
-import org.n52.sos.aquarius.pojo.data.Grade;
-import org.n52.sos.aquarius.pojo.data.Point;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class GradeChecker implements Checker, Serializable {
+public abstract class IntervalCheckerAndApplyer implements AquariusTimeHelper {
 
-    private static final long serialVersionUID = 1L;
+    @JsonIgnore
+    private Interval interval;
 
-    private Set<Grade> grades = new LinkedHashSet<>();
-
-    public GradeChecker addGrade(Grade grade) {
-        if (grade != null) {
-            this.grades.add(grade);
-        }
-        return this;
-    }
-
-    public Point check(Point point) {
-        if (point != null) {
-            for (Grade grade : grades) {
-                grade.applyGrade(point);
-            }
+    public Point apply(Point point) {
+        if (getInterval().contains(point.getInstant())) {
+            applyToPoint(point);
         }
         return point;
     }
+
+    @JsonIgnore
+    protected Interval getInterval() {
+        if (interval == null) {
+            this.interval = toInterval(getStartTime(), getEndTime());
+        }
+        return interval;
+    }
+
+    protected abstract String getStartTime();
+
+    protected abstract String getEndTime();
+
+    protected abstract void applyToPoint(Point point);
+
 }

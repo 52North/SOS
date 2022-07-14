@@ -36,12 +36,12 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.n52.sos.aquarius.ds.Checker;
 import org.n52.sos.aquarius.ds.CheckerHandler;
 import org.n52.sos.aquarius.pojo.data.Approval;
 import org.n52.sos.aquarius.pojo.data.GapTolerance;
 import org.n52.sos.aquarius.pojo.data.Grade;
 import org.n52.sos.aquarius.pojo.data.InterpolationType;
+import org.n52.sos.aquarius.pojo.data.IntervalCheckerAndApplyer;
 import org.n52.sos.aquarius.pojo.data.Method;
 import org.n52.sos.aquarius.pojo.data.Note;
 import org.n52.sos.aquarius.pojo.data.Point;
@@ -384,7 +384,7 @@ public class TimeSeriesData implements Serializable {
     }
 
     @JsonIgnore
-    public TimeSeriesData addChecker(Checker checker) {
+    public TimeSeriesData addChecker(IntervalCheckerAndApplyer checker) {
         this.checker.addChecker(checker);
         return this;
     }

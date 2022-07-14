@@ -323,7 +323,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
             } else {
                 AccessorConnector connection = getAquariusConnector();
                 TimeSeriesData timeSeriesData = connection.getTimeSeriesDataFirstPoint(dataset.getIdentifier());
-                return Optional.of(createDataEntity(dataset, aquariusHelper.applyQualifierChecker(timeSeriesData)
+                return Optional.of(createDataEntity(dataset, aquariusHelper.applyChecker(timeSeriesData)
                         .getFirstPoint(), new Counter()));
             }
         } catch (OwsExceptionReport | ConnectionProviderException e) {
@@ -342,7 +342,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
             } else {
                 AccessorConnector connection = getAquariusConnector();
                 TimeSeriesData timeSeriesData = connection.getTimeSeriesDataLastPoint(dataset.getIdentifier());
-                return Optional.of(createDataEntity(dataset, aquariusHelper.applyQualifierChecker(timeSeriesData)
+                return Optional.of(createDataEntity(dataset, aquariusHelper.applyChecker(timeSeriesData)
                         .getLastPoint(), new Counter()));
             }
         } catch (OwsExceptionReport | ConnectionProviderException e) {
@@ -368,7 +368,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
     private List<DataEntity<?>> convertTimeSeriesData(TimeSeriesData timeSeriesData, DatasetEntity dataset,
             Counter counter) {
-        return timeSeriesData.hasPoints() ? convertData(aquariusHelper.applyQualifierChecker(timeSeriesData)
+        return timeSeriesData.hasPoints() ? convertData(aquariusHelper.applyChecker(timeSeriesData)
                 .getPoints(), dataset, counter) : Collections.emptyList();
     }
 

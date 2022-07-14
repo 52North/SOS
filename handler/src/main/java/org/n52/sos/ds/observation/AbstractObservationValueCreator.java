@@ -145,6 +145,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public QuantityValue visit(QuantityDataEntity o, QuantityValue v) {
+        addAdditonalDataEntity(o, v);
         if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
@@ -153,6 +154,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public UnknownValue visit(BlobDataEntity o, UnknownValue v) {
+        addAdditonalDataEntity(o, null);
         if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
@@ -161,6 +163,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public BooleanValue visit(BooleanDataEntity o, BooleanValue v) {
+        addAdditonalDataEntity(o, v);
         if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
@@ -208,7 +211,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public void checkDetectionLimit(Value<?> value, OmObservation observation, String responseFormat) {
-        if (!checkWaterML(responseFormat) && value != null && value instanceof SweAbstractSimpleType
+        if (!checkResponseFormat(responseFormat) && value != null && value instanceof SweAbstractSimpleType
                 && ((SweAbstractSimpleType) value).isSetQuality()) {
             observation.addParameter(createDetectionLimitNamedValue(((SweAbstractSimpleType) value).getQuality()));
         }
@@ -216,7 +219,8 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     private void checkDetectionLimit(Value value, DataEntity o) {
         if (value instanceof SweAbstractSimpleType && o.hasDetectionLimit()) {
-            ((SweAbstractSimpleType) value).setQuality(createDetectionLimitQuality(o.getDetectionLimit(), value));
+            ((SweAbstractSimpleType) value).setQuality(createDetectionLimitQuality(
+                    ((SweAbstractSimpleType) value).getQuality(), o.getDetectionLimit(), value));
         }
     }
 
@@ -249,8 +253,9 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         return namedValue;
     }
 
-    protected SweQualityHolder createDetectionLimitQuality(DetectionLimitEntity detectionLimit, Value value) {
-        SweQualityHolder holder = new SweQualityHolder();
+    protected SweQualityHolder createDetectionLimitQuality(SweQualityHolder sweQualityHolder,
+            DetectionLimitEntity detectionLimit, Value value) {
+        SweQualityHolder holder = sweQualityHolder != null ? sweQualityHolder : new SweQualityHolder();
         if (value instanceof SweQuantity) {
             SweQuantity quantity = new SweQuantity(detectionLimit.getDetectionLimit(), value.getUnitObject());
             ReferenceType reference = new ReferenceType();
@@ -278,7 +283,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         }
     }
 
-    private boolean checkWaterML(String responseFormat) {
+    private boolean checkResponseFormat(String responseFormat) {
         return responseFormat != null && WaterMLConstants.NS_WML_20.endsWith(responseFormat)
                 || TimeseriesMLConstants.NS_TSML_10.equals(responseFormat);
     }

@@ -1,3 +1,30 @@
+/*
+ * Copyright (C) 2012-2022 52°North Spatial Information Research GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.sos.aquarius.pojo;
 
 import java.io.Serializable;
@@ -21,6 +48,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("jsonschema2pojo")
 public class Qualifiers implements Serializable {
 
+    private static final long serialVersionUID = 2991222437815253569L;
     @JsonProperty("Qualifiers")
     @Valid
     private List<Qualifier> qualifiers = new ArrayList<Qualifier>();
@@ -30,7 +58,6 @@ public class Qualifiers implements Serializable {
     private String responseTime;
     @JsonProperty("Summary")
     private String summary;
-    private final static long serialVersionUID = 2991222437815253569L;
 
     /**
      * No args constructor for use in serialization
@@ -42,9 +69,13 @@ public class Qualifiers implements Serializable {
     /**
      *
      * @param summary
+     *            The summary
      * @param responseVersion
+     *            The response version
      * @param responseTime
+     *            The response time
      * @param qualifiers
+     *            The qualifier list
      */
     public Qualifiers(List<Qualifier> qualifiers, Integer responseVersion, String responseTime, String summary) {
         super();
@@ -99,8 +130,9 @@ public class Qualifiers implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("qualifiers", this.qualifiers).append("responseVersion", this.responseVersion)
-                .append("responseTime", this.responseTime).append("summary", this.summary).toString();
+        return new ToStringBuilder(this).append("qualifiers", this.qualifiers)
+                .append("responseVersion", this.responseVersion).append("responseTime", this.responseTime)
+                .append("summary", this.summary).toString();
     }
 
     @Override
@@ -114,10 +146,10 @@ public class Qualifiers implements Serializable {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Qualifiers) == false) {
+        if (!(other instanceof Qualifiers)) {
             return false;
         }
-        Qualifiers rhs = ((Qualifiers) other);
+        Qualifiers rhs = (Qualifiers) other;
         return new EqualsBuilder().append(this.summary, rhs.summary).append(this.qualifiers, rhs.qualifiers)
                 .append(responseVersion, rhs.responseVersion).append(this.responseTime, rhs.responseTime).isEquals();
     }

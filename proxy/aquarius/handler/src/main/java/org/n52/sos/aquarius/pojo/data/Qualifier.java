@@ -32,8 +32,6 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.joda.time.Interval;
-import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,7 +41,7 @@ import com.google.common.base.Strings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Identifier", "DateApplied", "User", "StartTime", "EndTime" })
-public class Qualifier implements Serializable, AquariusTimeHelper {
+public class Qualifier extends IntervalCheckerAndApplyer implements Serializable {
 
     private static final long serialVersionUID = -8429449365231482643L;
 
@@ -64,15 +62,13 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
 
     @JsonIgnore
     private QualifierKey key;
-    
+
     @JsonIgnore
     private String code;
-    
+
     @JsonIgnore
     private String displayName;
 
-    @JsonIgnore
-    private Interval interval;
 
     /**
      * No args constructor for use in serialization
@@ -121,6 +117,7 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
     }
 
     @JsonProperty("StartTime")
+    @Override
     public String getStartTime() {
         return startTime;
     }
@@ -131,6 +128,7 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
     }
 
     @JsonProperty("EndTime")
+    @Override
     public String getEndTime() {
         return endTime;
     }
@@ -171,20 +169,9 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
         this.displayName = displayName;
     }
 
-    public Point applyQualifier(Point point) {
-        if (getInterval().contains(checkDateTimeStringFor24(point.getTimestamp()))) {
-            point.addQualifier(this);
-        }
-        return point;
-    }
-
-    @JsonIgnore
-    private Interval getInterval() {
-        if (interval == null) {
-            this.interval = new Interval(checkDateTimeStringFor24(getStartTime()),
-                    checkDateTimeStringFor24(getEndTime()).plusMillis(1));
-        }
-        return interval;
+    @Override
+    protected void applyToPoint(Point point) {
+        point.addQualifier(this);
     }
 
     @Override

@@ -64,7 +64,6 @@ import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.InterpolationType;
 import org.n52.sos.aquarius.pojo.data.Point;
-import org.n52.sos.aquarius.requests.GetGradeList;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.proxy.harvest.AbstractHarvester;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
@@ -122,9 +121,11 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
 
     protected void checkGradesAndQualifier(AquariusConnector connector) {
         try {
-            Grades grades = connector.getGradeList();
-            if (grades != null) {
-                getAquariusHelper().setGrades(grades.getGrades());
+            if (!getAquariusHelper().isSetUseGradesFromFile()) {
+                Grades grades = connector.getGradeList();
+                if (grades != null) {
+                    getAquariusHelper().setGrades(grades.getGrades());
+                }
             }
         } catch (Exception e) {
             LOGGER.error("Error while querying grades!", e);
@@ -293,11 +294,11 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
     protected void updateDataset(DatasetEntity entity, TimeSeriesData firstTimeSeriesData,
             TimeSeriesData lastTimeSeriesDataLast) {
         if (firstTimeSeriesData != null) {
-            insertData(entity, getAquariusHelper().applyQualifierChecker(firstTimeSeriesData)
+            insertData(entity, getAquariusHelper().applyChecker(firstTimeSeriesData)
                     .getFirstPoint());
         }
         if (lastTimeSeriesDataLast != null) {
-            insertData(entity, getAquariusHelper().applyQualifierChecker(lastTimeSeriesDataLast)
+            insertData(entity, getAquariusHelper().applyChecker(lastTimeSeriesDataLast)
                     .getLastPoint());
         }
     }

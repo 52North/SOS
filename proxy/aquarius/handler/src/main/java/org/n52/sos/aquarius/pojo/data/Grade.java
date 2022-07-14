@@ -32,8 +32,6 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.joda.time.Interval;
-import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,7 +41,7 @@ import com.google.common.base.Strings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "GradeCode", "StartTime", "EndTime" })
-public class Grade implements Serializable, AquariusTimeHelper {
+public class Grade extends IntervalCheckerAndApplyer implements Serializable {
 
     private static final long serialVersionUID = -1327261619367370030L;
 
@@ -55,13 +53,10 @@ public class Grade implements Serializable, AquariusTimeHelper {
 
     @JsonProperty("EndTime")
     private String endTime;
-    
-    @JsonIgnore
-    private Interval interval;
-    
+
     @JsonIgnore
     private String displayName;
-    
+
     @JsonIgnore
     private String description;
 
@@ -90,6 +85,7 @@ public class Grade implements Serializable, AquariusTimeHelper {
     }
 
     @JsonProperty("StartTime")
+    @Override
     public String getStartTime() {
         return startTime;
     }
@@ -100,6 +96,7 @@ public class Grade implements Serializable, AquariusTimeHelper {
     }
 
     @JsonProperty("EndTime")
+    @Override
     public String getEndTime() {
         return endTime;
     }
@@ -108,7 +105,7 @@ public class Grade implements Serializable, AquariusTimeHelper {
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
-    
+
     @JsonIgnore
     public String getDisplayName() {
         return Strings.isNullOrEmpty(displayName) ? getGradeCode() : displayName;
@@ -118,7 +115,7 @@ public class Grade implements Serializable, AquariusTimeHelper {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
     @JsonIgnore
     public String getDescription() {
         return Strings.isNullOrEmpty(description) ? getGradeCode() : description;
@@ -128,21 +125,10 @@ public class Grade implements Serializable, AquariusTimeHelper {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public Point applyGrade(Point point) {
-        if (getInterval().contains(checkDateTimeStringFor24(point.getTimestamp()))) {
-            point.addGrade(this);
-        }
-        return point;
-    }
 
-    @JsonIgnore
-    private Interval getInterval() {
-        if (interval == null) {
-            this.interval = new Interval(checkDateTimeStringFor24(getStartTime()),
-                    checkDateTimeStringFor24(getEndTime()).plusMillis(1));
-        }
-        return interval;
+    @Override
+    protected void applyToPoint(Point point) {
+        point.addGrade(this);
     }
 
     @Override

@@ -28,11 +28,15 @@
 package org.n52.sos.aquarius.pojo.data;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.joda.time.DateTime;
+import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -44,21 +48,27 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Timestamp", "Value" })
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class Point implements Serializable {
+public class Point implements Serializable, AquariusTimeHelper {
 
     private static final long serialVersionUID = -7566570989032058426L;
 
     @JsonProperty("Timestamp")
     private String timestamp;
 
+    @JsonIgnore
+    private DateTime dateTime;
+
+    @JsonIgnore
+    private Instant instant;
+
     @JsonProperty("Value")
     private Value value;
 
     @JsonIgnore
-    private Set<Qualifier> qualifiers;
-    
+    private Set<Qualifier> qualifiers = new LinkedHashSet<>();
+
     @JsonIgnore
-    private Set<Grade> grades;
+    private Set<Grade> grades = new LinkedHashSet<>();
 
     /**
      * No args constructor for use in serialization
@@ -81,6 +91,22 @@ public class Point implements Serializable {
     @JsonProperty("Timestamp")
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @JsonIgnore
+    public DateTime getDateTime() {
+        if (dateTime == null) {
+            this.dateTime = checkDateTimeStringFor24(getTimestamp());
+        }
+        return dateTime;
+    }
+
+    @JsonIgnore
+    public Instant getInstant() {
+        if (instant == null) {
+            this.instant = toInstant(getTimestamp());
+        }
+        return instant;
     }
 
     @JsonProperty("Value")
@@ -158,7 +184,7 @@ public class Point implements Serializable {
     public boolean hasGrades() {
         return getGrades() != null && !getGrades().isEmpty();
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("timestamp", timestamp).append("value", value).toString();

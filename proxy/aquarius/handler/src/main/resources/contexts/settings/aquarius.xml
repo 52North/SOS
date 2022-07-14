@@ -132,5 +132,14 @@
             <property name="optional" value="true" />
             <property name="defaultValue" value="Recreational,Recreational Repeats" />
           </bean>
+           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.grades.file" />
+            <property name="title" value="Should the grades definitions from file be used?" />
+            <property name="description" value="Define whether the service should use the grade definitions from file and not request from service." />
+            <property name="order" value="9.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="false" />
+          </bean>
     </beans>
 </beans>

@@ -184,6 +184,7 @@ This project includes:
   Netty/Handler under Apache License, Version 2.0
   Netty/Resolver under Apache License, Version 2.0
   Netty/Transport under Apache License, Version 2.0
+  Netty/Transport/Native/Unix/Common under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   odata-commons-api under The Apache Software License, Version 2.0
   odata-commons-core under The Apache Software License, Version 2.0

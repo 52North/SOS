@@ -97,6 +97,13 @@ public class H2InMemoryDatasource extends AbstractH2Datasource implements H2InMe
         settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
     }
+    
+    
+    @Override
+    public void validatePrerequisites(Map<String, Object> settings) {
+        // Nothing to check
+    }
+
 
     @Override
     @SuppressFBWarnings("DMI_EMPTY_DB_PASSWORD")

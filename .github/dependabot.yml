@@ -82,69 +82,32 @@ updates:
   - dependency-name: com.zaxxer:HikariCP
     versions:
     - 4.0.2
-  - dependency-name: org.elasticsearch.client:elasticsearch-rest-client
+  - dependency-name: org.apache.xmlbeans:xmlbeans
     versions:
-    - 7.11.0
-  - dependency-name: org.elasticsearch.client:elasticsearch-rest-high-level-client
+    - 5.0.0
+    - 5.1.0
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  target-branch: "version/6.x"
+  ignore:
+  - dependency-name: xml-apis:xml-apis
     versions:
-    - 7.11.0
-  - dependency-name: org.elasticsearch:elasticsearch
+    - ">= 2.a, < 3"
+  - dependency-name: com.microsoft.sqlserver:mssql-jdbc
     versions:
-    - 7.11.0
-  - dependency-name: org.n52.arctic-sea:svalbard-xmlstream
+    - 9.2.0.jre15
+    - 9.2.1.jre15
+    - 9.3.0.jre15-preview
+  - dependency-name: com.zaxxer:HikariCP
     versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-xmlbeans
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-json
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-json-common
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-exi
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-odata
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:shetland:tests
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:shetland
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:janmayen
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-json
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-annotations
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-utils
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland-statistics-geolocation
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland-statistics
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland:tests
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland
-    versions:
-    - 8.1.0
+    - 4.0.2
   - dependency-name: org.apache.xmlbeans:xmlbeans
     versions:
     - 4.0.0
+    - 5.0.0
+    - 5.1.0
+    

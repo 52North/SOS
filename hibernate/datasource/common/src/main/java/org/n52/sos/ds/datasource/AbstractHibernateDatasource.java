@@ -337,6 +337,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String getParameterMappingDirectory(Map<String, Object> settings) {
         switch (getDatabaseConcept(settings)) {
             case EREPORTING:
+            case PROXY:
             case TRANSACTIONAL:
                 return HIBERNATE_MAPPING_PARAMETER_PATH;
             default:

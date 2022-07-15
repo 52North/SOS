@@ -28,7 +28,8 @@ if [ "${SOS_DATASOURCE_TYPE}" = "postgres" ]; then
   
   rm -f /etc/sos/datasource.properties
   cat > /etc/sos/datasource.properties <<EOF
-HIBERNATE_DIRECTORY=/hbm/transactional/core;/hbm/transactional/dataset
+HIBERNATE_DIRECTORY=/hbm/transactional/core;/hbm/transactional/dataset;/hbm/parameter
+PROVIDED_JDBC=false
 hibernate.c3p0.acquire_increment=1
 hibernate.c3p0.contextClassLoaderSource=library
 hibernate.c3p0.idle_test_period=30
@@ -41,20 +42,21 @@ hibernate.c3p0.timeout=0
 hibernate.connection.autoReconnect=true
 hibernate.connection.autoReconnectForPools=true
 hibernate.connection.driver_class=org.postgresql.Driver
-hibernate.connection.username=${SOS_DATASOURCE_USERNAME}
 hibernate.connection.password=${SOS_DATASOURCE_PASSWORD}
 hibernate.connection.provider_class=org.hibernate.c3p0.internal.C3P0ConnectionProvider
 hibernate.connection.testOnBorrow=true
 hibernate.connection.url=jdbc:postgresql://${SOS_DATASOURCE_HOST}:${SOS_DATASOURCE_PORT}/${SOS_DATASOURCE_DATABASE}
+hibernate.connection.username=${SOS_DATASOURCE_USERNAME}
 hibernate.datasource.timeStringFormat=
 hibernate.datasource.timeStringZ=false
-hibernate.datasource.timezone=+00\:00
 hibernate.default_schema=public
 hibernate.dialect=org.n52.hibernate.spatial.dialect.postgis.TimestampWithTimeZonePostgisPG95Dialect
 hibernate.jdbc.batch_size=20
+hibernate.jdbc.time_zone=+00\:00
 org.n52.iceland.ds.Datasource=org.n52.sos.ds.datasource.PostgresDatasource
-PROVIDED_JDBC=false
 sos.database.concept=TRANSACTIONAL
+sos.database.extension=DATASOURCE
+sos.datasource.spring.profiles=hibernate
 sos.feature.concept=DEFAULT_FEATURE_CONCEPT
 EOF
 fi

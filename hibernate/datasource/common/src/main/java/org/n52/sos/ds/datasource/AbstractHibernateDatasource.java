@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.boot.Metadata;
@@ -296,22 +297,18 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected Set<File> getMappingPaths(Map<String, Object> settings) {
-        Set<File> paths = new HashSet<>();
-        for (String resource : getDatabaseConceptMappingDirectory(settings)) {
-            paths.add(resource(resource));
-        }
-        for (String resource : getDatabaseExtensionMappingDirectory(settings)) {
-            paths.add(resource(resource));
-        }
+        Set<String> resources = new HashSet<>();
+        resources.addAll(getDatabaseConceptMappingDirectory(settings));
+        resources.addAll(getDatabaseExtensionMappingDirectory(settings));
         String parameterMappingDirectory = getParameterMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(parameterMappingDirectory)) {
-            paths.add(resource(parameterMappingDirectory));
+            resources.add(parameterMappingDirectory);
         }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            paths.add(resource(featureConceptMappingDirectory));
+            resources.add(featureConceptMappingDirectory);
         }
-        return paths;
+        return resources.stream().map(r -> resource(r)).collect(Collectors.toSet());
     }
 
     protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {

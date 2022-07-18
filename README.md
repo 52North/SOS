@@ -114,10 +114,10 @@ The development the 52°North Sensor Observation Service implementations was con
 
 | Name | Organisation |
 | ------------- | :-------------: |
-| [Carsten Hollmann](http://52north.org/about/52-north-team/25-carsten-hollmann) | [52&deg;North](http://52north.org) |
-| [Eike Hinderk J&uuml;rrens](http://52north.org/about/52-north-team/14-eike-hinderk-juerrens) | [52&deg;North](http://52north.org) |
-| [Christian Autermann](http://52north.org/about/52-north-team/30-autermann-christian) | [52&deg;North](http://52north.org) |
-| [Christoph Stasch](http://52north.org/about/52-north-team/31-stasch-christoph) | [52&deg;North](http://52north.org) |
+| [Carsten Hollmann](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| [Eike Hinderk J&uuml;rrens](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| [Christian Autermann](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| Christoph Stasch| [52&deg;North](http://52north.org) |
 | Shane StClair | [Axiom Data Science](http://www.axiomdatascience.com) |
 | Victor Gonz&aacute;lez | [geomati.co](http://geomati.co/en) |
 | Oscar Fonts | [geomati.co](http://geomati.co/en) |

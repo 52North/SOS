@@ -76,12 +76,12 @@ docker run -p 8080:8080 --name sos 52north/sos:latest
 
 With a local configuration folder:
 ```sh
-docker run -p 8080:8080 --name -v ./config:/etc/sos 52north/sos:latest
+docker run -p 8080:8080 --name sos -v ./config:/etc/sos 52north/sos:latest
 ```
 
 Remote debugging enabled:
 ```sh
-docker run -p 8080:8080 -p 8000:8000 --name -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' 52north/sos:latest
+docker run -p 8080:8080 -p 8000:8000 --name sos -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' 52north/sos:latest
 ```
 
 ## Demo

@@ -8,7 +8,9 @@ set_admin_user() {
   local temp="$(mktemp)"
   password=$(echo "${password}" | bcrypt --rounds 10)
   jq --arg username "${username}" --arg password "${password}" \
-    '.users = {"\($username)": $password}'
+    '.users = {"\($username)": $password}' \
+    "${FAROE_CONFIGURATION}" > "${temp}"
+  mv -f "${temp}" "${FAROE_CONFIGURATION}"
 
 }
 

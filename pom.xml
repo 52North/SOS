@@ -91,7 +91,7 @@
         <version.dao-impl>4.0.0-PR.10</version.dao-impl>
         <version.springframework>5.3.22</version.springframework>
         <version.springframework.security>5.7.2</version.springframework.security>
-        <version.springframework.data>2.7.1</version.springframework.data>
+        <version.springframework.data>2.7.2</version.springframework.data>
         <version.spring-data-entity-graph>2.6.2</version.spring-data-entity-graph>
         <version.aspectj>1.9.9.1</version.aspectj>
         <version.saxon>11.3</version.saxon>
@@ -921,7 +921,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.6.0</version>
+                <version>7.6.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

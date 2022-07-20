@@ -44,7 +44,6 @@ import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
 import org.hibernate.hql.spi.QueryTranslatorFactory;
 import org.hibernate.internal.CriteriaImpl;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.loader.criteria.CriteriaJoinWalker;
 import org.hibernate.loader.criteria.CriteriaQueryTranslator;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
@@ -155,16 +154,14 @@ public final class HibernateHelper {
      * @return if the named query supported
      */
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
-        NamedQueryRepository namedQueryRepository =
-                ((SessionImpl) session).getSessionFactory().getNamedQueryRepository();
-        NamedQueryDefinition namedQueryDef = namedQueryRepository.getNamedQueryDefinition(namedQuery);
-        NamedSQLQueryDefinition namedSQLQueryDef = namedQueryRepository.getNamedSQLQueryDefinition(namedQuery);
-        // NamedQueryDefinition namedQueryDef = ((SessionImpl)
-        // session).getSessionFactory().getNamedQuery(namedQuery);
-        // NamedSQLQueryDefinition namedSQLQueryDef =
-        // ((SessionImpl)
-        // session).getSessionFactory().getNamedSQLQuery(namedQuery);
-        return namedQueryDef != null || namedSQLQueryDef != null;
+        if (session.getSessionFactory() instanceof SessionFactoryImplementor) {
+            NamedQueryRepository namedQueryRepository =
+                    ((SessionFactoryImplementor) session.getSessionFactory()).getNamedQueryRepository();
+            NamedQueryDefinition namedQueryDef = namedQueryRepository.getNamedQueryDefinition(namedQuery);
+            NamedSQLQueryDefinition namedSQLQueryDef = namedQueryRepository.getNamedSQLQueryDefinition(namedQuery);
+            return namedQueryDef != null || namedSQLQueryDef != null;
+        }
+        return false;
     }
 
     public static Dialect getDialect(Session session) {

@@ -90,7 +90,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
         if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) && request.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();

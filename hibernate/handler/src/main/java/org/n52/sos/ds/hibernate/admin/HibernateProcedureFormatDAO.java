@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
 
     private HibernateSessionHolder sessionHolder;

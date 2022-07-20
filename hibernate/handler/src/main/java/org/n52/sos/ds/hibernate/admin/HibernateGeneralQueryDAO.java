@@ -45,6 +45,7 @@ import org.hibernate.jdbc.ReturningWork;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.util.SQLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,13 +59,12 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  *
  */
-public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
+public class HibernateGeneralQueryDAO implements GeneralQueryDAO, TransactionHelper {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateGeneralQueryDAO.class);
 
     private static final String[] MODIFY_COMMANDS = { "alter ", "create ", "drop ", "truncate ", "rename " };
 
     private static final String[] UPDATE_COMMANDS = { "update ", "insert ", "delete " };
-
 
     private HibernateSessionHolder sessionHolder;
 
@@ -112,7 +112,7 @@ public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
         Session s = null;
         try {
             s = sessionHolder.getSession();
-            Transaction t = s.beginTransaction();
+            Transaction t = getTransaction(s);
             try {
                 QueryResult result = s.doReturningWork(work.setQuery(query));
                 t.commit();

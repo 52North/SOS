@@ -109,7 +109,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
         Session session = null;
         try {

@@ -65,6 +65,7 @@ import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.service.SosSettings;
@@ -79,8 +80,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 4.0.0
  *
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler implements Constructable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP" })
+public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler
+        implements Constructable, TransactionHelper {
 
     @Inject
     private ConnectionProvider connectionProvider;
@@ -120,7 +122,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         Transaction transaction = null;
         try {
             session = sessionHolder.getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {

@@ -70,6 +70,7 @@ import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.service.SosSettings;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -83,7 +84,8 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
 @Configurable
-public class InsertObservationHandler extends AbstractInsertObservationHandler implements Constructable {
+public class InsertObservationHandler extends AbstractInsertObservationHandler
+        implements Constructable, TransactionHelper {
     private static final int FLUSH_THRESHOLD = 50;
 
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
@@ -150,7 +152,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
         // DB
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
 
             CompositeOwsException exceptions = new CompositeOwsException();
             InsertObservationCache cache = new InsertObservationCache();

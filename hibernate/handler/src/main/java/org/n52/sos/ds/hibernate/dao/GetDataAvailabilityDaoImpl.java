@@ -72,7 +72,7 @@ import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);
@@ -184,13 +184,11 @@ public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n
     }
 
     /**
-     * Check if extensions contains a temporal filter with valueReference
-     * phenomenonTime
+     * Check if extensions contains a temporal filter with valueReference phenomenonTime
      *
      * @param extensions
      *            Extensions to check
-     * @return <code>true</code>, if extensions contains a temporal filter with
-     *         valueReference phenomenonTime
+     * @return <code>true</code>, if extensions contains a temporal filter with valueReference phenomenonTime
      */
     private boolean hasPhenomenonTimeFilter(Extensions extensions) {
         boolean hasFilter = false;
@@ -206,8 +204,7 @@ public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n
     }
 
     /**
-     * Get the temporal filter with valueReference phenomenonTime from
-     * extensions
+     * Get the temporal filter with valueReference phenomenonTime from extensions
      *
      * @param extensions
      *            To get filter from

@@ -124,7 +124,7 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         final GetResultResponse response = new GetResultResponse();
         response.setService(request.getService());

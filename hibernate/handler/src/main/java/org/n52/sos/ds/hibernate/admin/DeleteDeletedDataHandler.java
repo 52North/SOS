@@ -45,14 +45,16 @@ import org.n52.sos.ds.AbstractDeleteDeletedDataHandler;
 import org.n52.sos.ds.hibernate.DeleteDataHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public class DeleteDeletedDataHandler implements AbstractDeleteDeletedDataHandler, DeleteDataHelper, Constructable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP" })
+public class DeleteDeletedDataHandler
+        implements AbstractDeleteDeletedDataHandler, DeleteDataHelper, Constructable, TransactionHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeleteDeletedDataHandler.class);
     private HibernateSessionHolder sessionHolder;
@@ -74,9 +76,8 @@ public class DeleteDeletedDataHandler implements AbstractDeleteDeletedDataHandle
         Transaction transaction = null;
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
-            Criteria c = daoFactory.getSeriesDAO()
-                    .getDefaultAllSeriesCriteria(session)
+            transaction = getTransaction(session);
+            Criteria c = daoFactory.getSeriesDAO().getDefaultAllSeriesCriteria(session)
                     .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true))
                     .add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false));
             List<DatasetEntity> list = c.list();

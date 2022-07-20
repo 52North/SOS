@@ -39,12 +39,13 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class HibernateRenameDAO implements RenameDAO {
+public class HibernateRenameDAO implements RenameDAO, TransactionHelper {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -57,13 +58,13 @@ public class HibernateRenameDAO implements RenameDAO {
     }
 
     @Override
-    public void renameObservableProperty(String oldName, String newName) throws OwsExceptionReport,
-                                                                              NoSuchObservablePropertyException {
+    public void renameObservableProperty(String oldName, String newName)
+            throws OwsExceptionReport, NoSuchObservablePropertyException {
         Session s = null;
         Transaction t = null;
         try {
             s = sessionHolder.getSession();
-            t = s.beginTransaction();
+            t = getTransaction(s);
             PhenomenonEntity op = (PhenomenonEntity) s.createCriteria(PhenomenonEntity.class)
                     .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, oldName)).uniqueResult();
 

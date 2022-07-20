@@ -39,21 +39,22 @@ import org.n52.sos.ds.procedure.ProcedureCreationContext;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class ProcedureDescriptionEnrichments
-        extends
-        AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
+public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
-    public ProcedureDescriptionEnrichments(
-            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, ProcedureCreationContext ctx) {
+    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider,
+            ProcedureCreationContext ctx) {
         super(locale, serviceProvider, ctx);
     }
 
-    public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext())
-                .setConverter(getConverter())
-                .setProcedure(getProcedure())
-                .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
-                .setValidTime(getValidTime()));
+    public AbstractRelatedProceduresEnrichment createRelatedProceduresEnrichment() {
+        return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext())).setConverter(getConverter())
+                .setProcedure(getProcedure()).setProcedureDescriptionFormat(getProcedureDescriptionFormat())
+                .setValidTime(getValidTime());
+    }
+
+    @Override
+    public SensorMLEnrichment createIdentificationEnrichment() {
+        return setValues(new IdentificationEnrichment(getProcedureCreationContext())).setProcedure(getProcedure());
     }
 
 }

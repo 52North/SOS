@@ -118,7 +118,7 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request) throws OwsExceptionReport {
         GetResultTemplateResponse response = new GetResultTemplateResponse();
         response.setService(request.getService());

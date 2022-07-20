@@ -35,6 +35,8 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
+import org.n52.sos.ds.procedure.enrich.IdentificationEnrichment;
+import org.n52.sos.ds.procedure.enrich.SensorMLEnrichment;
 
 /**
  * TODO JavaDoc
@@ -50,11 +52,16 @@ public class ProcedureDescriptionEnrichments
         super(locale, serviceProvider, ctx);
     }
 
-    public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
+    public AbstractRelatedProceduresEnrichment createRelatedProceduresEnrichment() {
         return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext()))
                 .setConverter(getConverter())
                 .setProcedure(getProcedure())
                 .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
                 .setValidTime(getValidTime());
+    }
+
+    @Override
+    public SensorMLEnrichment createIdentificationEnrichment() {
+        return setValues(new IdentificationEnrichment(getProcedureCreationContext())).setProcedure(getProcedure());
     }
 }

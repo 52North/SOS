@@ -63,7 +63,7 @@ public abstract class AbstractSessionDao {
         Session session = this.sessionFactory.openSession();
         Transaction tx;
         try {
-            tx = session.beginTransaction();
+            tx = getTransaction(session);
             T result = query.apply(session);
             tx.commit();
             return result;
@@ -72,6 +72,10 @@ public abstract class AbstractSessionDao {
                 session.close();
             }
         }
+    }
+
+    private Transaction getTransaction(Session session) {
+        return session.getTransaction().isActive() ? session.getTransaction() : session.beginTransaction();
     }
 
     protected <X extends Exception> void throwingStatement(ThrowingConsumer<Session, X> statement) throws X {

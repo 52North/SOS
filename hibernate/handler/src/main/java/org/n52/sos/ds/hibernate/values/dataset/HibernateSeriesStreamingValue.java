@@ -53,7 +53,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 4.0.2
  *
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
@@ -77,11 +77,11 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-            AbstractObservationRequest request, DatasetEntity dataset)
-            throws OwsExceptionReport {
+            AbstractObservationRequest request, DatasetEntity dataset) throws OwsExceptionReport {
         super(connectionProvider, daoFactory, request);
         this.dataset = dataset;
         this.series = dataset.getId();

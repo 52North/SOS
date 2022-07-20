@@ -48,10 +48,9 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
  *
  * @author Christian Autermann
  */
-public class InsertResultTemplateCapabilitiesExtensionProvider
-        implements OwsCapabilitiesExtensionProvider {
-    private static final OwsCapabilitiesExtensionKey KEY
-            = new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+public class InsertResultTemplateCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
+    private static final OwsCapabilitiesExtensionKey KEY =
+            new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
     @Inject
     private ContentCacheController contentCacheController;
 
@@ -89,7 +88,5 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     public Set<OwsCapabilitiesExtensionKey> getKeys() {
         return Collections.singleton(KEY);
     }
-
-
 
 }

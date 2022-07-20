@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetObservationByIdDaoImpl extends AbstractObservationDao
         implements org.n52.sos.ds.dao.GetObservationByIdDao {
 
@@ -215,9 +215,8 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
                             getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
                             session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
-            HibernateSeriesStreamingValue streamingValue =
-                    new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series, getChunkSize());
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(
+                    sessionHolder.getConnectionProvider(), daoFactory, request, series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);

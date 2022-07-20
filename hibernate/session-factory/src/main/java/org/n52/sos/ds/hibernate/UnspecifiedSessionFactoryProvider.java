@@ -39,6 +39,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.service.ServiceRegistry;
 import org.n52.faroe.ConfigurationError;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -102,9 +103,13 @@ public abstract class UnspecifiedSessionFactoryProvider
             if (sessionFactory == null) {
                 return null;
             }
-            Session session = sessionFactory.openSession();
-            session.setCacheMode(CacheMode.IGNORE);
-            session.setHibernateFlushMode(FlushMode.COMMIT);
+            Session session = getSession();
+            if (session.getTransaction().isActive()) {
+                session.setCacheMode(CacheMode.IGNORE);
+                session.setHibernateFlushMode(FlushMode.COMMIT);
+            } else if (session.getTransaction().getStatus().equals(TransactionStatus.NOT_ACTIVE)) {
+                session.getTransaction().begin();
+            }
             return session;
         } catch (HibernateException he) {
             String exceptionText = "Error while getting connection!";
@@ -115,18 +120,32 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     }
 
+    private Session getSession() {
+        try {
+            return sessionFactory.getCurrentSession();
+        } catch (Exception e) {
+            LOGGER.warn("No current session available. Open new session!");
+        }
+        return sessionFactory.openSession();
+    }
+
     @Override
     public void returnConnection(Object connection) {
         try {
             if (connection instanceof Session) {
                 Session session = (Session) connection;
                 if (session.isOpen()) {
-                    session.clear();
-                    session.close();
+                    if (session.getTransaction().isActive()) {
+                        session.getTransaction().commit();
+                    }
+                    if (session.isOpen()) {
+                        session.clear();
+                        session.close();
+                    }
                 }
             }
-        } catch (HibernateException he) {
-            LOGGER.error("Error while returning connection!", he);
+        } catch (HibernateException | IllegalStateException e) {
+            LOGGER.error("Error while returning connection!", e);
         }
     }
 

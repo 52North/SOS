@@ -70,8 +70,7 @@ public class SOSHibernateSessionHolder implements HibernateSessionStore {
             throw new NoApplicableCodeException().withMessage("The parameter connection is null!");
         }
         if (!(connection instanceof Session)) {
-            throw new NoApplicableCodeException()
-                    .withMessage("The parameter connection is not an Hibernate Session!");
+            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
         }
         return (Session) connection;
     }

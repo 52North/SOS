@@ -93,6 +93,7 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolderContext;
 import org.n52.sos.ds.utils.ResultHandlingHelper;
@@ -111,7 +112,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class InsertResultHandler extends AbstractInsertResultHandler implements Constructable {
+public class InsertResultHandler extends AbstractInsertResultHandler implements Constructable, TransactionHelper {
 
     public static final String ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS =
             "service.abortInsertResultForExistingObservations";
@@ -163,14 +164,12 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             session = getHibernateSessionHolder().getSession();
             final ResultTemplateEntity resultTemplate = getDaoFactory().getResultTemplateDAO()
                     .getResultTemplateObject(request.getTemplateIdentifier(), session);
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             final OmObservation o = getSingleObservationFromResultValues(response.getVersion(), resultTemplate,
                     request.getResultValues(), session);
             final List<OmObservation> observations = getSingleObservationsFromObservation(o);
-            if (o.getObservationConstellation()
-                    .isSetFeatureOfInterest()
-                    && o.getObservationConstellation()
-                            .isSetProcedure()) {
+            if (o.getObservationConstellation().isSetFeatureOfInterest()
+                    && o.getObservationConstellation().isSetProcedure()) {
                 response.setObservation(o);
             } else {
                 response.setObservations(observations);
@@ -192,10 +191,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     if (oc != null) {
                         obsConsts.put(omObsConst, oc);
                     } else if (isConvertComplexProfileToSingleProfiles() && observation.isSetValue()
-                            && observation.getValue()
-                                    .isSetValue()
-                            && observation.getValue()
-                                    .getValue() instanceof ProfileValue) {
+                            && observation.getValue().isSetValue()
+                            && observation.getValue().getValue() instanceof ProfileValue) {
                         obsConsts.put(omObsConst, insertObservationConstellationForProfiles(obsConstDao, obsTypeDao,
                                 observation, session));
                     }
@@ -217,7 +214,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     }
                     if (!abortInsertResultForExistingObservations()) {
                         transaction.commit();
-                        transaction = session.beginTransaction();
+                        transaction = getTransaction(session);
                     }
                 } catch (PersistenceException pe) {
                     if (abortInsertResultForExistingObservations()) {
@@ -225,7 +222,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     } else {
                         transaction.rollback();
                         session.clear();
-                        transaction = session.beginTransaction();
+                        transaction = getTransaction(session);
                         LOGGER.debug("Already existing observation would be ignored!", pe);
                     }
                 }
@@ -281,8 +278,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             Session session) throws OwsExceptionReport {
         AbstractFeatureEntity hFeature = cache.get(abstractFeature.getIdentifier());
         if (hFeature == null) {
-            hFeature = getDaoFactory().getFeatureOfInterestDAO()
-                    .checkOrInsert(abstractFeature, session);
+            hFeature = getDaoFactory().getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
             cache.put(abstractFeature.getIdentifier(), hFeature);
         }
         return hFeature;
@@ -308,13 +304,9 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             throws OwsExceptionReport {
         final SosResultEncoding resultEncoding = createSosResultEncoding(resultTemplate.getEncoding());
         final SosResultStructure resultStructure = createSosResultStructure(resultTemplate.getStructure());
-        final String[] blockValues = getBlockValues(resultValues, resultEncoding.get()
-                .get());
-        final OmObservation singleObservation = getObservation(resultTemplate, blockValues, resultStructure.get()
-                .get(),
-                resultEncoding.get()
-                        .get(),
-                session);
+        final String[] blockValues = getBlockValues(resultValues, resultEncoding.get().get());
+        final OmObservation singleObservation = getObservation(resultTemplate, blockValues,
+                resultStructure.get().get(), resultEncoding.get().get(), session);
         // final AbstractFeature feature =
         // getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version,
         // session);
@@ -338,8 +330,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     getDaoFactory().getGeometryHandler(), getDaoFactory().getTrajectoryDetectionTimeGap())
                             .unfold(getContext());
         } catch (final Exception e) {
-            throw new InvalidParameterValueException().causedBy(e)
-                    .at(Sos2Constants.InsertResultParams.resultValues)
+            throw new InvalidParameterValueException().causedBy(e).at(Sos2Constants.InsertResultParams.resultValues)
                     .withMessage(
                             "The resultValues format does not comply to the resultStructure of the resultTemplate!");
         }
@@ -364,23 +355,18 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     private OmObservationConstellation getSosObservationConstellation(final ResultTemplateEntity resultTemplate,
             final Session session) throws OwsExceptionReport {
 
-        final List<DatasetEntity> obsConsts = getDaoFactory().getSeriesDAO()
-                .getSeriesForOfferings(resultTemplate.getPhenomenon(), Sets.newHashSet(resultTemplate.getOffering()),
-                        session);
-        final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering()
-                .getIdentifier());
+        final List<DatasetEntity> obsConsts = getDaoFactory().getSeriesDAO().getSeriesForOfferings(
+                resultTemplate.getPhenomenon(), Sets.newHashSet(resultTemplate.getOffering()), session);
+        final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
         for (DatasetEntity obsConst : obsConsts) {
             if (observationType == null && obsConst.isSetOMObservationType()) {
-                observationType = obsConst.getOmObservationType()
-                        .getFormat();
+                observationType = obsConst.getOmObservationType().getFormat();
             }
         }
         OmObservationConstellation omObservationConstellation = new OmObservationConstellation()
-                .setObservableProperty(new OmObservableProperty(resultTemplate.getPhenomenon()
-                        .getIdentifier()))
-                .setOfferings(offerings)
-                .setObservationType(observationType);
+                .setObservableProperty(new OmObservableProperty(resultTemplate.getPhenomenon().getIdentifier()))
+                .setOfferings(offerings).setObservationType(observationType);
         if (resultTemplate.isSetProcedure()) {
             omObservationConstellation.setProcedure(createProcedure(resultTemplate.getProcedure()));
         }
@@ -433,14 +419,10 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
-        final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields()
-                .size() - 1);
-        final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields()
-                .size() - 1);
-        final Map<Integer, String> featureOfInterest = new HashMap<Integer, String>(record.getFields()
-                .size() - 1);
-        final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields()
-                .size() - 1);
+        final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> featureOfInterest = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields().size() - 1);
 
         int j = 0;
         getIndexFor(record, j, observedProperties, units, featureOfInterest, procedure,
@@ -476,19 +458,14 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
-                    if (swefield.getElement() instanceof SweText && swefield.getElement()
-                            .getDefinition()
+                    if (swefield.getElement() instanceof SweText && swefield.getElement().getDefinition()
                             .contains(ResultHandlingHelper.OM_FEATURE_OF_INTEREST)) {
-                        featureOfInterest.put(index, swefield.getElement()
-                                .getDefinition());
-                    } else if (swefield.getElement() instanceof SweText && swefield.getElement()
-                            .getDefinition()
-                            .contains(ResultHandlingHelper.OM_PROCEDURE)) {
-                        procedure.put(index, swefield.getElement()
-                                .getDefinition());
+                        featureOfInterest.put(index, swefield.getElement().getDefinition());
+                    } else if (swefield.getElement() instanceof SweText
+                            && swefield.getElement().getDefinition().contains(ResultHandlingHelper.OM_PROCEDURE)) {
+                        procedure.put(index, swefield.getElement().getDefinition());
                     } else {
-                        observedProperties.put(index, swefield.getElement()
-                                .getDefinition());
+                        observedProperties.put(index, swefield.getElement().getDefinition());
                         if (sweAbstractSimpleType instanceof SweAbstractUomType<?>) {
                             units.put(index, ((SweAbstractUomType<?>) sweAbstractSimpleType).getUom());
                         }
@@ -507,11 +484,9 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                 } else if (swefield.getElement() instanceof SweVector) {
                     helper.checkVectorForSamplingGeometry(swefield);
                 } else {
-                    throw new NoApplicableCodeException()
-                            .withMessage("The swe:Field element of type %s is not yet supported!",
-                                    swefield.getElement()
-                                            .getClass()
-                                            .getName());
+                    throw new NoApplicableCodeException().withMessage(
+                            "The swe:Field element of type %s is not yet supported!",
+                            swefield.getElement().getClass().getName());
                 }
             }
             ++idx;
@@ -648,10 +623,9 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         }
 
         DatasetEntity oc = obsConstDao.getOrInsert(ctx, session);
-        if (o.getObservationConstellation()
-                .isSetObservationType()) {
-            oc.setOmObservationType(obsTypeDao.getFormatEntityObject(o.getObservationConstellation()
-                    .getObservationType(), session));
+        if (o.getObservationConstellation().isSetObservationType()) {
+            oc.setOmObservationType(
+                    obsTypeDao.getFormatEntityObject(o.getObservationConstellation().getObservationType(), session));
         }
         return oc;
     }

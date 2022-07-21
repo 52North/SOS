@@ -33,6 +33,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 
 /**
  * Abstract test class that contains implemented methods
@@ -42,7 +43,7 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
  *
  *
  */
-public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
+public abstract class ExtendedHibernateTestCase extends HibernateTestCase implements TransactionHelper  {
 
     @Deprecated
     protected static Class<?> getObservationClass(Session session) throws OwsExceptionReport {

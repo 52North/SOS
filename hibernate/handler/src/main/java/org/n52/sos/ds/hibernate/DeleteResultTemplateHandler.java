@@ -49,15 +49,15 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.exception.sos.concrete.DeleteResultTemplateInvalidParameterValueException;
 
 import com.google.common.collect.Lists;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class DeleteResultTemplateHandler
-        extends AbstractDeleteResultTemplateHandler {
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHandler implements TransactionHelper {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -82,7 +82,7 @@ public class DeleteResultTemplateHandler
         response.set(request);
         try {
             session = sessionHolder.getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             if (request.isSetResultTemplates()) {
                 response.addDeletedResultTemplates(deleteByTemplateId(session, request.getResultTemplates()));
             } else {

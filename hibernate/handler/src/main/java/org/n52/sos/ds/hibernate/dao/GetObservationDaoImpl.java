@@ -78,7 +78,7 @@ import com.google.common.collect.Maps;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetObservationDaoImpl extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDaoImpl.class);
 
@@ -227,7 +227,8 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
     }
 
     private List<DatasetEntity> getSeries(AbstractSeriesDAO seriesDAO, GetObservationRequest request,
-            List<String> features, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            List<String> features, IndeterminateValue sosIndeterminateTime, Session session)
+            throws OwsExceptionReport {
         if (!overallExtrema) {
             return seriesDAO.getSeries(request, features, session);
         }
@@ -293,9 +294,8 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
                             getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
                             observationCreatorContext, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
-            HibernateSeriesStreamingValue streamingValue =
-                    new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series, getChunkSize());
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(
+                    sessionHolder.getConnectionProvider(), daoFactory, request, series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);

@@ -132,8 +132,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             returnSession(getSession());
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -152,8 +151,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             returnSession(getSession());
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -189,15 +187,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             setSeriesValuesResult(resutltValues);
         } catch (final HibernateException he) {
             returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Check the queried {@link DataEntity}s for null and set them as iterator
-     * to local variable.
+     * Check the queried {@link DataEntity}s for null and set them as iterator to local variable.
      *
      * @param seriesValuesResult
      *            Queried {@link DataEntity}s

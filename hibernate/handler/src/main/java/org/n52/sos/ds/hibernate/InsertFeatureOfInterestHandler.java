@@ -45,10 +45,12 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 
-public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler implements Constructable {
+public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler
+        implements Constructable, TransactionHelper {
 
     @Inject
     private ConnectionProvider connectionProvider;
@@ -79,7 +81,7 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
         Transaction transaction = null;
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
                 getDaoFactory().getFeatureDAO().insertFeature(abstractFeature, session);
             }

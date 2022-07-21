@@ -153,7 +153,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetFeatureOfInterestResponse getFeatureOfInterest(GetFeatureOfInterestRequest request)
             throws OwsExceptionReport {
         Session session = sessionStore.getSession();

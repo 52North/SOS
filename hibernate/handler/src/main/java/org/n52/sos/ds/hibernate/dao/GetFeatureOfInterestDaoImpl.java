@@ -47,8 +47,9 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class GetFeatureOfInterestDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class GetFeatureOfInterestDaoImpl extends AbstractDaoImpl
+        implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -90,10 +91,9 @@ public class GetFeatureOfInterestDaoImpl extends AbstractDaoImpl implements org.
 
     private Map<String, AbstractFeature> queryFeaturesOfInterest(GetFeatureOfInterestRequest request, Session session)
             throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject =
-                new FeatureQueryHandlerQueryObject(session).setFeatures(request.getFeatureIdentifiers())
-                        .setVersion(request.getVersion()).setI18N(getRequestedLocale(request))
-                        .setSpatialFilters(request.getSpatialFilters());
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
+                .setFeatures(request.getFeatureIdentifiers()).setVersion(request.getVersion())
+                .setI18N(getRequestedLocale(request)).setSpatialFilters(request.getSpatialFilters());
         return featureQueryHandler.getFeatures(queryObject);
     }
 

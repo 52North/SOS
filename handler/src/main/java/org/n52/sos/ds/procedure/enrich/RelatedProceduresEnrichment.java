@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
  */
 public class RelatedProceduresEnrichment
         extends
-        AbstractRelatedProceduresEnrichment<ProcedureEntity> {
+        AbstractRelatedProceduresEnrichment {
 
     public RelatedProceduresEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);

@@ -143,7 +143,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response)
             throws OwsExceptionReport {
         Session session = null;
@@ -160,7 +160,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response,
             Object connection) throws OwsExceptionReport {
         if (checkHibernateConnection(connection)) {

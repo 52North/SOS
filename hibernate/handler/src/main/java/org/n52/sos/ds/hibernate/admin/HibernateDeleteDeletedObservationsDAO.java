@@ -41,6 +41,7 @@ import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated see {@link DeleteDeletedDataHandler}
  */
 @Deprecated
-public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObservationDAO {
+public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObservationDAO, TransactionHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateDeleteDeletedObservationsDAO.class);
     private HibernateSessionHolder sessionHolder;
@@ -68,7 +69,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
         Transaction transaction = null;
         try {
             session = sessionHolder.getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             ScrollableIterable<DataEntity<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session));
             try {
                 for (DataEntity<?> o : sr) {

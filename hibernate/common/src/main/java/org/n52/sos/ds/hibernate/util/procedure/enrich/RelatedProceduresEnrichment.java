@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.series.db.beans.ProcedureEntity;
@@ -47,7 +48,7 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class RelatedProceduresEnrichment
-        extends AbstractRelatedProceduresEnrichment<ProcedureEntity> {
+        extends AbstractRelatedProceduresEnrichment {
 
     public RelatedProceduresEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);
@@ -113,9 +114,16 @@ public class RelatedProceduresEnrichment
         return childProcedures;
     }
 
+
     protected Set<String> getParentProcedures()
             throws OwsExceptionReport {
-        return getCache().getParentProcedures(getIdentifier(), false, false);
+        Set<String> parents = new HashSet<>();
+        if (getProcedure().hasParents()) {
+            for (ProcedureEntity parent : getProcedure().getParents()) {
+                parents.add(parent.getIdentifier());
+            }
+        }
+        return parents;
     }
 
 }

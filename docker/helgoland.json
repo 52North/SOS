@@ -1,12 +1,12 @@
 {
     "defaultService": {
         "serviceId": "1",
-        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/"
+        "apiUrl": "http://localhost:8080/api/"
     },
     "datasetApis": [
         {
             "name": "localhost",
-            "url": "http://localhost:8080/52n-sos-webapp/api/"
+            "url": "http://localhost:8080/api/"
         },
 		{
             "name": "nexos.demo.52north",

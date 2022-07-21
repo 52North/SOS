@@ -162,8 +162,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
-        ObservationValueCreator creator = new ObservationValueCreator(getCreatorContext().getDaoFactory()
-                .getObservationHelper());
+        ObservationValueCreator creator =
+                new ObservationValueCreator(getCreatorContext().getDaoFactory().getObservationHelper());
         final Value<?> value = creator
                 .visit(unproxy(hObservation, getSession()));
         OmObservation sosObservation = null;
@@ -326,30 +326,27 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (!Strings.isNullOrEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
-        if (hObservation.getDataset()
-                .isSetOMObservationType()) {
-            obsConst.setObservationType(hObservation.getDataset()
-                    .getOmObservationType()
-                    .getFormat());
+        DatasetEntity dataset = hObservation.getDataset();
+        if (dataset.isSetOMObservationType()) {
+            obsConst.setObservationType(dataset.getOmObservationType().getFormat());
         }
         observationConstellations.put(hashCode, obsConst);
-        DatasetEntity series = hObservation.getDataset();
-        if (series.isSetIdentifier()) {
-            addIdentifier(obsConst, series);
+        if (dataset.isSetIdentifier()) {
+            addIdentifier(obsConst, dataset);
         }
         obsConst.setObservationType(getResultModel());
         if (request.isSetRequestedLanguage()) {
-            addNameAndDescription(series, obsConst, getRequestedLanguage(), getI18N(), false);
+            addNameAndDescription(dataset, obsConst, getRequestedLanguage(), getI18N(), false);
             if (obsConst.isSetName()) {
                 obsConst.setHumanReadableIdentifier(obsConst.getFirstName()
                         .getValue());
             }
         } else {
-            if (series.isSetName()) {
-                addName(obsConst, series);
+            if (dataset.isSetName()) {
+                addName(obsConst, dataset);
             }
-            if (series.isSetDescription()) {
-                obsConst.setDescription(series.getDescription());
+            if (dataset.isSetDescription()) {
+                obsConst.setDescription(dataset.getDescription());
             }
         }
 

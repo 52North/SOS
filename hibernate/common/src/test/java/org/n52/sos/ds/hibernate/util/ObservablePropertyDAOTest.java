@@ -51,8 +51,7 @@ import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 
-
-public class ObservablePropertyDAOTest extends HibernateTestCase {
+public class ObservablePropertyDAOTest extends HibernateTestCase implements TransactionHelper {
 
     private static final String CHILD = "child";
     private static final String PARENT = "parent";
@@ -66,7 +65,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         Session session = getSession();
         Transaction transaction = null;
         try {
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             ScrollableIterable<PhenomenonEntity> iter =
                     ScrollableIterable.fromCriteria(session.createCriteria(PhenomenonEntity.class));
             for (PhenomenonEntity observableProperty : iter) {
@@ -100,7 +99,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         Session session = getSession();
         Transaction transaction = null;
         try {
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             List<AbstractPhenomenon> abstractPhenomenons
                     = Arrays.asList(compositePhenomenon, simpleObservableProperty);
 

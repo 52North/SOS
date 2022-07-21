@@ -74,7 +74,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
         try {

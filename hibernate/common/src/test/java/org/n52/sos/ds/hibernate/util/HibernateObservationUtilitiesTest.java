@@ -77,7 +77,7 @@ import org.n52.sos.util.SosHelper;
  * @since 4.0.0
  *
  */
-public class HibernateObservationUtilitiesTest extends HibernateTestCase {
+public class HibernateObservationUtilitiesTest extends HibernateTestCase implements TransactionHelper {
     public static final String FEATURE_OF_INTEREST_TYPE = "junit_feature_of_interest_type";
 
     public static final String OFFERING = "junit_offering";
@@ -119,7 +119,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
         Session session = getSession();
 
         try {
-            Transaction transaction = session.beginTransaction();
+            Transaction transaction = getTransaction(session);
             GetObservationByIdRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 

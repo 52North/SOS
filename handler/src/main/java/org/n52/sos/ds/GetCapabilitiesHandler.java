@@ -130,7 +130,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             If an error occurs
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     protected List<SosObservationOffering> getContentsForSosV1(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;
@@ -237,7 +237,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             * If an error occurs
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     protected List<SosObservationOffering> getContentsForSosV2(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;

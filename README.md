@@ -71,17 +71,17 @@ A custom [Helgoland](https://github.com/52North/helgoland) `settings.json` can b
 
 Default:
 ```sh
-docker run -p 8080:8080 52north/sos:latest
+docker run -p 8080:8080 --name sos 52north/sos:latest
 ```
 
 With a local configuration folder:
 ```sh
-docker run -p 8080:8080 -v ./config:/etc/sos 52north/sos:latest
+docker run -p 8080:8080 --name sos -v ./config:/etc/sos 52north/sos:latest
 ```
 
 Remote debugging enabled:
 ```sh
-docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' 52north/sos:latest
+docker run -p 8080:8080 -p 8000:8000 --name sos -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8000,server=y,suspend=n' 52north/sos:latest
 ```
 
 ## Demo
@@ -114,10 +114,10 @@ The development the 52°North Sensor Observation Service implementations was con
 
 | Name | Organisation |
 | ------------- | :-------------: |
-| [Carsten Hollmann](http://52north.org/about/52-north-team/25-carsten-hollmann) | [52&deg;North](http://52north.org) |
-| [Eike Hinderk J&uuml;rrens](http://52north.org/about/52-north-team/14-eike-hinderk-juerrens) | [52&deg;North](http://52north.org) |
-| [Christian Autermann](http://52north.org/about/52-north-team/30-autermann-christian) | [52&deg;North](http://52north.org) |
-| [Christoph Stasch](http://52north.org/about/52-north-team/31-stasch-christoph) | [52&deg;North](http://52north.org) |
+| [Carsten Hollmann](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| [Eike Hinderk J&uuml;rrens](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| [Christian Autermann](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
+| Christoph Stasch| [52&deg;North](http://52north.org) |
 | Shane StClair | [Axiom Data Science](http://www.axiomdatascience.com) |
 | Victor Gonz&aacute;lez | [geomati.co](http://geomati.co/en) |
 | Oscar Fonts | [geomati.co](http://geomati.co/en) |

@@ -46,6 +46,7 @@ import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +61,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  */
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public class DeleteSensorHandler extends AbstractDeleteSensorHandler implements DeleteDataHelper, Constructable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP" })
+public class DeleteSensorHandler extends AbstractDeleteSensorHandler
+        implements DeleteDataHelper, Constructable, TransactionHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteSensorHandler.class);
 
     @Inject
@@ -97,7 +99,7 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler implements 
         Transaction transaction = null;
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             String identifier = request.getProcedureIdentifier();
             ProcedureEntity procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(identifier, session);
             deleteSensor(procedure, session);

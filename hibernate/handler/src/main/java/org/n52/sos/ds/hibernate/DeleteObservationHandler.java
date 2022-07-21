@@ -44,14 +44,16 @@ import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.ds.AbstractDeleteObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public class DeleteObservationHandler extends AbstractDeleteObservationHandler implements DeleteObservationHelper {
+@SuppressFBWarnings({ "EI_EXPOSE_REP" })
+public class DeleteObservationHandler extends AbstractDeleteObservationHandler
+        implements DeleteObservationHelper, TransactionHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationHandler.class);
 
@@ -87,7 +89,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler i
         Transaction transaction = null;
         try {
             session = getSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             if (request.isSetObservationIdentifiers()) {
                 deleteObservationsByIdentifier(request, response, session);
             } else {

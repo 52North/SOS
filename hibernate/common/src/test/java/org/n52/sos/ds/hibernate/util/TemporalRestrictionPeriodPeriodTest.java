@@ -53,7 +53,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         Transaction transaction = null;
         try {
             DateTime ref = new DateTime(DateTimeZone.UTC).minusDays(1);
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             HibernateObservationBuilder b = getBuilder(session);
             b.createObservation(TemporalRestrictionTest.Identifier.PP_AFTER_ID, ref.plus(3), ref.plus(4));
             b.createObservation(TemporalRestrictionTest.Identifier.PP_MET_BY_ID, ref.plus(2), ref.plus(3));

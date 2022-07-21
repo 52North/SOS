@@ -514,7 +514,7 @@ $(function() {
                     if (definition.request.endsWith("xml")) {
                         $.get(definition.request, function(data) {
                             var xml = self.xml2string(data);
-                            self.editor.setValue(vkbeautify.xml(xml));
+                            self.editor.setValue(new XmlBeautify().beautify(xml));
                         });
                     } else if (definition.request.endsWith("json")) {
                         $.get(definition.request, function(data) {

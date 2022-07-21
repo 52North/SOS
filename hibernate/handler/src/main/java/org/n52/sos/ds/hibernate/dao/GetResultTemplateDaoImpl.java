@@ -57,7 +57,7 @@ import org.n52.svalbard.util.XmlHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResultTemplateDao, Constructable {
 
     private HibernateSessionHolder sessionHolder;
@@ -100,8 +100,7 @@ public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResu
             session = sessionHolder.getSession();
             return queryResultTemplate(request, response, session);
         } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage("Error while querying result data!")
+            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
@@ -159,8 +158,8 @@ public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResu
             if (decoder != null) {
                 return decoder.decode(xmlObject);
             } else {
-                throw new NoApplicableCodeException().withMessage("No decoder found for %s", xmlObject.getClass()
-                        .getName());
+                throw new NoApplicableCodeException().withMessage("No decoder found for %s",
+                        xmlObject.getClass().getName());
             }
         } catch (DecodingException de) {
             throw new NoApplicableCodeException().causedBy(de);

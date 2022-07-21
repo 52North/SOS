@@ -104,7 +104,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional()
     public GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest request)
             throws OwsExceptionReport {
         GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();

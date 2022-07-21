@@ -29,6 +29,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -54,6 +55,7 @@ import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.GetResultTemplateHandler;
 import org.n52.sos.ds.dao.GetResultDao;
+import org.n52.sos.ds.dao.GetResultTemplateDao;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
@@ -68,7 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDaoImpl.class);
 
@@ -81,6 +83,8 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
     private ResultHandlingHelper resultHandlingHelper;
 
     private ProfileHandler profileHandler;
+
+    private Optional<GetResultTemplateDao> getResultTemplateDao;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -100,6 +104,11 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setGetResultTemplateDao(Optional<GetResultTemplateDao> getResultTemplateDao) {
+        this.getResultTemplateDao = getResultTemplateDao;
     }
 
     public SweHelper getSweHelper() {
@@ -129,8 +138,7 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
             session = sessionHolder.getSession();
             return queryResultData(request, response, session);
         } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage("Error while querying result data!")
+            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
@@ -146,18 +154,25 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
         return response;
     }
 
+    private Optional<GetResultTemplateDao> getGetResultTemplateDao() {
+        return getResultTemplateDao == null ? Optional.empty() : getResultTemplateDao;
+    }
+
+    private GetResultTemplateHandler getResultTemplateHandler() {
+        return resultTemplateHandler;
+    }
+
     private GetResultResponse getResult(GetResultRequest request, GetResultResponse response, Session session)
             throws OwsExceptionReport {
-        GetResultTemplateResponse resultTemplate = queryResultTemplate(request);
+        GetResultTemplateResponse resultTemplate = queryResultTemplate(request, session);
         if (resultTemplate != null) {
             SosResultEncoding resultEncoding = resultTemplate.getResultEncoding();
             SosResultStructure resultStructure = resultTemplate.getResultStructure();
             final List<DataEntity<?>> observations =
                     queryObservations(request, request.getFeatureIdentifiers(), session);
             response.setResultValues(getResultHandlingHelper().createResultValuesFromObservations(observations,
-                    resultEncoding, resultStructure, getProfileHandler().getActiveProfile()
-                            .getResponseNoDataPlaceholder(),
-                    session));
+                    resultEncoding, resultStructure,
+                    getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder(), session));
             return response;
         }
         return response;
@@ -169,9 +184,8 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
      * @param request
      *            GetObservation request
      * @param featureIdentifiers
-     *            Set of feature identifiers. If <tt>null</tt>, query filter
-     *            will not be added. If <tt>empty</tt>, <tt>null</tt> will be
-     *            returned.
+     *            Set of feature identifiers. If <tt>null</tt>, query filter will not be added. If
+     *            <tt>empty</tt>, <tt>null</tt> will be returned.
      * @param session
      *            Hibernate session
      * @return List of Observation objects
@@ -185,18 +199,15 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
         addSpatialFilteringProfileRestrictions(c, request, session);
         addParentChildRestriction(c);
 
-        List<DatasetEntity> series = getDaoFactory().getSeriesDAO()
-                .getSeries(request, featureIdentifiers, session);
+        List<DatasetEntity> series = getDaoFactory().getSeriesDAO().getSeries(request, featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID, series.stream()
-                    .map(DatasetEntity::getId)
-                    .collect(Collectors.toSet())));
+            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
+                    series.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
         }
 
-        if (request.getTemporalFilter() != null && !request.getTemporalFilter()
-                .isEmpty()) {
+        if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
             addTemporalFilter(c, request.getTemporalFilter());
         }
 
@@ -225,20 +236,17 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
     }
 
     /**
-     * Create Hibernate Criteria for the class and add ascending of phenomenon
-     * start time
+     * Create Hibernate Criteria for the class and add ascending of phenomenon start time
      *
      * @param clazz
      *            The class for the Criteria
      * @param session
      *            Hibernate session
-     * @return Hibernate Criteria for the class and add ascending of phenomenon
-     *         start time
+     * @return Hibernate Criteria for the class and add ascending of phenomenon start time
      */
     @SuppressWarnings("rawtypes")
     private Criteria createCriteriaFor(Class clazz, Session session) {
-        return session.createCriteria(clazz)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .addOrder(Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START));
     }
@@ -255,26 +263,27 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
-     *             If Spatial Filtering Profile is not supported or an error
-     *             occurs
+     *             If Spatial Filtering Profile is not supported or an error occurs
      */
     private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            criteria.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, request.getSpatialFilter()
-                    .getOperator(),
-                    getDaoFactory().getGeometryHandler()
-                            .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter()
-                                    .getGeometry()
-                                    .toGeometry())));
+            criteria.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
+                    request.getSpatialFilter().getOperator(),
+                    getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                            request.getSpatialFilter().getGeometry().toGeometry())));
         }
     }
 
-    private GetResultTemplateResponse queryResultTemplate(final GetResultRequest request) throws OwsExceptionReport {
+    private GetResultTemplateResponse queryResultTemplate(final GetResultRequest request, Session session)
+            throws OwsExceptionReport {
         GetResultTemplateRequest r = new GetResultTemplateRequest(request.getService(), request.getVersion());
         r.setOffering(request.getOffering());
         r.setObservedProperty(request.getObservedProperty());
-        return resultTemplateHandler.getResultTemplate(r);
+        return getGetResultTemplateDao().isPresent()
+                ? getGetResultTemplateDao().get().queryResultTemplate(r,
+                        new GetResultTemplateResponse(request.getService(), request.getVersion()), session)
+                : getResultTemplateHandler().getResultTemplate(r);
     }
 
 }

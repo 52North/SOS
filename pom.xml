@@ -85,10 +85,11 @@
         <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.6.1</version.arctic-sea>
+        <version.arctic-sea>9.7.0-SNAPSHOT</version.arctic-sea>
         <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
+        <version.helgoland-adapters>2.0.0-SNAPSHOT</version.helgoland-adapters>
         <version.springframework>5.3.22</version.springframework>
         <version.springframework.security>5.7.2</version.springframework.security>
         <version.springframework.data>2.7.2</version.springframework.data>
@@ -481,6 +482,11 @@
                 <groupId>org.n52.sensorweb-server.helgoland</groupId>
                 <artifactId>helgoland-rest</artifactId>
                 <version>${version.helgoland.api}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+                <artifactId>helgoland-adapters-common</artifactId>
+                <version>${version.helgoland-adapters}</version>
             </dependency>
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -1126,6 +1132,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${version.postgresql}</version>
+                <exclusions>
+	                <exclusion>
+			          <groupId>org.checkerframework</groupId>
+			          <artifactId>checker-qual</artifactId>
+			        </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>net.postgis</groupId>
@@ -1650,10 +1662,6 @@
                     <exclusion>
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpcore</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

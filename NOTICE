@@ -121,7 +121,9 @@ This project includes:
   fastinfoset under Apache License, Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
+  GeoGson Core under Apache License Version 2.0
   geolatte-geom under LGPL 3.0
+  Gson under Apache-2.0
   Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
   Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under Apache License, Version 2.0
@@ -228,6 +230,7 @@ This project includes:
   Sensor Web Server Helgoland - PDF report structure under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland Adapters - Common Module under GNU General Public License, Version 2.0
   SI Quantities under BSD 3-Clause
   SI Units under BSD
   SLF4J API Module under MIT License

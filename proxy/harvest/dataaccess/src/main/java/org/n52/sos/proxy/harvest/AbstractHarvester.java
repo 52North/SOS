@@ -33,8 +33,8 @@ import org.hibernate.Hibernate;
 import org.n52.janmayen.event.EventBus;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
+import org.n52.sensorweb.server.helgoland.adapters.da.CRUDRepository;
 import org.n52.sos.event.events.UpdateCache;
-import org.n52.sos.proxy.da.CRUDRepository;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -48,14 +48,14 @@ public abstract class AbstractHarvester implements Harvester {
     private DatasetRepository datasetRepository;
 
     @Inject
-    private CRUDRepository insertionRepository;
+    private CRUDRepository crudRepository;
 
     @Inject
     private EventBus eventBus;
 
     @Override
     public CRUDRepository getCRUDRepository() {
-        return insertionRepository;
+        return crudRepository;
     }
 
     @Override

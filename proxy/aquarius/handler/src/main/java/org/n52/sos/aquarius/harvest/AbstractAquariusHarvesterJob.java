@@ -79,6 +79,20 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
         }
     }
 
+    @Override
+    protected void process(JobExecutionContext context) throws JobExecutionException {
+        boolean processed = false;
+        try {
+            processed = process(context, getConnector());
+        } catch (OwsExceptionReport | ConnectionProviderException ex) {
+            throw new JobExecutionException(ex);
+        } finally {
+            if (processed) {
+                updateCache();
+            }
+        }
+    }
+
     protected abstract boolean process(JobExecutionContext context, AquariusConnector connector)
             throws OwsExceptionReport;
 

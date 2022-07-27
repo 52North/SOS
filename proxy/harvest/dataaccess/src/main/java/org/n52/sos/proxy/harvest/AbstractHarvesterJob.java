@@ -29,12 +29,13 @@ package org.n52.sos.proxy.harvest;
 
 import javax.inject.Inject;
 
+import org.n52.bjornoya.schedule.JobConfiguration;
 import org.n52.bjornoya.schedule.ScheduledJob;
 import org.n52.janmayen.event.EventBus;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
+import org.n52.sensorweb.server.helgoland.adapters.da.CRUDRepository;
 import org.n52.sos.event.events.UpdateCache;
-import org.n52.sos.proxy.da.CRUDRepository;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -48,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public abstract class AbstractHarvesterJob extends ScheduledJob {
 
     @Inject
-    private CRUDRepository insertionRepository;
+    private CRUDRepository crudRepository;
     @Inject
     private ServiceEntityFactory serviceEntityFactory;
     @Inject
@@ -63,8 +64,8 @@ public abstract class AbstractHarvesterJob extends ScheduledJob {
 
     protected abstract String getGroup();
 
-    public CRUDRepository getInsertionRepository() {
-        return insertionRepository;
+    public CRUDRepository getCRUDRepository() {
+        return crudRepository;
     }
 
     public ServiceEntityFactory getServiceEntityFactory() {

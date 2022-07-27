@@ -25,16 +25,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sensorweb.server.db.repositories.core;
+package org.n52.sos.aquarius.harvest;
 
-import org.n52.sensorweb.server.db.repositories.ParameterDataRepository;
-import org.n52.series.db.beans.ServiceEntity;
-import org.springframework.context.annotation.Profile;
-import org.springframework.transaction.annotation.Transactional;
+import javax.inject.Inject;
 
-@Transactional
-@Profile("proxy")
-public interface ServiceRepository extends ParameterDataRepository<ServiceEntity> {
+import org.n52.bjornoya.schedule.DefaultJobConfiguration;
+import org.n52.bjornoya.schedule.JobHandler;
+import org.n52.bjornoya.schedule.ScheduledJob;
+import org.n52.janmayen.lifecycle.Constructable;
 
-    ServiceEntity findByNameAndUrlAndType(String name, String url, String type);
+public class AquariusHarvesterJobFactory implements Constructable {
+
+    @Inject
+    private DefaultJobConfiguration jobConfiguration;
+
+    @Inject
+    private JobHandler jobHandler;
+
+    @Override
+    public void init() {
+        jobHandler.addScheduledJob(createFullHarvesterJob());
+        jobHandler.addScheduledJob(createTemporalHarvesterJob());
+    }
+
+    private ScheduledJob createTemporalHarvesterJob() {
+        return new AquariusTemporalHarvesterJob().setJobConfiguration(jobConfiguration.getTemporalJobConfiguration().setModified(true));
+    }
+
+    private ScheduledJob createFullHarvesterJob() {
+        return new AquariusFullHarvesterJob().setJobConfiguration(jobConfiguration.getFullJobConfiguration().setModified(true));
+    }
+
 }

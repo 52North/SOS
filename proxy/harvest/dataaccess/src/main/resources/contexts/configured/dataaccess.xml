@@ -17,6 +17,6 @@
     <ctx:annotation-config />
     <beans profile="proxy">
         <import resource="classpath*:**/sessionFactory.xml" />
-        <bean id="crudRepository" class="org.n52.sos.proxy.da.CRUDRepository" />
+        <bean id="crudRepository" class="org.n52.sensorweb.server.helgoland.adapters.da.CRUDRepository" />
     </beans>
 </beans>

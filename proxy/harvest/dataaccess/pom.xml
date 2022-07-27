@@ -16,10 +16,6 @@
             <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb-server.helgoland</groupId>
-            <artifactId>helgoland-spi</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.sensorweb-server.dao-impl</groupId>
             <artifactId>dao-impl-dao</artifactId>
         </dependency>
@@ -42,6 +38,10 @@
             <artifactId>db-model-types</artifactId>
             <scope>runtime</scope>
         </dependency>
+       	<dependency>
+            <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+            <artifactId>helgoland-adapters-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
@@ -54,10 +54,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -76,10 +72,6 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -87,10 +79,6 @@
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>

@@ -15,8 +15,7 @@
 
         <bean id="aquariusGetObservationDao" class="org.n52.sos.aquarius.dao.AquariusGetObservationDao"/>
 
-        <bean id="aquariusFullHarvesterJob" class="org.n52.sos.aquarius.harvest.AquariusFullHarvesterJob" />
-        <bean id="aquariusTemporalHarvesterJob" class="org.n52.sos.aquarius.harvest.AquariusTemporalHarvesterJob" />
+        <bean id="aquariusHarvesterJobFactory" class="org.n52.sos.aquarius.harvest.AquariusHarvesterJobFactory" />
         <bean id="aquariusTemporalUpdater" class="org.n52.sos.aquarius.harvest.AquariusTemporalUpdater" />
         <bean id="aquariusFullHarvester" class="org.n52.sos.aquarius.harvest.AquariusFullHarvester" />
     </beans>

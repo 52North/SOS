@@ -16,9 +16,8 @@
 
     <ctx:annotation-config />
     <beans profile="proxy">
-        <bean id="httpClientHandler" class="org.n52.sos.web.HttpClientHandler" />
-
-        <bean id="harvesterJobFactory" class="org.n52.bjornoya.schedule.JobFactory" />
+ 		<bean id="defaultJobConfiguration" class="org.n52.bjornoya.schedule.DefaultJobConfiguration" />
+        <bean id="jobHandler" class="org.n52.bjornoya.schedule.JobHandler" />
         <bean id="dataSourceHarvesterScheduler" class="org.n52.bjornoya.schedule.Scheduler" init-method="init" destroy-method="shutdown">
             <property name="scheduler">
                 <bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -29,6 +28,8 @@
                 </bean>
             </property>
         </bean>
-
+		<bean name="crudRepository" class="org.n52.sensorweb.server.helgoland.adapters.da.CRUDRepository"/>
+	    <bean name="dataSourceHarvesterHelper" class="org.n52.sensorweb.server.helgoland.adapters.harvest."/>
+		<bean name="dataSourceHarvestingJobFactory" class="org.n52.sensorweb.server.helgoland.adapters.harvest.DataSourceHarvestingJobFactory" init-method="init"/>
     </beans>
 </beans>

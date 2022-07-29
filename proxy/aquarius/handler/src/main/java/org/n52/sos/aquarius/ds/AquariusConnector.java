@@ -39,10 +39,15 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.n52.faroe.ConfigurationError;
+import org.n52.sensorweb.server.helgoland.adapters.utils.ProxyException;
+import org.n52.sensorweb.server.helgoland.adapters.web.HttpClient;
+import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractRequest;
+import org.n52.sensorweb.server.helgoland.adapters.web.response.Response;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
+import org.n52.sos.aquarius.adapters.config.AquariusConfigurationProvider;
 import org.n52.sos.aquarius.pojo.Grades;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.LocationDescriptions;
@@ -63,9 +68,7 @@ import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.aquarius.requests.GetUnitList;
-import org.n52.sos.proxy.Response;
-import org.n52.sos.proxy.request.AbstractRequest;
-import org.n52.sos.web.HttpClientHandler;
+import org.n52.sos.web.HttpClientCreator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -73,9 +76,9 @@ import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class AquariusConnector implements AccessorConnector {
+public class AquariusConnector implements AccessorConnector, HttpClientCreator {
 
-    private HttpClientHandler httpClientHandler;
+    private AquariusConfigurationProvider configurationProvider;
 
     private ObjectMapper om = new ObjectMapper();
 
@@ -83,9 +86,9 @@ public class AquariusConnector implements AccessorConnector {
 
     private SessionHandler sessionHandler;
 
-    public AquariusConnector(SessionHandler sessionHandler, HttpClientHandler httpClientHandler,
+    public AquariusConnector(SessionHandler sessionHandler, AquariusConfigurationProvider configurationProvider,
             AquariusHelper aquariusHelper) {
-        this.httpClientHandler = httpClientHandler;
+        this.configurationProvider = configurationProvider;
         this.aquariusHelper = aquariusHelper;
         this.sessionHandler = sessionHandler;
     }
@@ -344,14 +347,20 @@ public class AquariusConnector implements AccessorConnector {
     }
 
     private Response query(AbstractRequest request) throws OwsExceptionReport, URISyntaxException {
-        Response response = httpClientHandler.execute(getURL(sessionHandler.getSession()),
-                checkTokenParameter(request, sessionHandler.getSession()));
-        if (response != null && response.getStatus() == 401) {
-            sessionHandler.keepAlive(sessionHandler.getSession());
-            response = httpClientHandler.execute(getURL(sessionHandler.getSession()),
+        try {
+            HttpClient client = getClient(configurationProvider.getDataSourceConfiguration());
+            Response response = client.execute(getURL(sessionHandler.getSession()),
                     checkTokenParameter(request, sessionHandler.getSession()));
+
+            if (response != null && response.getStatus() == 401) {
+                sessionHandler.keepAlive(sessionHandler.getSession());
+                response = client.execute(getURL(sessionHandler.getSession()),
+                        checkTokenParameter(request, sessionHandler.getSession()));
+            }
+            return response;
+        } catch (ProxyException e) {
+            throw new NoApplicableCodeException().causedBy(e);
         }
-        return response;
     }
 
     private AbstractRequest checkTokenParameter(AbstractRequest request, Session session) {

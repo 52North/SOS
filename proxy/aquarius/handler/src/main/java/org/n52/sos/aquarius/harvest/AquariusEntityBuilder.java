@@ -40,6 +40,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.n52.sensorweb.server.helgoland.adapters.utils.EntityBuilder;
+import org.n52.sensorweb.server.helgoland.adapters.web.Counter;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -71,7 +72,6 @@ import org.n52.sos.aquarius.pojo.data.Grade;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.QualifierKey;
-import org.n52.sos.proxy.Counter;
 
 public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper {
 

@@ -25,10 +25,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.proxy.request;
+package org.n52.sos.aquarius.adapters.harvest;
 
-public abstract class AbstractDeleteRequest extends AbstractRequest {
+import org.n52.sensorweb.server.helgoland.adapters.connector.ConnectorConfiguration;
+import org.n52.sensorweb.server.helgoland.adapters.connector.ConnectorConfigurationFactory;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.DataSourceJobConfiguration;
+import org.n52.sos.aquarius.AquariusConstants;
+import org.quartz.JobExecutionException;
 
-    public AbstractDeleteRequest() {
+public class AquariusConnectorConfigurationFactory implements ConnectorConfigurationFactory {
+
+    @Override
+    public boolean checkDatasource(DataSourceJobConfiguration dataSource) {
+        return dataSource.getType().equalsIgnoreCase(AquariusConstants.TYPE);
     }
+
+    @Override
+    public ConnectorConfiguration createConfiguration(DataSourceJobConfiguration dataSource)
+            throws JobExecutionException {
+        return new ConnectorConfiguration(dataSource);
+    }
+
 }

@@ -35,20 +35,19 @@ import javax.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.sensorweb.server.helgoland.adapters.config.DataSourceConfiguration;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.ds.datasource.AbstractAquariusH2Datasource;
-import org.n52.sos.web.HttpClientHandler;
+import org.n52.sos.aquarius.adapters.config.AquariusConfigurationProvider;
+import org.n52.sos.web.HttpClientCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class AquariusConnectionFactory implements Constructable, Destroyable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+public class AquariusConnectionFactory implements Constructable, Destroyable, HttpClientCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnectionFactory.class);
 
@@ -56,9 +55,7 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
 
     private Timer timer = new Timer("session-keepalive", true);
 
-    private DatabaseSettingsHandler databaseSettingsHandler;
-
-    private HttpClientHandler httpClientHandler;
+    private AquariusConfigurationProvider configurationProvider;
 
     private SessionHandler sessionHandler;
 
@@ -70,13 +67,8 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
     }
 
     @Inject
-    public void setDatabaseSettingsHandler(DatabaseSettingsHandler databaseSettingsHandler) {
-        this.databaseSettingsHandler = databaseSettingsHandler;
-    }
-
-    @Inject
-    public void setHttpClientHandle(HttpClientHandler httpClientHandler) {
-        this.httpClientHandler = httpClientHandler;
+    public void setAquariusConfigurationProvider(AquariusConfigurationProvider configurationProvider) {
+        this.configurationProvider = configurationProvider;
     }
 
     public AquariusConnector getConnection() throws ConnectionProviderException {
@@ -84,29 +76,24 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
             if (connection == null) {
                 return null;
             }
-            return new AquariusConnector(sessionHandler, httpClientHandler, aquariusHelper);
+            return new AquariusConnector(sessionHandler, configurationProvider, aquariusHelper);
         } catch (Exception e) {
             throw new ConnectionProviderException("Error while getting connection!", e);
         }
-    }
-
-    private String getRestPath() {
-        return AquariusConstants.AQUARIUS_PATH;
     }
 
     @Override
     public void init() {
         try {
             LOGGER.debug("Instantiating session factory");
-            String host = this.databaseSettingsHandler.getAll()
-                    .getProperty(AbstractAquariusH2Datasource.PROXY_HOST_KEY);
-            String user = this.databaseSettingsHandler.getAll()
-                    .getProperty(AbstractAquariusH2Datasource.PROXY_USERNAME_KEY);
-            String password = this.databaseSettingsHandler.getAll()
-                    .getProperty(AbstractAquariusH2Datasource.PROXY_PASSWORD_KEY);
+            DataSourceConfiguration dataSourceConfiguration = this.configurationProvider.getDataSourceConfiguration();
+            String host = dataSourceConfiguration.getUrl();
+            String user = dataSourceConfiguration.getUsername();
+            String password = dataSourceConfiguration.getPassword();
             LOGGER.debug("Server: {}", host);
-            this.connection = new AquariusConnection(user, password, host, getRestPath());
-            this.sessionHandler = new SessionHandler(httpClientHandler, connection);
+            this.connection = new AquariusConnection(user, password, host);
+            this.sessionHandler =
+                    new SessionHandler(getClient(dataSourceConfiguration), connection);
             timer.scheduleAtFixedRate(new KeepAliveTask(), 1800000, 1800000);
         } catch (SecurityException | IllegalArgumentException e) {
             throw new ConfigurationError("An error occurs during instantiation of the AquariusConnector connection!",

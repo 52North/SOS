@@ -27,8 +27,8 @@
  */
 package org.n52.sos.aquarius.requests;
 
+import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractDeleteRequest;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractDeleteRequest;
 
 public class DeleteRequest extends AbstractDeleteRequest {
 

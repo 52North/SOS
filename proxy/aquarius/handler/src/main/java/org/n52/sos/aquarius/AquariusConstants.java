@@ -37,7 +37,11 @@ public interface AquariusConstants {
 
     String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
 
-    String GROUP = "Aquarius";
+    String NAME = "Aquarius";
+
+    String TYPE = NAME;
+
+    String GROUP = NAME;
 
     public interface Paths {
         String SESSION = "session";

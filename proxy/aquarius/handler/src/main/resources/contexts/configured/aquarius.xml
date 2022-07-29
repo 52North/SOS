@@ -10,13 +10,16 @@
 
     <ctx:annotation-config />
     <beans profile="aquarius">
-        <bean id="aquariusConnectionFactory" class="org.n52.sos.aquarius.ds.AquariusConnectionFactory" />
+    	<!-- aquarius -->
+        <bean id="aquariusConnectionFactory" class="org.n52.sos.aquarius.ds.AquariusConnectionFactory" scope="singleton"/>
         <bean id="aquariusHelper" class="org.n52.sos.aquarius.ds.AquariusHelper" scope="singleton" />
-
+		<!-- sos -->
         <bean id="aquariusGetObservationDao" class="org.n52.sos.aquarius.dao.AquariusGetObservationDao"/>
-
-        <bean id="aquariusHarvesterJobFactory" class="org.n52.sos.aquarius.harvest.AquariusHarvesterJobFactory" />
-        <bean id="aquariusTemporalUpdater" class="org.n52.sos.aquarius.harvest.AquariusTemporalUpdater" />
-        <bean id="aquariusFullHarvester" class="org.n52.sos.aquarius.harvest.AquariusFullHarvester" />
+		<!-- adapters -->
+		<bean id="aquariusServiceConnector" class="org.n52.sos.aquarius.adapters.AquariusServiceConnector"/>
+		<bean id="aquariusConfigurationProvider" class="org.n52.sos.aquarius.adapters.config.AquariusConfigurationProvider"/>
+        <bean id="aquariusConnectorConfigurationFactory" class="org.n52.sos.aquarius.adapters.harvest.AquariusConnectorConfigurationFactory" />
+        <bean id="aquariusTemporalUpdater" class="org.n52.sos.aquarius.adapters.harvest.AquariusTemporalUpdater" />
+        <bean id="aquariusFullHarvester" class="org.n52.sos.aquarius.adapters.harvest.AquariusFullHarvester" />
     </beans>
 </beans>

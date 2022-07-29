@@ -29,8 +29,8 @@ package org.n52.sos.aquarius.requests;
 
 import java.util.Map;
 
+import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractGetRequest;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
 public abstract class AbstractAquariusGetRequest extends AbstractGetRequest {
 

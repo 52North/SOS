@@ -42,6 +42,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.sensorweb.server.helgoland.adapters.utils.ProxyException;
+import org.n52.sensorweb.server.helgoland.adapters.web.HttpClient;
+import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractRequest;
+import org.n52.sensorweb.server.helgoland.adapters.web.response.Response;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.AquariusConstants;
@@ -51,9 +55,6 @@ import org.n52.sos.aquarius.requests.DeleteRequest;
 import org.n52.sos.aquarius.requests.GetPublicKey;
 import org.n52.sos.aquarius.requests.GetSession;
 import org.n52.sos.aquarius.requests.KeepAliveRequest;
-import org.n52.sos.proxy.Response;
-import org.n52.sos.proxy.request.AbstractRequest;
-import org.n52.sos.web.HttpClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -63,7 +64,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class SessionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionHandler.class);
@@ -72,14 +73,14 @@ public class SessionHandler {
 
     private ObjectMapper om = new ObjectMapper();
 
-    private HttpClientHandler httpClientHandler;
+    private HttpClient httpClient;
 
     private Session session;
 
     private AquariusConnection connection;
 
-    public SessionHandler(HttpClientHandler httpClientHandler, AquariusConnection connection) {
-        this.httpClientHandler = httpClientHandler;
+    public SessionHandler(HttpClient httpClient, AquariusConnection connection) {
+        this.httpClient = httpClient;
         this.connection = connection;
     }
 
@@ -89,7 +90,7 @@ public class SessionHandler {
 
     private synchronized void establishConnection(AquariusConnection connection, int attempt) {
         try {
-            Response response = httpClientHandler.execute(getURL(connection.getBasePath()),
+            Response response = httpClient.execute(getURL(connection.getBasePath()),
                     new GetSession(new SessionRequestEntity(connection.getUsername(),
                             encryptedPassword(connection.getPassword(), connection))));
             this.session = new Session(response.getEntity(), connection);
@@ -108,24 +109,25 @@ public class SessionHandler {
         try {
             execute(new DeleteRequest(), session);
         } catch (URISyntaxException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying parameter data");
-        } finally {
-            httpClientHandler.destroy();
+            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while querying parameter data");
         }
     }
 
     private Response execute(AbstractRequest request, Session session) throws OwsExceptionReport, URISyntaxException {
         request.addHeader(AquariusConstants.HEADER_AQ_AUTH_TOKEN, session.getToken());
-        return httpClientHandler.execute(getURL(session.getConnection()
-                .getBasePath()), request);
+        try {
+            return httpClient.execute(getURL(session.getConnection()
+                    .getBasePath()), request);
+        } catch (ProxyException e) {
+            throw new NoApplicableCodeException().causedBy(e);
+        }
     }
 
     private String encryptedPassword(String plaintextPassword, AquariusConnection connection) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             if (!connection.hasCipher()) {
-                Response response = httpClientHandler.execute(getURL(connection.getBasePath()), new GetPublicKey());
+                Response response = httpClient.execute(getURL(connection.getBasePath()), new GetPublicKey());
                 PublicKey publicKey = om.readValue(response.getEntity(), PublicKey.class);
 
                 InputSource source = new InputSource(new StringReader(publicKey.getXml()));
@@ -141,12 +143,10 @@ public class SessionHandler {
                 RSAPublicKeySpec pubSpec =
                         new RSAPublicKeySpec(new BigInteger(1, modulusByes), new BigInteger(1, exponentBytes));
                 Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");
-                cipher.init(1, KeyFactory.getInstance("RSA")
-                        .generatePublic(pubSpec));
+                cipher.init(1, KeyFactory.getInstance("RSA").generatePublic(pubSpec));
                 connection.setCipher(cipher);
             }
-            byte[] encryptedPasswordBlob = connection.getCipher()
-                    .doFinal(plaintextPassword.getBytes("UTF-8"));
+            byte[] encryptedPasswordBlob = connection.getCipher().doFinal(plaintextPassword.getBytes("UTF-8"));
             return DatatypeConverter.printBase64Binary(encryptedPasswordBlob);
         } catch (Exception e) {
             LOGGER.error("Error encrypting password!", e);
@@ -155,7 +155,7 @@ public class SessionHandler {
     }
 
     private URI getURL(String host) throws URISyntaxException {
-//      new URIBuilder(host.startsWith("http") ? host : "http://" + host, StandardCharsets.UTF_8).build();
+        // new URIBuilder(host.startsWith("http") ? host : "http://" + host, StandardCharsets.UTF_8).build();
         return new URI(host.startsWith("http") ? host : "http://" + host);
     }
 

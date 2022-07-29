@@ -41,6 +41,10 @@ public class AquariusConnection {
 
     private Cipher cipher;
 
+    public AquariusConnection(String username, String password, String host) {
+        this(username, password, host, "");
+    }
+
     public AquariusConnection(String username, String password, String host, String path) {
         this.username = username;
         this.password = password;

@@ -25,39 +25,50 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.harvest;
+package org.n52.sos.aquarius.adapters.harvest;
 
+import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvester;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvesterResponse;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvesterResponse;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.n52.sos.aquarius.harvest.AbstractAquariusHarvester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-public class AquariusFullHarvester extends AbstractAquariusHarvester {
+public class AquariusFullHarvester extends AbstractAquariusHarvester implements FullHarvester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvester.class);
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void harvest(AquariusConnector connector) {
-        procedures.clear();
-        phenomenon.clear();
-        categories.clear();
-        offerings.clear();
-        parameters.clear();
-        features.clear();
-        platforms.clear();
-        locations.clear();
-        units.clear();
-        checkGradesAndQualifier(connector);
-        try {
-            ServiceEntity service = getOrInsertServiceEntity();
-            parameters = getParameterList(connector);
-            units = getUnitList(connector);
-            harvestDatasets(service, connector);
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while harvesting data!", e);
+    public HarvesterResponse process(HarvestContext context) {
+        if (context instanceof AquariusHarvesterContext) {
+            AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
+            procedures.clear();
+            phenomenon.clear();
+            categories.clear();
+            offerings.clear();
+            parameters.clear();
+            features.clear();
+            platforms.clear();
+            locations.clear();
+            units.clear();
+            checkGradesAndQualifier(connector);
+            try {
+                ServiceEntity service = getOrInsertServiceEntity();
+                parameters = getParameterList(connector);
+                units = getUnitList(connector);
+                harvestDatasets(service, connector);
+            } catch (OwsExceptionReport e) {
+                LOGGER.error("Error while harvesting data!", e);
+            }
+            return new FullHarvesterResponse();
         }
+        return new FullHarvesterResponse(false);
     }
 
     @Override

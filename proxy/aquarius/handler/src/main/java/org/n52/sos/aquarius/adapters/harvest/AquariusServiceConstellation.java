@@ -25,49 +25,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.proxy.request;
+package org.n52.sos.aquarius.adapters.harvest;
 
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.springframework.web.util.UriUtils;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
+import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
+import org.n52.sos.prox.harvest.AbstractProxyServiceConstellation;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public abstract class AbstractRequest {
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+public class AquariusServiceConstellation extends AbstractProxyServiceConstellation {
 
-    private Map<String, String> header = new LinkedHashMap<>();
+    private AquariusConnectionFactory factory;
 
-    public AbstractRequest() {
-        super();
+    public AquariusServiceConstellation(AquariusConnectionFactory factory) {
+        super(AquariusFullHarvester.class.getName(), AquariusTemporalUpdater.class.getName());
+        this.factory = factory;
     }
 
-    /**
-     * @return the header
-     */
-    public Map<String, String> getHeader() {
-        return header;
+    public HarvestContext getHavesterContext() throws JobExecutionException {
+        try {
+            return new AquariusHarvesterContext(this, factory.getConnection());
+        } catch (ConnectionProviderException e) {
+            throw new JobExecutionException(e);
+        }
     }
 
-    /**
-     * @param header the header to add
-     */
-    public AbstractRequest addHeader(String key, String value) {
-        this.header.put(key, value);
-        return this;
+    public HarvestContext getHavesterContext(JobDataMap jobDataMap) throws JobExecutionException {
+        try {
+            return new AquariusHarvesterContext(this, jobDataMap, factory.getConnection());
+        } catch (ConnectionProviderException e) {
+            throw new JobExecutionException(e);
+        }
     }
-
-    public boolean hasHeader() {
-        return !getHeader().isEmpty();
-    }
-
-    protected String encode(String value) {
-        return UriUtils.encode(value, StandardCharsets.UTF_8);
-    }
-
-    public abstract String getPath();
-
-
 }

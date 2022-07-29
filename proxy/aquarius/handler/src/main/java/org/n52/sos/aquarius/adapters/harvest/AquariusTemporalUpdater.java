@@ -25,7 +25,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.harvest;
+package org.n52.sos.aquarius.adapters.harvest;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,14 +34,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvesterResponse;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.TemporalHarvester;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.TemporalHarvesterResponse;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.n52.sos.aquarius.harvest.AbstractAquariusHarvester;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesUniqueId;
@@ -49,23 +53,28 @@ import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
 import org.n52.sos.aquarius.requests.AbstractAquariusGetRequest.ChangeEvent;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
-import org.quartz.JobDataMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
-public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
+public class AquariusTemporalUpdater extends AbstractAquariusHarvester implements TemporalHarvester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusTemporalUpdater.class);
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public TemporalUpdateResponse update(JobDataMap mergedJobDataMap, AquariusConnector connector) {
-        return update(connector, (DateTime) mergedJobDataMap.get(AquariusConstants.LAST_UPDATE_TIME));
+    public HarvesterResponse process(HarvestContext context) {
+        if (context instanceof AquariusHarvesterContext) {
+            AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
+            return update(connector, context.getLastUpdateTime());
+        }
+        return new TemporalHarvesterResponse();
     }
 
-    protected TemporalUpdateResponse update(AquariusConnector connector, DateTime changedSince) {
+
+    protected TemporalHarvesterResponse update(AquariusConnector connector, DateTime changedSince) {
         boolean updated = false;
         try {
             ServiceEntity service = null;
@@ -97,11 +106,11 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
                     }
                 }
             }
-            return new TemporalUpdateResponse(updated, timeSeriesUniqueIds.getNextToken());
+            return new TemporalHarvesterResponse(updated, timeSeriesUniqueIds.getNextToken());
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while updating!", e);
         }
-        return new TemporalUpdateResponse(updated, null);
+        return new TemporalHarvesterResponse(updated, null);
     }
 
     private List<TimeSeriesDescription> getTimeSeriesDescriptions(List<TimeSeriesUniqueId> timeSeriesUniqueIds,
@@ -134,4 +143,5 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
     public Logger getLogger() {
         return LOGGER;
     }
+
 }

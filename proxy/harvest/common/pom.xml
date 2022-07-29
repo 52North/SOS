@@ -11,34 +11,34 @@
     <name>52°North SOS - Proxy Harvest Common</name>
     <description>52°North Sensor Observation Service Proxy common harvest module</description>
     <dependencies>
+     	<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-proxy-datasource-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+		    <artifactId>helgoland-adapters-common</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+		    <artifactId>helgoland-adapters-harvest</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>shetland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>bjornoya</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -48,34 +48,6 @@
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId> org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-         <dependency>
-            <groupId> org.apache.httpcomponents</groupId>
-            <artifactId>httpclient-cache</artifactId>
-        </dependency>
-         <dependency>
-            <groupId> org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.jodah</groupId>
-            <artifactId>failsafe</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

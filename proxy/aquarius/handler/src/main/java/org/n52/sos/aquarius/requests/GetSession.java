@@ -29,9 +29,9 @@ package org.n52.sos.aquarius.requests;
 
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractPostRequest;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.pojo.SessionRequestEntity;
-import org.n52.sos.proxy.request.AbstractPostRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

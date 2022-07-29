@@ -25,35 +25,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.harvest;
+package org.n52.sos.aquarius.adapters.harvest;
 
-import javax.inject.Inject;
+import org.n52.sensorweb.server.helgoland.adapters.connector.AbstractServiceConstellation;
+import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
+import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.quartz.JobDataMap;
 
-import org.n52.bjornoya.schedule.DefaultJobConfiguration;
-import org.n52.bjornoya.schedule.JobHandler;
-import org.n52.bjornoya.schedule.ScheduledJob;
-import org.n52.janmayen.lifecycle.Constructable;
+public class AquariusHarvesterContext extends HarvestContext {
 
-public class AquariusHarvesterJobFactory implements Constructable {
+    private final AquariusConnector connector;
 
-    @Inject
-    private DefaultJobConfiguration jobConfiguration;
-
-    @Inject
-    private JobHandler jobHandler;
-
-    @Override
-    public void init() {
-        jobHandler.addScheduledJob(createFullHarvesterJob());
-        jobHandler.addScheduledJob(createTemporalHarvesterJob());
+    public AquariusHarvesterContext(AbstractServiceConstellation constellation, AquariusConnector connector) {
+        this(constellation, null, connector);
     }
 
-    private ScheduledJob createTemporalHarvesterJob() {
-        return new AquariusTemporalHarvesterJob().setJobConfiguration(jobConfiguration.getTemporalJobConfiguration().setModified(true));
+    public AquariusHarvesterContext(AbstractServiceConstellation constellation, JobDataMap jobDataMap,
+            AquariusConnector connector) {
+        super(constellation, jobDataMap);
+        this.connector = connector;
     }
 
-    private ScheduledJob createFullHarvesterJob() {
-        return new AquariusFullHarvesterJob().setJobConfiguration(jobConfiguration.getFullJobConfiguration().setModified(true));
+    public AquariusConnector getConnector() {
+        return connector;
     }
 
 }

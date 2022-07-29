@@ -77,7 +77,7 @@
         <version.hibernate>5.6.10.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>27.0</version.geotools>
+        <version.geotools>27.1</version.geotools>
         <version.jackson>2.13.3</version.jackson>
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>

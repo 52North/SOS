@@ -456,6 +456,16 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         // .findAny().isPresent();
     }
 
+    public Envelope getEnvelope(EnvelopeOrGeometry envelopeOrGeometry) throws OwsExceptionReport {
+        if (envelopeOrGeometry != null) {
+            Geometry geometry = switchCoordinateAxisFromToDatasourceIfNeeded(envelopeOrGeometry);
+            if (geometry != null) {
+                return geometry.getEnvelopeInternal();
+            }
+        }
+        return null;
+    }
+
     /**
      * Check if the EPSG code is easting first.
      *

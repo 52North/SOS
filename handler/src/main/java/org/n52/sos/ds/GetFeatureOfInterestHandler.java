@@ -44,7 +44,6 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -73,7 +72,6 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
-import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.ds.feature.create.FeatureVisitorContext;
@@ -251,22 +249,25 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      */
     private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req,
             Session session) throws OwsExceptionReport {
-        // try {
-        Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(req));
         Collection<FeatureEntity> allFeatures =
                 req.isSetObservableProperties() || req.isSetProcedures() ? new LinkedHashSet<>()
                         : new FeatureDao(session).get(createFoiDbQuery(req));
-        if (datasets != null) {
-            Set<AbstractFeatureEntity> features = datasets.stream().filter(d -> d.isSetFeature()
-                    && (d.isPublished() || !d.isPublished() && d.getDatasetType().equals(DatasetType.not_initialized)))
-                    .map(d -> d.getFeature()).collect(Collectors.toSet());
+        if (allFeatures != null && !allFeatures.isEmpty()) {
+            Collection<DatasetEntity> datasets = new DatasetDao(session).get(
+                    createDbQuery(req, allFeatures.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet())));
+            if (datasets != null) {
+                Set<AbstractFeatureEntity> features = datasets.stream()
+                        .filter(d -> d.isSetFeature() && (d.isPublished()
+                                || !d.isPublished() && d.getDatasetType().equals(DatasetType.not_initialized)))
+                        .map(d -> d.getFeature()).collect(Collectors.toSet());
 
-            Set<AbstractFeatureEntity> notVisibleFeatures =
-                    datasets.stream().filter(d -> d.isDeleted() || !d.isPublished()).map(d -> d.getFeature())
-                            .collect(Collectors.toSet());
-            features.addAll(
-                    allFeatures.stream().filter(o -> !notVisibleFeatures.contains(o)).collect(Collectors.toSet()));
-            return features;
+                Set<AbstractFeatureEntity> notVisibleFeatures =
+                        datasets.stream().filter(d -> d.isDeleted() || !d.isPublished()).map(d -> d.getFeature())
+                                .collect(Collectors.toSet());
+                features.addAll(
+                        allFeatures.stream().filter(o -> !notVisibleFeatures.contains(o)).collect(Collectors.toSet()));
+                return features;
+            }
         }
         return Collections.emptySet();
     }
@@ -280,7 +281,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             Envelope envelope = null;
             for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
                 if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    Envelope toAdd = getEnvelope(spatialFilter.getGeometry());
+                    Envelope toAdd = getGeometryHandler().getEnvelope(spatialFilter.getGeometry());
                     if (toAdd != null) {
                         if (envelope == null) {
                             envelope = toAdd;
@@ -291,6 +292,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                 }
             }
             if (envelope != null) {
+
                 List<Double> bbox = Lists.newArrayList();
                 bbox.add(envelope.getMinX());
                 bbox.add(envelope.getMinY());
@@ -303,15 +305,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    private Envelope getEnvelope(EnvelopeOrGeometry envelopeOrGeometry) throws OwsExceptionReport {
-        if (envelopeOrGeometry != null) {
-            Geometry geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(envelopeOrGeometry);
-            if (geometry != null) {
-                return geometry.getEnvelopeInternal();
-            }
-        }
-        return null;
-    }
+
 
     /**
      * Check if the request contains spatial filters
@@ -362,9 +356,9 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return geometryHandler;
     }
 
-    private DbQuery createDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
+    private DbQuery createDbQuery(GetFeatureOfInterestRequest req, Set<String> features) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
-        if (req.isSetFeatureOfInterestIdentifiers()) {
+        if (features != null && !features.isEmpty()) {
             map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
         }
         if (req.isSetProcedures()) {
@@ -372,29 +366,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
         if (req.isSetObservableProperties()) {
             map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
-        }
-        if (req.isSetSpatialFilters()) {
-            Envelope envelope = null;
-            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
-                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    Envelope toAdd = getEnvelope(spatialFilter.getGeometry());
-                    if (toAdd != null) {
-                        if (envelope == null) {
-                            envelope = toAdd;
-                        } else {
-                            envelope.expandToInclude(toAdd);
-                        }
-                    }
-                }
-            }
-            if (envelope != null) {
-                List<Double> bbox = Lists.newArrayList();
-                bbox.add(envelope.getMinX());
-                bbox.add(envelope.getMinY());
-                bbox.add(envelope.getMaxX());
-                bbox.add(envelope.getMaxY());
-                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-            }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
         return createDbQuery(IoParameters.createFromSingleValueMap(map));

@@ -49,6 +49,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.ds.dao.GetObservationDao;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +71,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
 
     private DbQueryFactory dbQueryFactory;
 
+    private GeometryHandler geometryHandler;
+
     public GetObservationHandler() {
         super(SosConstants.SOS);
     }
@@ -87,6 +90,11 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     @Inject
     public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
         this.dbQueryFactory = dbQueryFactory;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
     }
 
     @Override
@@ -119,38 +127,27 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         return dao != null;
     }
 
-    private DbQuery createDbQuery(GetObservationRequest request) {
+    private GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    private DbQuery createDbQuery(GetObservationRequest request) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
         if (request.isSetFeatureOfInterest()) {
             map.put(IoParameters.FEATURES, listToString(request.getFeatureIdentifiers()));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
+            Envelope envelope = null;
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
-                if (request.getSpatialFilter().getGeometry().isGeometry()
-                        && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
-                    Envelope envelope =
-                            request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
-                    if (envelope != null) {
-                        List<Double> bbox = Lists.newArrayList();
-                        bbox.add(envelope.getMinX());
-                        bbox.add(envelope.getMinY());
-                        bbox.add(envelope.getMaxX());
-                        bbox.add(envelope.getMaxY());
-                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-                    }
-                } else if (request.getSpatialFilter().getGeometry().isEnvelope()
-                        && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()) {
-                    Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelope().get().getEnvelope();
-                    if (envelope != null) {
-                        List<Double> bbox = Lists.newArrayList();
-                        bbox.add(envelope.getMinX());
-                        bbox.add(envelope.getMinY());
-                        bbox.add(envelope.getMaxX());
-                        bbox.add(envelope.getMaxY());
-                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-                    }
+                envelope = getGeometryHandler().getEnvelope(request.getSpatialFilter().getGeometry());
+                if (envelope != null) {
+                    List<Double> bbox = Lists.newArrayList();
+                    bbox.add(envelope.getMinX());
+                    bbox.add(envelope.getMinY());
+                    bbox.add(envelope.getMaxX());
+                    bbox.add(envelope.getMaxY());
+                    map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
                 }
-
             }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));

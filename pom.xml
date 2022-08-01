@@ -71,13 +71,13 @@
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.6.0.0.1</version.ojdbc8>
         <version.sqljdbc>11.1.2.jre8-preview</version.sqljdbc>
-        <version.mysql>8.0.29</version.mysql>
+        <version.mysql>8.0.30</version.mysql>
         <version.h2>2.1.214</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.6.10.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>27.0</version.geotools>
+        <version.geotools>27.1</version.geotools>
         <version.jackson>2.13.3</version.jackson>
         <version.logback>1.2.11</version.logback>
         <version.slf4j>1.7.36</version.slf4j>
@@ -95,12 +95,12 @@
         <version.springframework.data>2.7.2</version.springframework.data>
         <version.spring-data-entity-graph>2.6.2</version.spring-data-entity-graph>
         <version.aspectj>1.9.9.1</version.aspectj>
-        <version.saxon>11.3</version.saxon>
+        <version.saxon>11.4</version.saxon>
         <version.elasticsearch>7.17.5</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
-        <version.junit>5.8.2</version.junit>
+        <version.junit>5.9.0</version.junit>
         <version.exificient>1.0.4</version.exificient>
         <version.jaxb>2.3.0</version.jaxb>
         <version.netty>4.1.79.Final</version.netty>

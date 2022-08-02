@@ -27,6 +27,8 @@
  */
 package org.n52.sos.aquarius;
 
+import java.util.Locale;
+
 public interface AquariusConstants {
 
     String AQUARIUS_PATH = "/AQUARIUS/Publish/v2/";
@@ -41,7 +43,7 @@ public interface AquariusConstants {
 
     String TYPE = NAME;
 
-    String GROUP = NAME;
+    String GROUP = NAME.toLowerCase(Locale.ROOT);
 
     public interface Paths {
         String SESSION = "session";

@@ -55,7 +55,7 @@ public class AquariusConfigurationProvider extends AbstractProxyConfigurationPro
 
     @Override
     protected String getItemName() {
-        return "Aquarius Proxy";
+        return getName();
     }
 
     @Override

@@ -94,7 +94,6 @@ This project includes:
   Apache FOP Events under The Apache Software License, Version 2.0
   Apache FOP Utilities under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
-  Apache HttpClient Cache under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache Thrift under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
@@ -231,6 +230,8 @@ This project includes:
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Common Module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland Adapters - Connector Module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland Adapters - Harvester Module under GNU General Public License, Version 2.0
   SI Quantities under BSD 3-Clause
   SI Units under BSD
   SLF4J API Module under MIT License

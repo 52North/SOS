@@ -41,7 +41,7 @@ import org.n52.sensorweb.server.helgoland.adapters.config.ConfigurationProvider;
 import org.n52.sensorweb.server.helgoland.adapters.config.DataSourceConfiguration;
 import org.n52.sos.ds.datasource.ProxyDatasource;
 
-public abstract class AbstractProxyConfigurationProvider implements ConfigurationProvider {
+public abstract class AbstractAdaptersConfigurationProvider implements ConfigurationProvider {
 
     @Inject
     private DatasourceSettingsHandler datasourceSettingsHandler;

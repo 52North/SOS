@@ -30,14 +30,14 @@ package org.n52.sos.aquarius.adapters.harvest;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
 import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
-import org.n52.sos.prox.harvest.AbstractProxyServiceConstellation;
+import org.n52.sos.prox.harvest.AbstractAdaptersServiceConstellation;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({ "EI_EXPOSE_REP2" })
-public class AquariusServiceConstellation extends AbstractProxyServiceConstellation {
+public class AquariusServiceConstellation extends AbstractAdaptersServiceConstellation {
 
     private AquariusConnectionFactory factory;
 

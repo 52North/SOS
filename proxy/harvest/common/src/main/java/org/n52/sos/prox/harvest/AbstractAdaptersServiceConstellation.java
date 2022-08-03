@@ -31,9 +31,9 @@ import org.n52.janmayen.event.Event;
 import org.n52.sensorweb.server.helgoland.adapters.connector.AbstractServiceConstellation;
 import org.n52.sos.event.events.UpdateCache;
 
-public class AbstractProxyServiceConstellation extends AbstractServiceConstellation {
+public class AbstractAdaptersServiceConstellation extends AbstractServiceConstellation {
 
-    public AbstractProxyServiceConstellation(String fullHarvester, String temporalHarvester) {
+    public AbstractAdaptersServiceConstellation(String fullHarvester, String temporalHarvester) {
         super(fullHarvester, temporalHarvester);
     }
 

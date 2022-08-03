@@ -29,9 +29,9 @@ package org.n52.sos.aquarius.adapters.config;
 
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.adapters.AquariusServiceConnector;
-import org.n52.sos.prox.config.AbstractProxyConfigurationProvider;
+import org.n52.sos.prox.config.AbstractAdaptersConfigurationProvider;
 
-public class AquariusConfigurationProvider extends AbstractProxyConfigurationProvider {
+public class AquariusConfigurationProvider extends AbstractAdaptersConfigurationProvider {
 
     @Override
     protected String getGroup() {

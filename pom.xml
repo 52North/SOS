@@ -774,13 +774,17 @@
                         <groupId>net.bytebuddy</groupId>
                         <artifactId>byte-buddy</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna-platform</artifactId>
+                    </exclusion>
                 </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.12</version>
+                 <version>1.12.13</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

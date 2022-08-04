@@ -86,9 +86,9 @@
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.7.0-SNAPSHOT</version.arctic-sea>
-        <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
+        <version.helgoland.api>3.5.0-PR.9</version.helgoland.api>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
-        <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
+        <version.dao-impl>4.0.0-PR.11</version.dao-impl>
         <version.helgoland-adapters>2.0.0-SNAPSHOT</version.helgoland-adapters>
         <version.springframework>5.3.22</version.springframework>
         <version.springframework.security>5.7.2</version.springframework.security>
@@ -953,13 +953,17 @@
                         <groupId>net.bytebuddy</groupId>
                         <artifactId>byte-buddy</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna-platform</artifactId>
+                    </exclusion>
                 </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.12</version>
+                 <version>1.12.13</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

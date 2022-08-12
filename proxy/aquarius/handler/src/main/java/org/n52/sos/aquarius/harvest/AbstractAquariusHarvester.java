@@ -27,11 +27,11 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,52 +53,77 @@ import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.aquarius.ds.AquariusHelper;
-import org.n52.sos.aquarius.pojo.Grades;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.Parameter;
-import org.n52.sos.aquarius.pojo.Parameters;
-import org.n52.sos.aquarius.pojo.Qualifiers;
-import org.n52.sos.aquarius.pojo.TimeSeriesData;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.Unit;
-import org.n52.sos.aquarius.pojo.Units;
-import org.n52.sos.aquarius.pojo.data.InterpolationType;
-import org.n52.sos.aquarius.pojo.data.Point;
-import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
+import org.n52.sos.aquarius.ds.Point;
 import org.n52.sos.proxy.harvest.AbstractHarvester;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.InterpolationType;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDescriptionListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescription;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitMetadata;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "MS_MUTABLE_COLLECTION" })
 public abstract class AbstractAquariusHarvester extends AbstractHarvester implements AquariusEntityBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvester.class);
 
     private static final String UNKNOWN = "Unknown";
 
-    protected Map<String, ProcedureEntity> procedures = new HashMap<>();
+    private static final Map<String, ProcedureEntity> PROCEDURES = new HashMap<>();
 
-    protected Map<String, PhenomenonEntity> phenomenon = new HashMap<>();
+    private static final Map<String, PhenomenonEntity> PHENOMEON = new HashMap<>();
 
-    protected Map<String, CategoryEntity> categories = new HashMap<>();
+    private static final Map<String, CategoryEntity> CATEGORIES = new HashMap<>();
 
-    protected Map<String, OfferingEntity> offerings = new HashMap<>();
+    private static final Map<String, OfferingEntity> OFFERINGS = new HashMap<>();
 
-    protected Map<String, FeatureEntity> features = new HashMap<>();
+    private static final Map<String, FeatureEntity> FEATURES = new HashMap<>();
 
-    protected Map<String, PlatformEntity> platforms = new HashMap<>();
+    private static final Map<String, PlatformEntity> PLATFORMS = new HashMap<>();
 
-    protected Map<String, Parameter> parameters = new HashMap<>();
+    private static final Map<String, ParameterMetadata> PARAMETERS = new HashMap<>();
 
-    protected Map<String, Unit> units = new HashMap<>();
+    private static final Map<String, UnitMetadata> UNITS = new HashMap<>();
 
-    protected Map<String, Location> locations = new HashMap<>();
+    private static final Map<String, LocationDataServiceResponse> LOCATIONS = new HashMap<>();
 
     @Inject
     private AquariusHelper aquariusHelper;
+
+    protected void clearMaps() {
+        PROCEDURES.clear();
+        PHENOMEON.clear();
+        CATEGORIES.clear();
+        OFFERINGS.clear();
+        PARAMETERS.clear();
+        FEATURES.clear();
+        PLATFORMS.clear();
+        LOCATIONS.clear();
+        UNITS.clear();
+    }
+
+    protected Map<String, PlatformEntity> getPlatforms() {
+        return PLATFORMS;
+    }
+
+    protected Map<String, FeatureEntity> getFeatures() {
+        return FEATURES;
+    }
+
+    protected Map<String, ProcedureEntity> getProcedures() {
+        return PROCEDURES;
+    }
 
     public AquariusHelper getAquariusHelper() {
         return aquariusHelper;
@@ -115,14 +140,17 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
     }
 
     @Override
-    public <T> T unproxy(T entity) {
+    public <
+            T> T unproxy(T entity) {
         return (T) Hibernate.unproxy(entity);
     }
 
     protected void checkGradesAndQualifier(AquariusConnector connector) {
+        LOGGER.debug("Check for Grades and Qualifier");
         try {
             if (!getAquariusHelper().isSetUseGradesFromFile()) {
-                Grades grades = connector.getGradeList();
+
+                GradeListServiceResponse grades = connector.getGradeList();
                 if (grades != null) {
                     getAquariusHelper().setGrades(grades.getGrades());
                 }
@@ -131,58 +159,69 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
             LOGGER.error("Error while querying grades!", e);
         }
         try {
-            Qualifiers qualifiers = connector.getQualifierList();
+            QualifierListServiceResponse qualifiers = connector.getQualifierList();
             if (qualifiers != null) {
                 getAquariusHelper().setQualifiers(qualifiers.getQualifiers());
             }
         } catch (Exception e) {
-           LOGGER.error("Error while querying qualifiers!", e);
+            LOGGER.error("Error while querying qualifiers!", e);
         }
     }
 
-    protected Map<String, Location> getLocations(AquariusConnector connector) throws OwsExceptionReport {
+    protected Map<String, LocationDataServiceResponse> getLocations(AquariusConnector connector)
+            throws OwsExceptionReport {
         return getLocations(getAquariusHelper().getLocationDescriptionListRequest(), connector);
     }
 
-    private Map<String, Location> getLocations(GetLocationDescriptionList request, AquariusConnector connector)
+    private Map<String, LocationDataServiceResponse> getLocations(LocationDescriptionListServiceRequest request,
+            AquariusConnector connector) throws OwsExceptionReport {
+        for (String location : connector.getLocationDescriptions(request)) {
+            getLocation(location, connector);
+        }
+        return Collections.unmodifiableMap(LOCATIONS);
+    }
+
+    protected Set<String> getLocationIds(AquariusConnector connector) throws OwsExceptionReport {
+        if (getAquariusHelper().hasConfiguredLocations()) {
+            return getAquariusHelper().getConfiguredLocations();
+        }
+        return connector.getLocationDescriptions(getAquariusHelper().getLocationDescriptionListRequest());
+    }
+
+    protected LocationDataServiceResponse getLocation(String locationIdentifier, AquariusConnector connector)
             throws OwsExceptionReport {
-        Map<String, Location> locs = new LinkedHashMap<>();
-        for (Location location : connector.getLocations(request)) {
-            locs.put(location.getIdentifier(), location);
+        if (!this.LOCATIONS.containsKey(locationIdentifier)) {
+            LOGGER.debug("Querying location '{}'!", locationIdentifier);
+            AbstractAquariusHarvester.LOCATIONS.put(locationIdentifier,
+                    connector.getLocation(getAquariusHelper().getLocationData(locationIdentifier)));
         }
-        this.locations.putAll(locs);
-        return locations;
+        return this.LOCATIONS.get(locationIdentifier);
     }
 
-    protected Location getLocation(String locationIdentifier, AquariusConnector connector) throws OwsExceptionReport {
-        if (!this.locations.containsKey(locationIdentifier)) {
-            getLocations(getAquariusHelper().getLocationDescriptionListRequest(locationIdentifier), connector);
-        }
-        return this.locations.get(locationIdentifier);
-    }
-
-    protected Map<String, Parameter> getParameterList(AquariusConnector connector) throws OwsExceptionReport {
-        Map<String, Parameter> paramMap = new HashMap<>();
-        Parameters params = connector.getParameterList();
-        if (params.hasParameters()) {
-            for (Parameter param : params.getParameters()) {
+    protected Map<String, ParameterMetadata> getParameterList(AquariusConnector connector) throws OwsExceptionReport {
+        LOGGER.debug("Query parameters");
+        Map<String, ParameterMetadata> paramMap = new HashMap<>();
+        ParameterListServiceResponse params = connector.getParameterList();
+        if (params.getParameters() != null) {
+            for (ParameterMetadata param : params.getParameters()) {
                 paramMap.put(param.getIdentifier(), param);
             }
         }
-        this.parameters.putAll(paramMap);
-        return parameters;
+        AbstractAquariusHarvester.PARAMETERS.putAll(paramMap);
+        return Collections.unmodifiableMap(PARAMETERS);
     }
 
-    protected Map<String, Unit> getUnitList(AquariusConnector connector) throws OwsExceptionReport {
-        Map<String, Unit> unitMap = new HashMap<>();
-        Units us = connector.getUnitList();
-        if (us.hasUnits()) {
-            for (Unit unit : us.getUnits()) {
+    protected Map<String, UnitMetadata> getUnitList(AquariusConnector connector) throws OwsExceptionReport {
+        LOGGER.debug("Query units");
+        Map<String, UnitMetadata> unitMap = new HashMap<>();
+        UnitListServiceResponse us = connector.getUnitList();
+        if (us.getUnits() != null) {
+            for (UnitMetadata unit : us.getUnits()) {
                 unitMap.put(unit.getIdentifier(), unit);
             }
         }
-        this.units.putAll(unitMap);
-        return units;
+        AbstractAquariusHarvester.UNITS.putAll(unitMap);
+        return Collections.unmodifiableMap(UNITS);
     }
 
     protected Set<TimeSeriesDescription> getTimeSeries(AquariusConnector connector) throws OwsExceptionReport {
@@ -198,63 +237,32 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
     protected Set<TimeSeriesDescription> getTimeSeries(String locationIdentifier, AquariusConnector connector)
             throws OwsExceptionReport {
         Set<TimeSeriesDescription> set = new HashSet<>();
-        for (TimeSeriesDescription timeSeries : connector
-                .getTimeSeriesDescriptions(getAquariusHelper().getGetTimeSeriesDescriptionListRequest()
-                        .setLocationIdentifier(locationIdentifier))) {
+        for (TimeSeriesDescription timeSeries : connector.getTimeSeriesDescriptions(getAquariusHelper()
+                .getGetTimeSeriesDescriptionListRequest().setLocationIdentifier(locationIdentifier))) {
             set.add(timeSeries);
             getAquariusHelper().addDataset(timeSeries);
         }
         return set;
     }
 
-    protected void harvestDatasets(ServiceEntity service, AquariusConnector connector) throws OwsExceptionReport {
-        Map<String, Location> locs = getLocations(connector);
-        Map<String, DatasetEntity> datasets = getIdentifierDatasetMap(service);
-        for (Entry<String, Location> entry : locs.entrySet()) {
-            Location location = entry.getValue();
-            if (checkLocation(location)) {
-                for (TimeSeriesDescription ts : getTimeSeries(location.getIdentifier(), connector)) {
-                    ProcedureEntity procedure = createProcedure(location, procedures, service);
-                    FeatureEntity feature = createFeature(location, features, service);
-                    PlatformEntity platform = createPlatform(location, platforms, service);
-                    harvestDatasets(location, ts, feature, procedure, platform, service, connector);
-                    datasets.remove(ts.getUniqueId());
-                }
-            }
-        }
-        if (!datasets.isEmpty()) {
-            LOGGER.debug("Start removing datasets/timeSeries!");
-            for (Entry<String, DatasetEntity> entry : datasets.entrySet()) {
-                LOGGER.debug("Removing timeSeries with id '{}' from metadata!", entry.getKey());
-                DatasetEntity dataset = entry.getValue();
-                if (getAquariusHelper().isDeletePhysically()) {
-                    getCRUDRepository().removeRelatedData(dataset);
-                    getDatasetRepository().delete(dataset);
-                } else {
-                    dataset.setDeleted(true);
-                    getDatasetRepository().saveAndFlush(dataset);
-                }
-            }
-        }
-    }
-
-    protected void harvestDatasets(Location location, TimeSeriesDescription timeSeries, FeatureEntity feature,
-            ProcedureEntity procedure, PlatformEntity platform, ServiceEntity service, AquariusConnector connector) {
+    protected void harvestDatasets(LocationDataServiceResponse location, TimeSeriesDescription timeSeries,
+            FeatureEntity feature, ProcedureEntity procedure, PlatformEntity platform, ServiceEntity service,
+            AquariusConnector connector) {
         if (feature.isSetGeometry()) {
             try {
                 if (getAquariusHelper().checkForData(timeSeries)) {
                     OfferingEntity offering =
-                            createOffering(offerings, timeSeries, procedure, service, getAquariusHelper());
+                            createOffering(OFFERINGS, timeSeries, procedure, service, getAquariusHelper());
                     DatasetEntity dataset = createDataset(procedure, offering, feature, platform, timeSeries,
-                            parameters.get(timeSeries.getParameter()), units.get(timeSeries.getUnit()), service);
+                            PARAMETERS.get(timeSeries.getParameter()), UNITS.get(timeSeries.getUnit()), service);
                     if (dataset != null) {
                         getAquariusHelper().addLocation(location);
-                        getAquariusHelper().addParameter(parameters.get(timeSeries.getParameter()));
+                        getAquariusHelper().addParameter(PARAMETERS.get(timeSeries.getParameter()));
                         PhenomenonEntity phen =
-                                createPhenomenon(parameters.get(timeSeries.getParameter()), phenomenon, service);
+                                createPhenomenon(PARAMETERS.get(timeSeries.getParameter()), PHENOMEON, service);
                         dataset.setPhenomenon(phen);
-                        dataset.setCategory(createCategory(phen, categories, service));
-                        TimeSeriesData firstTimeSeriesData =
+                        dataset.setCategory(createCategory(phen, CATEGORIES, service));
+                        TimeSeriesDataServiceResponse firstTimeSeriesData =
                                 connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
                         addParameter(dataset, timeSeries, firstTimeSeriesData);
                         DatasetEntity insertDataset = getCRUDRepository().insertDataset(dataset);
@@ -267,39 +275,39 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
         }
     }
 
-    protected boolean checkLocation(String identifier, Map<String, Location> locations) {
+    protected boolean checkLocation(String identifier, Map<String, LocationDataServiceResponse> locations) {
         if (locations.containsKey(identifier)) {
-            Location location = locations.get(identifier);
+            LocationDataServiceResponse location = locations.get(identifier);
             return checkLocation(location);
         }
         return false;
     }
 
-    protected boolean checkLocation(Location location) {
+    protected boolean checkLocation(LocationDataServiceResponse location) {
         return location != null && location.getLatitude() != null && location.getLongitude() != null;
     }
 
     protected void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesDescription timeSeries,
             AquariusConnector connector) throws OwsExceptionReport {
-        TimeSeriesData firstTimeSeriesData = connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
+        TimeSeriesDataServiceResponse firstTimeSeriesData =
+                connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
         updateFirstLastObservation(dataset, firstTimeSeriesData, timeSeries, connector);
     }
 
-    private void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesData firstTimeSeriesData,
+    private void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesDataServiceResponse firstTimeSeriesData,
             TimeSeriesDescription timeSeries, AquariusConnector connector) throws OwsExceptionReport {
-        TimeSeriesData lastTimeSeriesData = connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
+        TimeSeriesDataServiceResponse lastTimeSeriesData =
+                connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
         updateDataset(dataset, firstTimeSeriesData, lastTimeSeriesData);
     }
 
-    protected void updateDataset(DatasetEntity entity, TimeSeriesData firstTimeSeriesData,
-            TimeSeriesData lastTimeSeriesDataLast) {
+    protected void updateDataset(DatasetEntity entity, TimeSeriesDataServiceResponse firstTimeSeriesData,
+            TimeSeriesDataServiceResponse lastTimeSeriesDataLast) {
         if (firstTimeSeriesData != null) {
-            insertData(entity, getAquariusHelper().applyChecker(firstTimeSeriesData)
-                    .getFirstPoint());
+            insertData(entity, getAquariusHelper().applyChecker(firstTimeSeriesData).getFirstPoint());
         }
         if (lastTimeSeriesDataLast != null) {
-            insertData(entity, getAquariusHelper().applyChecker(lastTimeSeriesDataLast)
-                    .getLastPoint());
+            insertData(entity, getAquariusHelper().applyChecker(lastTimeSeriesDataLast).getLastPoint());
         }
     }
 
@@ -312,21 +320,29 @@ public abstract class AbstractAquariusHarvester extends AbstractHarvester implem
     }
 
     protected void addParameter(DatasetEntity dataset, TimeSeriesDescription timeSeries,
-            TimeSeriesData firstTimeSeriesData) throws OwsExceptionReport {
-        if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData != null
-                && firstTimeSeriesData.hasInterpolationTypes()) {
-            ParameterEntity<?> param = createInterpolationParam(dataset, firstTimeSeriesData.getInterpolationTypes()
-                    .get(0), timeSeries.getComputationIdentifier());
+            TimeSeriesDataServiceResponse firstTimeSeriesData) throws OwsExceptionReport {
+        if (check(timeSeries.getComputationIdentifier()) && firstTimeSeriesData != null
+                && check(firstTimeSeriesData.getInterpolationTypes())) {
+            ParameterEntity<?> param = createInterpolationParam(dataset,
+                    firstTimeSeriesData.getInterpolationTypes().get(0), timeSeries.getComputationIdentifier());
             if (param != null) {
                 dataset.addParameter(param);
             }
         }
-        if (timeSeries.hasComputationPeriodIdentifier()) {
+        if (check(timeSeries.getComputationPeriodIdentifier())) {
             ParameterEntity<?> param = createAggregationParam(dataset, timeSeries.getComputationPeriodIdentifier());
             if (param != null) {
                 dataset.addParameter(param);
             }
         }
+    }
+
+    protected boolean check(String value) {
+        return value != null && !value.isEmpty();
+    }
+
+    protected boolean check(Collection<?> value) {
+        return value != null && !value.isEmpty();
     }
 
     private ParameterEntity<?> createInterpolationParam(DatasetEntity dataset, InterpolationType interpolationType,

@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.n52.sos.aquarius.pojo.data.IntervalCheckerAndApplyer;
-import org.n52.sos.aquarius.pojo.data.Point;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesPoint;
 
 public class CheckerHandler implements Serializable {
 
@@ -48,17 +47,19 @@ public class CheckerHandler implements Serializable {
         return this;
     }
 
-    public List<Point> check(List<Point> points) {
+    public List<Point> check(List<TimeSeriesPoint> points) {
         return points.stream().map(p -> check(p)).collect(Collectors.toList());
     }
 
-    public Point check(Point p) {
-        if (p != null) {
+    public Point check(TimeSeriesPoint tsp) {
+        if (tsp != null) {
+            Point p = new Point(tsp);
             for (IntervalCheckerAndApplyer checker : checkers) {
                 checker.apply(p);
             }
+            return p;
         }
-        return p;
+        return null;
     }
 
 }

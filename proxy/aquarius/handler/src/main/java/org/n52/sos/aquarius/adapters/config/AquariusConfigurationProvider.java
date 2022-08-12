@@ -60,7 +60,7 @@ public class AquariusConfigurationProvider extends AbstractAdaptersConfiguration
 
     @Override
     protected String getRestPath() {
-        return AquariusConstants.AQUARIUS_PATH;
+        return "";
     }
 
 }

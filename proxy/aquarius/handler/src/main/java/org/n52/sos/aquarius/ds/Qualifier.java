@@ -25,9 +25,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.pojo.data;
+package org.n52.sos.aquarius.ds;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -55,10 +56,10 @@ public class Qualifier extends IntervalCheckerAndApplyer implements Serializable
     private String user;
 
     @JsonProperty("StartTime")
-    private String startTime;
+    private Instant startTime;
 
     @JsonProperty("EndTime")
-    private String endTime;
+    private Instant endTime;
 
     @JsonIgnore
     private QualifierKey key;
@@ -69,7 +70,6 @@ public class Qualifier extends IntervalCheckerAndApplyer implements Serializable
     @JsonIgnore
     private String displayName;
 
-
     /**
      * No args constructor for use in serialization
      *
@@ -77,7 +77,7 @@ public class Qualifier extends IntervalCheckerAndApplyer implements Serializable
     public Qualifier() {
     }
 
-    public Qualifier(String identifier, String dateApplied, String user, String startTime, String endTime) {
+    public Qualifier(String identifier, String dateApplied, String user, Instant startTime, Instant endTime) {
         super();
         this.identifier = identifier;
         this.dateApplied = dateApplied;
@@ -118,23 +118,23 @@ public class Qualifier extends IntervalCheckerAndApplyer implements Serializable
 
     @JsonProperty("StartTime")
     @Override
-    public String getStartTime() {
+    public Instant getStartTime() {
         return startTime;
     }
 
     @JsonProperty("StartTime")
-    public void setStartTime(String startTime) {
+    public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
     @JsonProperty("EndTime")
     @Override
-    public String getEndTime() {
+    public Instant getEndTime() {
         return endTime;
     }
 
     @JsonProperty("EndTime")
-    public void setEndTime(String endTime) {
+    public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
 

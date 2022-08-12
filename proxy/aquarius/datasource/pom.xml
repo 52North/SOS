@@ -11,6 +11,15 @@
     <name>52°North SOS - Proxy Aquarius Datasource</name>
     <description>52°North Sensor Observation Service Proxy Aquarius datasource module</description>
     <dependencies>
+    	<dependency>
+		  <groupId>com.aquaticinformatics</groupId>
+		  <artifactId>aquarius.sdk</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<scope>runtime</scope>
+		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-proxy-datasource-common</artifactId>
@@ -47,14 +56,20 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
+         -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+        <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
         <dependency>
             <groupId> com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>

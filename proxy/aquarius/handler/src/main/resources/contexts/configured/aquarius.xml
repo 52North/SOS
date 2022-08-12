@@ -21,5 +21,6 @@
         <bean id="aquariusConnectorConfigurationFactory" class="org.n52.sos.aquarius.adapters.harvest.AquariusConnectorConfigurationFactory" />
         <bean id="aquariusTemporalUpdater" class="org.n52.sos.aquarius.adapters.harvest.AquariusTemporalUpdater" />
         <bean id="aquariusFullHarvester" class="org.n52.sos.aquarius.adapters.harvest.AquariusFullHarvester" />
+        <bean id="aquariustDatasetHarvester" class="org.n52.sos.aquarius.adapters.harvest.AquariustDatasetHarvester" />
     </beans>
 </beans>

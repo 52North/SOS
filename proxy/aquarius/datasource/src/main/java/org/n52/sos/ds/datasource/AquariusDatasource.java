@@ -28,20 +28,16 @@
 package org.n52.sos.ds.datasource;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.settings.StringSettingDefinition;
+import org.slf4j.Logger;
+
+import com.aquaticinformatics.aquarius.sdk.timeseries.AquariusClient;
 
 public interface AquariusDatasource extends ProxyDatasource {
     String CONGIF_ERROR = "An error occurs during instantiation of the Aquarius connection!";
@@ -160,29 +156,17 @@ public interface AquariusDatasource extends ProxyDatasource {
             String path = AQUARIUS_PATH_DEFAULT_VALUE;
             String username = (String) settings.get(PROXY_USERNAME_KEY);
             String password = (String) settings.get(PROXY_PASSWORD_KEY);
-            String url = host + path + "session";
-            URIBuilder uriBuilder = new URIBuilder(url);
-            uriBuilder.addParameter("Username", username);
-            uriBuilder.addParameter("EncryptedPassword", password);
-            URI uri = uriBuilder.build();
-            HttpPost post = new HttpPost(uri);
-            CloseableHttpResponse response = httpClient.execute(post);
-            if (response != null && response.getEntity() != null && response.getStatusLine()
-                    .getStatusCode() == 200) {
-                String content = EntityUtils.toString(response.getEntity(), "UTF-8");
-                if (content != null && !content.isEmpty()) {
-                    HttpDelete httpDelete = new HttpDelete(url);
-                    httpClient.execute(httpDelete);
-                } else {
-                    throw new ConfigurationError(CONGIF_ERROR);
-                }
-            } else {
+            try (AquariusClient client = AquariusClient.createConnectedClient(host, username, password)) {
+                getLogger().info("Connected to {} ({})\n", host, client.ServerVersion);
+            } catch (Exception e) {
                 throw new ConfigurationError(CONGIF_ERROR);
             }
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             throw new ConfigurationError(CONGIF_ERROR, e);
         }
     }
+
+    Logger getLogger();
 
     @Override
     default String getProxyHostDescription() {

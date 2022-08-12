@@ -118,7 +118,9 @@ public interface AquariusConstants {
     }
 
     enum GetParts {
-        All, PointsOnly, MetadataOnly;
+        All,
+        PointsOnly,
+        MetadataOnly;
     }
 
     enum InterpolationTypes {
@@ -132,8 +134,7 @@ public interface AquariusConstants {
 
         public static InterpolationTypes getFrom(String value) {
             for (InterpolationTypes identifier : values()) {
-                if (identifier.name()
-                        .equalsIgnoreCase(value)) {
+                if (identifier.name().equalsIgnoreCase(value)) {
                     return identifier;
                 }
             }
@@ -142,12 +143,14 @@ public interface AquariusConstants {
     }
 
     enum ComputationIdentifiers {
-        Mean, Max, Min, Default;
+        Mean,
+        Max,
+        Min,
+        Default;
 
         public static ComputationIdentifiers getFrom(String value) {
             for (ComputationIdentifiers identifier : values()) {
-                if (identifier.name()
-                        .equalsIgnoreCase(value)) {
+                if (identifier.name().equalsIgnoreCase(value)) {
                     return identifier;
                 }
             }
@@ -155,4 +158,8 @@ public interface AquariusConstants {
         }
     }
 
+    enum ChangeEvent {
+        Data,
+        Attribute;
+    }
 }

@@ -25,9 +25,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.pojo.data;
+package org.n52.sos.aquarius.ds;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -36,8 +36,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
-import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.DoubleWithDisplay;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.StatisticalDateTimeOffset;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesPoint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,10 +49,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Timestamp", "Value" })
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class Point implements Serializable, AquariusTimeHelper {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class Point implements AquariusTimeHelper {
 
-    private static final long serialVersionUID = -7566570989032058426L;
+    private final TimeSeriesPoint original;
 
     @JsonProperty("Timestamp")
     private String timestamp;
@@ -60,9 +62,6 @@ public class Point implements Serializable, AquariusTimeHelper {
 
     @JsonIgnore
     private Instant instant;
-
-    @JsonProperty("Value")
-    private Value value;
 
     @JsonIgnore
     private Set<Qualifier> qualifiers = new LinkedHashSet<>();
@@ -74,59 +73,58 @@ public class Point implements Serializable, AquariusTimeHelper {
      * No args constructor for use in serialization
      *
      */
-    public Point() {
+    public Point(TimeSeriesPoint original) {
+        this.original = original;
     }
 
-    public Point(String timestamp, Value value) {
-        super();
-        this.timestamp = timestamp;
-        this.value = value;
+    public StatisticalDateTimeOffset getTimestamp() {
+        return original.getTimestamp();
     }
 
-    @JsonProperty("Timestamp")
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    @JsonProperty("Timestamp")
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    @JsonIgnore
     public DateTime getDateTime() {
         if (dateTime == null) {
-            this.dateTime = checkDateTimeStringFor24(getTimestamp());
+            this.dateTime = toDateTime(getInstant());
         }
         return dateTime;
     }
 
-    @JsonIgnore
     public Instant getInstant() {
         if (instant == null) {
-            this.instant = toInstant(getTimestamp());
+            this.instant = getTimestamp().getDateTimeOffset();
         }
         return instant;
     }
 
-    @JsonProperty("Value")
-    public Value getValue() {
-        return value;
+    public DoubleWithDisplay getValue() {
+        return original.getValue();
     }
 
-    @JsonProperty("Value")
-    public void setValue(Value value) {
-        this.value = value;
+    public boolean isNumeric() {
+        return getValue().getNumeric() != null;
     }
 
-    @JsonIgnore
+    public BigDecimal getNumericAsBigDecimal() {
+        return isNumeric() ? BigDecimal.valueOf(getValue().getNumeric()) : null;
+    }
+
+    public BigDecimal getDisplayAsBigDecimal() {
+        return isDisplay() ? new BigDecimal(getDisplay()) : null;
+    }
+
+    public boolean isDisplay() {
+        return getDisplay() != null && !getDisplay().isEmpty();
+    }
+
+    private String getDisplay() {
+        return getValue().getDisplay();
+    }
+
     public Point setQualifier(Set<Qualifier> qualifiers) {
         this.qualifiers.clear();
         addQualifiers(qualifiers);
         return this;
     }
 
-    @JsonIgnore
     public Point addQualifiers(Set<Qualifier> qualifiers) {
         if (qualifiers != null) {
             this.qualifiers.addAll(qualifiers);
@@ -134,7 +132,6 @@ public class Point implements Serializable, AquariusTimeHelper {
         return this;
     }
 
-    @JsonIgnore
     public Point addQualifier(Qualifier qualifier) {
         if (qualifier != null) {
             this.qualifiers.add(qualifier);
@@ -142,7 +139,6 @@ public class Point implements Serializable, AquariusTimeHelper {
         return this;
     }
 
-    @JsonIgnore
     public Set<Qualifier> getQualifiers() {
         return qualifiers;
     }
@@ -187,12 +183,12 @@ public class Point implements Serializable, AquariusTimeHelper {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("timestamp", timestamp).append("value", value).toString();
+        return new ToStringBuilder(this).append("timestamp", getTimestamp()).append("value", getValue()).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(value).append(timestamp).toHashCode();
+        return new HashCodeBuilder().append(getValue()).append(getTimestamp()).toHashCode();
     }
 
     @Override
@@ -204,7 +200,8 @@ public class Point implements Serializable, AquariusTimeHelper {
             return false;
         }
         Point rhs = (Point) other;
-        return new EqualsBuilder().append(value, rhs.value).append(timestamp, rhs.timestamp).isEquals();
+        return new EqualsBuilder().append(getValue(), rhs.getValue()).append(getTimestamp(), rhs.getTimestamp())
+                .isEquals();
     }
 
 }

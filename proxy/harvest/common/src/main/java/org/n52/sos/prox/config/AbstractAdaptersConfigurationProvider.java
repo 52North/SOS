@@ -81,7 +81,7 @@ public abstract class AbstractAdaptersConfigurationProvider implements Configura
     }
 
     private String getUrl() {
-        return getProperties().getProperty(ProxyDatasource.PROXY_HOST_KEY) + getRestPath();
+        return getProperties().getProperty(ProxyDatasource.PROXY_HOST_KEY);
     }
 
     private DataSourceConfiguration addValues(DataSourceConfiguration config) {

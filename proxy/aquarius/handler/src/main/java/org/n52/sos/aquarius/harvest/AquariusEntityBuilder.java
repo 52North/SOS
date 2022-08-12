@@ -64,14 +64,15 @@ import org.n52.series.db.beans.quality.TextQualityEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.ds.AquariusTimeHelper;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.Parameter;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.Unit;
-import org.n52.sos.aquarius.pojo.data.Grade;
-import org.n52.sos.aquarius.pojo.data.Point;
-import org.n52.sos.aquarius.pojo.data.Qualifier;
-import org.n52.sos.aquarius.pojo.data.QualifierKey;
+import org.n52.sos.aquarius.ds.Grade;
+import org.n52.sos.aquarius.ds.Point;
+import org.n52.sos.aquarius.ds.Qualifier;
+import org.n52.sos.aquarius.ds.QualifierKey;
+
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescription;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitMetadata;
 
 public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper {
 
@@ -136,8 +137,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return offerings.get(procedure.getIdentifier());
     }
 
-    default ProcedureEntity createProcedure(Location location, Map<String, ProcedureEntity> procedures,
-            ServiceEntity service) {
+    default ProcedureEntity createProcedure(LocationDataServiceResponse location,
+            Map<String, ProcedureEntity> procedures, ServiceEntity service) {
         String procedureId = location.getLocationType().replace(" ", "_");
         if (!procedures.containsKey(procedureId)) {
             ProcedureEntity entity = createProcedure(procedureId, location.getLocationType(), null, service);
@@ -146,8 +147,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return procedures.get(procedureId);
     }
 
-    default FeatureEntity createFeature(Location location, Map<String, FeatureEntity> features, ServiceEntity service)
-            throws CodedException {
+    default FeatureEntity createFeature(LocationDataServiceResponse location, Map<String, FeatureEntity> features,
+            ServiceEntity service) throws CodedException {
         if (!features.containsKey(location.getIdentifier())) {
             FeatureEntity entity =
                     createFeature(location.getIdentifier(), createNameFromLocation(location), null, service);
@@ -157,7 +158,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return features.get(location.getIdentifier());
     }
 
-    default PlatformEntity createPlatform(Location location, Map<String, PlatformEntity> platforms,
+    default PlatformEntity createPlatform(LocationDataServiceResponse location, Map<String, PlatformEntity> platforms,
             ServiceEntity service) {
         if (!platforms.containsKey(location.getIdentifier())) {
             PlatformEntity entity =
@@ -167,11 +168,11 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return platforms.get(location.getIdentifier());
     }
 
-    default String createNameFromLocation(Location location) {
+    default String createNameFromLocation(LocationDataServiceResponse location) {
         return location.getLocationName() + " (" + location.getIdentifier() + ")";
     }
 
-    default Geometry createGeometry(Location location) {
+    default Geometry createGeometry(LocationDataServiceResponse location) {
         if (location.getLongitude() != null && location.getLatitude() != null) {
             GeometryEntity geometryEntity = new GeometryEntity();
             geometryEntity.setGeometryFactory(new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), 4326));
@@ -183,7 +184,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return null;
     }
 
-    default PhenomenonEntity createPhenomenon(Parameter parameter, Map<String, PhenomenonEntity> phenomenon,
+    default PhenomenonEntity createPhenomenon(ParameterMetadata parameter, Map<String, PhenomenonEntity> phenomenon,
             ServiceEntity service) {
         String identifier = getValidatedIdentifier(parameter.getIdentifier());
         if (!phenomenon.containsKey(identifier)) {
@@ -217,7 +218,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     }
 
     default DatasetEntity createDataset(ProcedureEntity procedure, OfferingEntity offering, FeatureEntity feature,
-            PlatformEntity platform, TimeSeriesDescription timeSeries, Parameter parameter, Unit unit,
+            PlatformEntity platform, TimeSeriesDescription timeSeries, ParameterMetadata parameter, UnitMetadata unit,
             ServiceEntity service) {
         DatasetEntity entity = createDataset(timeSeries.getUniqueId(), timeSeries.getIdentifier(),
                 getDatasetDescription(timeSeries, parameter), service);
@@ -232,8 +233,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return entity;
     }
 
-    default String getDatasetDescription(TimeSeriesDescription timeSeries, Parameter parameter) {
-        if (parameter != null && parameter.hasDisplayName()) {
+    default String getDatasetDescription(TimeSeriesDescription timeSeries, ParameterMetadata parameter) {
+        if (parameter != null && parameter.getDisplayName() != null) {
             return timeSeries.getIdentifier().replaceAll(parameter.getIdentifier(), parameter.getDisplayName());
         }
         return timeSeries.getIdentifier();
@@ -257,12 +258,12 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Long id, boolean applyRounding) {
         DateTime time = point.getDateTime();
-        if (point.getValue().isNumeric()) {
+        if (point.isNumeric()) {
             QuantityDataEntity dataEntity = createQuantityDataEntity(dataset, time, id);
             checkAndAddQualifiersAndValue(dataEntity, point, applyRounding);
             checkAndAddGrades(dataEntity, point);
             return dataEntity;
-        } else if (point.getValue().isDisplay()) {
+        } else if (point.isDisplay()) {
             TextDataEntity dataEntity = createTextDataEntity(dataset, time, id);
             dataEntity.setValue(point.getValue().getDisplay());
             return dataEntity;
@@ -295,7 +296,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default DataEntity<?> addGrade(QuantityDataEntity dataEntity, Grade grade) {
         TextQualityEntity textQualityEntity = new TextQualityEntity();
-//        textQualityEntity.setIdentifier(grade.getGradeCode());
+        // textQualityEntity.setIdentifier(grade.getGradeCode());
         textQualityEntity.setName(grade.getDisplayName());
         textQualityEntity.setDescription(grade.getDescription());
         textQualityEntity.setValue(grade.getGradeCode());
@@ -317,10 +318,10 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
             }
         }
         if (!detectionLimitAdded) {
-            if (applyRounding && point.getValue().isDisplay()) {
-                dataEntity.setValue(point.getValue().getDisplayAsBigDecimal());
+            if (applyRounding && point.isDisplay()) {
+                dataEntity.setValue(point.getDisplayAsBigDecimal());
             } else {
-                dataEntity.setValue(point.getValue().getNumericAsBigDecimal());
+                dataEntity.setValue(point.getNumericAsBigDecimal());
             }
         }
         return point;
@@ -328,7 +329,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default DataEntity<?> addQualifier(QuantityDataEntity dataEntity, Qualifier qualifier) {
         TextQualityEntity textQualityEntity = new TextQualityEntity();
-//        textQualityEntity.setIdentifier(qualifier.getIdentifier());
+        // textQualityEntity.setIdentifier(qualifier.getIdentifier());
         textQualityEntity.setName(qualifier.getIdentifier());
         textQualityEntity.setDescription(qualifier.getIdentifier());
         textQualityEntity.setValue(qualifier.getIdentifier());
@@ -339,10 +340,10 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     default DataEntity<?> addDetectionLimit(QuantityDataEntity dataEntity, Point point, Qualifier qualifier,
             boolean applyRounding) {
         DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
-        if (applyRounding && point.getValue().isDisplay()) {
-            detectionLimitEntity.setDetectionLimit(point.getValue().getDisplayAsBigDecimal());
+        if (applyRounding && point.isDisplay()) {
+            detectionLimitEntity.setDetectionLimit(point.getDisplayAsBigDecimal());
         } else {
-            detectionLimitEntity.setDetectionLimit(point.getValue().getNumericAsBigDecimal());
+            detectionLimitEntity.setDetectionLimit(point.getNumericAsBigDecimal());
         }
         if (qualifier.getKey().isEquals(QualifierKey.ABOVE)) {
             detectionLimitEntity.setFlag(Short.valueOf("1"));
@@ -363,7 +364,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return data;
     }
 
-    default UnitEntity createUnit(Unit unit, ServiceEntity service) {
+    default UnitEntity createUnit(UnitMetadata unit, ServiceEntity service) {
         return createUnit(unit.getIdentifier(), unit.getSymbol(), unit.getDisplayName(), service);
     }
 

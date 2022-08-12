@@ -611,6 +611,11 @@
 		    <artifactId>helgoland-adapters-harvest</artifactId>
 		    <scope>runtime</scope>
 		</dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-proxy-datasource-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-proxy-aquarius-datasource</artifactId>

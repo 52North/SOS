@@ -144,7 +144,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
             update.setErrors(errors);
             update.setSession(session);
 
-            LOGGER.info("Starting cache update");
+            LOGGER.debug("Starting cache update");
             long cacheUpdateStartTime = System.currentTimeMillis();
 
             update.execute();
@@ -218,7 +218,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
 
     private void logCacheLoadTime(long startTime) {
         Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
-        LOGGER.info("Cache load finished in {} ({} seconds)",
+        LOGGER.debug("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
                 cacheLoadPeriod.toStandardSeconds());
     }

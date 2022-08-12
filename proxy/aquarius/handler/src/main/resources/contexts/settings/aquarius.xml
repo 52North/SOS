@@ -114,6 +114,7 @@
             <property name="order" value="7.0" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
+            <property name="defaultValue" value="AboveDetectionLimit" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
             <property name="key" value="proxy.aquarius.detectionlimit.below" />
@@ -122,6 +123,7 @@
             <property name="order" value="7.1" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
+             <property name="defaultValue" value="BelowDetectionLimit" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
             <property name="key" value="proxy.aquarius.qualifiers" />
@@ -140,6 +142,15 @@
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
             <property name="defaultValue" value="false" />
+          </bean>
+           <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.location.configured" />
+            <property name="title" value="Provided locations" />
+            <property name="description" value="Limit the provided locations to the defined ids or empty for all." />
+            <property name="order" value="10.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="" />
           </bean>
     </beans>
 </beans>

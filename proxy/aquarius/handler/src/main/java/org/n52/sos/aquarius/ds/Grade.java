@@ -25,91 +25,122 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.pojo.data;
+package org.n52.sos.aquarius.ds;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.common.base.Strings;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "MethodCode", "StartTime", "EndTime" })
-public class Method implements Serializable {
+@JsonPropertyOrder({ "GradeCode", "StartTime", "EndTime" })
+public class Grade extends IntervalCheckerAndApplyer implements Serializable {
 
-    private static final long serialVersionUID = 2483342849894538113L;
+    private static final long serialVersionUID = -1327261619367370030L;
 
-    @JsonProperty("MethodCode")
-    private String methodCode;
+    @JsonProperty("GradeCode")
+    private String gradeCode;
 
     @JsonProperty("StartTime")
-    private String startTime;
+    private Instant startTime;
 
     @JsonProperty("EndTime")
-    private String endTime;
+    private Instant endTime;
+
+    @JsonIgnore
+    private String displayName;
+
+    @JsonIgnore
+    private String description;
 
     /**
      * No args constructor for use in serialization
      *
      */
-    public Method() {
+    public Grade() {
     }
 
-    public Method(String methodCode, String startTime, String endTime) {
+    public Grade(String gradeCode, Instant startTime, Instant endTime) {
         super();
-        this.methodCode = methodCode;
+        this.gradeCode = gradeCode;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    @JsonProperty("MethodCode")
-    public String getMethodCode() {
-        return methodCode;
+    @JsonProperty("GradeCode")
+    public String getGradeCode() {
+        return gradeCode;
     }
 
-    @JsonProperty("MethodCode")
-    public void setMethodCode(String methodCode) {
-        this.methodCode = methodCode;
+    @JsonProperty("GradeCode")
+    public void setGradeCode(String gradeCode) {
+        this.gradeCode = gradeCode;
     }
 
     @JsonProperty("StartTime")
-    public String getStartTime() {
+    @Override
+    public Instant getStartTime() {
         return startTime;
     }
 
     @JsonProperty("StartTime")
-    public void setStartTime(String startTime) {
+    public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
     @JsonProperty("EndTime")
-    public String getEndTime() {
+    @Override
+    public Instant getEndTime() {
         return endTime;
     }
 
     @JsonProperty("EndTime")
-    public void setEndTime(String endTime) {
+    public void setEndTime(Instant endTime) {
         this.endTime = endTime;
+    }
+
+    @JsonIgnore
+    public String getDisplayName() {
+        return Strings.isNullOrEmpty(displayName) ? getGradeCode() : displayName;
+    }
+
+    @JsonIgnore
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @JsonIgnore
+    public String getDescription() {
+        return Strings.isNullOrEmpty(description) ? getGradeCode() : description;
+    }
+
+    @JsonIgnore
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    protected void applyToPoint(Point point) {
+        point.addGrade(this);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("methodCode", methodCode)
-                .append("startTime", startTime)
-                .append("endTime", endTime)
-                .toString();
+        return new ToStringBuilder(this).append("gradeCode", gradeCode).append("startTime", startTime)
+                .append("endTime", endTime).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(startTime)
-                .append(endTime)
-                .append(methodCode)
-                .toHashCode();
+        return new HashCodeBuilder().append(startTime).append(gradeCode).append(endTime).toHashCode();
     }
 
     @Override
@@ -117,14 +148,12 @@ public class Method implements Serializable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof Method)) {
+        if (!(other instanceof Grade)) {
             return false;
         }
-        Method rhs = (Method) other;
-        return new EqualsBuilder().append(startTime, rhs.startTime)
-                .append(endTime, rhs.endTime)
-                .append(methodCode, rhs.methodCode)
-                .isEquals();
+        Grade rhs = (Grade) other;
+        return new EqualsBuilder().append(startTime, rhs.startTime).append(gradeCode, rhs.gradeCode)
+                .append(endTime, rhs.endTime).isEquals();
     }
 
 }

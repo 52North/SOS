@@ -177,6 +177,7 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         this.hostDescription = hostDescription;
     }
 
+
 //    public void setServicePathDescription(String restPathDescription) {
 //        this.restPathDescription = restPathDescription;
 //    }

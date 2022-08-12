@@ -25,25 +25,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.requests;
+package org.n52.sos.aquarius.ds;
 
-import java.util.Map;
+import java.time.Instant;
 
-import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractGetRequest;
-import org.n52.sos.aquarius.AquariusConstants;
+import org.threeten.extra.Interval;
 
-public class KeepAliveRequest extends AbstractGetRequest {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    public KeepAliveRequest() {
+public abstract class IntervalCheckerAndApplyer implements AquariusTimeHelper {
+
+    @JsonIgnore
+    private Interval interval;
+
+    public Point apply(Point point) {
+        if (getInterval().contains(point.getInstant())) {
+            applyToPoint(point);
+        }
+        return point;
     }
 
-    @Override
-    public String getPath() {
-        return AquariusConstants.Paths.KEEP_ALIVE;
+    @JsonIgnore
+    protected Interval getInterval() {
+        if (interval == null) {
+            this.interval = toInterval(getStartTime(), getEndTime());
+        }
+        return interval;
     }
 
-    @Override
-    public Map<String, String> getQueryParameters() {
-        return createMap();
-    }
+    protected abstract Instant getStartTime();
+
+    protected abstract Instant getEndTime();
+
+    protected abstract void applyToPoint(Point point);
+
 }

@@ -40,8 +40,8 @@ import org.n52.sos.ds.observation.ObservationHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class AquariusStreamingValue  extends StreamingValue<DataEntity<?>> {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class AquariusStreamingValue extends StreamingValue<DataEntity<?>> {
 
     private Iterator<DataEntity<?>> seriesValuesResult;
     private ObservationHelper observationHelper;

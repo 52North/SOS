@@ -45,36 +45,36 @@ import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.aquarius.pojo.Grades;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.Parameter;
-import org.n52.sos.aquarius.pojo.Parameters;
-import org.n52.sos.aquarius.pojo.Qualifiers;
-import org.n52.sos.aquarius.pojo.TimeSeriesData;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
-import org.n52.sos.aquarius.pojo.Unit;
-import org.n52.sos.aquarius.pojo.Units;
-import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
-import org.n52.sos.aquarius.requests.GetGradeList;
-import org.n52.sos.aquarius.requests.GetLocationData;
-import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
-import org.n52.sos.aquarius.requests.GetParameterList;
-import org.n52.sos.aquarius.requests.GetQualifierList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
-import org.n52.sos.aquarius.requests.GetUnitList;
 
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDescriptionListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescription;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesUniqueIdListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesUniqueIdListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitMetadata;
 import com.google.common.collect.Lists;
 
 public interface AccessorConnector {
 
-    Set<String> getLocationDescriptions(GetLocationDescriptionList request) throws OwsExceptionReport;
+    Set<String> getLocationDescriptions(LocationDescriptionListServiceRequest request) throws OwsExceptionReport;
 
-    default List<Location> getLocations(Set<String> locationIdentifiers) throws OwsExceptionReport {
-        List<Location> locations = new LinkedList<>();
+    default List<LocationDataServiceResponse> getLocations(Set<String> locationIdentifiers) throws OwsExceptionReport {
+        List<LocationDataServiceResponse> locations = new LinkedList<>();
         for (String locationIdentifier : locationIdentifiers) {
-            Location location = getLocation(new GetLocationData(locationIdentifier));
+            LocationDataServiceResponse location =
+                    getLocation(new LocationDataServiceRequest().setLocationIdentifier(locationIdentifier));
             if (location != null) {
                 locations.add(location);
             }
@@ -82,15 +82,11 @@ public interface AccessorConnector {
         return locations;
     }
 
-    default List<Location> getLocations(GetLocationDescriptionList request) throws OwsExceptionReport {
-        return getLocations(getLocationDescriptions(request));
-    }
-
-    default List<Location> getLocations(Set<String> locationIdentifiers, SpatialFilter spatialFitler)
-            throws OwsExceptionReport {
-        List<Location> locations = new LinkedList<>();
+    default List<LocationDataServiceResponse> getLocations(Set<String> locationIdentifiers,
+            SpatialFilter spatialFitler) throws OwsExceptionReport {
+        List<LocationDataServiceResponse> locations = new LinkedList<>();
         List<EnvelopeOrGeometry> envelopes = Lists.newArrayList(spatialFitler.getGeometry());
-        for (Location location : getLocations(locationIdentifiers)) {
+        for (LocationDataServiceResponse location : getLocations(locationIdentifiers)) {
             if (featureIsInFilter(getGeomtery(location), envelopes)) {
                 locations.add(location);
             }
@@ -98,39 +94,35 @@ public interface AccessorConnector {
         return locations;
     }
 
-    Location getLocation(GetLocationData request) throws OwsExceptionReport;
+    LocationDataServiceResponse getLocation(LocationDataServiceRequest request) throws OwsExceptionReport;
 
-    default Location getLocation(String identifier) throws OwsExceptionReport {
-        return getLocation(new GetLocationData(identifier));
+    default LocationDataServiceResponse getLocation(String identifier) throws OwsExceptionReport {
+        return getLocation(new LocationDataServiceRequest().setLocationIdentifier(identifier));
     }
 
-    TimeSeriesUniqueIds getTimeSeriesUniqueIds(GetTimeSeriesUniqueIdList request)
-            throws OwsExceptionReport;
+    TimeSeriesUniqueIdListServiceResponse getTimeSeriesUniqueIds(TimeSeriesUniqueIdListServiceRequest request);
 
     List<TimeSeriesDescription> getTimeSeriesDescriptions() throws OwsExceptionReport;
 
-    List<TimeSeriesDescription> getTimeSeriesDescriptions(GetTimeSeriesDescriptionList request)
+    List<TimeSeriesDescription> getTimeSeriesDescriptions(TimeSeriesDescriptionServiceRequest request)
             throws OwsExceptionReport;
 
-    TimeSeriesData getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport;
+    TimeSeriesDataServiceResponse getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
 
-    TimeSeriesData getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
-
-    TimeSeriesData getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
+    TimeSeriesDataServiceResponse getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
 
     // getParameterList
-    default Parameters getParameterList() throws OwsExceptionReport {
-        return getParameterList(new GetParameterList());
+    default ParameterListServiceResponse getParameterList() throws OwsExceptionReport {
+        return getParameterList(new ParameterListServiceRequest());
     }
 
-    Parameters getParameterList(GetParameterList request) throws OwsExceptionReport;
+    ParameterListServiceResponse getParameterList(ParameterListServiceRequest request) throws OwsExceptionReport;
 
-    default Parameter getParameter(String parameter) throws OwsExceptionReport {
-        Parameters parameters = getParameterList();
-        if (parameters != null && parameters.hasParameters()) {
-            for (Parameter param : parameters.getParameters()) {
-                if (param.getIdentifier()
-                        .equalsIgnoreCase(parameter)) {
+    default ParameterMetadata getParameter(String parameter) throws OwsExceptionReport {
+        ParameterListServiceResponse parameters = getParameterList();
+        if (parameters != null && parameters.getParameters() != null) {
+            for (ParameterMetadata param : parameters.getParameters()) {
+                if (param.getIdentifier().equalsIgnoreCase(parameter)) {
                     return param;
                 }
             }
@@ -139,76 +131,62 @@ public interface AccessorConnector {
     }
 
     // getUnitList
-    default Units getUnitList() throws OwsExceptionReport {
-        return getUnitList(new GetUnitList());
+    default UnitListServiceResponse getUnitList() throws OwsExceptionReport {
+        return getUnitList(new UnitListServiceRequest());
     }
 
-    Units getUnitList(GetUnitList request) throws OwsExceptionReport;
+    UnitListServiceResponse getUnitList(UnitListServiceRequest request) throws OwsExceptionReport;
 
-    default Unit getUnit(String unit) throws OwsExceptionReport {
-        Units units = getUnitList();
-        if (units != null && units.hasUnits()) {
-            for (Unit u : units.getUnits()) {
-                if (u.getIdentifier()
-                        .equalsIgnoreCase(unit)) {
+    default UnitMetadata getUnit(String unit) throws OwsExceptionReport {
+        UnitListServiceResponse units = getUnitList();
+        if (units != null && units.getUnits() != null) {
+            for (UnitMetadata u : units.getUnits()) {
+                if (u.getIdentifier().equalsIgnoreCase(unit)) {
                     return u;
                 }
             }
         }
         return null;
-     }
-
-    default Grades getGradeList() throws OwsExceptionReport {
-        return getGradeList(new GetGradeList());
     }
 
-    Grades getGradeList(GetGradeList request) throws OwsExceptionReport;
-
-    default Qualifiers getQualifierList() throws OwsExceptionReport {
-        return getQualifierList(new GetQualifierList());
+    default GradeListServiceResponse getGradeList() throws OwsExceptionReport {
+        return getGradeList(new GradeListServiceRequest());
     }
 
-    Qualifiers getQualifierList(GetQualifierList request) throws OwsExceptionReport;
+    GradeListServiceResponse getGradeList(GradeListServiceRequest request) throws OwsExceptionReport;
+
+    default QualifierListServiceResponse getQualifierList() throws OwsExceptionReport {
+        return getQualifierList(new QualifierListServiceRequest());
+    }
+
+    QualifierListServiceResponse getQualifierList(QualifierListServiceRequest request) throws OwsExceptionReport;
 
     default Map<String, String> createFilterForLocationQuery(Map<String, String> parameter) {
         if (parameter != null && !parameter.isEmpty()) {
             HashMap<String, String> filter = new HashMap<>();
             StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : parameter.entrySet()) {
-                sb.append(entry.getKey())
-                        .append("=")
-                        .append(entry.getValue())
-                        .append(";");
+                sb.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
             }
-            filter.put(AquariusConstants.FILTER, sb.toString()
-                    .substring(0, sb.toString()
-                            .length() - 1));
+            filter.put(AquariusConstants.FILTER, sb.toString().substring(0, sb.toString().length() - 1));
             return filter;
         }
         return new HashMap<>();
     }
 
     default boolean featureIsInFilter(Geometry geometry, List<EnvelopeOrGeometry> envelopes) {
-        return geometry != null && !geometry.isEmpty() && envelopes.stream()
-                .anyMatch(e -> e.isGeometry() && e.getGeometry()
-                        .isPresent()
-                        && e.getGeometry()
-                                .get()
-                                .contains(geometry)
-                        || e.isEnvelope() && e.getEnvelope()
-                                .isPresent()
-                                && e.getEnvelope()
-                                        .get()
-                                        .toGeometry()
-                                        .contains(geometry));
+        return geometry != null && !geometry.isEmpty()
+                && envelopes.stream().anyMatch(
+                        e -> e.isGeometry() && e.getGeometry().isPresent() && e.getGeometry().get().contains(geometry)
+                                || e.isEnvelope() && e.getEnvelope().isPresent()
+                                        && e.getEnvelope().get().toGeometry().contains(geometry));
     }
 
-    default Geometry getGeomtery(final Location location) throws OwsExceptionReport {
+    default Geometry getGeomtery(final LocationDataServiceResponse location) throws OwsExceptionReport {
         if (location.getLongitude() != null && location.getLatitude() != null) {
             try {
                 final String wktString = getWktString(location.getLongitude(), location.getLatitude(), true);
-                Geometry geom = JTSHelper.createGeometryFromWKT(wktString, location.getSrid()
-                        .intValue());
+                Geometry geom = JTSHelper.createGeometryFromWKT(wktString, location.getSrid().intValue());
                 if (location.getElevation() != null) {
                     geom.getCoordinate().z = JavaHelper.asDouble(location.getElevation());
                 }
@@ -222,29 +200,21 @@ public interface AccessorConnector {
 
     default String getWktString(Object latitude, Object longitude, boolean northingFirst) {
         StringBuilder builder = new StringBuilder();
-        builder.append("POINT ")
-                .append('(');
+        builder.append("POINT ").append('(');
 
         if (northingFirst) {
-            builder.append(JavaHelper.asString(latitude))
-                    .append(' ');
+            builder.append(JavaHelper.asString(latitude)).append(' ');
             builder.append(JavaHelper.asString(longitude));
         } else {
-            builder.append(JavaHelper.asString(longitude))
-                    .append(' ');
+            builder.append(JavaHelper.asString(longitude)).append(' ');
             builder.append(JavaHelper.asString(latitude));
         }
         builder.append(')');
         return builder.toString();
     }
 
-    default URI getURL(Session session) throws URISyntaxException {
-        return getURL(session.getConnection()
-                .getBasePath());
-    }
-
     default URI getURL(String host) throws URISyntaxException {
-//        new URIBuilder(host.startsWith("http") ? host : "http://" + host, StandardCharsets.UTF_8).build();
+        // new URIBuilder(host.startsWith("http") ? host : "http://" + host, StandardCharsets.UTF_8).build();
         return new URI(host.startsWith("http") ? host : "http://" + host);
     }
 

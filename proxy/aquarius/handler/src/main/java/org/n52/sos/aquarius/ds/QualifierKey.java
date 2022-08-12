@@ -25,16 +25,39 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.requests;
+package org.n52.sos.aquarius.ds;
 
-import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractDeleteRequest;
-import org.n52.sos.aquarius.AquariusConstants;
+import java.io.Serializable;
+import java.util.Objects;
 
-public class DeleteRequest extends AbstractDeleteRequest {
+public class QualifierKey implements Serializable {
 
-    @Override
-    public String getPath() {
-        return AquariusConstants.Paths.SESSION;
+    public static final String BELOW = "below";
+    public static final String ABOVE = "above";
+    private static final long serialVersionUID = 1671220620564807413L;
+    private final String value;
+
+    public QualifierKey(String value) {
+        this.value = value;
     }
 
+    public static QualifierKey of(String value) {
+        return new QualifierKey(value);
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isEquals(Object obj) {
+        if (!(obj instanceof QualifierKey || obj instanceof String)) {
+            return false;
+        }
+        if (obj instanceof String) {
+            String that = (String) obj;
+            return Objects.equals(this.getValue(), that);
+        }
+        QualifierKey that = (QualifierKey) obj;
+        return Objects.equals(this.getValue(), that.getValue());
+    }
 }

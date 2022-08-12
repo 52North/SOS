@@ -27,8 +27,6 @@
  */
 package org.n52.sos.aquarius.ds;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,91 +36,63 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
-import org.n52.faroe.ConfigurationError;
-import org.n52.sensorweb.server.helgoland.adapters.utils.ProxyException;
-import org.n52.sensorweb.server.helgoland.adapters.web.HttpClient;
-import org.n52.sensorweb.server.helgoland.adapters.web.request.AbstractRequest;
-import org.n52.sensorweb.server.helgoland.adapters.web.response.Response;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.aquarius.adapters.config.AquariusConfigurationProvider;
-import org.n52.sos.aquarius.pojo.Grades;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.LocationDescriptions;
-import org.n52.sos.aquarius.pojo.Parameters;
-import org.n52.sos.aquarius.pojo.Qualifiers;
-import org.n52.sos.aquarius.pojo.TimeSeriesData;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescriptions;
-import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
-import org.n52.sos.aquarius.pojo.Units;
-import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
-import org.n52.sos.aquarius.requests.GetGradeList;
-import org.n52.sos.aquarius.requests.GetLocationData;
-import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
-import org.n52.sos.aquarius.requests.GetParameterList;
-import org.n52.sos.aquarius.requests.GetQualifierList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
-import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
-import org.n52.sos.aquarius.requests.GetUnitList;
-import org.n52.sos.web.HttpClientCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
+import com.aquaticinformatics.aquarius.sdk.timeseries.AquariusClient;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDescriptionListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDescriptionListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescription;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionListByUniqueIdServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionListByUniqueIdServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesUniqueIdListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesUniqueIdListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.UnitListServiceResponse;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class AquariusConnector implements AccessorConnector, HttpClientCreator {
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+public class AquariusConnector implements AccessorConnector, AutoCloseable, AquariusTimeHelper {
 
-    private AquariusConfigurationProvider configurationProvider;
-
-    private ObjectMapper om = new ObjectMapper();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnector.class);
     private AquariusHelper aquariusHelper;
+    private AquariusClient client;
 
-    private SessionHandler sessionHandler;
-
-    public AquariusConnector(SessionHandler sessionHandler, AquariusConfigurationProvider configurationProvider,
-            AquariusHelper aquariusHelper) {
-        this.configurationProvider = configurationProvider;
+    public AquariusConnector(AquariusConnection connection, AquariusHelper aquariusHelper) {
         this.aquariusHelper = aquariusHelper;
-        this.sessionHandler = sessionHandler;
+        this.client = AquariusClient.createConnectedClient(connection.getHost(), connection.getUsername(),
+                connection.getPassword());
     }
 
     @Override
-    public Set<String> getLocationDescriptions(GetLocationDescriptionList request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            if (response.getEntity() != null) {
-                LocationDescriptions locationDescriptions =
-                        om.readValue(response.getEntity(), LocationDescriptions.class);
-                if (locationDescriptions != null && locationDescriptions.hasLocationDesctiptions()) {
-                    return locationDescriptions.getLocationDescriptions()
-                            .stream()
-                            .map(l -> l.getIdentifier())
-                            .collect(Collectors.toSet());
-                }
+    public Set<String> getLocationDescriptions(LocationDescriptionListServiceRequest request) {
+        LocationDescriptionListServiceResponse response = this.client.Publish.get(request);
+        if (response != null) {
+            if (response.getLocationDescriptions() != null) {
+                return response.getLocationDescriptions().stream().map(l -> l.getIdentifier())
+                        .collect(Collectors.toSet());
             }
-            return Collections.emptySet();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying locations");
         }
+        return Collections.emptySet();
     }
 
     @Override
-    public Location getLocation(GetLocationData request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            return response.getEntity() != null ? om.readValue(response.getEntity(), Location.class) : null;
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying location data");
-        }
+    public LocationDataServiceResponse getLocation(LocationDataServiceRequest request) {
+        return this.client.Publish.get(request);
     }
 
     public List<TimeSeriesDescription> getTimeSeriesDescriptions() throws OwsExceptionReport {
@@ -130,167 +100,78 @@ public class AquariusConnector implements AccessorConnector, HttpClientCreator {
     }
 
     @Override
-    public List<TimeSeriesDescription> getTimeSeriesDescriptions(GetTimeSeriesDescriptionList request)
+    public List<TimeSeriesDescription> getTimeSeriesDescriptions(TimeSeriesDescriptionServiceRequest request)
             throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            if (response.getEntity() != null) {
-                TimeSeriesDescriptions timeSeriesDescriptions =
-                        om.readValue(response.getEntity(), TimeSeriesDescriptions.class);
-                if (timeSeriesDescriptions.hasTimeSeriesDescriptions()) {
-                    return timeSeriesDescriptions.getTimeSeriesDescriptions();
-                }
-            }
-            return Collections.emptyList();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying dataset data");
+        TimeSeriesDescriptionListServiceResponse respone = this.client.Publish.get(request);
+        if (respone != null && respone.getTimeSeriesDescriptions() != null) {
+            return respone.getTimeSeriesDescriptions();
         }
+        return Collections.emptyList();
     }
 
-    public List<TimeSeriesDescription> getTimeSeriesDescriptionsByUniqueId(
-            GetTimeSeriesDescriptionsByUniqueId request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            if (response.getEntity() != null) {
-                TimeSeriesDescriptions timeSeriesDescriptions =
-                        om.readValue(response.getEntity(), TimeSeriesDescriptions.class);
-                if (timeSeriesDescriptions.hasTimeSeriesDescriptions()) {
-                    return timeSeriesDescriptions.getTimeSeriesDescriptions();
-                }
-            }
-            return Collections.emptyList();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying dataset data by unique id");
-        }
+    public TimeSeriesDescriptionListByUniqueIdServiceResponse getTimeSeriesDescriptionsByUniqueId(
+            TimeSeriesDescriptionListByUniqueIdServiceRequest request) {
+        return this.client.Publish.get(request);
     }
 
     @Override
-    public TimeSeriesUniqueIds getTimeSeriesUniqueIds(GetTimeSeriesUniqueIdList request)
+    public TimeSeriesUniqueIdListServiceResponse getTimeSeriesUniqueIds(TimeSeriesUniqueIdListServiceRequest request) {
+        return this.client.Publish.get(request);
+    }
+
+    @Override
+    public ParameterListServiceResponse getParameterList(ParameterListServiceRequest request)
             throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            if (response.getEntity() != null) {
-                return om.readValue(response.getEntity(), TimeSeriesUniqueIds.class);
-            }
-            return null;
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying dataset data unique ids");
-        }
-    }
-
-
-    @Override
-    public Parameters getParameterList(GetParameterList request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            return response.getEntity() != null ? om.readValue(response.getEntity(), Parameters.class)
-                    : new Parameters();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying parameter data");
-        }
+        return this.client.Publish.get(request);
     }
 
     @Override
-    public Units getUnitList(GetUnitList request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            return response.getEntity() != null ? om.readValue(response.getEntity(), Units.class)
-                    : new Units();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying unit data");
-        }
+    public UnitListServiceResponse getUnitList(UnitListServiceRequest request) throws OwsExceptionReport {
+        return this.client.Publish.get(request);
     }
 
     @Override
-    public Grades getGradeList(GetGradeList request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            return response.getEntity() != null ? om.readValue(response.getEntity(), Grades.class)
-                    : new Grades();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying grade data");
-        }
+    public GradeListServiceResponse getGradeList(GradeListServiceRequest request) throws OwsExceptionReport {
+        return this.client.Publish.get(request);
     }
 
     @Override
-    public Qualifiers getQualifierList(GetQualifierList request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            return response.getEntity() != null ? om.readValue(response.getEntity(), Qualifiers.class)
-                    : new Qualifiers();
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying qualifier data");
-        }
+    public QualifierListServiceResponse getQualifierList(QualifierListServiceRequest request)
+            throws OwsExceptionReport {
+        return this.client.Publish.get(request);
     }
 
-    public TimeSeriesData getTimeSeriesData(String timeSeriesUniqueId) throws OwsExceptionReport {
-        return getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId));
+    public TimeSeriesDataServiceResponse getTimeSeriesData(String timeSeriesUniqueId, DateTime queryFrom,
+            DateTime queryTo) throws OwsExceptionReport {
+        LOGGER.debug("Query TimeSeriesData for {} from {}/{}", timeSeriesUniqueId, queryFrom, queryTo);
+        return this.client.Publish
+                .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, queryFrom, queryTo));
     }
 
-    @Override
-    public TimeSeriesData getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport {
-        try {
-            Response response = query(request);
-            if (response.getEntity() != null) {
-                TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
-                if (timeSeriesData != null && timeSeriesData.hasPoints()) {
-                    return timeSeriesData;
-                }
-            }
-            return null;
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying time series data!");
-        }
+    public TimeSeriesDataServiceResponse getTimeSeriesData(String timeSeriesUniqueId) throws OwsExceptionReport {
+        return getTimeSeriesData(timeSeriesUniqueId, null, null);
     }
 
     @Override
-    public TimeSeriesData getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
-        try {
-            DateTime dateTime = getQueryToForFirstTimeSeriesData(timeSeriesUniqueId);
-            if (dateTime != null) {
-                Response response = query(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId)
-                        .setQueryTo(dateTime));
-                if (response.getEntity() != null) {
-                    TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
-                    if (timeSeriesData.hasPoints()) {
-                        return timeSeriesData;
-                    }
-                }
-            }
-            return null;
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying first time series data");
+    public TimeSeriesDataServiceResponse getTimeSeriesDataFirstPoint(String timeSeriesUniqueId)
+            throws OwsExceptionReport {
+        DateTime dateTime = getQueryToForFirstTimeSeriesData(timeSeriesUniqueId);
+        if (dateTime != null) {
+            return this.client.Publish
+                    .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, null, dateTime));
         }
+        return null;
     }
 
     @Override
-    public TimeSeriesData getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
-        try {
-            DateTime dateTime = getQueryFromForLastTimeSeriesData(timeSeriesUniqueId);
-            if (dateTime != null) {
-                Response response = query(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId)
-                        .setQueryFrom(dateTime));
-                if (response.getEntity() != null) {
-                    TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
-                    if (timeSeriesData.hasPoints()) {
-                        return timeSeriesData;
-                    }
-                }
-            }
-            return null;
-        } catch (URISyntaxException | IOException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying last time series data");
+    public TimeSeriesDataServiceResponse getTimeSeriesDataLastPoint(String timeSeriesUniqueId)
+            throws OwsExceptionReport {
+        DateTime dateTime = getQueryFromForLastTimeSeriesData(timeSeriesUniqueId);
+        if (dateTime != null) {
+            return this.client.Publish
+                    .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, dateTime, null));
         }
+        return null;
     }
 
     private DateTime getQueryToForFirstTimeSeriesData(String timeSeriesUniqueId) {
@@ -299,12 +180,10 @@ public class AquariusConnector implements AccessorConnector, HttpClientCreator {
             switch (aquariusHelper.getDataType()) {
                 case CORRECTED:
                     return timeSeries.getCorrectedStartTime() != null
-                            ? DateTimeHelper.parseIsoString2DateTime(timeSeries.getCorrectedStartTime())
+                            ? toDateTime(timeSeries.getCorrectedStartTime())
                             : null;
                 default:
-                    return timeSeries.getRawStartTime() != null
-                            ? DateTimeHelper.parseIsoString2DateTime(timeSeries.getRawStartTime())
-                            : null;
+                    return timeSeries.getRawStartTime() != null ? toDateTime(timeSeries.getRawStartTime()) : null;
             }
         }
         return null;
@@ -315,13 +194,10 @@ public class AquariusConnector implements AccessorConnector, HttpClientCreator {
         if (timeSeries != null) {
             switch (aquariusHelper.getDataType()) {
                 case CORRECTED:
-                    return timeSeries.getCorrectedEndTime() != null
-                            ? DateTimeHelper.parseIsoString2DateTime(timeSeries.getCorrectedEndTime())
+                    return timeSeries.getCorrectedEndTime() != null ? toDateTime(timeSeries.getCorrectedEndTime())
                             : null;
                 default:
-                    return timeSeries.getRawEndTime() != null
-                            ? DateTimeHelper.parseIsoString2DateTime(timeSeries.getRawEndTime())
-                            : null;
+                    return timeSeries.getRawEndTime() != null ? toDateTime(timeSeries.getRawEndTime()) : null;
             }
         }
         return null;
@@ -333,52 +209,19 @@ public class AquariusConnector implements AccessorConnector, HttpClientCreator {
             HashMap<String, String> filter = new HashMap<>();
             StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : parameter.entrySet()) {
-                sb.append(entry.getKey())
-                        .append("=")
-                        .append(entry.getValue())
-                        .append(";");
+                sb.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
             }
-            filter.put(AquariusConstants.FILTER, sb.toString()
-                    .substring(0, sb.toString()
-                            .length() - 1));
+            filter.put(AquariusConstants.FILTER, sb.toString().substring(0, sb.toString().length() - 1));
             return filter;
         }
         return new HashMap<>();
     }
 
-    private Response query(AbstractRequest request) throws OwsExceptionReport, URISyntaxException {
-        try {
-            HttpClient client = getClient(configurationProvider.getDataSourceConfiguration());
-            Response response = client.execute(getURL(sessionHandler.getSession()),
-                    checkTokenParameter(request, sessionHandler.getSession()));
-
-            if (response != null && response.getStatus() == 401) {
-                sessionHandler.keepAlive(sessionHandler.getSession());
-                response = client.execute(getURL(sessionHandler.getSession()),
-                        checkTokenParameter(request, sessionHandler.getSession()));
-            }
-            return response;
-        } catch (ProxyException e) {
-            throw new NoApplicableCodeException().causedBy(e);
+    @Override
+    public void close() throws Exception {
+        if (this.client != null) {
+            this.client.close();
         }
-    }
-
-    private AbstractRequest checkTokenParameter(AbstractRequest request, Session session) {
-        if (session == null || Strings.isNullOrEmpty(session.getToken())) {
-            String exceptionText = "Error when establishing a connection to Aquarius";
-            if (session != null && session.getConnection() != null) {
-                exceptionText = String.format("Error when establishing a connection to Aquarius for (%s, %s, %s)",
-                        session.getConnection()
-                                .getBasePath(),
-                        session.getConnection()
-                                .getUsername(),
-                        session.getConnection()
-                                .getPassword());
-            }
-            throw new ConfigurationError(exceptionText);
-        }
-        request.addHeader(AquariusConstants.HEADER_AQ_AUTH_TOKEN, session.getToken());
-        return request;
     }
 
 }

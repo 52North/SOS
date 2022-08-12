@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.threeten.extra.Interval;
@@ -72,5 +73,9 @@ public interface AquariusTimeHelper {
 
     default Interval toInterval(Instant start, Instant end) {
         return Interval.of(start, end);
+    }
+
+    default DateTime toDateTime(Instant instant) {
+        return new DateTime(Date.from(instant));
     }
 }

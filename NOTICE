@@ -96,7 +96,9 @@ This project includes:
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache Thrift under The Apache Software License, Version 2.0
+  Apache Tika core under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
+  aquarius-sdk-java under GNU Affero General Public License
   AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
   AspectJ Weaver under Eclipse Public License - v 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
@@ -121,6 +123,7 @@ This project includes:
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   geolatte-geom under LGPL 3.0
+  Gson under Apache-2.0
   Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
   Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under Apache License, Version 2.0
@@ -138,6 +141,7 @@ This project includes:
   J2ObjC Annotations under The Apache Software License, Version 2.0
   Jackson dataformat: CBOR under The Apache Software License, Version 2.0
   Jackson datatype: Joda under The Apache Software License, Version 2.0
+  Jackson datatype: JSR310 under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
@@ -230,6 +234,7 @@ This project includes:
   Sensor Web Server Helgoland Adapters - Common Module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Connector Module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Harvester Module under GNU General Public License, Version 2.0
+  ServiceStack.Client under The BSD 3-Clause License
   SI Quantities under BSD 3-Clause
   SI Units under BSD
   SLF4J API Module under MIT License

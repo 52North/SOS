@@ -27,46 +27,53 @@
  */
 package org.n52.sos.aquarius.adapters.harvest;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvester;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvesterResponse;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvesterResponse;
-import org.n52.series.db.beans.ServiceEntity;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.aquarius.harvest.AbstractAquariusHarvester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 public class AquariusFullHarvester extends AbstractAquariusHarvester implements FullHarvester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvester.class);
 
+    @Inject
+    private AquariustDatasetHarvester harvester;
+
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public HarvesterResponse process(HarvestContext context) {
         if (context instanceof AquariusHarvesterContext) {
-            AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
-            procedures.clear();
-            phenomenon.clear();
-            categories.clear();
-            offerings.clear();
-            parameters.clear();
-            features.clear();
-            platforms.clear();
-            locations.clear();
-            units.clear();
-            checkGradesAndQualifier(connector);
-            try {
-                ServiceEntity service = getOrInsertServiceEntity();
-                parameters = getParameterList(connector);
-                units = getUnitList(connector);
-                harvestDatasets(service, connector);
-            } catch (OwsExceptionReport e) {
+            try (AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector()) {
+                clearMaps();
+                checkGradesAndQualifier(connector);
+                getParameterList(connector);
+                getUnitList(connector);
+                Map<String, DatasetEntity> datasets = getIdentifierDatasetMap(getServiceEntity());
+                int count = 0;
+                for (String identifier : getLocationIds(connector)) {
+                    if (count <= 10) {
+                    harvester.harvestDatasets(getLocation(identifier, connector), datasets, connector);
+                    updateCache();
+                    count++;
+                    }
+                }
+                if (!datasets.isEmpty()) {
+                    LOGGER.debug("Start removing datasets/timeSeries!");
+                    harvester.deleteObsoleteData(datasets);
+                }
+            } catch (Exception e) {
                 LOGGER.error("Error while harvesting data!", e);
             }
             return new FullHarvesterResponse();
+
         }
         return new FullHarvesterResponse(false);
     }

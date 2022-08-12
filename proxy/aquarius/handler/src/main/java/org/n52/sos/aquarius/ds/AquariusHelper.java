@@ -30,6 +30,8 @@ package org.n52.sos.aquarius.ds;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,31 +50,32 @@ import org.joda.time.DateTime;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.aquarius.pojo.Grades;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.Parameter;
-import org.n52.sos.aquarius.pojo.TimeSeriesData;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.data.Grade;
-import org.n52.sos.aquarius.pojo.data.Qualifier;
-import org.n52.sos.aquarius.pojo.data.QualifierKey;
-import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
-import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesCorrectedData;
-import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
-import org.n52.sos.aquarius.requests.GetTimeSeriesRawData;
-import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.proxy.harvest.AbstractProxyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ExtendedAttributeFilter;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDescriptionListServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.ParameterMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.QualifierMetadata;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataCorrectedServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataRawServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDataServiceResponse;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescription;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesDescriptionServiceRequest;
+import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.TimeSeriesUniqueIdListServiceRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.base.Strings;
 
+import net.servicestack.client.IReturn;
+
 @Configurable
-public class AquariusHelper extends AbstractProxyHelper implements Constructable {
+public class AquariusHelper extends AbstractProxyHelper implements Constructable, AquariusTimeHelper {
 
     public static final String APPLY_ROUNDING = "proxy.aquarius.applyRounding";
 
@@ -106,11 +110,13 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     private static final String GRADES_FROM_FILE = "proxy.aquarius.grades.file";
 
-    private ObjectMapper om = new ObjectMapper();
+    private static final String CONFIGURED_LOCATIONS = "proxy.aquarius.location.configured";
 
-    private Map<String, Parameter> parameters = new HashMap<>();
+    private ObjectMapper om;
 
-    private Map<String, Location> locations = new HashMap<>();
+    private Map<String, ParameterMetadata> parameters = new HashMap<>();
+
+    private Map<String, LocationDataServiceResponse> locations = new HashMap<>();
 
     private Map<String, TimeSeriesDescription> datasets = new HashMap<>();
 
@@ -142,11 +148,13 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     private boolean createTemporal = Boolean.FALSE.booleanValue();
 
-    private Map<String, org.n52.sos.aquarius.pojo.Qualifier> qualifiers = new LinkedHashMap<>();
+    private Map<String, QualifierMetadata> qualifiers = new LinkedHashMap<>();
 
-    private Map<String, org.n52.sos.aquarius.pojo.Grade> grades = new LinkedHashMap<>();
+    private Map<String, GradeMetadata> grades = new LinkedHashMap<>();
 
     private boolean useGradesFromFile = Boolean.FALSE.booleanValue();
+
+    private Set<String> configurdLocations = new LinkedHashSet<>();
 
     @Setting(APPLY_ROUNDING)
     public AquariusHelper setApplyRoundig(boolean applyRounding) {
@@ -224,13 +232,23 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return this;
     }
 
+    @Setting(CONFIGURED_LOCATIONS)
+    public AquariusHelper setConfiguredLocations(String locations) {
+        this.configurdLocations.clear();
+        if (!Strings.isNullOrEmpty(locations)) {
+            this.configurdLocations.addAll(Arrays.asList(locations.split(",")));
+        }
+        return this;
+    }
+
     public void init() {
         try {
+            this.om = JsonMapper.builder().findAndAddModules().build();
             URL resource = AquariusHelper.class.getResource("/aquarius/grades.json");
             if (resource != null) {
                 File file = FileUtils.toFile(resource);
                 if (file != null) {
-                    Grades parsedGrades = om.readValue(file, Grades.class);
+                    GradeListServiceResponse parsedGrades = om.readValue(file, GradeListServiceResponse.class);
                     if (parsedGrades != null) {
                         setGrades(parsedGrades.getGrades());
                     }
@@ -271,6 +289,14 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     public boolean isSetUseGradesFromFile() {
         return useGradesFromFile;
+    }
+
+    public Set<String> getConfiguredLocations() {
+        return Collections.unmodifiableSet(configurdLocations);
+    }
+
+    public boolean hasConfiguredLocations() {
+        return !getConfiguredLocations().isEmpty();
     }
 
     private boolean isSetExtendedAttributeTimeSeriesKey() {
@@ -323,7 +349,7 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return dataType;
     }
 
-    public Parameter getParameter(String parameterId) {
+    public ParameterMetadata getParameter(String parameterId) {
         return parameters.get(parameterId);
     }
 
@@ -339,14 +365,14 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return published;
     }
 
-    public AquariusHelper addParameter(Parameter parameter) {
+    public AquariusHelper addParameter(ParameterMetadata parameter) {
         if (parameter != null) {
             parameters.put(parameter.getIdentifier(), parameter);
         }
         return this;
     }
 
-    public AquariusHelper addParameters(Collection<Parameter> parameters) {
+    public AquariusHelper addParameters(Collection<ParameterMetadata> parameters) {
         if (parameters != null) {
             parameters.stream().forEach(m -> addParameter(m));
         }
@@ -357,18 +383,18 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return locations.containsKey(locationId);
     }
 
-    public Location getLocation(String locationId) {
+    public LocationDataServiceResponse getLocation(String locationId) {
         return locations.get(locationId);
     }
 
-    public AquariusHelper addLocation(Location location) {
+    public AquariusHelper addLocation(LocationDataServiceResponse location) {
         if (location != null) {
             locations.put(location.getIdentifier(), location);
         }
         return this;
     }
 
-    public AquariusHelper addLocations(Collection<Location> locations) {
+    public AquariusHelper addLocations(Collection<LocationDataServiceResponse> locations) {
         if (locations != null) {
             locations.stream().forEach(m -> addLocation(m));
         }
@@ -390,74 +416,92 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return datasets.containsKey(dataSetId);
     }
 
-    public GetLocationDescriptionList getLocationDescriptionListRequest(String locationIdentifier) {
-        GetLocationDescriptionList request = getLocationDescriptionListRequest();
+    public LocationDescriptionListServiceRequest getLocationDescriptionListRequest(String locationIdentifier) {
+        LocationDescriptionListServiceRequest request = getLocationDescriptionListRequest();
         request.setLocationIdentifier(locationIdentifier);
         return request;
     }
 
-    public GetLocationDescriptionList getLocationDescriptionListRequest() {
+    public LocationDescriptionListServiceRequest getLocationDescriptionListRequest() {
         switch (getPublished()) {
             case FALSE:
-                return (GetLocationDescriptionList) getBaseLocationDescriptionListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
-            case TURE:
-                return (GetLocationDescriptionList) getBaseLocationDescriptionListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
+                return (LocationDescriptionListServiceRequest) getBaseLocationDescriptionListRequest()
+                        .setPublish(Boolean.FALSE);
+            case TRUE:
+                return (LocationDescriptionListServiceRequest) getBaseLocationDescriptionListRequest()
+                        .setPublish(Boolean.TRUE);
             case ALL:
             default:
                 return getBaseLocationDescriptionListRequest();
         }
     }
 
-    private GetLocationDescriptionList getBaseLocationDescriptionListRequest() {
-        if (isExtendendAttributeLocation()
-                || isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries()) {
-            return new GetLocationDescriptionList(getExtendedFilterMapLocation());
-        }
-        return new GetLocationDescriptionList();
+    public LocationDataServiceRequest getLocationData(String locationIdentifier) {
+        return new LocationDataServiceRequest().setLocationIdentifier(locationIdentifier);
     }
 
-    public GetTimeSeriesDescriptionList getGetTimeSeriesDescriptionListRequest() {
+    private LocationDescriptionListServiceRequest getBaseLocationDescriptionListRequest() {
+        LocationDescriptionListServiceRequest request = new LocationDescriptionListServiceRequest();
+        if (isExtendendAttributeLocation()
+                || isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries()) {
+            Map<String, String> filters = getExtendedFilterMapLocation();
+            request.setExtendedFilters(createExtendedFilters(filters));
+        }
+        return request;
+    }
+
+    private ArrayList<ExtendedAttributeFilter> createExtendedFilters(Map<String, String> filters) {
+        if (filters != null && !filters.isEmpty()) {
+            ArrayList<ExtendedAttributeFilter> list = new ArrayList<>();
+            for (Entry<String, String> filter : filters.entrySet()) {
+                list.add(new ExtendedAttributeFilter().setFilterName(filter.getKey())
+                        .setFilterValue(filter.getValue()));
+            }
+            return list;
+        }
+        return null;
+    }
+
+    public TimeSeriesDescriptionServiceRequest getGetTimeSeriesDescriptionListRequest() {
         switch (getPublished()) {
             case FALSE:
-                return (GetTimeSeriesDescriptionList) getBaseTimeSeriesDescriptionListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
-            case TURE:
-                return (GetTimeSeriesDescriptionList) getBaseTimeSeriesDescriptionListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
+                return getBaseTimeSeriesDescriptionListRequest().setPublish(Boolean.FALSE);
+            case TRUE:
+                return getBaseTimeSeriesDescriptionListRequest().setPublish(Boolean.TRUE);
             case ALL:
             default:
                 return getBaseTimeSeriesDescriptionListRequest();
         }
     }
 
-    private GetTimeSeriesDescriptionList getBaseTimeSeriesDescriptionListRequest() {
+    private TimeSeriesDescriptionServiceRequest getBaseTimeSeriesDescriptionListRequest() {
+        TimeSeriesDescriptionServiceRequest request = new TimeSeriesDescriptionServiceRequest();
         if (isExtendendAttributeTimeSeries()) {
-            return new GetTimeSeriesDescriptionList(getExtendedFilterMapTimeSeries());
+            Map<String, String> filters = getExtendedFilterMapTimeSeries();
+            request.setExtendedFilters(createExtendedFilters(filters));
         }
-        return new GetTimeSeriesDescriptionList();
+        return request;
     }
 
-    public GetTimeSeriesUniqueIdList getTimeSeriesUniqueIdsRequest() {
+    public TimeSeriesUniqueIdListServiceRequest getTimeSeriesUniqueIdsRequest() {
         switch (getPublished()) {
             case FALSE:
-                return (GetTimeSeriesUniqueIdList) getBaseTimeSeriesUnitqueIdsListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
-            case TURE:
-                return (GetTimeSeriesUniqueIdList) getBaseTimeSeriesUnitqueIdsListRequest()
-                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
+                return getBaseTimeSeriesUnitqueIdsListRequest().setPublish(Boolean.FALSE);
+            case TRUE:
+                return getBaseTimeSeriesUnitqueIdsListRequest().setPublish(Boolean.TRUE);
             case ALL:
             default:
                 return getBaseTimeSeriesUnitqueIdsListRequest();
         }
     }
 
-    private GetTimeSeriesUniqueIdList getBaseTimeSeriesUnitqueIdsListRequest() {
+    private TimeSeriesUniqueIdListServiceRequest getBaseTimeSeriesUnitqueIdsListRequest() {
+        TimeSeriesUniqueIdListServiceRequest request = new TimeSeriesUniqueIdListServiceRequest();
         if (isExtendendAttributeTimeSeries()) {
-            return new GetTimeSeriesUniqueIdList(getExtendedFilterMapTimeSeries());
+            Map<String, String> filters = getExtendedFilterMapLocation();
+            request.setExtendedFilters(createExtendedFilters(filters));
         }
-        return new GetTimeSeriesUniqueIdList();
+        return request;
     }
 
     private Map<String, String> getExtendedFilterMapTimeSeries() {
@@ -479,14 +523,31 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return map;
     }
 
-    public AbstractGetTimeSeriesData getTimeSeriesDataRequest(String timeSeriesUniqueId) {
+    public IReturn<TimeSeriesDataServiceResponse> getTimeSeriesDataRequest(String timeSeriesUniqueId,
+            DateTime queryFrom, DateTime queryTo) {
         switch (getDataType()) {
             case CORRECTED:
-                return new GetTimeSeriesCorrectedData(timeSeriesUniqueId).setReturnFullCoverage(returnFullCoverage)
+                TimeSeriesDataCorrectedServiceRequest request = new TimeSeriesDataCorrectedServiceRequest()
+                        .setTimeSeriesUniqueId(timeSeriesUniqueId).setReturnFullCoverage(returnFullCoverage)
                         .setIncludeGapMarkers(includeGapMarkers).setApplyRounding(applyRounding);
+                if (queryFrom != null) {
+                    request.setQueryFrom(queryFrom.toDate().toInstant());
+                }
+                if (queryTo != null) {
+                    request.setQueryTo(queryTo.toDate().toInstant());
+                }
+                return request;
             case RAW:
             default:
-                return new GetTimeSeriesRawData(timeSeriesUniqueId).setApplyRounding(applyRounding);
+                TimeSeriesDataRawServiceRequest rawRequest = new TimeSeriesDataRawServiceRequest()
+                        .setTimeSeriesUniqueId(timeSeriesUniqueId).setApplyRounding(applyRounding);
+                if (queryFrom != null) {
+                    rawRequest.setQueryFrom(queryFrom.toDate().toInstant());
+                }
+                if (queryTo != null) {
+                    rawRequest.setQueryTo(queryTo.toDate().toInstant());
+                }
+                return rawRequest;
         }
     }
 
@@ -494,15 +555,13 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         switch (getDataType()) {
             case CORRECTED:
                 return (timeSeries.getCorrectedStartTime() != null && timeSeries.getCorrectedEndTime() != null)
-                        ? new Range<DateTime>(DateTime.class,
-                                DateTimeHelper.parseIsoString2DateTime(timeSeries.getCorrectedStartTime()),
-                                DateTimeHelper.parseIsoString2DateTime(timeSeries.getCorrectedEndTime()))
+                        ? new Range<DateTime>(DateTime.class, toDateTime(timeSeries.getCorrectedStartTime()),
+                                toDateTime(timeSeries.getCorrectedEndTime()))
                         : null;
             default:
                 return (timeSeries.getRawStartTime() != null && timeSeries.getRawEndTime() != null)
-                        ? new Range<DateTime>(DateTime.class,
-                                DateTimeHelper.parseIsoString2DateTime(timeSeries.getRawStartTime()),
-                                DateTimeHelper.parseIsoString2DateTime(timeSeries.getRawEndTime()))
+                        ? new Range<DateTime>(DateTime.class, toDateTime(timeSeries.getRawStartTime()),
+                                toDateTime(timeSeries.getRawEndTime()))
                         : null;
         }
     }
@@ -516,21 +575,27 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         }
     }
 
+    public TimeSeriesData applyChecker(TimeSeriesDataServiceResponse timeSeriesData) {
+        return applyGradeChecker(applyQualifierChecker(new TimeSeriesData(timeSeriesData)));
+    }
+
     public TimeSeriesData applyChecker(TimeSeriesData timeSeriesData) {
-       return applyGradeChecker(applyQualifierChecker(timeSeriesData));
+        return applyGradeChecker(applyQualifierChecker(timeSeriesData));
     }
 
     private TimeSeriesData applyQualifierChecker(TimeSeriesData timeSeriesData) {
         if (isSetAboveQualifier() || isSetBelowQualifier()
                 || isSetAdditionalQualifiers() && timeSeriesData.hasQualifiers()) {
-            for (Qualifier qualifier : timeSeriesData.getQualifiers()) {
+            for (com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Qualifier q : timeSeriesData
+                    .getQualifiers()) {
+                Qualifier qualifier = createQualifier(q);
                 if (isSetAboveQualifier() && qualifier.getIdentifier().equalsIgnoreCase(getAboveQualifier())) {
                     timeSeriesData.addChecker(qualifier.setKey(QualifierKey.of(QualifierKey.ABOVE)));
                 } else if (isSetBelowQualifier() && qualifier.getIdentifier().equalsIgnoreCase(getBelowQualifier())) {
                     timeSeriesData.addChecker(qualifier.setKey(QualifierKey.of(QualifierKey.BELOW)));
                 } else if (isSetAdditionalQualifiers()
                         && getAdditionalQualifiers().contains(qualifier.getIdentifier())) {
-                    timeSeriesData.addChecker(enhanceQualifier(qualifier));
+                    timeSeriesData.addChecker(enhanceQualifier(qualifier, q));
                 }
             }
         }
@@ -538,59 +603,73 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
     }
 
     private TimeSeriesData applyGradeChecker(TimeSeriesData timeSeriesData) {
-        for (Grade grade : timeSeriesData.getGrades()) {
+        for (com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Grade grade : timeSeriesData
+                .getGrades()) {
             timeSeriesData.addChecker(enhanceGrade(grade));
         }
         return timeSeriesData;
     }
 
-    private Qualifier enhanceQualifier(Qualifier qualifier) {
+    private Qualifier createQualifier(
+            com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Qualifier original) {
+        Qualifier sosQualifier = new Qualifier();
+        sosQualifier.setIdentifier(original.getIdentifier());
+        sosQualifier.setStartTime(original.getStartTime());
+        sosQualifier.setEndTime(original.getEndTime());
+        return sosQualifier;
+    }
+
+    private Qualifier enhanceQualifier(Qualifier qualifier,
+            com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Qualifier original) {
         qualifier.setKey(QualifierKey.of(qualifier.getIdentifier()));
-        if (getQualifiers().containsKey(qualifier.getIdentifier())) {
-            org.n52.sos.aquarius.pojo.Qualifier quali = getQualifier(qualifier.getIdentifier());
+        if (getQualifiers().containsKey(original.getIdentifier())) {
+            QualifierMetadata quali = getQualifier(original.getIdentifier());
             qualifier.setCode(quali.getCode());
             qualifier.setDisplayName(quali.getDisplayName());
         }
         return qualifier;
     }
 
-    private Grade enhanceGrade(Grade grade) {
-        if (getGrades().containsKey(grade.getGradeCode())) {
-            org.n52.sos.aquarius.pojo.Grade g = getGrade(grade.getGradeCode());
-            grade.setDescription(g.getDescription());
-            grade.setDisplayName(g.getDisplayName());
+    private Grade enhanceGrade(com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Grade original) {
+        Grade sosGrade = new Grade();
+        sosGrade.setStartTime(original.getStartTime());
+        sosGrade.setEndTime(original.getEndTime());
+        if (getGrades().containsKey(original.getGradeCode())) {
+            GradeMetadata g = getGrade(original.getGradeCode());
+            sosGrade.setDescription(g.getDescription());
+            sosGrade.setDisplayName(g.getDisplayName());
         }
-        return grade;
+        return sosGrade;
     }
 
-    public Map<String, org.n52.sos.aquarius.pojo.Grade> getGrades() {
+    public Map<String, GradeMetadata> getGrades() {
         return Collections.unmodifiableMap(grades);
     }
 
-    public org.n52.sos.aquarius.pojo.Grade getGrade(String code) {
+    public GradeMetadata getGrade(String code) {
         return getGrades().get(code);
     }
 
-    public Map<String, org.n52.sos.aquarius.pojo.Qualifier> getQualifiers() {
+    public Map<String, QualifierMetadata> getQualifiers() {
         return Collections.unmodifiableMap(qualifiers);
     }
 
-    public org.n52.sos.aquarius.pojo.Qualifier getQualifier(String identifier) {
+    public QualifierMetadata getQualifier(String identifier) {
         return getQualifiers().get(identifier);
     }
 
-    public void setGrades(List<org.n52.sos.aquarius.pojo.Grade> grades) {
-        Map<String, org.n52.sos.aquarius.pojo.Grade> map = new LinkedHashMap<>();
-        for (org.n52.sos.aquarius.pojo.Grade grade : grades) {
+    public void setGrades(List<GradeMetadata> arrayList) {
+        Map<String, GradeMetadata> map = new LinkedHashMap<>();
+        for (GradeMetadata grade : arrayList) {
             map.put(grade.getIdentifier(), grade);
         }
         this.grades.putAll(map);
     }
 
-    public void setQualifiers(List<org.n52.sos.aquarius.pojo.Qualifier> qualifiers) {
-        Map<String, org.n52.sos.aquarius.pojo.Qualifier> map = new LinkedHashMap<>();
+    public void setQualifiers(List<QualifierMetadata> arrayList) {
+        Map<String, QualifierMetadata> map = new LinkedHashMap<>();
         if (isSetAdditionalQualifiers()) {
-            for (org.n52.sos.aquarius.pojo.Qualifier qualifier : qualifiers) {
+            for (QualifierMetadata qualifier : arrayList) {
                 if (getAdditionalQualifiers().contains(qualifier.getIdentifier())) {
                     map.put(qualifier.getIdentifier(), qualifier);
                 }
@@ -605,7 +684,7 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
     }
 
     public enum Published {
-        TURE,
+        TRUE,
         FALSE,
         ALL;
     }

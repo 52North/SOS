@@ -51,7 +51,8 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester implements 
     @Override
     public HarvesterResponse process(HarvestContext context) {
         if (context instanceof AquariusHarvesterContext) {
-            try (AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector()) {
+            try {
+                AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
                 clearMaps();
                 checkGradesAndQualifier(connector);
                 getParameterList(connector);

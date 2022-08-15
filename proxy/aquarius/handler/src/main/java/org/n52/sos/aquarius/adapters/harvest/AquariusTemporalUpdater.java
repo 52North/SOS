@@ -69,7 +69,8 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester implement
     @Transactional(rollbackFor = Exception.class)
     public HarvesterResponse process(HarvestContext context) {
         if (context instanceof AquariusHarvesterContext) {
-            try (AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector()) {
+            try {
+                AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
                 return update(connector, context.getLastUpdateTime());
             } catch (Exception e) {
                 LOGGER.error(ERROR_UPDATE, e);

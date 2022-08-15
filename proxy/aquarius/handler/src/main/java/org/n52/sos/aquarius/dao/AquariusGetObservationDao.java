@@ -93,7 +93,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import net.servicestack.client.WebServiceException;
 
 @SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class AquariusGetObservationDao extends AbstractAquariusDao
@@ -180,7 +179,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         final List<OmObservation> result = new LinkedList<>();
         Locale requestedLocale = getRequestedLocale(request);
         String pdf = getProcedureDescriptionFormat(request.getResponseFormat());
-        try (AquariusConnector connection = getAquariusConnector()) {
+        try {
+            AquariusConnector connection = getAquariusConnector();
             List<DatasetEntity> datasets = getDatasets(createDbQuery(request)).collect(Collectors.toList());
             Counter counter = new Counter();
             for (DatasetEntity dataset : datasets) {
@@ -217,8 +217,6 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
             }
         } catch (ConnectionProviderException cpe) {
             throw new NoApplicableCodeException().causedBy(cpe);
-        } catch (WebServiceException e) {
-            handleWebServiceException(e);
         } catch (Exception e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage("Error while processing observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
@@ -287,17 +285,15 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     @Transactional
     public List<DataEntity<?>> getObservations(DatasetEntity entitiy, DbQuery parameters) {
         List<DataEntity<?>> measurements = Lists.newArrayList();
-        try (AquariusConnector connection = getAquariusConnector()) {
+        try {
             Date start = null;
             Date end = null;
             if (parameters.getTimespan() != null) {
                 Interval interval = parameters.getTimespan().toInterval();
                 start = interval.getStart().toDate();
                 end = interval.getEnd().toDate();
-                measurements.addAll(getData(start, end, entitiy, connection));
+                measurements.addAll(getData(start, end, entitiy, getAquariusConnector()));
             }
-        } catch (WebServiceException e) {
-            handleWebServiceException(e);
         } catch (Exception e) {
             LOGGER.error(ERROR_OBSERVATION, e);
         }
@@ -316,13 +312,11 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
             return Optional
                     .ofNullable(checkTimeStart(Hibernate.unproxy(dataset.getFirstObservation(), DataEntity.class)));
         } else {
-            try (AquariusConnector connection = getAquariusConnector()) {
+            try {
                 TimeSeriesDataServiceResponse timeSeriesData =
-                        connection.getTimeSeriesDataFirstPoint(dataset.getIdentifier());
+                        getAquariusConnector().getTimeSeriesDataFirstPoint(dataset.getIdentifier());
                 return Optional.of(createDataEntity(dataset,
                         aquariusHelper.applyChecker(timeSeriesData).getFirstPoint(), new Counter()));
-            } catch (WebServiceException e) {
-                    handleWebServiceException(e);
             } catch (Exception e) {
                 LOGGER.error(ERROR_FIRST_OBSERVATION, e);
             }
@@ -338,25 +332,17 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
             return Optional
                     .ofNullable(checkTimeStart(Hibernate.unproxy(dataset.getLastObservation(), DataEntity.class)));
         } else {
-            try (AquariusConnector connection = getAquariusConnector()) {
+            try {
                 TimeSeriesDataServiceResponse timeSeriesData =
-                        connection.getTimeSeriesDataLastPoint(dataset.getIdentifier());
+                        getAquariusConnector().getTimeSeriesDataLastPoint(dataset.getIdentifier());
                 return Optional.of(createDataEntity(dataset,
                         aquariusHelper.applyChecker(timeSeriesData).getLastPoint(), new Counter()));
-            } catch (WebServiceException e) {
-                handleWebServiceException(e);
             } catch (Exception e) {
                 LOGGER.error(ERROR_LAST_OBSERVATION, e);
             }
         }
         return Optional.<
                 DataEntity<?>> empty();
-    }
-
-    private void handleWebServiceException(WebServiceException e) {
-        if (e.getStatusCode() == 401) {
-
-        }
     }
 
     private DataEntity<?> checkTimeStart(DataEntity<?> entity) {

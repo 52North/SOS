@@ -27,11 +27,15 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.sensorweb.server.helgoland.adapters.config.DataSourceConfiguration;
 import org.n52.sos.aquarius.adapters.config.AquariusConfigurationProvider;
 import org.slf4j.Logger;
@@ -40,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({ "EI_EXPOSE_REP2" })
-public class AquariusConnectionFactory implements Constructable {
+public class AquariusConnectionFactory implements Constructable, Destroyable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnectionFactory.class);
 
@@ -48,7 +52,11 @@ public class AquariusConnectionFactory implements Constructable {
 
     private AquariusConfigurationProvider configurationProvider;
 
+    private Timer timer = new Timer("session-keepalive", true);
+
     private AquariusHelper aquariusHelper;
+
+    private ClientHandler clientHandler;
 
     @Inject
     public void setAquariusHelper(AquariusHelper aquariusHelper) {
@@ -65,7 +73,7 @@ public class AquariusConnectionFactory implements Constructable {
             if (connection == null) {
                 return null;
             }
-            return new AquariusConnector(connection, aquariusHelper);
+            return new AquariusConnector(clientHandler, aquariusHelper);
         } catch (Exception e) {
             throw new ConnectionProviderException("Error while getting connection!", e);
         }
@@ -81,10 +89,38 @@ public class AquariusConnectionFactory implements Constructable {
             String password = dataSourceConfiguration.getPassword();
             LOGGER.debug("Server: {}", host);
             this.connection = new AquariusConnection(user, password, host);
+            this.clientHandler =
+                    new ClientHandler(connection);
+            timer.scheduleAtFixedRate(new KeepAliveTask(), 1800000, 1800000);
         } catch (SecurityException | IllegalArgumentException e) {
             throw new ConfigurationError("An error occurs during instantiation of the AquariusConnector connection!",
                     e);
         }
     }
 
+    @Override
+    public void destroy() {
+        try {
+            timer.cancel();
+            if (clientHandler != null) {
+                clientHandler.delete();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error while destroying class!", e);
+        }
+    }
+
+    public class KeepAliveTask extends TimerTask {
+
+        @Override
+        public void run() {
+            try {
+                clientHandler.keepAlive();
+            } catch (Exception e) {
+                LOGGER.debug("Error while executing keepalive", e);
+            }
+            LOGGER.debug("KeepAlive was executed!");
+        }
+
+    }
 }

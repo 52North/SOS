@@ -41,7 +41,7 @@ import org.n52.sos.aquarius.AquariusConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.aquaticinformatics.aquarius.sdk.timeseries.AquariusClient;
+import com.aquaticinformatics.aquarius.sdk.helpers.SdkServiceClient;
 import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceRequest;
 import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.GradeListServiceResponse;
 import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.LocationDataServiceRequest;
@@ -66,21 +66,20 @@ import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Unit
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({ "EI_EXPOSE_REP2" })
-public class AquariusConnector implements AccessorConnector, AutoCloseable, AquariusTimeHelper {
+public class AquariusConnector implements AccessorConnector, AquariusTimeHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnector.class);
     private AquariusHelper aquariusHelper;
-    private AquariusClient client;
+    private ClientHandler clientHandler;
 
-    public AquariusConnector(AquariusConnection connection, AquariusHelper aquariusHelper) {
+    public AquariusConnector(ClientHandler clientHandler, AquariusHelper aquariusHelper) {
         this.aquariusHelper = aquariusHelper;
-        this.client = AquariusClient.createConnectedClient(connection.getHost(), connection.getUsername(),
-                connection.getPassword());
+        this.clientHandler = clientHandler;
     }
 
     @Override
     public Set<String> getLocationDescriptions(LocationDescriptionListServiceRequest request) {
-        LocationDescriptionListServiceResponse response = this.client.Publish.get(request);
+        LocationDescriptionListServiceResponse response = getClient().get(request);
         if (response != null) {
             if (response.getLocationDescriptions() != null) {
                 return response.getLocationDescriptions().stream().map(l -> l.getIdentifier())
@@ -92,7 +91,7 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
 
     @Override
     public LocationDataServiceResponse getLocation(LocationDataServiceRequest request) {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     public List<TimeSeriesDescription> getTimeSeriesDescriptions() throws OwsExceptionReport {
@@ -102,7 +101,7 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
     @Override
     public List<TimeSeriesDescription> getTimeSeriesDescriptions(TimeSeriesDescriptionServiceRequest request)
             throws OwsExceptionReport {
-        TimeSeriesDescriptionListServiceResponse respone = this.client.Publish.get(request);
+        TimeSeriesDescriptionListServiceResponse respone = getClient().get(request);
         if (respone != null && respone.getTimeSeriesDescriptions() != null) {
             return respone.getTimeSeriesDescriptions();
         }
@@ -111,40 +110,40 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
 
     public TimeSeriesDescriptionListByUniqueIdServiceResponse getTimeSeriesDescriptionsByUniqueId(
             TimeSeriesDescriptionListByUniqueIdServiceRequest request) {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     @Override
     public TimeSeriesUniqueIdListServiceResponse getTimeSeriesUniqueIds(TimeSeriesUniqueIdListServiceRequest request) {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     @Override
     public ParameterListServiceResponse getParameterList(ParameterListServiceRequest request)
             throws OwsExceptionReport {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     @Override
     public UnitListServiceResponse getUnitList(UnitListServiceRequest request) throws OwsExceptionReport {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     @Override
     public GradeListServiceResponse getGradeList(GradeListServiceRequest request) throws OwsExceptionReport {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     @Override
     public QualifierListServiceResponse getQualifierList(QualifierListServiceRequest request)
             throws OwsExceptionReport {
-        return this.client.Publish.get(request);
+        return getClient().get(request);
     }
 
     public TimeSeriesDataServiceResponse getTimeSeriesData(String timeSeriesUniqueId, DateTime queryFrom,
             DateTime queryTo) throws OwsExceptionReport {
         LOGGER.debug("Query TimeSeriesData for {} from {}/{}", timeSeriesUniqueId, queryFrom, queryTo);
-        return this.client.Publish
+        return getClient()
                 .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, queryFrom, queryTo));
     }
 
@@ -157,7 +156,7 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
             throws OwsExceptionReport {
         DateTime dateTime = getQueryToForFirstTimeSeriesData(timeSeriesUniqueId);
         if (dateTime != null) {
-            return this.client.Publish
+            return getClient()
                     .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, null, dateTime));
         }
         return null;
@@ -168,7 +167,7 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
             throws OwsExceptionReport {
         DateTime dateTime = getQueryFromForLastTimeSeriesData(timeSeriesUniqueId);
         if (dateTime != null) {
-            return this.client.Publish
+            return getClient()
                     .get(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId, dateTime, null));
         }
         return null;
@@ -217,11 +216,8 @@ public class AquariusConnector implements AccessorConnector, AutoCloseable, Aqua
         return new HashMap<>();
     }
 
-    @Override
-    public void close() throws Exception {
-        if (this.client != null) {
-            this.client.close();
-        }
+    private SdkServiceClient getClient() {
+        return clientHandler.getClient().Publish;
     }
 
 }

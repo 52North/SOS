@@ -28,6 +28,7 @@
 package org.n52.sos.aquarius.ds;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,11 +84,11 @@ public class TimeSeriesData {
     }
 
     public List<Approval> getApprovals() {
-        return Collections.unmodifiableList(original.getApprovals());
+        return Collections.unmodifiableList(checkList(original.getApprovals()));
     }
 
     public List<Qualifier> getQualifiers() {
-        return Collections.unmodifiableList(original.getQualifiers());
+        return Collections.unmodifiableList(checkList(original.getQualifiers()));
     }
 
     public boolean hasQualifiers() {
@@ -95,19 +96,19 @@ public class TimeSeriesData {
     }
 
     public List<Method> getMethods() {
-        return Collections.unmodifiableList(original.getMethods());
+        return Collections.unmodifiableList(checkList(original.getMethods()));
     }
 
     public List<Grade> getGrades() {
-        return Collections.unmodifiableList(original.getGrades());
+        return Collections.unmodifiableList(checkList(original.getGrades()));
     }
 
     public List<GapTolerance> getGapTolerances() {
-        return Collections.unmodifiableList(original.getGapTolerances());
+        return Collections.unmodifiableList(checkList(original.getGapTolerances()));
     }
 
     public List<InterpolationType> getInterpolationTypes() {
-        return Collections.unmodifiableList(original.getInterpolationTypes());
+        return Collections.unmodifiableList(checkList(original.getInterpolationTypes()));
     }
 
     public boolean hasInterpolationTypes() {
@@ -115,7 +116,7 @@ public class TimeSeriesData {
     }
 
     public List<com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Note> getNotes() {
-        return Collections.unmodifiableList(original.getNotes());
+        return Collections.unmodifiableList(checkList(original.getNotes()));
     }
 
     public StatisticalTimeRange getTimeRange() {
@@ -147,6 +148,10 @@ public class TimeSeriesData {
     @JsonIgnore
     public Point getLastPoint() {
         return hasPoints() ? getChecker().check(Iterables.getLast(original.getPoints())) : null;
+    }
+
+    private <T> List<T> checkList(ArrayList<T> list) {
+        return list != null ? list : Collections.emptyList();
     }
 
     @JsonIgnore

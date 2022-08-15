@@ -68,7 +68,7 @@
         <version.postgresql>42.4.1</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.6.0.0.1</version.ojdbc8>
-        <version.sqljdbc>11.1.2.jre8-preview</version.sqljdbc>
+        <version.sqljdbc>11.2.0.jre8</version.sqljdbc>
         <version.mysql>8.0.30</version.mysql>
         <version.h2>2.1.214</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -1510,7 +1510,16 @@
                         <groupId>com.google.protobuf</groupId>
                         <artifactId>protobuf-java</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.minidev</groupId>
+                        <artifactId>json-smart</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+             <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.4.8</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>

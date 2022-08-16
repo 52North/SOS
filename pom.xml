@@ -1087,10 +1087,10 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.hibernate.common</groupId>
+            	<groupId>org.hibernate.common</groupId>
                 <artifactId>hibernate-commons-annotations</artifactId>
-                <version>6.0.3.Final</version>
-                 <exclusions>
+                <version>5.1.2.Final</version>
+                <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
                         <artifactId>jboss-logging</artifactId>

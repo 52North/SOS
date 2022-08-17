@@ -83,7 +83,7 @@
         <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.6.1</version.arctic-sea>
+        <version.arctic-sea>9.7.0</version.arctic-sea>
         <version.helgoland.api>3.4.3</version.helgoland.api>
         <version.dao-impl>3.6.0</version.dao-impl>
         <version.db-model>3.2.0</version.db-model>

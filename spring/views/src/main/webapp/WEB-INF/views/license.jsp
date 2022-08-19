@@ -80,6 +80,11 @@
 			<td>0.99.00.beta</td>
 			<td><a href='http://opensource.org/licenses/mit-license.php'>MIT</a></td>
 		</tr>
+		<tr>
+			<td><a href='https://github.com/riversun/xml-beautify/'>xml-beautify</a></td>
+			<td>1.2.3</td>
+			<td><a href='http://opensource.org/licenses/mit-license.php'>MIT</a></td>
+		</tr>
 	</tbody>
 	<tbody>
 		<tr>

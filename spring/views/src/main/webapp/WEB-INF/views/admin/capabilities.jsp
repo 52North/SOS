@@ -41,7 +41,7 @@
 <script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34-xml.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/prettify.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/vkbeautify-0.99.00.beta.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/lib/XmlBeautify-1.2.3.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/jquery.toggle.buttons.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>

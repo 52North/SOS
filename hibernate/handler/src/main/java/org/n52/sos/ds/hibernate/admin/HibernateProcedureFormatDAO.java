@@ -38,6 +38,8 @@ import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
+import com.google.common.collect.Maps;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -62,10 +64,10 @@ public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
     @Override
     public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
         Session session = null;
-        Map<String, String> procedureFormatMap = null;
+        Map<String, String> procedureFormatMap = Maps.newTreeMap();
         try {
             session = this.sessionHolder.getSession();
-            procedureFormatMap = daoFactory.getProcedureDAO().getProcedureFormatMap(session);
+            procedureFormatMap.putAll(daoFactory.getProcedureDAO().getProcedureFormatMap(session));
         } finally {
             this.sessionHolder.returnSession(session);
         }

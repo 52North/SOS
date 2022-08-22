@@ -80,7 +80,7 @@
         <version.geotools>27.1</version.geotools>
         <version.jackson>2.13.3</version.jackson>
         <version.logback>1.2.11</version.logback>
-        <version.slf4j>1.7.36</version.slf4j>
+        <version.slf4j>2.0.0</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
         <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->

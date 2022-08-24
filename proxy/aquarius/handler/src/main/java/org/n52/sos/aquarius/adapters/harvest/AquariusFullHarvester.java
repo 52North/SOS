@@ -58,13 +58,9 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester implements 
                 getParameterList(connector);
                 getUnitList(connector);
                 Map<String, DatasetEntity> datasets = getIdentifierDatasetMap(getServiceEntity());
-                int count = 0;
                 for (String identifier : getLocationIds(connector)) {
-                    if (count <= 10) {
                     harvester.harvestDatasets(getLocation(identifier, connector), datasets, connector);
                     updateCache();
-                    count++;
-                    }
                 }
                 if (!datasets.isEmpty()) {
                     LOGGER.debug("Start removing datasets/timeSeries!");

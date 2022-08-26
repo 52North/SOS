@@ -86,7 +86,7 @@ public class ClientHandler {
     }
 
     public synchronized void keepAlive() {
-        this.client.Publish.send(new GetKeepAlive());
+        this.client.Publish.get(new GetKeepAlive());
     }
 
     public synchronized AquariusClient getClient() {

@@ -48,6 +48,8 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusConnectionFactory.class);
 
+    private static final Integer KEEP_ALIVE = 1800000;
+
     private AquariusConnection connection;
 
     private AquariusConfigurationProvider configurationProvider;
@@ -91,7 +93,7 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
             this.connection = new AquariusConnection(user, password, host);
             this.clientHandler =
                     new ClientHandler(connection);
-            timer.scheduleAtFixedRate(new KeepAliveTask(), 1800000, 1800000);
+            timer.scheduleAtFixedRate(new KeepAliveTask(), KEEP_ALIVE, KEEP_ALIVE);
         } catch (SecurityException | IllegalArgumentException e) {
             throw new ConfigurationError("An error occurs during instantiation of the AquariusConnector connection!",
                     e);

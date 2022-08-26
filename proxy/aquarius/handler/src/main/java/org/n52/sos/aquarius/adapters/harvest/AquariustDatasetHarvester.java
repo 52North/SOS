@@ -62,12 +62,18 @@ public class AquariustDatasetHarvester extends AbstractAquariusHarvester {
         if (checkLocation(location)) {
             LOGGER.debug("Harvesting timeseries for location '{}'", location.getLocationName());
             for (TimeSeriesDescription ts : getTimeSeries(location.getIdentifier(), connector)) {
-                LOGGER.debug("Harvesting timeseries '{}'", ts.getIdentifier());
-                ProcedureEntity procedure = createProcedure(location, getProcedures(), service);
-                FeatureEntity feature = createFeature(location, getFeatures(), service);
-                PlatformEntity platform = createPlatform(location, getPlatforms(), service);
-                harvestDatasets(location, ts, feature, procedure, platform, service, connector);
-                datasets.remove(ts.getUniqueId());
+                if (ts != null) {
+                    LOGGER.debug("Harvesting timeseries '{}'", ts.getIdentifier());
+                    try {
+                        ProcedureEntity procedure = createProcedure(location, getProcedures(), service);
+                        FeatureEntity feature = createFeature(location, getFeatures(), service);
+                        PlatformEntity platform = createPlatform(location, getPlatforms(), service);
+                        harvestDatasets(location, ts, feature, procedure, platform, service, connector);
+                        datasets.remove(ts.getUniqueId());
+                    } catch (Exception e) {
+                        LOGGER.error(String.format("Error while harvesting dataset '%s'!", ts.getIdentifier()), e);
+                    }
+                }
             }
         } else {
             LOGGER.debug("Location '{}' does not have coordinates!", location.getLocationName());

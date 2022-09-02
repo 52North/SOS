@@ -84,8 +84,8 @@ public class ProfileHandlerImpl extends AbstractJsonDao implements ProfileHandle
         if (!getAvailableProfiles().containsKey(createSosProfile().getIdentifier())) {
             addAvailableProfile(createSosProfile().setActiveProfile(false));
         }
-        if (!getAvailableProfiles().containsKey(createHydrologyofile().getIdentifier())) {
-            addAvailableProfile(createHydrologyofile().setActiveProfile(false));
+        if (!getAvailableProfiles().containsKey(createHydrologyProfile().getIdentifier())) {
+            addAvailableProfile(createHydrologyProfile().setActiveProfile(false));
         }
         if (!getAvailableProfiles().containsKey(createInspireProfile().getIdentifier())) {
             addAvailableProfile(createInspireProfile().setActiveProfile(false));
@@ -136,6 +136,7 @@ public class ProfileHandlerImpl extends AbstractJsonDao implements ProfileHandle
     @Override
     public void reloadProfiles() {
         try {
+            configuration().refresh();
             loadProfiles();
         } catch (OwsExceptionReport e) {
             throw new ConfigurationError("Error loading profiles", e);

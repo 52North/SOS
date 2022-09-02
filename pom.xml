@@ -104,6 +104,7 @@
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
 		<version.netty>4.1.80.Final</version.netty>
+		<version.jetty>10.0.11</version.jetty>
 	</properties>
 
 	<dependencyManagement>
@@ -2306,6 +2307,11 @@
 				<version>0.16.0</version>
 				<scope>runtime</scope>
 			</dependency>
+			<dependency>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-slf4j-impl</artifactId>
+			  <version>${version.jetty}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -2506,7 +2512,7 @@
 				<plugin>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-maven-plugin</artifactId>
-					<version>11.0.11</version>
+					<version>${version.jetty}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>

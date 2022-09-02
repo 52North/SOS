@@ -1338,5 +1338,15 @@
                 </plugins>
             </build>
         </profile>
+         <profile>
+            <id>docker</id>
+            <dependencies>
+	            <dependency>
+				  <groupId>org.eclipse.jetty</groupId>
+				  <artifactId>jetty-slf4j-impl</artifactId>
+				  <scope>runtime</scope>
+				</dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>

@@ -14,6 +14,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 RUN mvn --batch-mode --errors --fail-fast \
+  -P docker \
   --define maven.javadoc.skip=true \
   --define skipTests=true install
 

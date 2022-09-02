@@ -112,6 +112,8 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     private static final String CONFIGURED_LOCATIONS = "proxy.aquarius.location.configured";
 
+    private static final String UPDATE_COUNTER = "proxy.aquarius.update.counter";
+
     private ObjectMapper om;
 
     private Map<String, ParameterMetadata> parameters = new HashMap<>();
@@ -146,7 +148,7 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     private Set<String> additionalQualifiers = new LinkedHashSet<>();
 
-    private boolean createTemporal = Boolean.FALSE.booleanValue();
+    private boolean createTemporal = Boolean.TRUE.booleanValue();
 
     private Map<String, QualifierMetadata> qualifiers = new LinkedHashMap<>();
 
@@ -155,6 +157,8 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
     private boolean useGradesFromFile = Boolean.FALSE.booleanValue();
 
     private Set<String> configurdLocations = new LinkedHashSet<>();
+
+    private Integer updateCounter = 50;
 
     @Setting(APPLY_ROUNDING)
     public AquariusHelper setApplyRoundig(boolean applyRounding) {
@@ -241,6 +245,12 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
         return this;
     }
 
+    @Setting(UPDATE_COUNTER)
+    public AquariusHelper setUpdateCount(Integer updateCounter) {
+        this.updateCounter = updateCounter;
+        return this;
+    }
+
     public void init() {
         try {
             this.om = JsonMapper.builder().findAndAddModules().build();
@@ -297,6 +307,10 @@ public class AquariusHelper extends AbstractProxyHelper implements Constructable
 
     public boolean hasConfiguredLocations() {
         return !getConfiguredLocations().isEmpty();
+    }
+
+    public Integer getUpdateCount() {
+        return updateCounter;
     }
 
     private boolean isSetExtendedAttributeTimeSeriesKey() {

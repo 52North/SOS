@@ -152,5 +152,14 @@
             <property name="optional" value="true" />
             <property name="defaultValue" value="" />
           </bean>
+          <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+	        <property name="key" value="proxy.aquarius.update.counter" />
+	        <property name="title" value="Update cache after x location loaded!" />
+	        <property name="description" value="Define the number of loacations that should be harvested before the cache would be updated! A value of 0 would update after each location!" />
+	        <property name="order" value="11.0" />
+	        <property name="group" ref="aquariusSettingDefinitionGroup" />
+	        <property name="defaultValue" value="50" />
+	        <property name="minimum" value="0" />
+	      </bean>
     </beans>
 </beans>

@@ -83,14 +83,35 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    ResponseWriter<Object> writer = this.responseWriterRepository.getWriter(encode.getClass());
-                    if (writer == null) {
-                        throw new RuntimeException("no writer for " + encode.getClass() + " found!");
-                    }
-                    writer.write(encode, out, responseProxy);
+                    getWriter(encoder).write(encode, out);
                 }
             }
         }
+    }
+
+    @Override
+    public void write(OwsServiceResponse asr, OutputStream out)
+            throws IOException, EncodingException {
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
+        if (encoder != null) {
+            if (encoder instanceof StreamingEncoder) {
+                ((StreamingEncoder<?, OwsServiceResponse>) encoder).encode(asr, out);
+            } else {
+                // use encoded Object specific writer, e.g. XmlResponseWriter
+                Object encode = encoder.encode(asr);
+                if (encode != null) {
+                    getWriter(encoder).write(encode, out);
+                }
+            }
+        }
+    }
+
+    private ResponseWriter<Object> getWriter(Object encode) {
+        ResponseWriter<Object> writer = this.responseWriterRepository.getWriter(encode.getClass());
+        if (writer == null) {
+            throw new RuntimeException("no writer for " + encode.getClass() + " found!");
+        }
+        return writer;
     }
 
     @Override

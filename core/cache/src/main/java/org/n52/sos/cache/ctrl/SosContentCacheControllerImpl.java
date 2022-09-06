@@ -84,8 +84,8 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
     private volatile WritableContentCache cache;
     private final ReentrantLock lock = new ReentrantLock();
 
-    private CompleteUpdate current;
-    private CompleteUpdate next;
+    private CompleteUpdate currentUpdate;
+    private CompleteUpdate nextUpdate;
 
     private ContentCachePersistenceStrategy persistenceStrategy;
     private ContentCacheFactory cacheFactory;
@@ -129,6 +129,7 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
                 LOGGER.warn("Couldn't load cache from datasource, maybe the datasource isn't configured yet?", e);
             }
         }
+        setInitialized(true);
     }
 
     @Override
@@ -161,7 +162,7 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
                 }
                 cache.setLastUpdateTime(DateTime.now());
             } finally {
-                current = null;
+                currentUpdate = null;
             }
         } else {
             throw new IllegalArgumentException("update may not be null");
@@ -174,14 +175,14 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
     }
 
     private void runCurrent() throws OwsExceptionReport {
-        LOGGER.trace(STARTING_UPDATE, this.current);
-        this.current.execute();
-        LOGGER.trace(FINISHED_UPDATE, this.current);
+        LOGGER.trace(STARTING_UPDATE, this.currentUpdate);
+        this.currentUpdate.execute();
+        LOGGER.trace(FINISHED_UPDATE, this.currentUpdate);
         lock();
         try {
             persistenceStrategy.persistOnCompleteUpdate(getCache());
-            CompleteUpdate u = this.current;
-            this.current = null;
+            CompleteUpdate u = this.currentUpdate;
+            this.currentUpdate = null;
             u.signalWaiting();
         } finally {
             unlock();
@@ -192,8 +193,8 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
         update.execute(getCache());
         lock();
         try {
-            if (this.current != null) {
-                this.current.addUpdate(update);
+            if (this.currentUpdate != null) {
+                this.currentUpdate.addUpdate(update);
             } else {
                 persistenceStrategy.persistOnPartialUpdate(getCache());
             }
@@ -208,17 +209,17 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
         CompleteUpdate waitFor = null;
         lock();
         try {
-            if (current == null || current.isFinished()) {
-                current = update;
+            if (currentUpdate == null || currentUpdate.isFinished()) {
+                currentUpdate = update;
                 isCurrent = true;
-            } else if (current.isNotYetStarted()) {
-                waitFor = current;
-            } else if (next == null || next.isFinished()) {
-                next = update;
-                waitFor = current;
+            } else if (currentUpdate.isNotYetStarted()) {
+                waitFor = currentUpdate;
+            } else if (nextUpdate == null || nextUpdate.isFinished()) {
+                nextUpdate = update;
+                waitFor = currentUpdate;
                 isNext = true;
             } else {
-                waitFor = next;
+                waitFor = nextUpdate;
             }
         } finally {
             unlock();
@@ -232,8 +233,8 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
             }
             lock();
             try {
-                current = next;
-                next = null;
+                currentUpdate = nextUpdate;
+                nextUpdate = null;
             } finally {
                 unlock();
             }
@@ -259,7 +260,7 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
 
     @Override
     public boolean isUpdateInProgress() {
-        return current != null;
+        return currentUpdate != null;
     }
 
     @Override

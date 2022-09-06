@@ -55,6 +55,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+         <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>iceland</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>

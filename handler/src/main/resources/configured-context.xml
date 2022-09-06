@@ -13,7 +13,6 @@
     <bean id="getResultTemplateHandler" class="org.n52.sos.ds.GetResultTemplateHandler"/>
     <bean id="cacheFeederHandler" class="org.n52.sos.ds.SosCacheFeederHandler"/>
 
-
     <bean class="org.n52.sos.ds.observation.AdditionalObservationCreatorRepository" />
     <bean class="org.n52.sos.ds.observation.InspireObservationCreator"/>
     <bean class="org.n52.sos.ds.observation.WaterMLObservationCreator"/>

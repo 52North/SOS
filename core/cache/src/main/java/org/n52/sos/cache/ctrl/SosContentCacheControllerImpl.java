@@ -57,6 +57,7 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.AbstractSchedulingContentCacheController;
 import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -69,8 +70,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class SosContentCacheControllerImpl implements ContentCacheController, Constructable, Destroyable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class SosContentCacheControllerImpl extends AbstractSchedulingContentCacheController
+        implements ContentCacheController, Constructable, Destroyable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosContentCacheControllerImpl.class);
 
     private static final AtomicInteger COMPLETE_UPDATE_COUNT = new AtomicInteger(0);
@@ -78,10 +80,12 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     private static final String STARTING_UPDATE = "Starting update {}";
     private static final String FINISHED_UPDATE = "Finished update {}";
     private static final String UPDATE_FAILED = "Update failed!";
-    private CompleteUpdate current;
-    private CompleteUpdate next;
+
     private volatile WritableContentCache cache;
     private final ReentrantLock lock = new ReentrantLock();
+
+    private CompleteUpdate current;
+    private CompleteUpdate next;
 
     private ContentCachePersistenceStrategy persistenceStrategy;
     private ContentCacheFactory cacheFactory;
@@ -126,7 +130,6 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
             }
         }
     }
-
 
     @Override
     public WritableContentCache getCache() {
@@ -265,7 +268,11 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     }
 
     private enum State {
-        WAITING, RUNNING, APPLYING_UPDATES, FINISHED, FAILED
+        WAITING,
+        RUNNING,
+        APPLYING_UPDATES,
+        FINISHED,
+        FAILED
     }
 
     private abstract class Update {
@@ -306,8 +313,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     }
 
     private class CompleteUpdate extends Update {
-        private final ConcurrentLinkedQueue<PartialUpdate> updates
-                = new ConcurrentLinkedQueue<>();
+        private final ConcurrentLinkedQueue<PartialUpdate> updates = new ConcurrentLinkedQueue<>();
 
         private final Lock lock = new ReentrantLock();
         private final Condition finished = lock.newCondition();

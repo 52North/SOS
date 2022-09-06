@@ -632,28 +632,4 @@ public class WSDLBuilder {
         return this.kvpBinding;
     }
 
-//    /**
-//     * Generate the WSDL file
-//     *
-//     * @param args
-//     *            the arguments
-//     * @throws ParserConfigurationException
-//     *             If an error occurs
-//     */
-//    public static void main(String[] args) throws ParserConfigurationException {
-//        URI url = URI.create("http://localhost:8080/52n-sos-webapp/service");
-//        WSDLBuilder b = new WSDLBuilder(null).setSoapEndpoint(url)
-//                .setKvpEndpoint(url)
-//                .setPoxEndpoint(url);
-//        for (Metadata o : new Metadata[] { Metadatas.DELETE_SENSOR, Metadatas.DESCRIBE_SENSOR,
-//                Metadatas.GET_CAPABILITIES, Metadatas.GET_FEATURE_OF_INTEREST, Metadatas.GET_OBSERVATION,
-//                Metadatas.GET_OBSERVATION_BY_ID, Metadatas.GET_RESULT, Metadatas.GET_RESULT_TEMPLATE,
-//                Metadatas.INSERT_OBSERVATION, Metadatas.INSERT_RESULT, Metadatas.INSERT_RESULT_TEMPLATE,
-//                Metadatas.INSERT_SENSOR, Metadatas.UPDATE_SENSOR_DESCRIPTION }) {
-//            b.addPoxOperation(o);
-//            b.addKvpOperation(o);
-//            b.addSoapOperation(o);
-//        }
-//        System.out.println(b.build());
-//    }
 }

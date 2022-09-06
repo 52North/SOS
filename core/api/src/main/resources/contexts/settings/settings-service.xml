@@ -20,7 +20,7 @@
         <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html" />
         <property name="order" value="1.1" />
         <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="0 0/120 * * * ?" />
+        <property name="defaultValue" value="0 0 0/2 * * ?" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.cachePersistenceDelay" />
@@ -47,7 +47,15 @@
         <property name="optional" value="true" />
         <property name="group" ref="serviceSettingDefintionGroup" />
     </bean>
-        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.capabilities.provide.static" />
+        <property name="title" value="Provide static capabilities generated after each cache update intervall?" />
+        <property name="description" value="Should the service provide static capabilities which are update after each regular cache update!" />
+        <property name="order" value="1.5" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.sensorDirectory" />
         <property name="title" value="Sensor Directory" />
         <property name="description" value="The path to a directory with the sensor descriptions in SensorML format. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/sensors&lt;/code&gt;) or a path relative to the web application classes directory (e.g. &lt;code&gt;WEB-INF/classes/sensors&lt;/code&gt;)." />

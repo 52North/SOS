@@ -27,9 +27,12 @@
  */
 package org.n52.sos.proxy.harvest;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
+import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;
 import org.n52.janmayen.event.EventBus;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
@@ -53,6 +56,9 @@ public abstract class AbstractHarvester implements Harvester {
     @Inject
     private EventBus eventBus;
 
+    @Inject
+    private Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider;
+
     @Override
     public CRUDRepository getCRUDRepository() {
         return crudRepository;
@@ -74,6 +80,9 @@ public abstract class AbstractHarvester implements Harvester {
 
     protected void updateCache() {
         getEventBus().submit(new UpdateCache());
+        if (staticCapabilitiesProvider.isPresent()) {
+            staticCapabilitiesProvider.get().create();
+        }
     }
 
 

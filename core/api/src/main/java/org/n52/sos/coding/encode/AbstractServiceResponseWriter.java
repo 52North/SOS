@@ -56,17 +56,15 @@ import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
  *
  */
 public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsServiceResponse> {
-    private static final ResponseWriterKey KEY
-            = new ResponseWriterKey(OwsServiceResponse.class);
+    private static final ResponseWriterKey KEY = new ResponseWriterKey(OwsServiceResponse.class);
 
     private final ResponseWriterRepository responseWriterRepository;
 
     public AbstractServiceResponseWriter(EncoderRepository encoderRepository,
-                                         ResponseWriterRepository responseWriterRepository) {
+            ResponseWriterRepository responseWriterRepository) {
         super(encoderRepository);
         this.responseWriterRepository = responseWriterRepository;
     }
-
 
     public ResponseWriterRepository getResponseWriterRepository() {
         return responseWriterRepository;
@@ -120,13 +118,13 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     }
 
     /**
-     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the
-     * requested contentType
+     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the requested contentType
      *
      * @param asr
      *            {@link OwsServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link OwsServiceResponse}
-     * @throws org.n52.svalbard.encode.exception.NoEncoderForKeyException if no encoder could be found
+     * @throws org.n52.svalbard.encode.exception.NoEncoderForKeyException
+     *             if no encoder could be found
      */
     private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) throws NoEncoderForKeyException {
         OperationResponseEncoderKey key = getEncoderKey(asr);
@@ -146,15 +144,13 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     }
 
     /**
-     * Check if streaming encoding is forced and the {@link Encoder} for the
-     * {@link OwsServiceResponse} is a {@link StreamingEncoder}
+     * Check if streaming encoding is forced and the {@link Encoder} for the {@link OwsServiceResponse} is a
+     * {@link StreamingEncoder}
      *
      * @param asr
-     *            {@link OwsServiceResponse} to check the {@link Encoder}
-     *            for
-     * @return <code>true</code>, if streaming encoding is forced and the
-     *         {@link Encoder} for the {@link OwsServiceResponse} is a
-     *         {@link StreamingEncoder}
+     *            {@link OwsServiceResponse} to check the {@link Encoder} for
+     * @return <code>true</code>, if streaming encoding is forced and the {@link Encoder} for the
+     *         {@link OwsServiceResponse} is a {@link StreamingEncoder}
      */
     private boolean isStreaming(OwsServiceResponse asr) {
         return getEncoder(getEncoderKey(asr)) instanceof StreamingEncoder;

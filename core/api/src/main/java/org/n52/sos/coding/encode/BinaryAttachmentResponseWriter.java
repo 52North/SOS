@@ -92,6 +92,16 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
     }
 
     @Override
+    public void write(BinaryAttachmentResponse response, OutputStream out) throws IOException {
+        if (response == null) {
+            return;
+        }
+        byte[] bytes = response.getBytes();
+        //write output now that headers and content length are in place
+        out.write(bytes);
+    }
+
+    @Override
     public boolean supportsGZip(BinaryAttachmentResponse t) {
         return false;
     }

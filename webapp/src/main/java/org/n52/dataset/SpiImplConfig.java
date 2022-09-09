@@ -27,20 +27,24 @@
  */
 package org.n52.dataset;
 
+import org.n52.dataset.filter.ProxyProfileExcludeFilterDelegator;
 import org.n52.sensorweb.server.db.factory.AnnotationBasedDataRepositoryFactory;
 import org.n52.sensorweb.server.db.factory.DataRepositoryTypeFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.cosium.spring.data.jpa.entity.graph.repository.support.EntityGraphJpaRepositoryFactoryBean;
 
 @Configuration
+@ComponentScan(
+        basePackages = { "org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv", "org.n52.dataset.filter" })
 @EnableJpaRepositories(repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class,
-        basePackages = "org.n52.sensorweb.server.db")
-@ComponentScan(basePackages = { "org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv" })
+        basePackages = "org.n52.sensorweb.server.db", excludeFilters = @ComponentScan.Filter(type = FilterType.CUSTOM,
+                classes = ProxyProfileExcludeFilterDelegator.class))
 public class SpiImplConfig {
 
     @Bean

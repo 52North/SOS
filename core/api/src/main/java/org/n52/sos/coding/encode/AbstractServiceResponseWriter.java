@@ -81,7 +81,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    getWriter(encoder).write(encode, out);
+                    getWriter(encode).write(encode, out);
                 }
             }
         }
@@ -97,7 +97,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    getWriter(encoder).write(encode, out);
+                    getWriter(encode).write(encode, out);
                 }
             }
         }

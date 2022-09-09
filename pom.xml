@@ -103,7 +103,7 @@
 		<version.junit>5.9.0</version.junit>
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
-		<version.netty>4.1.80.Final</version.netty>
+		<version.netty>4.1.81.Final</version.netty>
 		<version.jetty>10.0.11</version.jetty>
 	</properties>
 
@@ -1011,7 +1011,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>4.7.0</version>
+				<version>4.8.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.hamcrest</groupId>
@@ -1031,7 +1031,7 @@
 			<dependency>
 				<groupId>net.bytebuddy</groupId>
 				<artifactId>byte-buddy</artifactId>
-				<version>1.12.14</version>
+				<version>1.12.16</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hamcrest</groupId>

@@ -81,15 +81,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    getWriter(encoder).write(encode, out);
+                    getWriter(encode).write(encode, out, responseProxy);
                 }
             }
         }
     }
 
     @Override
-    public void write(OwsServiceResponse asr, OutputStream out)
-            throws IOException, EncodingException {
+    public void write(OwsServiceResponse asr, OutputStream out) throws IOException, EncodingException {
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (encoder != null) {
             if (encoder instanceof StreamingEncoder) {
@@ -98,7 +97,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    getWriter(encoder).write(encode, out);
+                    getWriter(encode).write(encode, out);
                 }
             }
         }

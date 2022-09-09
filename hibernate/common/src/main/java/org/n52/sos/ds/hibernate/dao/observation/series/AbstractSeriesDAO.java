@@ -911,14 +911,17 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             if (dataset.isSetGeometry()) {
                 dataset.getGeometryEntity().expand(observation.getGeometryEntity());
             } else {
-                dataset.setGeometryEntity(new GeometryEntity().copy(observation.getGeometryEntity()));
+                GeometryEntity geometryEntity = new GeometryEntity();
+                geometryEntity.expand(observation.getGeometryEntity());
+                dataset.setGeometryEntity(geometryEntity);
             }
         } else if (observation.getDataset().isSetFeature() && observation.getDataset().getFeature().isSetGeometry()) {
             if (dataset.isSetGeometry()) {
                 dataset.getGeometryEntity().expand(observation.getDataset().getFeature().getGeometryEntity());
             } else {
-                dataset.setGeometryEntity(
-                        new GeometryEntity().copy(observation.getDataset().getFeature().getGeometryEntity()));
+                GeometryEntity geometryEntity = new GeometryEntity();
+                geometryEntity.expand(observation.getDataset().getFeature().getGeometryEntity());
+                dataset.setGeometryEntity(geometryEntity);
             }
         }
         session.saveOrUpdate(dataset);

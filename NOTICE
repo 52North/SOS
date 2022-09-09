@@ -99,8 +99,6 @@ This project includes:
   Apache Tika core under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   aquarius-sdk-java under GNU Affero General Public License
-  asm under BSD-3-Clause
-  ASM based accessors helper used by json-smart under The Apache Software License, Version 2.0
   AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
   AspectJ Weaver under Eclipse Public License - v 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
@@ -165,13 +163,11 @@ This project includes:
   JAXB Runtime under CDDL+GPL License
   jaxb-api under CDDL 1.1 or GPL2 w/ CPE
   JBoss Logging 3 under Apache License, version 2.0
-  JCIP Annotations under Apache License under Apache License, Version 2.0
   JCL 1.2 implemented over SLF4J under Apache License, Version 2.0
   jcommander under Apache License, Version 2.0
   JFreeChart under GNU Lesser General Public Licence
   jgridshift-core under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache License, Version 2.0
-  JSON Small and Fast Parser under The Apache Software License, Version 2.0
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
   libphonenumber under The Apache Software License, Version 2.0
@@ -181,7 +177,6 @@ This project includes:
   Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
-  msal4j under MIT License
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   netcdf4 under BSD 3-Clause License
@@ -193,11 +188,7 @@ This project includes:
   Netty/Resolver under Apache License, Version 2.0
   Netty/Transport under Apache License, Version 2.0
   Netty/Transport/Native/Unix/Common under Apache License, Version 2.0
-  Nimbus Content Type under The Apache Software License, Version 2.0
-  Nimbus JOSE+JWT under The Apache Software License, Version 2.0
-  Nimbus LangTag under The Apache Software License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
-  OAuth 2.0 SDK with OpenID Connect extensions under Apache License, version 2.0
   odata-commons-api under The Apache Software License, Version 2.0
   odata-commons-core under The Apache Software License, Version 2.0
   odata-server-api under The Apache Software License, Version 2.0

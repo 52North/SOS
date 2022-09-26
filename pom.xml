@@ -103,7 +103,7 @@
 		<version.junit>5.9.0</version.junit>
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
-		<version.netty>4.1.81.Final</version.netty>
+		<version.netty>4.1.82.Final</version.netty>
 		<version.jetty>10.0.11</version.jetty>
 	</properties>
 

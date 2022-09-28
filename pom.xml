@@ -93,7 +93,7 @@
 		<version.springframework>5.3.23</version.springframework>
 		<version.springframework.security>5.7.3</version.springframework.security>
 		<version.springframework.data>2.7.3</version.springframework.data>
-		<version.spring-data-entity-graph>2.7.9</version.spring-data-entity-graph>
+		<version.spring-data-entity-graph>2.7.10</version.spring-data-entity-graph>
 		<version.aspectj>1.9.9.1</version.aspectj>
 		<version.saxon>11.4</version.saxon>
 		<version.elasticsearch>7.17.6</version.elasticsearch>

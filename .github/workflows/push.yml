@@ -34,7 +34,7 @@ jobs:
     - name: Build with Maven
       run: mvn -U -B clean install
   build-java-11:
-    if: github.ref != 'refs/heads/version/6.x'
+    if: github.ref == 'refs/heads/version/6.x'
     strategy:
       matrix:
         java: [ 11, 17 ]

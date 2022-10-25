@@ -83,7 +83,7 @@ This project includes:
   52°North Svalbard JSON Common under The Apache Software License, Version 2.0
   52°North Svalbard JSON encoding under The Apache Software License, Version 2.0
   52°North Svalbard OData under The Apache Software License, Version 2.0
-  ANTLR 4 Runtime under The BSD License
+  ANTLR 4 Runtime under BSD-3-Clause
   AntLR Parser Generator under BSD License
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons IO under Apache License, Version 2.0
@@ -101,6 +101,7 @@ This project includes:
   aquarius-sdk-java under GNU Affero General Public License
   AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
   AspectJ Weaver under Eclipse Public License - v 2.0
+  btf under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm-core under BSD 3-Clause License
   cf4j under GNU Lesser General Public License
@@ -144,8 +145,9 @@ This project includes:
   Jackson datatype: JSR310 under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
+  jackson-coreutils under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
+  jackson-coreutils-equivalence under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   jackson-databind under The Apache Software License, Version 2.0
-  jakarta.annotation API under EPL 2.0 or GPL2 w/ CPE
   janino under BSD-3-Clause
   Java Annotation Indexer under Apache License, Version 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
@@ -156,7 +158,7 @@ This project includes:
   JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   javaee-api under CDDL + GPLv2 with classpath exception
   JavaMail API under CDDL/GPLv2+CE
-  JavaMail API jar under CDDL or GPLv2+CE
+  JavaMail API (no providers) under CDDL/GPLv2+CE
   javax.annotation API under CDDL + GPLv2 with classpath exception
   javax.inject under The Apache Software License, Version 2.0
   javax.persistence-api under Eclipse Public License v1.0 or Eclipse Distribution License v. 1.0
@@ -168,6 +170,8 @@ This project includes:
   JFreeChart under GNU Lesser General Public Licence
   jgridshift-core under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache License, Version 2.0
+  json-schema-core under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
+  json-schema-validator under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
   libphonenumber under The Apache Software License, Version 2.0
@@ -177,6 +181,7 @@ This project includes:
   Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
+  msg-simple under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   netcdf4 under BSD 3-Clause License
@@ -188,7 +193,6 @@ This project includes:
   Netty/Resolver under Apache License, Version 2.0
   Netty/Transport under Apache License, Version 2.0
   Netty/Transport/Native/Unix/Common under Apache License, Version 2.0
-  null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   odata-commons-api under The Apache Software License, Version 2.0
   odata-commons-core under The Apache Software License, Version 2.0
   odata-server-api under The Apache Software License, Version 2.0
@@ -271,6 +275,7 @@ This project includes:
   Units of Measurement Common Library for Java under BSD
   Units of Measurement Common Unit Systems under BSD
   Units of Measurement Reference Implementation under BSD 3-Clause
+  uri-template under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   Xerces2-j under The Apache Software License, Version 2.0

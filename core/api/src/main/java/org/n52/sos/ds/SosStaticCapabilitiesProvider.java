@@ -114,6 +114,10 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
         return this.lock.readLock();
     }
 
+    public Lock writeLock() {
+        return this.lock.writeLock();
+    }
+
     public String get(GetCapabilitiesResponse response) {
         if (isProvideStaticCapabilities()) {
             if (isV2(response)) {
@@ -127,16 +131,21 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
 
     public String get(String identifier) {
         if (isProvideStaticCapabilities()) {
-            Path path = buildPath(identifier + FILE_ENDING);
-            File file = path.toFile();
-            if (file.exists()) {
-                try (FileInputStream fis = new FileInputStream(file);
-                        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                        BufferedReader reader = new BufferedReader(isr)) {
-                    return reader.lines().collect(Collectors.joining("\n"));
-                } catch (IOException e) {
-                    LOGGER.error("Error while getting static capabilities!", e);
+            try {
+                readLock().lock();
+                Path path = buildPath(identifier + FILE_ENDING);
+                File file = path.toFile();
+                if (file.exists()) {
+                    try (FileInputStream fis = new FileInputStream(file);
+                            InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                            BufferedReader reader = new BufferedReader(isr)) {
+                        return reader.lines().collect(Collectors.joining("\n"));
+                    } catch (IOException e) {
+                        LOGGER.error("Error while getting static capabilities!", e);
+                    }
                 }
+            } finally {
+                readLock().unlock();
             }
         }
         return "";
@@ -191,7 +200,7 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
         }
 
         private void write(GetCapabilitiesResponse response, String identifier, MediaType contentType) {
-            readLock().lock();
+            writeLock().lock();
             try {
                 Path path = buildPath(identifier + FILE_ENDING);
                 Path parent = path.getParent();
@@ -213,7 +222,7 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
             } catch (IOException | EncodingException e) {
                 LOGGER.error("Error while persisting static capabilities!", e);
             } finally {
-                readLock().unlock();
+                writeLock().unlock();
             }
         }
     }

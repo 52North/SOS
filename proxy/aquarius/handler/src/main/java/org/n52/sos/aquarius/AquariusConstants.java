@@ -45,7 +45,7 @@ public interface AquariusConstants {
 
     String GROUP = NAME.toLowerCase(Locale.ROOT);
 
-    public interface Paths {
+    interface Paths {
         String SESSION = "session";
 
         String PUBLIC_KEY = SESSION + "/publickey";
@@ -73,7 +73,7 @@ public interface AquariusConstants {
         String GET_QUALIFIER_LIST = "GetQualifierList";
     }
 
-    public interface Parameters {
+    interface Parameters {
         String GROUP_IDENTIFIER = "GroupIdentifier";
 
         String LOCATION_NAME = "LocationName";

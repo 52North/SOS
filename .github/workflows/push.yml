@@ -59,7 +59,7 @@ jobs:
       run: mvn -U -B clean install
 
   publish-snapshot-java-8:
-     if: github.ref != 'refs/heads/version/6.x'
+    if: github.ref != 'refs/heads/version/6.x'
     needs: build-java-8
     runs-on: ubuntu-latest
 
@@ -86,7 +86,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
   publish-snapshot-java-11:
-     if: github.ref == 'refs/heads/version/6.x'
+    if: github.ref == 'refs/heads/version/6.x'
     needs: build-java-11
     runs-on: ubuntu-latest
 

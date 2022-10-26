@@ -84,9 +84,9 @@
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.8.0</version.arctic-sea>
-        <version.helgoland.api>3.4.3</version.helgoland.api>
-        <version.dao-impl>3.6.0</version.dao-impl>
-        <version.db-model>3.2.0</version.db-model>
+        <version.helgoland.api>3.4.4</version.helgoland.api>
+        <version.dao-impl>3.6.1</version.dao-impl>
+        <version.db-model>3.2.1</version.db-model>
         <version.springframework>5.3.23</version.springframework>
         <version.springframework.security>5.7.3</version.springframework.security>
         <version.aspectj>1.9.9.1</version.aspectj>

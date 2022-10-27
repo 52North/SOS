@@ -1,0 +1,45 @@
+name: Java CI on Push
+
+on:
+  push:
+    branches:
+      - 'maintenance/*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [ 8, 11, 17 ]
+    runs-on: ubuntu-latest
+    name: Java ${{ matrix.java }} compile
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: ${{ matrix.java }}
+    - name: Build with Maven
+      run: mvn -fae -U -B clean license:check install -P check --file pom.xml
+
+  publish-snapshot:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up settings.xml for GitHub Packages
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+          server-id: sonatype-nexus-snapshots
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Publish SNAPSHOT version Maven Central
+        run: mvn -B --no-transfer-progress deploy -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+       

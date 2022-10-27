@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.4.3</version>
+    <version>5.5.2</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -20,18 +20,13 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.4.3</tag>
+        <tag>v5.5.2</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub issues</system>
         <url>https://github.com/52North/SOS/issues?state=open</url>
     </issueManagement>
-
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/52North/SOS</url>
-    </ciManagement>
 
     <licenses>
         <license>
@@ -70,33 +65,33 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <version.postgresql>42.3.4</version.postgresql>
+        <version.postgresql>42.5.0</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
-        <version.ojdbc8>21.5.0.0</version.ojdbc8>
-        <version.sqljdbc>11.1.1.jre8-preview</version.sqljdbc>
-        <version.mysql>8.0.29</version.mysql>
-        <version.h2>1.4.200</version.h2>
+        <version.ojdbc8>21.7.0.0</version.ojdbc8>
+        <version.sqljdbc>11.2.1.jre8</version.sqljdbc>
+        <version.mysql>8.0.30</version.mysql>
+        <version.h2>2.1.214</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.6.1.Final</version.hibernate>
+        <version.hibernate>5.6.12.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>26.4</version.geotools>
-        <version.jackson>2.13.2.20220328</version.jackson>
-        <version.logback>1.2.11</version.logback>
-        <version.slf4j>1.7.36</version.slf4j>
+        <version.geotools>27.2</version.geotools>
+        <version.jackson>2.13.4</version.jackson>
+        <version.logback>1.3.0</version.logback>
+        <version.slf4j>2.0.3</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
-        <version.jts>1.18.2</version.jts>
+        <version.jts>1.19.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.5.3</version.arctic-sea>
-        <version.helgoland.api>3.4.2</version.helgoland.api>
-        <version.dao-impl>3.5.2</version.dao-impl>
-        <version.db-model>3.1.4</version.db-model>
-        <version.springframework>5.3.19</version.springframework>
-        <version.springframework.security>5.6.3</version.springframework.security>
+        <version.arctic-sea>9.9.0</version.arctic-sea>
+        <version.helgoland.api>3.4.4</version.helgoland.api>
+        <version.dao-impl>3.6.1</version.dao-impl>
+        <version.db-model>3.2.1</version.db-model>
+        <version.springframework>5.3.23</version.springframework>
+        <version.springframework.security>5.7.3</version.springframework.security>
         <version.aspectj>1.9.9.1</version.aspectj>
-        <version.saxon>11.3</version.saxon>
-        <version.elasticsearch>7.17.3</version.elasticsearch>
+        <version.saxon>11.4</version.saxon>
+        <version.elasticsearch>7.17.6</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -763,13 +758,13 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.5</version>
+                <version>7.6.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.5.1</version>
+                <version>4.8.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -779,13 +774,17 @@
                         <groupId>net.bytebuddy</groupId>
                         <artifactId>byte-buddy</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna-platform</artifactId>
+                    </exclusion>
                 </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.10</version>
+                 <version>1.12.18</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -850,7 +849,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.7</version>
+                <version>3.1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -860,7 +859,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.14</version>
+                <version>2.12.0</version>
             </dependency>
             <!-- Hibernate Core Dependencies -->
             <dependency>
@@ -875,6 +874,10 @@
                     <exclusion>
                         <groupId>org.hibernate.common</groupId>
                         <artifactId>hibernate-commons-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.annotation</groupId>
+                        <artifactId>javax.annotation-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1396,7 +1399,7 @@
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.4.1</version>
+                <version>1.5.1</version>
             </dependency>
             <dependency>
                 <groupId>jstl</groupId>
@@ -1418,7 +1421,7 @@
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.3.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -1507,7 +1510,16 @@
                         <groupId>com.google.protobuf</groupId>
                         <artifactId>protobuf-java</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.minidev</groupId>
+                        <artifactId>json-smart</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+             <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.4.8</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
@@ -1551,7 +1563,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.6.0</version>
+                <version>4.7.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -1604,7 +1616,7 @@
             <dependency>
                 <groupId>org.geolatte</groupId>
                 <artifactId>geolatte-geom</artifactId>
-                <version>1.8.2</version>
+                <version>1.9.0</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -1857,6 +1869,10 @@
                         <groupId>c3p0</groupId>
                         <artifactId>c3p0</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.google.re2j</groupId>
+                        <artifactId>re2j</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1872,7 +1888,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.11.0</version>
+                <version>5.12.1</version>
             </dependency>
             <!-- EXI -->
             <dependency>
@@ -2108,7 +2124,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.9</version>
+                    <version>11.0.12</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2150,7 +2166,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-webdav-jackrabbit</artifactId>
-                <version>3.5.1</version>
+                <version>3.5.2</version>
             </extension>
         </extensions>
     </build>
@@ -2187,7 +2203,7 @@
             <id>debug</id>
             <properties>
                 <config.logger.level.main.global>ERROR</config.logger.level.main.global>
-                <config.logger.level.main.n52>ERROR</config.logger.level.main.n52>
+                <config.logger.level.main.n52>DEBUG</config.logger.level.main.n52>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>
         </profile>

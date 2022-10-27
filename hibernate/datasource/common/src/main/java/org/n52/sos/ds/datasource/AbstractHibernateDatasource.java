@@ -54,6 +54,8 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.model.relational.SqlStringGenerationContext;
+import org.hibernate.boot.model.relational.internal.SqlStringGenerationContextImpl;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.dialect.Dialect;
@@ -1018,13 +1020,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn)
             throws SQLException {
         Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
+        String catalog = checkCatalog(conn);
+        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+        SqlStringGenerationContext sqlStringGenerationContext =
+                SqlStringGenerationContextImpl.forBackwardsCompatibility(createDialect(), null, schema);
         List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
                 // TODO check if this works
-                names.add(table.getQualifiedTableName().render());
-//                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
+                names.add(table.getQualifiedName(sqlStringGenerationContext));
             }
         }
         return names;

@@ -1,5 +1,9 @@
 version: 2
 updates:
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
 - package-ecosystem: maven
   directory: "/"
   schedule:
@@ -7,6 +11,35 @@ updates:
     time: "04:00"
   open-pull-requests-limit: 10
   ignore:
+  - dependency-name: ch.qos.logback:logback-classic
+    versions:
+    - ">= 1.2, < 1.4"
+  - dependency-name: xml-apis:xml-apis
+    versions:
+    - ">= 1.2, < 3"
+  - dependency-name: com.microsoft.sqlserver:mssql-jdbc
+    versions:
+    - 9.2.0.jre15
+    - 9.2.1.jre15
+    - 9.3.0.jre15-preview
+  - dependency-name: com.zaxxer:HikariCP
+    versions:
+    - 4.0.2
+  - dependency-name: org.apache.xmlbeans:xmlbeans
+    versions:
+    - 5.0.0
+    - 5.1.0
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  target-branch: "version/6.x"
+  ignore:
+  - dependency-name: ch.qos.logback:logback-classic
+    versions:
+    - ">= 1.2, < 1.4"
   - dependency-name: xml-apis:xml-apis
     versions:
     - ">= 2.a, < 3"
@@ -15,132 +48,12 @@ updates:
     - 9.2.0.jre15
     - 9.2.1.jre15
     - 9.3.0.jre15-preview
-  - dependency-name: org.n52.sensorweb-server.helgoland:helgoland-rest
-    versions:
-    - 3.5.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.helgoland:helgoland-spi
-    versions:
-    - 3.5.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.helgoland:helgoland-io
-    versions:
-    - 3.5.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-related-offering
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-ereporting
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-inspire-api
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-inspire-ompr
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-inspire-omso
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-uvf
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-gwml
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-cv-gml
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-gml-cov
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-coding-gml
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.sos:sos-api:tests
-    versions:
-    - 6.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.db-model:db-model-types
-    versions:
-    - 4.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.db-model:db-model-entities
-    versions:
-    - 4.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.db-model:db-model-dialects
-    versions:
-    - 4.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.db-model:db-model-mappings
-    versions:
-    - 4.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.dao-impl:dao-impl-webapp
-    versions:
-    - 4.0.0-PR.2
-  - dependency-name: org.n52.sensorweb-server.dao-impl:dao-impl-dao
-    versions:
-    - 4.0.0-PR.2
   - dependency-name: com.zaxxer:HikariCP
     versions:
     - 4.0.2
-  - dependency-name: org.elasticsearch.client:elasticsearch-rest-client
-    versions:
-    - 7.11.0
-  - dependency-name: org.elasticsearch.client:elasticsearch-rest-high-level-client
-    versions:
-    - 7.11.0
-  - dependency-name: org.elasticsearch:elasticsearch
-    versions:
-    - 7.11.0
-  - dependency-name: org.n52.arctic-sea:svalbard-xmlstream
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-xmlbeans
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-json
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-json-common
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-exi
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:svalbard-odata
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:shetland:tests
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:shetland
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:janmayen
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-json
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-annotations
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe-utils
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:faroe
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland-statistics-geolocation
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland-statistics
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland:tests
-    versions:
-    - 8.1.0
-  - dependency-name: org.n52.arctic-sea:iceland
-    versions:
-    - 8.1.0
   - dependency-name: org.apache.xmlbeans:xmlbeans
     versions:
     - 4.0.0
+    - 5.0.0
+    - 5.1.0
+    

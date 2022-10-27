@@ -180,8 +180,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
             request.setOfferings(Lists.newArrayList(cache.getAllOfferings()));
 
             // if no observationConstellation is valid, throw exception
-            if (exceptions.size() == request.getObservations()
-                    .size()) {
+            if (exceptions.size() == request.getObservations().size()) {
                 throw exceptions;
             }
 
@@ -196,8 +195,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
             getHibernateSessionHolder().returnSession(session);
         }
         /*
-         * TODO: ... all the DS insertion stuff Requirement 68
-         * proc/obsProp/Offering same obsType;
+         * TODO: ... all the DS insertion stuff Requirement 68 proc/obsProp/Offering same obsType;
          */
 
         return response;
@@ -217,16 +215,13 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
         //
         // }
 
-        String offeringID = sosObsConst.getOfferings()
-                .iterator()
-                .next();
+        String offeringID = sosObsConst.getOfferings().iterator().next();
         DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
         if (hDataset == null) {
             if (!cache.isChecked(sosObsConst, offeringID)) {
                 try {
-                    hDataset = getDaoFactory().getSeriesDAO()
-                            .checkSeries(sosObsConst, offeringID, session,
-                                    Sos2Constants.InsertObservationParams.observationType.name());
+                    hDataset = getDaoFactory().getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                            Sos2Constants.InsertObservationParams.observationType.name());
                     // add to cache table
                     cache.putConstellation(sosObsConst, offeringID, hDataset);
                 } catch (OwsExceptionReport owse) {
@@ -243,8 +238,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
             // only do feature checking once for each
             // AbstractFeature/offering combo
             if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                getDaoFactory().getFeatureOfInterestDAO()
-                        .checkOrInsertRelatedFeatureRelation(hFeature, hDataset.getOffering(), session);
+                getDaoFactory().getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(hFeature,
+                        hDataset.getOffering(), session);
                 cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
             }
             AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
@@ -256,8 +251,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
                 dataset = observationDAO.insertObservationMultiValue(hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), cache.getFormatCache(), session);
             }
-            if (dataset != null && !cache.get(sosObsConst, offeringID)
-                    .equals(dataset)) {
+            if (dataset != null && cache.containsConstellation(sosObsConst, offeringID)
+                    && !cache.get(sosObsConst, offeringID).equals(dataset)) {
                 cache.putConstellation(sosObsConst, offeringID, dataset);
             }
         }
@@ -280,9 +275,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
         } else if (pe.getCause() instanceof ConstraintViolationException) {
             handleConstraintViolationException((ConstraintViolationException) pe.getCause(), pe, status);
         } else {
-            throw new NoApplicableCodeException().causedBy(pe)
-                    .withMessage(exceptionMsg)
-                    .setStatus(status);
+            throw new NoApplicableCodeException().causedBy(pe).withMessage(exceptionMsg).setStatus(status);
         }
     }
 
@@ -313,8 +306,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
                 exceptionMsg = LOG_OBSERVATION_SAME_IDENTIFIER;
             }
             if (!Strings.isNullOrEmpty(exceptionMsg)) {
-                throw new NoApplicableCodeException().causedBy(e)
-                        .withMessage(exceptionMsg)
+                throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
                         .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
@@ -323,24 +315,21 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
     private void checkContainsAndThrow(String message, PersistenceException e) throws OwsExceptionReport {
         if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = "";
-            if (message.toLowerCase()
-                    .contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
+            if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = LOG_OBSERVATION_SAME_VALUES;
-            } else if (message.toLowerCase()
-                    .contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
+            } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
                 exceptionMsg = LOG_OBSERVATION_SAME_IDENTIFIER;
             }
             if (!Strings.isNullOrEmpty(exceptionMsg)) {
-                throw new NoApplicableCodeException().causedBy(e)
-                        .withMessage(exceptionMsg)
+                throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
                         .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
 
     /**
-     * Get the hibernate AbstractFeatureOfInterest object for an
-     * AbstractFeature, returning it from the local cache if already requested
+     * Get the hibernate AbstractFeatureOfInterest object for an AbstractFeature, returning it from the local
+     * cache if already requested
      *
      * @param abstractFeature
      *            the abstract features
@@ -356,8 +345,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
             Session session) throws OwsExceptionReport {
         AbstractFeatureEntity hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = getDaoFactory().getFeatureOfInterestDAO()
-                    .checkOrInsert(abstractFeature, session);
+            hFeature = getDaoFactory().getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         return hFeature;
@@ -398,6 +386,10 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
 
         public DatasetEntity get(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingDatasetTable.get(oc, offering);
+        }
+
+        public boolean containsConstellation(OmObservationConstellation oc, String offering) {
+            return this.obsConstOfferingDatasetTable.contains(oc, offering);
         }
 
         public void putConstellation(OmObservationConstellation soc, String offering, DatasetEntity hoc) {

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.5.2</version>
+        <version>5.5.3-SNAPSHOT</version>
     </parent>
     <artifactId>sos-views</artifactId>
     <name>52°North SOS - Web Views</name>

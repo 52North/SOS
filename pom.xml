@@ -56,6 +56,8 @@
 		<!-- sos name -->
 		<conf.sos.name>52n-sos-webapp</conf.sos.name>
 		<timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <currentYear>${maven.build.timestamp}</currentYear>
 		<version.java>11</version.java>
 
 		<!-- Logger configuration -->
@@ -2357,8 +2359,7 @@
 								<!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
 								<skip>true</skip>
 							</gitDescribe>
-							<timestampFormat>{0,date,yyyy-MM-dd
-                                HH:mm:ss}</timestampFormat>
+							<timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
 						</configuration>
 					</execution>
 				</executions>
@@ -2394,27 +2395,15 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>groovy-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <source>project.properties['currentYear'] = java.time.Year.now().toString()</source>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-			<plugin>
 				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<inherited>false</inherited>
-				<configuration>
-					<aggregate>true</aggregate>
-					<strictCheck>true</strictCheck>
+                <artifactId>license-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
 					<licenseSets>
 						<licenseSet>
 							<header>misc/52N_license.txt</header>
@@ -2445,6 +2434,17 @@
 						</licenseSet>
 					</licenseSets>
 				</configuration>
+				<!--
+				<executions>
+                    <execution>
+                        <id>format-license-headers</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                -->
 				<!-- <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
                     <goals> <goal>format</goal> </goals> </execution> </executions> -->
 			</plugin>

@@ -2394,54 +2394,56 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>timestamp-property</id>
-						<goals>
-							<goal>timestamp-property</goal>
-						</goals>
-						<configuration>
-							<locale>en_US</locale>
-							<name>currentYearDynamic</name>
-							<pattern>yyyy</pattern>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>project.properties['currentYear'] = java.time.Year.now().toString()</source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<inherited>false</inherited>
 				<configuration>
 					<aggregate>true</aggregate>
-					<header>misc/52N_license.txt</header>
-					<excludes>
-						<exclude>**/log4j*</exclude>
-						<exclude>**/*.xml</exclude>
-						<exclude>**/*.html</exclude>
-						<exclude>**/webapp/static/lib/*</exclude>
-						<exclude>**/webapp/static/client/helgoland/*</exclude>
-						<exclude>**/webapp/WEB-INF/web.xml</exclude>
-						<exclude>**/buildNumber.properties</exclude>
-						<exclude>**/src/**/NcNameResolver.java</exclude>
-						<exclude>**/src/**/PGGeometryTypeDescriptor52N.java</exclude>
-						<exclude>**/src/**/PGGeometryValueExtractor52N.java</exclude>
-						<exclude>**/src/**/PostgisDialect52N.java</exclude>
-						<exclude>iceland/**</exclude>
-					</excludes>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.jsp</include>
-						<include>**/*.js</include>
-						<include>**/*.xsl</include>
-						<include>**/*.sql</include>
-					</includes>
 					<strictCheck>true</strictCheck>
-					<properties>
-						<year>${project.inceptionYear}-${currentYearDynamic}</year>
-					</properties>
+					<licenseSets>
+						<licenseSet>
+							<header>misc/52N_license.txt</header>
+							<excludes>
+								<exclude>**/log4j*</exclude>
+								<exclude>**/*.xml</exclude>
+								<exclude>**/*.html</exclude>
+								<exclude>**/webapp/static/lib/*</exclude>
+								<exclude>**/webapp/static/client/helgoland/*</exclude>
+								<exclude>**/webapp/WEB-INF/web.xml</exclude>
+								<exclude>**/buildNumber.properties</exclude>
+								<exclude>**/src/**/NcNameResolver.java</exclude>
+								<exclude>**/src/**/PGGeometryTypeDescriptor52N.java</exclude>
+								<exclude>**/src/**/PGGeometryValueExtractor52N.java</exclude>
+								<exclude>**/src/**/PostgisDialect52N.java</exclude>
+								<exclude>iceland/**</exclude>
+							</excludes>
+							<includes>
+								<include>**/*.java</include>
+								<include>**/*.jsp</include>
+								<include>**/*.js</include>
+								<include>**/*.xsl</include>
+								<include>**/*.sql</include>
+							</includes>
+							<properties>
+								<year>${project.inceptionYear}-${currentYear}</year>
+							</properties>
+						</licenseSet>
+					</licenseSets>
 				</configuration>
 				<!-- <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
                     <goals> <goal>format</goal> </goals> </execution> </executions> -->

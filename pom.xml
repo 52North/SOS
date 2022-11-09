@@ -90,7 +90,7 @@
 		<version.n52.common.xml>2.7.0</version.n52.common.xml>
 		<version.arctic-sea>10.0.0</version.arctic-sea>
 		<version.helgoland.api>3.5.0-PR.11</version.helgoland.api>
-		<version.db-model>4.0.0-PR.12</version.db-model>
+		<version.db-model>4.0.0-PR.13</version.db-model>
 		<version.dao-impl>4.0.0-PR.13</version.dao-impl>
 		<version.helgoland-adapters>2.0.0-PR.6</version.helgoland-adapters>
 		<version.springframework>5.3.23</version.springframework>

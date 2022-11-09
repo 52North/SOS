@@ -214,6 +214,9 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     }
                     if (!abortInsertResultForExistingObservations()) {
                         transaction.commit();
+                        if (!session.isOpen()) {
+                            session = getHibernateSessionHolder().getSession();
+                        }
                         transaction = getTransaction(session);
                     }
                 } catch (PersistenceException pe) {
@@ -221,7 +224,11 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                         throw pe;
                     } else {
                         transaction.rollback();
-                        session.clear();
+                        if (session.isConnected() || session.isOpen()) {
+                            session.clear();
+                        } else {
+                            session = getHibernateSessionHolder().getSession();
+                        }
                         transaction = getTransaction(session);
                         LOGGER.debug("Already existing observation would be ignored!", pe);
                     }

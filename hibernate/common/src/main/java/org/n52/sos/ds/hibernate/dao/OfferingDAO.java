@@ -55,7 +55,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
-import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -731,14 +730,14 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
             if (offering.isSetGeometry()) {
                 offering.getGeometryEntity().expand(observation.getGeometryEntity());
             } else {
-                offering.setGeometryEntity(new GeometryEntity().copy(observation.getGeometryEntity()));
+                offering.setGeometryEntity(observation.getGeometryEntity().copy());
             }
         } else if (observation.getDataset().isSetFeature() && observation.getDataset().getFeature().isSetGeometry()) {
             if (offering.isSetGeometry()) {
                 offering.getGeometryEntity().expand(observation.getDataset().getFeature().getGeometryEntity());
             } else {
                 offering.setGeometryEntity(
-                        new GeometryEntity().copy(observation.getDataset().getFeature().getGeometryEntity()));
+                        observation.getDataset().getFeature().getGeometryEntity().copy());
             }
         }
         session.saveOrUpdate(offering);

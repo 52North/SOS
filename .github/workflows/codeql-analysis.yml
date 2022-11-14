@@ -37,6 +37,7 @@ jobs:
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
+    if: github.repository_owner == '52North'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -56,10 +57,10 @@ jobs:
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
+    # â„¹ï¸� Command-line programs to run using the OS shell.
+    # ðŸ“š https://git.io/JvXDl
 
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
+    # âœ�ï¸� If the Autobuild fails above, remove it and uncomment the following three lines
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 

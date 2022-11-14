@@ -9,6 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Java 11 compile
+    
+    if: github.repository_owner == '52North'
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -21,7 +23,9 @@ jobs:
       
   publish-snapshot:
     needs: build
-    runs-on: ubuntu-latest          
+    runs-on: ubuntu-latest
+    
+    if: github.repository_owner == '52North'         
     steps:
       - uses: actions/checkout@v3
       - name: Set up settings.xml for GitHub Packages

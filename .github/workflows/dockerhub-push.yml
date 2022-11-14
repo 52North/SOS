@@ -19,6 +19,8 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    
+    if: github.repository_owner == '52North'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3

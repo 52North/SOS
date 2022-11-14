@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Java ${{ matrix.java }} compile
     
-    if: github.repository_owner == '52North'
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}

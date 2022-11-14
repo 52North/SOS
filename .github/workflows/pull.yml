@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    if: github.repository_owner == '52North'
     strategy:
       matrix:
         java: [ 11, 17 ]

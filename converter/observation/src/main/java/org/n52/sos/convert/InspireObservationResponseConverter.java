@@ -176,33 +176,38 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
         Map<String, List<OmObservation>> map = Maps.newHashMap();
         while (response.getObservationCollection().hasNext()) {
             OmObservation omObservation = response.getObservationCollection().next();
+            String observationType = checkForObservationTypeForStreaming(omObservation, request);
             if (omObservation.getValue() instanceof StreamingValue<?>) {
                 if (checkRequestedObservationTypeForOffering(omObservation, request)) {
-                    String observationType = checkForObservationTypeForStreaming(omObservation, request);
                     while (((StreamingValue<?>) omObservation.getValue()).hasNext()) {
                         OmObservation observation = ((StreamingValue<?>) omObservation.getValue()).next();
-                        if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
-                                    convertToProfileObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
-                                    convertToTrajectoryObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
-                                    convertToMultiPointObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION
-                                .equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
-                                    convertToPointTimeSeriesObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
-                                    convertToPointObservations(observation));
-                        }
+                        checkAndPutOrAdd(observation, map, observationType);
                     }
                 }
+            } else {
+                checkAndPutOrAdd(omObservation, map, observationType);
             }
         }
         response.setObservationCollection(mergeObservations(map));
+    }
+
+    private void checkAndPutOrAdd(OmObservation observation, Map<String, List<OmObservation>> map,
+            String observationType) throws CodedException {
+        if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
+                    convertToProfileObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
+                    convertToTrajectoryObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
+                    convertToMultiPointObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
+                    convertToPointTimeSeriesObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION, convertToPointObservations(observation));
+        }
     }
 
     /**

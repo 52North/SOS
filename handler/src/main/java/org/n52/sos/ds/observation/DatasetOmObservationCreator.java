@@ -106,7 +106,7 @@ public class DatasetOmObservationCreator extends AbstractOmObservationCreator {
             OmObservableProperty obsProp, AbstractFeature feature) throws OwsExceptionReport {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
-        if (obsConst.getOfferings() == null) {
+        if (!obsConst.isSetOfferings()) {
             obsConst.setOfferings(Sets.newHashSet(getDataset().getOffering()
                     .getIdentifier()));
         }

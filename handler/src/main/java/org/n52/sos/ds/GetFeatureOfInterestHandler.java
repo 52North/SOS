@@ -249,10 +249,13 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      */
     private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req,
             Session session) throws OwsExceptionReport {
-        Collection<FeatureEntity> allFeatures =
-                req.isSetSpatialFilters() ? new FeatureDao(session).get(createFoiDbQuery(req))
-                        : new LinkedHashSet<>();
-        if (!req.isSetSpatialFilters() || allFeatures != null && !allFeatures.isEmpty()) {
+        Collection<FeatureEntity> allFeatures = req.isSetSpatialFilters() || req.isSetFeatureOfInterestIdentifiers()
+                ? new FeatureDao(session).get(createFoiDbQuery(req))
+                : new LinkedHashSet<>();
+        if ((req.isSetFeatureOfInterestIdentifiers()
+                || req.isSetSpatialFilters()) && (allFeatures == null || allFeatures.isEmpty())) {
+            return Collections.emptySet();
+        } else {
             Collection<DatasetEntity> datasets = new DatasetDao(session).get(
                     createDbQuery(req, allFeatures.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet())));
             if (datasets != null) {
@@ -268,8 +271,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                         allFeatures.stream().filter(o -> !notVisibleFeatures.contains(o)).collect(Collectors.toSet()));
                 return features;
             }
+            return Collections.emptySet();
         }
-        return Collections.emptySet();
     }
 
     /**
@@ -323,9 +326,9 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
 
     private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
-//        if (req.isSetFeatureOfInterestIdentifiers()) {
-//            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
-//        }
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
+        }
         if (req.isSetSpatialFilters()) {
             Envelope envelope = null;
             for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
@@ -350,7 +353,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                 map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
             }
         }
-//        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
         return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

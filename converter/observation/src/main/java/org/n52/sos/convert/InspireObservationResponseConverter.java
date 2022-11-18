@@ -430,7 +430,7 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
         }
         return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
     }
-    
+
     /**
      * Check for {@link TrajectoryObservation}
      *

@@ -113,7 +113,7 @@ This project includes:
   Commons Pool under The Apache Software License, Version 2.0
   commons-compiler under BSD-3-Clause
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
-  EJML under The Apache Software License, Version 2.0
+  EJML under The Apache License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   error-prone annotations under Apache 2.0
   EXIficient-Core under MIT License

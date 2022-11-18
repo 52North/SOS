@@ -250,9 +250,9 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req,
             Session session) throws OwsExceptionReport {
         Collection<FeatureEntity> allFeatures =
-                req.isSetObservableProperties() || req.isSetProcedures() ? new LinkedHashSet<>()
-                        : new FeatureDao(session).get(createFoiDbQuery(req));
-        if (allFeatures != null && !allFeatures.isEmpty()) {
+                req.isSetSpatialFilters() ? new FeatureDao(session).get(createFoiDbQuery(req))
+                        : new LinkedHashSet<>();
+        if (!req.isSetSpatialFilters() || allFeatures != null && !allFeatures.isEmpty()) {
             Collection<DatasetEntity> datasets = new DatasetDao(session).get(
                     createDbQuery(req, allFeatures.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet())));
             if (datasets != null) {
@@ -271,41 +271,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
         return Collections.emptySet();
     }
-
-    private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
-        Map<String, String> map = Maps.newHashMap();
-        if (req.isSetFeatureOfInterestIdentifiers()) {
-            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
-        }
-        if (req.isSetSpatialFilters()) {
-            Envelope envelope = null;
-            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
-                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    Envelope toAdd = getGeometryHandler().getEnvelope(spatialFilter.getGeometry());
-                    if (toAdd != null) {
-                        if (envelope == null) {
-                            envelope = toAdd;
-                        } else {
-                            envelope.expandToInclude(toAdd);
-                        }
-                    }
-                }
-            }
-            if (envelope != null) {
-
-                List<Double> bbox = Lists.newArrayList();
-                bbox.add(envelope.getMinX());
-                bbox.add(envelope.getMinY());
-                bbox.add(envelope.getMaxX());
-                bbox.add(envelope.getMaxY());
-                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-            }
-        }
-        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return createDbQuery(IoParameters.createFromSingleValueMap(map));
-    }
-
-
 
     /**
      * Check if the request contains spatial filters
@@ -354,6 +319,39 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
 
     protected GeometryHandler getGeometryHandler() {
         return geometryHandler;
+    }
+
+    private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
+        Map<String, String> map = Maps.newHashMap();
+//        if (req.isSetFeatureOfInterestIdentifiers()) {
+//            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
+//        }
+        if (req.isSetSpatialFilters()) {
+            Envelope envelope = null;
+            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
+                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
+                    Envelope toAdd = getGeometryHandler().getEnvelope(spatialFilter.getGeometry());
+                    if (toAdd != null) {
+                        if (envelope == null) {
+                            envelope = toAdd;
+                        } else {
+                            envelope.expandToInclude(toAdd);
+                        }
+                    }
+                }
+            }
+            if (envelope != null) {
+
+                List<Double> bbox = Lists.newArrayList();
+                bbox.add(envelope.getMinX());
+                bbox.add(envelope.getMinY());
+                bbox.add(envelope.getMaxX());
+                bbox.add(envelope.getMaxY());
+                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
+            }
+        }
+//        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req, Set<String> features) throws OwsExceptionReport {

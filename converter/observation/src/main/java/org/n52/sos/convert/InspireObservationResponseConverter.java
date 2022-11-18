@@ -50,6 +50,7 @@ import org.n52.shetland.inspire.omso.PointObservation;
 import org.n52.shetland.inspire.omso.PointTimeSeriesObservation;
 import org.n52.shetland.inspire.omso.ProfileObservation;
 import org.n52.shetland.inspire.omso.TrajectoryObservation;
+import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.ObservationMergeIndicator;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -420,10 +421,16 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
                 return InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION;
             }
         }
-        // TODO default setting
-        return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
+        return checkForObservtionValue(observation);
     }
 
+    private String checkForObservtionValue(OmObservation observation) {
+        if (observation.getValue() instanceof MultiObservationValues<?>) {
+            return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
+        }
+        return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
+    }
+    
     /**
      * Check for {@link TrajectoryObservation}
      *

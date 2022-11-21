@@ -88,11 +88,11 @@
 		<version.jts>1.19.0</version.jts>
 		<!-- 52N dependency versions -->
 		<version.n52.common.xml>2.7.0</version.n52.common.xml>
-		<version.dao-impl>4.0.0-PR.13</version.dao-impl>
 		<version.helgoland-adapters>2.0.0-PR.6</version.helgoland-adapters>
 		<version.arctic-sea>10.0.2</version.arctic-sea>
 		<version.helgoland.api>3.5.0-PR.12</version.helgoland.api>
 		<version.db-model>4.0.0-PR.14</version.db-model>
+		<version.dao-impl>4.0.0-PR.14</version.dao-impl>
 		<version.springframework>5.3.24</version.springframework>
 		<version.springframework.security>5.7.5</version.springframework.security>
 		<version.springframework.data>2.7.5</version.springframework.data>

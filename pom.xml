@@ -91,8 +91,8 @@
 		<version.arctic-sea>10.0.2</version.arctic-sea>
 		<version.helgoland.api>3.5.0-PR.12</version.helgoland.api>
 		<version.db-model>4.0.0-PR.14</version.db-model>
-		<version.dao-impl>4.0.0-PR.14</version.dao-impl>
 		<version.helgoland-adapters>2.0.0-PR.7</version.helgoland-adapters>
+		<version.dao-impl>4.0.0-PR.15</version.dao-impl>
 		<version.springframework>5.3.24</version.springframework>
 		<version.springframework.security>5.7.5</version.springframework.security>
 		<version.springframework.data>2.7.6</version.springframework.data>

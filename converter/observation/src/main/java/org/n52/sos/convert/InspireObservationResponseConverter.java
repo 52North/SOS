@@ -72,6 +72,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.SosSettings;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -94,6 +95,8 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
 
     private ContentCacheController contentCacheController;
 
+    private ProfileHandler profileHandler;
+
     @Setting(SosSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
         this.includeResultTimeForMerging = includeResultTimeForMerging;
@@ -102,6 +105,11 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
     @Inject
     public void setContentCacheController(ContentCacheController ctrl) {
         this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     public ContentCacheController getContentCacheController() {
@@ -153,11 +161,7 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
             AbstractObservationResponse resp = (AbstractObservationResponse) response;
             if (InspireOMSOConstants.NS_OMSO_30.equals(resp.getResponseFormat())
                     && resp.getObservationCollection().hasNext()) {
-                // if (resp.hasStreamingData()) {
                 checkData(request, resp);
-                // } else {
-                // checkForNonStreamingData(request, resp);
-                // }
             }
         }
         return response;
@@ -426,6 +430,9 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
 
     private String checkForObservtionValue(OmObservation observation) {
         if (observation.getValue() instanceof MultiObservationValues<?>) {
+            return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
+        } else if (observation.getValue() instanceof StreamingValue<?>
+                && this.profileHandler.getActiveProfile().isMergeValues()) {
             return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
         }
         return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;

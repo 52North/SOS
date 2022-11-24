@@ -15,8 +15,6 @@ updates:
     versions: ">= 1.2, < 1.4"
   - dependency-name: "xml-apis:xml-apis"
     versions: ">= 1.2, < 3"
-  - dependency-name: "com.microsoft.sqlserver:mssql-jdbc"
-    versions: "*-preview"
   - dependency-name: "org.apache.xmlbeans:xmlbeans"
     versions: ">= 4.x"
   - dependency-name: "org.springframework:*"

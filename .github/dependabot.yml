@@ -12,19 +12,11 @@ updates:
   open-pull-requests-limit: 10
   ignore:
   - dependency-name: "ch.qos.logback:logback-classic"
-    versions:
-    - ">= 1.2, < 1.4"
+    versions: ">= 1.2, < 1.4"
   - dependency-name: "xml-apis:xml-apis"
-    versions:
-    - ">= 1.2, < 3"
+    versions: ">= 1.2, < 3"
   - dependency-name: "com.microsoft.sqlserver:mssql-jdbc"
-    versions:
-    - 9.2.0.jre15
-    - 9.2.1.jre15
-    - 9.3.0.jre15-preview
-  - dependency-name: "com.zaxxer:HikariCP"
-    versions:
-    - 4.0.2
+    versions: "*-preview"
   - dependency-name: "org.apache.xmlbeans:xmlbeans"
     versions: ">= 4.x"
   - dependency-name: "org.springframework:*"

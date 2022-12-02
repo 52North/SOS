@@ -227,11 +227,11 @@ This project includes:
   RE2/J under Go License
   Referencing services under Lesser General Public License (LGPL)
   Sensor Web Server DAO Impl - DAO under GNU General Public License, Version 2.0
+  Sensor Web Server DAO Impl - Jpa Reposito under GNU General Public License, Version 2.0
   Sensor Web Server DAO Impl - Jpa Repositories under GNU General Public License, Version 2.0
   Sensor Web Server DAO Impl - Webapp under GNU General Public License, Version 2.0
   Sensor Web Server Database Model - Entities under The Apache Software License, Version 2.0
   Sensor Web Server Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
-  Sensor Web Server Database Model - Jpa Repositories under The Apache Software License, Version 2.0
   Sensor Web Server Helgoland - IO module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - PDF report structure under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0

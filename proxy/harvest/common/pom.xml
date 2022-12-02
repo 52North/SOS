@@ -25,6 +25,10 @@
 					<artifactId>dao-impl-repo</artifactId>
 				</exclusion>
 				<exclusion>
+                    <groupId>org.n52.sensorweb-server.db-model</groupId>
+                    <artifactId>db-model-repos</artifactId>
+                </exclusion>
+				<exclusion>
 					<groupId>org.n52.sensorweb-server.dao-impl</groupId>
 					<artifactId>dao-impl-dao</artifactId>
 				</exclusion>

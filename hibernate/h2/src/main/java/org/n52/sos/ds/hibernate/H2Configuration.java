@@ -121,7 +121,6 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/LocationResource.hbm.xml");
             resources.add("/hbm/transactional/core/OfferingResource.hbm.xml");
             resources.add("/hbm/transactional/core/PhenomenonResource.hbm.xml");
-            resources.add("/hbm/transactional/core/PlatformResource.hbm.xml");
             resources.add("/hbm/transactional/core/ProcedureHistoryResource.hbm.xml");
             resources.add("/hbm/transactional/core/ProcedureResource.hbm.xml");
             resources.add("/hbm/transactional/core/RelatedDataResource.hbm.xml");
@@ -132,6 +131,7 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/TagResource.hbm.xml");
             resources.add("/hbm/transactional/core/VerticalMetadataResource.hbm.xml");
             // dataset
+            resources.add("/hbm/transactional/dataset/PlatformResource.hbm.xml");
             resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");
             resources.add("/hbm/transactional/dataset/DatasetResource.hbm.xml");
             // parameter

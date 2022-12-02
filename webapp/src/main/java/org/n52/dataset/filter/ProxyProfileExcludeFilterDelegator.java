@@ -69,7 +69,7 @@ public class ProxyProfileExcludeFilterDelegator implements TypeFilter, Environme
     public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
             throws IOException {
         String className = metadataReader.getClassMetadata().getClassName();
-        if (className != null && className.equals("org.n52.sensorweb.server.db.repositories.core.ServiceRepository")) {
+        if (className != null && className.equals("org.n52.sensorweb.server.db.repositories.proxy.ServiceRepository")) {
            return !isProxy;
         }
         return false;

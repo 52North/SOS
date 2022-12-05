@@ -102,7 +102,7 @@
 		<version.elasticsearch>7.17.6</version.elasticsearch>
 		<version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
 		<version.httpcore>4.4.16</version.httpcore>
-		<version.httpcoponents>4.5.13</version.httpcoponents>
+		<version.httpcoponents>4.5.14</version.httpcoponents>
 		<version.junit>5.9.1</version.junit>
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>

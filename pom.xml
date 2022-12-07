@@ -517,12 +517,53 @@
 						<groupId>org.n52.sensorweb-server.dao-impl</groupId>
 						<artifactId>dao-impl-repo</artifactId>
 					</exclusion>
+					 <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repos</artifactId>
+                    </exclusion>
 					<exclusion>
 						<groupId>org.n52.sensorweb-server.dao-impl</groupId>
 						<artifactId>dao-impl-dao</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
+			</dependency><dependency>
+                <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+                <artifactId>helgoland-adapters-config</artifactId>
+                <version>${version.helgoland-adapters}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repo</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repos</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-dao</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+                <artifactId>helgoland-adapters-http</artifactId>
+                <version>${version.helgoland-adapters}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repo</artifactId>
+                    </exclusion>
+                     <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repos</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-dao</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 			<dependency>
 				<groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
 				<artifactId>helgoland-adapters-harvest</artifactId>
@@ -532,6 +573,10 @@
 						<groupId>org.n52.sensorweb-server.dao-impl</groupId>
 						<artifactId>dao-impl-repo</artifactId>
 					</exclusion>
+					 <exclusion>
+                        <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                        <artifactId>dao-impl-repos</artifactId>
+                    </exclusion>
 					<exclusion>
 						<groupId>org.n52.sensorweb-server.dao-impl</groupId>
 						<artifactId>dao-impl-dao</artifactId>

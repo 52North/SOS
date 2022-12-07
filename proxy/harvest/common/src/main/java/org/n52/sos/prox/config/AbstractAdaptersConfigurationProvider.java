@@ -38,6 +38,7 @@ import org.n52.bjornoya.schedule.JobConfiguration;
 import org.n52.bjornoya.schedule.JobConfiguration.JobType;
 import org.n52.iceland.service.DatasourceSettingsHandler;
 import org.n52.sensorweb.server.helgoland.adapters.config.ConfigurationProvider;
+import org.n52.sensorweb.server.helgoland.adapters.config.Credentials;
 import org.n52.sensorweb.server.helgoland.adapters.config.DataSourceConfiguration;
 import org.n52.sos.ds.datasource.ProxyDatasource;
 
@@ -85,11 +86,17 @@ public abstract class AbstractAdaptersConfigurationProvider implements Configura
     }
 
     private DataSourceConfiguration addValues(DataSourceConfiguration config) {
-        if (getProperties().containsKey(ProxyDatasource.PROXY_USERNAME_KEY)) {
-            config.setUsername(getProperties().getProperty(ProxyDatasource.PROXY_USERNAME_KEY));
-        }
-        if (getProperties().containsKey(ProxyDatasource.PROXY_PASSWORD_KEY)) {
-           config.setPassword(getProperties().getProperty(ProxyDatasource.PROXY_PASSWORD_KEY));
+        if (getProperties().containsKey(ProxyDatasource.PROXY_USERNAME_KEY)
+                || getProperties().containsKey(ProxyDatasource.PROXY_PASSWORD_KEY)) {
+            Credentials credentials = config.isSetCredentials() ? config.getCredentials() : new Credentials();
+
+            if (getProperties().containsKey(ProxyDatasource.PROXY_USERNAME_KEY)) {
+                credentials.setUsername(getProperties().getProperty(ProxyDatasource.PROXY_USERNAME_KEY));
+            }
+            if (getProperties().containsKey(ProxyDatasource.PROXY_PASSWORD_KEY)) {
+                credentials.setPassword(getProperties().getProperty(ProxyDatasource.PROXY_PASSWORD_KEY));
+            }
+            config.setCredentials(credentials);
         }
         if (isProxyDefined()) {
             config.addProperty(ProxyDatasource.PROXY_PROXY_HOST_KEY,

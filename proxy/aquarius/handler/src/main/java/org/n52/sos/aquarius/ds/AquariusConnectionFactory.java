@@ -87,8 +87,8 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
             LOGGER.debug("Instantiating session factory");
             DataSourceConfiguration dataSourceConfiguration = this.configurationProvider.getDataSourceConfiguration();
             String host = dataSourceConfiguration.getUrl();
-            String user = dataSourceConfiguration.getUsername();
-            String password = dataSourceConfiguration.getPassword();
+            String user = dataSourceConfiguration.getCredentials().getUsername();
+            String password = dataSourceConfiguration.getCredentials().getPassword();
             LOGGER.debug("Server: {}", host);
             this.connection = new AquariusConnection(user, password, host);
             this.clientHandler =

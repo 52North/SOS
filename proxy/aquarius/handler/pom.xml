@@ -36,6 +36,14 @@
 		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
 		    <artifactId>helgoland-adapters-common</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+            <artifactId>helgoland-adapters-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+            <artifactId>helgoland-adapters-http</artifactId>
+        </dependency>
         <dependency>
 		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
 		    <artifactId>helgoland-adapters-harvest</artifactId>

@@ -237,8 +237,10 @@ This project includes:
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Common Module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland Adapters - Configuration Module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Connector Module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland Adapters - Harvester Module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland Adapters - HTTP Module under GNU General Public License, Version 2.0
   ServiceStack.Client under The BSD 3-Clause License
   SI Quantities under BSD 3-Clause
   SI Units under BSD

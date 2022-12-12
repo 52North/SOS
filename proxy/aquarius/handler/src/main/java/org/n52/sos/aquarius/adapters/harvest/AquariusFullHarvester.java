@@ -28,11 +28,9 @@
 package org.n52.sos.aquarius.adapters.harvest;
 
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvester;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvesterResponse;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.HarvestContext;
@@ -49,9 +47,6 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester implements 
 
     @Inject
     private AquariustDatasetHarvester harvester;
-
-    @Inject
-    private Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider;
 
     @Override
     public HarvesterResponse process(HarvestContext context) {
@@ -85,8 +80,6 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester implements 
                 return new FullHarvesterResponse();
             } catch (Exception e) {
                 LOGGER.error("Error while harvesting data!", e);
-            } finally {
-                updateCache();
             }
         }
         return new FullHarvesterResponse(false);

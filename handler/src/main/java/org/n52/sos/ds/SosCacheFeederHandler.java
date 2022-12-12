@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -41,6 +42,7 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
@@ -88,6 +90,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private HibernateSessionStore sessionStore;
     private GeometryHandler geometryHandler;
     private DbQueryFactory dbQueryFactory;
+    private Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider = Optional.empty();
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -119,6 +122,11 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         this.dbQueryFactory = dbQueryFactory;
     }
 
+    @Inject
+    public void setStaticCapabilitiesProvider(Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider) {
+        this.staticCapabilitiesProvider = staticCapabilitiesProvider;
+    }
+
     @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
@@ -148,7 +156,9 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
             long cacheUpdateStartTime = System.currentTimeMillis();
 
             update.execute();
-
+            if (staticCapabilitiesProvider.isPresent()) {
+                staticCapabilitiesProvider.get().create();
+            }
             logCacheLoadTime(cacheUpdateStartTime);
         } catch (Exception e) {
             LOGGER.error(ERROR_UPDATE_CACHE, e);

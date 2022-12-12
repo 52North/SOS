@@ -59,7 +59,9 @@ public interface Harvester {
 
     @Transactional(rollbackFor = Exception.class)
     default ServiceEntity getOrInsertServiceEntity() {
-        return unproxy(getCRUDRepository().insertService(getServiceEntity()));
+        ServiceEntity serviceEntity = getServiceEntity();
+        serviceEntity.setId(null);
+        return unproxy(getCRUDRepository().insertService(serviceEntity));
     }
 
     default Specification<DatasetEntity> getDatasetServicQS(ServiceEntity service) {

@@ -85,7 +85,7 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
     private ResponseWriterRepository responseWriterRepository;
 
     @Setting(PROVIDE_STATIC_CAPABILITIES)
-    public void setCronExpression(Boolean provideStaticCapabilities) {
+    public void setProvideStaticCapabilities(Boolean provideStaticCapabilities) {
         this.provideStaticCapabilities = provideStaticCapabilities;
     }
 

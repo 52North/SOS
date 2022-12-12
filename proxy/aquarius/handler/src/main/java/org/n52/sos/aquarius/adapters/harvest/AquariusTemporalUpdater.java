@@ -74,8 +74,6 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester implement
                 return update(connector, context.getLastUpdateTime());
             } catch (Exception e) {
                 LOGGER.error(ERROR_UPDATE, e);
-            } finally {
-                updateCache();
             }
         }
         return new TemporalHarvesterResponse();

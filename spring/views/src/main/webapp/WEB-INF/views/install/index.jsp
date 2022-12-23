@@ -43,7 +43,6 @@
 <p>This installer requires a running DBMS installation with an accessible data base. This version supports the following DBMS:</p>
 <ul>
   <li>PostgreSQL with PostGIS</li>
-  <li>Oracle / Oracle Spatial</li>
   <li>MySQL</li>
   <li>SQL Server</li>
   <li>H2/GeoDB (file / in memory)</li>
@@ -56,10 +55,6 @@
 	The database also needs the <strong>PostGIS</strong> extension in <strong>version 1.5 or 2.0</strong> enabled (see
 	the <a target="_blank" href="http://postgis.refractions.net/documentation/manual-2.0/postgis_installation.html">PostGIS documentation</a>
 	for a description how to install and enable it for your database).
-</p>
-	
-<p>Documentation for <strong>Oracle</strong> can be found <a target="_blank" href="http://www.oracle.com/technetwork/database/enterprise-edition/documentation/index.html">here</a>.
-   How to install the 52&deg;North SOS with Oracle is described in the <a target="_blank" href="https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_installation">SOS wiki</a>
 </p>
 
 <p> If you like to use <strong>MySQL 5.6.x</strong> you can find here a detailed installation guide for the different platforms

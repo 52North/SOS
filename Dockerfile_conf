@@ -17,7 +17,7 @@ RUN mvn --batch-mode --errors --fail-fast \
   --define maven.javadoc.skip=true \
   --define skipTests=true install
 
-FROM jetty:10.0.11-jdk11-alpine
+FROM jetty:10.0.13-jdk11-alpine
 
 USER root
 RUN  set -ex \

@@ -41,7 +41,7 @@
 <script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34-xml.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/prettify.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/vkbeautify-0.99.00.beta.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/lib/XmlBeautify-1.2.3.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/EventMixin.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/lib/jsxml-0.2.2.js" />"></script>
@@ -400,7 +400,7 @@ $.extend(Controller.prototype, {
 	onIdChange: function() {
 		var id = this.getSelectedProcedure(),
 			onSuccess = function(response) {
-				this.setEditorContent(vkbeautify.xml(xml2string(response)));
+				this.setEditorContent(new XmlBeautify().beautify(xml2string(response)));
 				this.$save.disabled(true);
 				this.$delete.disabled(false);
 				this.$validate.disabled(false);

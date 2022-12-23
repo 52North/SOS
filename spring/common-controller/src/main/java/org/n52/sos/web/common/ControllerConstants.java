@@ -72,7 +72,15 @@ public interface ControllerConstants {
 
         String ADMIN_ROOT = "/" + ADMIN;
 
-        String INSTALL_ROOT = "/install";
+        String INSTALL = "install";
+
+        String INSTALL_ROOT = "/" + INSTALL;
+
+        String INDEX = "index";
+
+        String LOGIN = "/login";
+
+        String FINISH = "/finish";
     }
 
     /**
@@ -80,7 +88,6 @@ public interface ControllerConstants {
      *
      */
     interface Views extends Default {
-        String INDEX = "index";
 
         String DOCUMENTATION = "documentation";
 
@@ -90,53 +97,53 @@ public interface ControllerConstants {
 
         String GET_INVOLVED = "get-involved";
 
-        String ADMIN_INDEX = "admin/index";
+        String ADMIN_INDEX = ADMIN + "/" + INDEX;
 
         String ADMIN_DATASOURCE = ADMIN + DATASOURCE;
 
-        String ADMIN_DATASOURCE_SETTINGS = "admin/datasource-settings";
+        String ADMIN_DATASOURCE_SETTINGS = ADMIN + "/datasource-settings";
 
-        String ADMIN_LOGIN = "admin/login";
+        String ADMIN_LOGIN = ADMIN + LOGIN;
 
-        String ADMIN_RESET = "admin/reset";
+        String ADMIN_RESET = ADMIN + "/reset";
 
-        String ADMIN_LIBRARY_LIST = "admin/libs";
+        String ADMIN_LIBRARY_LIST = ADMIN + "/libs";
 
-        String ADMIN_SETTINGS = "admin/settings";
+        String ADMIN_SETTINGS = ADMIN + SETTINGS;
 
-        String ADMIN_OPERATIONS = "admin/operations";
+        String ADMIN_OPERATIONS = ADMIN + "/operations";
 
-        String ADMIN_ENCODINGS = "admin/encodings";
+        String ADMIN_ENCODINGS = ADMIN + "/encodings";
 
-        String ADMIN_BINDINGS = "admin/bindings";
-
-        String INSTALL_INDEX = "install/index";
-
-        String INSTALL_DATASOURCE = "install" + DATASOURCE;
-
-        String INSTALL_SETTINGS = "install/settings";
-
-        String INSTALL_FINISH = "install/finish";
+        String ADMIN_BINDINGS = ADMIN + "/bindings";
 
         String INSTALL_LOAD_SETTINGS = "install/load";
 
-        String ADMIN_LOGGING = "admin/logging";
+        String ADMIN_LOGGING = ADMIN + "/logging";
 
-        String ADMIN_CACHE = "admin/cache";
+        String ADMIN_CACHE = ADMIN + "/cache";
 
-        String ADMIN_SENSOR_DESCRIPTIONS = "admin/sensors";
+        String ADMIN_SENSOR_DESCRIPTIONS = ADMIN + "/sensors";
 
-        String ADMIN_CAPABILITIES_SETTINGS = "admin/capabilities";
+        String ADMIN_CAPABILITIES_SETTINGS = ADMIN + "/capabilities";
 
-        String ADMIN_I18N = "admin/i18n";
+        String ADMIN_I18N = ADMIN + "/i18n";
 
         String ADMIN_I18N_SETTINGS = ADMIN_I18N + SETTINGS;
 
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
 
-        String ADMIN_EXTENSIONS = ADMIN_ROOT + EXTENSIONS;
+        String ADMIN_EXTENSIONS = ADMIN + EXTENSIONS;
 
-        String ADMIN_PROFILES = ADMIN_ROOT + PROFILES;
+        String ADMIN_PROFILES = ADMIN + PROFILES;
+
+        String INSTALL_INDEX =  INSTALL + "/" + INDEX;
+
+        String INSTALL_DATASOURCE = INSTALL + DATASOURCE;
+
+        String INSTALL_SETTINGS = INSTALL + SETTINGS;
+
+        String INSTALL_FINISH = INSTALL + FINISH;
     }
 
     /**
@@ -148,7 +155,7 @@ public interface ControllerConstants {
 
         String WSDL = "/wsdl";
 
-        String INDEX = "/index";
+        String INDEX = "/" + Default.INDEX;
 
         String DOCUMENTATION = "/documentation";
 
@@ -234,19 +241,19 @@ public interface ControllerConstants {
 
         String ADMIN_I18N_SETTINGS = ADMIN_I18N + SETTINGS;
 
-        String INSTALL_INDEX = "/install/index";
+        String INSTALL_INDEX = INSTALL_ROOT + INDEX;
 
         String INSTALL_DATASOURCE = INSTALL_ROOT + DATASOURCE;
 
-        String INSTALL_SETTINGS = "/install/settings";
+        String INSTALL_SETTINGS = INSTALL_ROOT + SETTINGS;
 
-        String INSTALL_FINISH = "/install/finish";
+        String INSTALL_FINISH = INSTALL_ROOT + FINISH;
 
-        String INSTALL_LOAD_CONFIGURATION = "/install/load";
+        String INSTALL_LOAD_CONFIGURATION = INSTALL_ROOT + "/load";
 
-        String INSTALL_DATASOURCE_DIALECTS = "/install/datasource/sources";
+        String INSTALL_DATASOURCE_DIALECTS = INSTALL_ROOT + "/datasource/sources";
 
-        String LOGIN = "/login";
+        String LOGIN = Default.LOGIN;
 
         String LOGOUT = "/j_spring_security_logout";
 

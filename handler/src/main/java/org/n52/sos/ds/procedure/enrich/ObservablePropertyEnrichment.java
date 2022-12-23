@@ -34,9 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.PhenomenonDao;
+import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -55,7 +55,6 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
 
     @Override
     public void enrich() throws OwsExceptionReport {
-
         List<PhenomenonEntity> phens = new PhenomenonDao(getSession()).getAllInstances(
                 createDbQuery(checkForPublished(getCache().getObservablePropertiesForProcedure(getIdentifier()))));
         for (PhenomenonEntity phen : phens) {
@@ -75,7 +74,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
             map.put(IoParameters.PHENOMENA, listToString(ids));
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Set<String> checkForPublished(Set<String> ids) {
@@ -87,4 +86,5 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
         }
         return obsProps;
     }
+
 }

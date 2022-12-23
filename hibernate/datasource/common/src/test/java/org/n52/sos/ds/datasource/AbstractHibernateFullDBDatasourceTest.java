@@ -102,19 +102,20 @@ public class AbstractHibernateFullDBDatasourceTest
     }
 
     private void checkSettingDefinitions(Set<SettingDefinition<?>> settings, boolean changeable,
-            boolean settingsDefinitions, boolean timeFormat) {
+            boolean directory, boolean timeFormat) {
         List<String> keys = new ArrayList<>();
         Iterator<SettingDefinition<?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }
-        checkSettingKeys(keys, changeable, settingsDefinitions, timeFormat);
+        checkSettingKeys(keys, changeable, directory, timeFormat);
     }
 
-    private void checkSettingKeys(Collection<String> keys, boolean changeable, boolean settingsDefinitions,
+    private void checkSettingKeys(Collection<String> keys, boolean changeable, boolean directory,
             boolean timeFormat) {
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
+        boolean extensionConcept = keys.contains(AbstractHibernateDatasource.DATABASE_EXTENSION_KEY);
 
         assertTrue(keys.contains(AbstractHibernateCoreDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateCoreDatasource.PORT_KEY));
@@ -126,10 +127,11 @@ public class AbstractHibernateFullDBDatasourceTest
         assertTrue(keys.contains(AbstractHibernateCoreDatasource.MAX_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.BATCH_SIZE_KEY));
         assertTrue(
-                changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
+                changeable || directory || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
+        assertTrue(!extensionConcept || keys.contains(AbstractHibernateDatasource.DATABASE_EXTENSION_KEY));
         assertTrue(keys.contains(AbstractHibernateCoreDatasource.TIMEZONE_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_FORMAT_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_Z_KEY));
@@ -144,11 +146,14 @@ public class AbstractHibernateFullDBDatasourceTest
             if (!featureConcept) {
                 counter--;
             }
-            if (settingsDefinitions) {
+            if (!extensionConcept) {
+                counter--;
+            }
+            if (directory) {
                 counter--;
             }
             if (!timeFormat) {
-                counter -= 3;
+                counter -= 2;
             }
             assertEquals(counter, keys.size());
         }

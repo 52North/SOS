@@ -1,62 +1,62 @@
 <configuration scan="true" scanPeriod="30 seconds">
 
-	<property name="logFile" value="${catalina.base}/logs/${config.logger.fileappender.filename}" />
+    <property name="logFile"
+        value="${catalina.base}/logs/${config.logger.fileappender.filename}" />
 
-	<!--
-		the following assumptions are made by the Adminstrator:
-		* The name of a file appender is FILE
-		* The name of a console appender is STDOUT
-		* The appender named FILE is of type ch.qos.logback.core.rolling.RollingFileAppender
-			and has a maxHistory and a timeBasedFileNamingAndTriggeringPolicy > maxFileSize
-			property
-		* All variables in the file property of the FILE appender are fully resolvable
-			by the properties defined in this file and the Java system properties.
+    <!-- the following assumptions are made by the Adminstrator: * The name
+        of a file appender is FILE * The name of a console appender is STDOUT * The
+        appender named FILE is of type ch.qos.logback.core.rolling.RollingFileAppender
+        and has a maxHistory and a timeBasedFileNamingAndTriggeringPolicy > maxFileSize
+        property * All variables in the file property of the FILE appender are fully
+        resolvable by the properties defined in this file and the Java system properties.
+        Additional appenders can be defined freely. -->
 
-		Additional appenders can be defined freely.
-	-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logFile}.log</file>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>return message.contains("HHH90000022") ||
+                    message.contains("HHH000179");</expression>
+            </evaluator>
+            <OnMismatch>NEUTRAL</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
 
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logFile}.log</file>
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return message.contains("HHH90000022") || message.contains("HHH000179");</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log </fileNamePattern>
+            <!-- keep ${config.logger.history.max} days' worth of history -->
+            <maxHistory>${config.logger.history.max}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${config.logger.maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] [%file:%line] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
 
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-			<!-- keep ${config.logger.history.max} days' worth of history -->
-			<maxHistory>${config.logger.history.max}</maxHistory>
-			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>${config.logger.maxFileSize}</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
-		<encoder>
-			<pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
-		</encoder>
-	</appender>
+    <appender name="STDOUT"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <filter
+            class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>return message.contains("HHH90000022") || message.contains("HHH000179");</expression>
+            </evaluator>
+            <OnMismatch>NEUTRAL</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator>
-        <expression>return message.contains("HHH90000022") || message.contains("HHH000179");</expression>
-      </evaluator>
-      <OnMismatch>NEUTRAL</OnMismatch>
-      <OnMatch>DENY</OnMatch>
-    </filter>
-		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
-		</encoder>
-	</appender>
+    <logger name="org.n52" level="${config.logger.level.main.n52}" />
+    <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
+    <logger name="org.hibernate.SQL" level="${config.logger.level.main.sql}" />
+    <logger name="org.hibernate.type.descriptor.sql" level="ERROR" />
 
-	<logger name="org.n52" level="${config.logger.level.main.n52}" />
-  <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
-  <logger name="org.hibernate.SQL" level="ERROR" />
-  <logger name="org.hibernate.type.descriptor.sql" level="ERROR" />
-
-	<root level="${config.logger.level.main.global}">
-		<appender-ref ref="FILE" />
-	</root>
+    <root level="${config.logger.level.main.global}">
+        <appender-ref ref="FILE" />
+    </root>
 </configuration>

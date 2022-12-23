@@ -33,7 +33,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -42,9 +41,6 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 
 public interface EReportingDaoHelper {
-
-    String SAMPLING_POINT_ASSOCIATION_PATH =
-            DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
 
     String VALIDATION_ASSOCIATION_PATH =
             DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION;
@@ -67,10 +63,6 @@ public interface EReportingDaoHelper {
                 }
             }
         }
-    }
-
-    default String getSamplingPointAssociationPath() {
-        return SAMPLING_POINT_ASSOCIATION_PATH;
     }
 
     Set<Integer> getVerificationFlags();

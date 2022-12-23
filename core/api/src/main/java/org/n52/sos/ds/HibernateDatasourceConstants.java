@@ -50,6 +50,8 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
 
+    String HIBERNATE_MAPPING_PROXY_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/proxy";
+
     // Database core paths
     String HIBERNATE_MAPPING_CORE_PATH = "/core";
 
@@ -60,6 +62,9 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH =
             HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
+
+    String HIBERNATE_MAPPING_PROXY_CORE_PATH =
+            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
 
     // Database simple paths
     String HIBERNATE_MAPPING_DATASET_PATH = "/dataset";
@@ -73,6 +78,9 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_MAPPING_TRANSACTIONAL_DATASET_PATH =
             HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
 
+    String HIBERNATE_MAPPING_PROXY_DATASET_PATH =
+            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
+
     // Database sampling extension paths
     String HIBERNATE_MAPPING_SAMPLING_PATH = "/sampling";
 
@@ -85,8 +93,12 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_MAPPING_TRANSACTIONAL_SAMPLING_PATH =
             HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
 
-    // TODO change to /feature
+    String HIBERNATE_MAPPING_PROXY_SAMPLING_PATH =
+            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
+
     String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
+
+    String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
 
     String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
 
@@ -111,9 +123,13 @@ public interface HibernateDatasourceConstants {
 
     String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
+    String DATABASE_EXTENSION_KEY = "sos.database.extension";
+
+    String SPRING_PROFILE_KEY = "sos.datasource.spring.profiles";
+
     enum DatabaseConcept {
         SIMPLE("Simple database model"), TRANSACTIONAL("Transactional database model"), EREPORTING(
-                "eReporting database model");
+                "eReporting database model"), PROXY("proxy");
 
         private final String displayName;
 
@@ -127,7 +143,7 @@ public interface HibernateDatasourceConstants {
     }
 
     enum DatabaseExtension {
-        DEFAULT("Default database model"), SAMPLING("Extended model to support Samplings/MeasuringPrograms");
+        DATASOURCE("Default database model"), SAMPLING("Extended model to support Samplings/MeasuringPrograms");
 
         private final String displayName;
 

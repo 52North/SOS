@@ -41,17 +41,16 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.DatasetDao;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
@@ -65,6 +64,7 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.FormatDescriptor
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -79,6 +79,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     private HibernateSessionStore sessionStore;
 
     private Optional<GetDataAvailabilityDao> dao = Optional.empty();
+
+    private DbQueryFactory dbQueryFactory;
 
     public GetDataAvailabilityHandler() {
         super(SosConstants.SOS);
@@ -96,7 +98,13 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
     }
 
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
     @Override
+    @Transactional()
     public GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest request)
             throws OwsExceptionReport {
         GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();
@@ -136,30 +144,9 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 return checkForDuplictation(context.getDataAvailabilityList());
             }
             return context.getDataAvailabilityList();
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for GetDataAvailability!");
         } finally {
             sessionStore.returnSession(session);
         }
-    }
-
-    private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
-        Map<String, String> map = Maps.newHashMap();
-        if (req.isSetFeaturesOfInterest()) {
-            map.put(IoParameters.FEATURES, listToString(req.getFeaturesOfInterest()));
-        }
-        if (req.isSetProcedures()) {
-            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
-        }
-        if (req.isSetObservedProperties()) {
-            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
-        }
-        if (req.isSetOfferings()) {
-            map.put(IoParameters.OFFERINGS, listToString(req.getOfferings()));
-        }
-        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DataAvailability defaultProcessDataAvailability(DatasetEntity entity, GDARequestContext context,
@@ -173,7 +160,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 dataAvailability.setCount(entity.getObservationCount());
             }
             if (isIncludeResultTime(context.getRequest()) && dao.isPresent()) {
-                dataAvailability.setResultTimes(dao.get().getResultTimes(dataAvailability, context.getRequest()));
+                dataAvailability.setResultTimes(dao.get()
+                        .getResultTimes(dataAvailability, context.getRequest(), session));
             }
             return dataAvailability;
         }
@@ -216,7 +204,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
             if (dao.isPresent()) {
-                dataAvailability.setMetadata(dao.get().getMetadata(dataAvailability));
+                dataAvailability.setMetadata(dao.get()
+                        .getMetadata(dataAvailability, session));
             }
             context.addDataAvailability(dataAvailability);
         }
@@ -450,6 +439,29 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             parentDataAvailabilities.add(childDataAvailability.copy());
         }
         return notContained;
+    }
+
+    private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
+        Map<String, String> map = Maps.newHashMap();
+        if (req.isSetFeaturesOfInterest()) {
+            map.put(IoParameters.FEATURES, listToString(req.getFeaturesOfInterest()));
+        }
+        if (req.isSetProcedures()) {
+            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
+        }
+        if (req.isSetObservedProperties()) {
+            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
+        }
+        if (req.isSetOfferings()) {
+            map.put(IoParameters.OFFERINGS, listToString(req.getOfferings()));
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
     public static class GDARequestContext {

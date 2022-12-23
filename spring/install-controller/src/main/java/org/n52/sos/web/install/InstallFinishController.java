@@ -196,6 +196,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
 
     protected void createAdministratorUser(InstallationConfiguration c) throws InstallationSettingsError {
         try {
+            userService.deleteAllAdmins();
             userService.createAdmin(c.getUsername(), c.getPassword());
         } catch (Throwable e) {
             throw new InstallationSettingsError(c,

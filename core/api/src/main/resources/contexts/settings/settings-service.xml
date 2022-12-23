@@ -20,7 +20,7 @@
         <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html" />
         <property name="order" value="1.1" />
         <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="0 0/120 * * * ?" />
+        <property name="defaultValue" value="0 0 0/2 * * ?" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.cachePersistenceDelay" />
@@ -47,7 +47,15 @@
         <property name="optional" value="true" />
         <property name="group" ref="serviceSettingDefintionGroup" />
     </bean>
-        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.capabilities.provide.static" />
+        <property name="title" value="Provide static capabilities generated after each cache update intervall?" />
+        <property name="description" value="Should the service provide static capabilities which are update after each regular cache update!" />
+        <property name="order" value="1.5" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.sensorDirectory" />
         <property name="title" value="Sensor Directory" />
         <property name="description" value="The path to a directory with the sensor descriptions in SensorML format. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/sensors&lt;/code&gt;) or a path relative to the web application classes directory (e.g. &lt;code&gt;WEB-INF/classes/sensors&lt;/code&gt;)." />
@@ -87,6 +95,14 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="service.requiredGetObservationRequestParameters" />
+        <property name="title" value="Define the required GetObservation parameters (CSV)" />
+        <property name="description" value="Define the required parameters which should be contained in GetObservation requests (CSV)" />
+        <property name="order" value="12.1" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.exposeChildObservableProperties" />
         <property name="title" value="Should this SOS expose child observable properties?" />
@@ -104,36 +120,12 @@
         <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.createFeatureGeometryFromSamplingGeometries" />
-        <property name="title" value="Should this SOS create the featureOfInterest geometry from samplingGeometries?" />
-        <property name="description" value="Whether the SOS should create the featureOfInterest geometry from samplingGeometries." />
-        <property name="order" value="20.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
-     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.updateFeatureGeometry" />
-        <property name="title" value="Should this SOS update the featureOfInterest geometry with samplingGeometries geometry?" />
-        <property name="description" value="Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation. Note: The geometries are added to the end of the LineString! Also if the new observation is between existing observations!" />
-        <property name="order" value="22.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.includeResultTimeForMerging" />
         <property name="title" value="Should this SOS include the resultTime for merging?" />
         <property name="description" value="Whether the SOS should include the resultTime as inidcator when merging observations!" />
         <property name="order" value="23.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-	   <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="misc.convertComplexProfileToSingleProfiles" />
-        <property name="title" value="Should the SOS convert complex profiles to single profiles?" />
-        <property name="description" value="Should the SOS convert complex profiles to single profiles?" />
-        <property name="order" value="23.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.request.timeout" />
@@ -143,22 +135,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="0" />
         <property name="minimum" value="0" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.allowTemplateWithoutProcedureAndFeature" />
-        <property name="title" value="Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?" />
-        <property name="description" value="Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!" />
-        <property name="order" value="25.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.abortInsertResultForExistingObservations" />
-        <property name="title" value="Should this SOS abort the InsertResult if an observation already exist but others not?" />
-        <property name="description" value="Whether the SOS should abort the InsertResult if an observation already exist in the databse but others are new. Default is that the insertion would be stopped!" />
-        <property name="order" value="26.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.sta.supports.urls" />

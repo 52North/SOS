@@ -77,7 +77,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
 
     public ObservationConstellationOmObservationCreator(DatasetEntity observationConstellation,
             List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, Locale language, String pdf,
-            OmObservationCreatorContext creatorContext, Session session) {
+            HibernateOmObservationCreatorContext creatorContext, Session session) {
         super(request, language, pdf, creatorContext, session);
         this.oc = observationConstellation;
         this.featureIds = featureOfInterestIdentifiers != null ? new LinkedList<>(featureOfInterestIdentifiers)

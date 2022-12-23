@@ -77,7 +77,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
             daoFactory.setI18NDAORepository(i18NDAORepository);
             observationDAO = daoFactory.getObservationDAO();
             offeringDAO = daoFactory.getOfferingDAO();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             HibernateObservationBuilder b;
             b = new HibernateObservationBuilder(session, daoFactory);
             DateTime begin = DateTimeHelper.parseIsoString2DateTime("2019-10-01T12:00:00.000Z");
@@ -102,7 +102,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         Transaction transaction = null;
         try {
             session = getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             try (ScrollableIterable<DataEntity<?>> i =
                     ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
                 for (DataEntity<?> o : i) {

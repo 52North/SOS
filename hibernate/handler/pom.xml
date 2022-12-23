@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-hibernate</artifactId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-hibernate-handler</artifactId>
@@ -52,9 +52,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.n52.sensorweb-server.dao-impl</groupId>
-                <artifactId>dao-impl-dao</artifactId>
+            <artifactId>dao-impl-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repo</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repos</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -75,10 +85,6 @@
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>faroe-utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
             <exclusions>
                 <exclusion>
@@ -91,23 +97,9 @@
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.n52.sensorweb-server.helgoland</groupId>
-            <artifactId>proxy-dao</artifactId>
-        </dependency>
-         -->
-        <dependency>
-            <groupId>org.n52.sensorweb-server.helgoland</groupId>
-            <artifactId>helgoland-io</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
@@ -134,6 +126,7 @@
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

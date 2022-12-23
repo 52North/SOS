@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-hibernate</artifactId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-hibernate-session-factory</artifactId>
@@ -59,6 +59,10 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>

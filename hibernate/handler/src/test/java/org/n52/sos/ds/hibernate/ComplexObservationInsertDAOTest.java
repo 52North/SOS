@@ -171,7 +171,7 @@ public class ComplexObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(OFFERING3, PROCEDURE3, OBSPROP3, OBS_TIME, FEATURE3);
         GetObservationResponse response =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         assertThat(response, notNullValue());
         assertThat(response.getObservationCollection().hasNext(), is(true));
         OmObservation omObservation = getObservation(response);

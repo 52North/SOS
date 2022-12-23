@@ -28,10 +28,10 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<jsp:include page="common/header.jsp">
+<jsp:include page="./common/header.jsp">
 	<jsp:param name="activeMenu" value="home" />
 </jsp:include>
-<jsp:include page="common/logotitle.jsp">
+<jsp:include page="./common/logotitle.jsp">
 	<jsp:param name="title" value="52&deg;North SOS" />
 	<jsp:param name="leadParagraph" value="Open Source Sensor Observation Service" />
 </jsp:include>
@@ -78,6 +78,11 @@
 		<tr>
 			<td><a href='http://code.google.com/p/vkbeautify/'>vkbeautify</a></td>
 			<td>0.99.00.beta</td>
+			<td><a href='http://opensource.org/licenses/mit-license.php'>MIT</a></td>
+		</tr>
+		<tr>
+			<td><a href='https://github.com/riversun/xml-beautify/'>xml-beautify</a></td>
+			<td>1.2.3</td>
 			<td><a href='http://opensource.org/licenses/mit-license.php'>MIT</a></td>
 		</tr>
 	</tbody>
@@ -555,4 +560,4 @@
 	</tbody>
 </table>
 
-<jsp:include page="common/footer.jsp" />
+<jsp:include page="./common/footer.jsp" />

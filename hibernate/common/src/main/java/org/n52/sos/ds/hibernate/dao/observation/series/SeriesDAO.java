@@ -252,17 +252,37 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
         @Override
         public Class<? extends DatasetEntity> textProfileClass() {
-            return datasetClass();
+            return profileClass();
         }
 
         @Override
         public Class<? extends DatasetEntity> categoryProfileClass() {
-            return datasetClass();
+            return profileClass();
         }
 
         @Override
         public Class<? extends DatasetEntity> quantityProfileClass() {
+            return profileClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> trajectoryClass() {
             return datasetClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> textTrajectoryClass() {
+            return trajectoryClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> categoryTrajectoryClass() {
+            return trajectoryClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> quantityTrajectoryClass() {
+            return trajectoryClass();
         }
 
         @Override

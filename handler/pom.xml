@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-parent</artifactId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
      <artifactId>sos-handler</artifactId>
     <packaging>jar</packaging>
@@ -63,8 +63,21 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.sensorweb-server.dao-impl</groupId>
             <artifactId>dao-impl-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repos</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -108,6 +121,16 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

@@ -18,3 +18,4 @@ docker/.build/
 .checkstyle
 *.iml
 .idea
+*.class

@@ -33,6 +33,7 @@ import javax.servlet.ServletContextEvent;
 
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.HibernateDatasourceConstants.DatabaseExtension;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -71,9 +72,15 @@ public class SosContextLoaderListener extends ContextLoaderListener {
      *            the context
      */
     private void setProfile(DatabaseSettingsHandler handler, ServletContext sc) {
-        String concept = (String) handler.getAll()
+        String concept = handler.getAll()
                 .getProperty(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
-        sc.setInitParameter(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, concept.toLowerCase());
+        String extension = handler.getAll()
+                .getProperty(HibernateDatasourceConstants.DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
+        String profiles = handler.getAll()
+                .getProperty(HibernateDatasourceConstants.SPRING_PROFILE_KEY, DatabaseExtension.DATASOURCE.name());
+        sc.setInitParameter(
+                AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME,
+                String.join(",", concept.toLowerCase(), extension.toLowerCase(), profiles.toLowerCase()));
     }
 
     @Override

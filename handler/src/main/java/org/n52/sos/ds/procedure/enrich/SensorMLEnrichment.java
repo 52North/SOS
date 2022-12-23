@@ -29,6 +29,7 @@ package org.n52.sos.ds.procedure.enrich;
 
 import java.util.function.Predicate;
 
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
@@ -37,16 +38,30 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifierPredicates;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment {
+
+    private ProcedureEntity procedure;
 
     public SensorMLEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);
+    }
+
+    public SensorMLEnrichment setProcedure(ProcedureEntity procedure) {
+        this.procedure = procedure;
+        return this;
+    }
+
+    public ProcedureEntity getProcedure() {
+        return procedure;
     }
 
     protected Predicate<SmlIdentifier> longNamePredicate() {

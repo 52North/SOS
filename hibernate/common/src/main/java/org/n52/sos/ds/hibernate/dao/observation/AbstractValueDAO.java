@@ -258,4 +258,8 @@ public abstract class AbstractValueDAO extends TimeCreator {
     public GeometryHandler getGeometryHandler() {
         return daoFactory.getGeometryHandler();
     }
+
+    protected DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
 }

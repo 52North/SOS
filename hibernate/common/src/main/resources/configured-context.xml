@@ -3,25 +3,24 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.dao.DaoFactory"/>
+    <beans profile="hibernate">
+        <bean class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
+        <bean class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
+        <bean class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
+        <bean class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
+        <bean class="org.n52.sos.ds.hibernate.dao.DaoFactory"/>
 
-    <bean class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+        <bean class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
+        <bean class="org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext"/>
 
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext"/>
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter"/>
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml101"/>
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml20"/>
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
-    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml101"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml20"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
+        <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
 
-    <bean class="org.n52.sos.ds.hibernate.util.observation.InspireObservationCreator"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.WaterMLObservationCreator"/>
+    </beans>
 
 </beans>

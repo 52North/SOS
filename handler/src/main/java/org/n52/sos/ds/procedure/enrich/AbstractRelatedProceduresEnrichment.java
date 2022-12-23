@@ -29,6 +29,7 @@ package org.n52.sos.ds.procedure.enrich;
 
 import java.util.Set;
 
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -36,19 +37,20 @@ import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
+import org.n52.sos.ds.utils.HibernateUnproxy;
 
 import com.google.common.base.Preconditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public abstract class AbstractRelatedProceduresEnrichment<T>
-        extends ProcedureDescriptionEnrichment {
-    private T procedure;
+public abstract class AbstractRelatedProceduresEnrichment
+        extends ProcedureDescriptionEnrichment implements HibernateUnproxy {
+    private ProcedureEntity procedure;
 
     private String procedureDescriptionFormat;
 
-    private AbstractProcedureConverter<T> converter;
+    private AbstractProcedureConverter<ProcedureEntity> converter;
 
     private TimePeriod validTime;
 
@@ -56,27 +58,27 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
         super(ctx);
     }
 
-    public AbstractRelatedProceduresEnrichment<T> setProcedure(T procedure) {
+    public AbstractRelatedProceduresEnrichment setProcedure(ProcedureEntity procedure) {
         this.procedure = procedure;
         return this;
     }
 
-    public AbstractRelatedProceduresEnrichment<T> setProcedureDescriptionFormat(String pdf) {
+    public AbstractRelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
         this.procedureDescriptionFormat = Preconditions.checkNotNull(pdf);
         return this;
     }
 
-    public AbstractRelatedProceduresEnrichment<T> setValidTime(TimePeriod validTime) {
+    public AbstractRelatedProceduresEnrichment setValidTime(TimePeriod validTime) {
         this.validTime = validTime;
         return this;
     }
 
-    public AbstractRelatedProceduresEnrichment<T> setConverter(AbstractProcedureConverter<T> converter) {
+    public AbstractRelatedProceduresEnrichment setConverter(AbstractProcedureConverter<ProcedureEntity> converter) {
         this.converter = converter;
         return this;
     }
 
-    public T getProcedure() {
+    public ProcedureEntity getProcedure() {
         return procedure;
     }
 
@@ -94,7 +96,7 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
         return validTime;
     }
 
-    public AbstractProcedureConverter<T> getConverter() {
+    public AbstractProcedureConverter<ProcedureEntity> getConverter() {
         return converter;
     }
 

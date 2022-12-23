@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -41,11 +42,13 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.i18n.LocaleHelper;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -86,6 +89,8 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionStore sessionStore;
     private GeometryHandler geometryHandler;
+    private DbQueryFactory dbQueryFactory;
+    private Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider = Optional.empty();
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -112,6 +117,16 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         this.geometryHandler = geometryHandler;
     }
 
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
+    @Inject
+    public void setStaticCapabilitiesProvider(Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider) {
+        this.staticCapabilitiesProvider = staticCapabilitiesProvider;
+    }
+
     @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
@@ -130,17 +145,20 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                     this.i18NDAORepository,
                     this.sessionStore,
                     this.serviceMetadataRepository,
-                    geometryHandler);
+                    geometryHandler,
+                    dbQueryFactory);
             session = this.sessionStore.getSession();
             update.setCache(cache);
             update.setErrors(errors);
             update.setSession(session);
 
-            LOGGER.info("Starting cache update");
+            LOGGER.debug("Starting cache update");
             long cacheUpdateStartTime = System.currentTimeMillis();
 
             update.execute();
-
+            if (staticCapabilitiesProvider.isPresent()) {
+                staticCapabilitiesProvider.get().create();
+            }
             logCacheLoadTime(cacheUpdateStartTime);
         } catch (Exception e) {
             LOGGER.error(ERROR_UPDATE_CACHE, e);
@@ -172,7 +190,8 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                 this.cacheThreadCount,
                 this.defaultLocale,
                 this.geometryHandler,
-                this.sessionStore);
+                this.sessionStore,
+                dbQueryFactory);
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);
@@ -209,7 +228,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
 
     private void logCacheLoadTime(long startTime) {
         Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
-        LOGGER.info("Cache load finished in {} ({} seconds)",
+        LOGGER.debug("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
                 cacheLoadPeriod.toStandardSeconds());
     }

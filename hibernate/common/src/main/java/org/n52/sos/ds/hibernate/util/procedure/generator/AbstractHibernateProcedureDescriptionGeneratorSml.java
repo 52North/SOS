@@ -228,7 +228,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         if (CollectionHelper.isNotEmpty(observationConstellations)) {
             DatasetEntity oc = observationConstellations.iterator().next();
             String unit = queryUnit(oc, session);
-            if (oc.isSetOmObservationType()) {
+            if (oc.isSetOMObservationType()) {
                 final String observationType = oc.getOmObservationType().getFormat();
                 if (null != observationType) {
                     switch (observationType) {
@@ -298,7 +298,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
                             Lists.<String> newArrayList(), session);
             if (series.iterator().hasNext()) {
                 DatasetEntity next = series.iterator().next();
-                if (next.hasUnit()) {
+                if (next.isSetUnit()) {
                     return next.getUnit().getUnit();
                 }
             }

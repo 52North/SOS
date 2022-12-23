@@ -128,5 +128,5 @@ public interface ErrorMessages {
 
     String TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB = "Missing column: featureOfInterestId in public.observation";
 
-    String TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB = "Missing column: seriesId in public.observation";
+    String TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB = "Missing column: datasetId in public.observation";
 }

@@ -52,6 +52,7 @@ import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureHistoryDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
@@ -59,7 +60,8 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  * @since 4.0.0
  *
  */
-public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler implements Constructable {
+public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler
+        implements Constructable, TransactionHelper {
 
     @Inject
     private ConnectionProvider connectionProvider;
@@ -85,7 +87,7 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
         Transaction transaction = null;
         try {
             session = sessionHolder.getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());

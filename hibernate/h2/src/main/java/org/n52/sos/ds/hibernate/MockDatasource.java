@@ -37,7 +37,7 @@ import org.n52.iceland.ds.DatasourceCallback;
 
 public class MockDatasource implements Datasource {
 
-    private static final long serialVersionUID = -755236603023612661L;
+    private static final long serialVersionUID = -7798123898348967576L;
 
     @Override
     public String getDialectName() {

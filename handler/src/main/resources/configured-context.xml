@@ -9,7 +9,14 @@
     <bean id="getDataAvailabilityHandler" class="org.n52.sos.ds.GetDataAvailabilityHandler"/>
     <bean id="getFeatureOfInterestHandler" class="org.n52.sos.ds.GetFeatureOfInterestHandler"/>
     <bean id="getObservationByIdHandler" class="org.n52.sos.ds.GetObservationByIdHandler"/>
+    <bean id="getResultHandler" class="org.n52.sos.ds.GetResultHandler"/>
+    <bean id="getResultTemplateHandler" class="org.n52.sos.ds.GetResultTemplateHandler"/>
     <bean id="cacheFeederHandler" class="org.n52.sos.ds.SosCacheFeederHandler"/>
+
+    <bean class="org.n52.sos.ds.observation.AdditionalObservationCreatorRepository" />
+    <bean class="org.n52.sos.ds.observation.InspireObservationCreator"/>
+    <bean class="org.n52.sos.ds.observation.WaterMLObservationCreator"/>
+    <bean class="org.n52.sos.ds.observation.TimeseriesMLObservationCreator"/>
 
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository" />
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml101"/>
@@ -19,5 +26,8 @@
 
     <bean class="org.n52.sos.ds.procedure.ProcedureConverter"/>
     <bean class="org.n52.sos.ds.procedure.ProcedureCreationContext"/>
+
+    <bean class="org.n52.sos.ds.observation.ObservationHelper"/>
+    <bean class="org.n52.sos.ds.observation.OmObservationCreatorContext"/>
 
 </beans>

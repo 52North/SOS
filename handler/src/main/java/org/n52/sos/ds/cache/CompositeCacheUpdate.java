@@ -29,6 +29,7 @@ package org.n52.sos.ds.cache;
 
 import org.n52.iceland.util.action.CompositeAction;
 import org.n52.iceland.util.action.CompositeSerialAction;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +48,15 @@ public abstract class CompositeCacheUpdate extends AbstractDatasourceCacheUpdate
 
     private CompositeAction<AbstractDatasourceCacheUpdate> delegatedAction;
 
-    public CompositeCacheUpdate(AbstractDatasourceCacheUpdate... actions) {
+    public CompositeCacheUpdate(DbQueryFactory dbQueryFactory, AbstractDatasourceCacheUpdate... actions) {
+        setDbQueryFactory(dbQueryFactory);
         this.delegatedAction = new CompositeSerialAction<AbstractDatasourceCacheUpdate>(actions) {
             @Override
             protected void pre(AbstractDatasourceCacheUpdate action) {
                 action.setCache(getCache());
                 action.setErrors(getErrors());
                 action.setSession(getSession());
+                action.setDbQueryFactory(getDbQueryFactory());
             }
 
             @Override

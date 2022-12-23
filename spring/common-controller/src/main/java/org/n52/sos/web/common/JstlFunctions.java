@@ -28,6 +28,7 @@
 package org.n52.sos.web.common;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -86,7 +87,7 @@ public final class JstlFunctions {
 
     private static boolean checkProfile(ServletContext ctx, String profile) {
         String initParameter = ctx.getInitParameter(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME);
-        return initParameter != null && !initParameter.isEmpty() && initParameter.equalsIgnoreCase(profile);
+        return initParameter != null && !initParameter.isEmpty() && initParameter.contains(profile);
     }
 
     /**
@@ -138,7 +139,8 @@ public final class JstlFunctions {
      * @return <code>true</code>, if file exists
      */
     public static boolean fileExists(ServletContext ctx, String path) {
-        return new File(ctx.getRealPath(path)).exists();
+        return ctx.getRealPath(path) != null ? new File(ctx.getRealPath(path)).exists()
+                : Paths.get(ctx.getRealPath("/"), path).toFile().exists();
     }
 
     public static String mapToJson(Map<?, ?> map) {

@@ -27,14 +27,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.util.Properties;
-import java.util.Set;
-
-import org.n52.faroe.SettingDefinition;
-
-import com.google.common.collect.ImmutableSet;
-
-
 /**
  * ProstgreSQL datasource for core mapping
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -54,18 +46,4 @@ public class PostgresCoreDatasource extends AbstractPostgresDatasource {
         return DIALECT_NAME;
     }
 
-    @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
-    @Override
-    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
-        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(BATCH_SIZE_KEY));
-    }
-
-    @Override
-    public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(BATCH_SIZE_KEY));
-    }
 }

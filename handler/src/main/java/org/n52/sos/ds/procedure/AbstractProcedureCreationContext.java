@@ -40,7 +40,10 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.procedure.generator.AbstractProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.ProcedureDescriptionSettings;
@@ -69,6 +72,7 @@ public class AbstractProcedureCreationContext {
     private Locale defaultLocale;
     private ContentCacheController contentCacheController;
     private ProcedureDescriptionSettings procedureSettings;
+    private DbQueryFactory dbQueryFactory;
 
     public AbstractProcedureCreationContext(
             OwsServiceMetadataRepository serviceMetadataRepository,
@@ -80,7 +84,8 @@ public class AbstractProcedureCreationContext {
             BindingRepository bindingRepository,
             ServiceOperatorRepository serviceOperatorRepository,
             ContentCacheController contentCacheController,
-            ProcedureDescriptionSettings procedureSettings) {
+            ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
         this.serviceMetadataRepository = serviceMetadataRepository;
         this.decoderRepository = decoderRepository;
         this.factoryRepository = factoryRepository;
@@ -91,6 +96,7 @@ public class AbstractProcedureCreationContext {
         this.serviceOperatorRepository = serviceOperatorRepository;
         this.contentCacheController = contentCacheController;
         this.procedureSettings = procedureSettings;
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     /**
@@ -204,6 +210,14 @@ public class AbstractProcedureCreationContext {
      */
     public ProcedureDescriptionSettings getProcedureSettings() {
         return procedureSettings;
+    }
+
+    public DbQueryFactory getDbQueryFactory() {
+        return dbQueryFactory;
+    }
+
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return getDbQueryFactory().createFrom(parameters);
     }
 
 }

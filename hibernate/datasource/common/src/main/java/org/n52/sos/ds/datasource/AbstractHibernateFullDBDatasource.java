@@ -144,6 +144,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, Boolean.TRUE.toString());
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
+        p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
         if (settings.containsKey(TIMEZONE_KEY)) {
             p.put(HibernateConstants.JDBC_TIME_ZONE, settings.get(TIMEZONE_KEY));
@@ -153,6 +154,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
         if (settings.containsKey(TIME_STRING_Z_KEY)) {
             p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
+        }
+        if (getSpringProfiles() != null && !getSpringProfiles().isEmpty()) {
+            p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
         }
         addMappingFileDirectories(settings, p);
 
@@ -174,6 +178,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
             settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
         }
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
@@ -187,6 +192,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
         if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_Z)) {
             settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
+        }
+        if (current.containsKey(SPRING_PROFILE_KEY)) {
+            settings.put(SPRING_PROFILE_KEY, current.getProperty(SPRING_PROFILE_KEY));
         }
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 

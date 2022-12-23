@@ -27,7 +27,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -43,30 +42,30 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.DetectionLimitEntity;
-import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
-import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
-import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
+import org.n52.sos.ds.observation.ObservationValueCreator;
+import org.n52.sos.ds.observation.ParameterAdder;
+import org.n52.sos.ds.observation.PhenomenonTimeCreator;
+import org.n52.sos.ds.observation.RelatedObservationAdder;
+import org.n52.sos.ds.utils.HibernateUnproxy;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,8 +98,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private List<OmObservation> observationCollection;
 
     public ObservationOmObservationCreator(Collection<? extends DataEntity<?>> observations,
-            AbstractObservationRequest request, Locale i18n, String pdf, OmObservationCreatorContext creatorContext,
-            Session session) {
+            AbstractObservationRequest request, Locale i18n, String pdf,
+            HibernateOmObservationCreatorContext creatorContext, Session session) {
         super(request, i18n, pdf, creatorContext, session);
         this.request = request;
         this.observations = observations == null ? Collections.emptyList() : new LinkedList<>(observations);
@@ -142,8 +141,13 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 // // String offeringID =
                 // // hoc.getOffering().getIdentifier();
                 // // String mimeType = SosConstants.PARAMETER_NOT_SET;
-
-                observationCollection.add(createObservation(hObservation));
+                if (hObservation instanceof TrajectoryDataEntity) {
+                    for (DataEntity<?> observation : ((TrajectoryDataEntity) hObservation).getValue()) {
+                        observationCollection.add(createObservation(observation));
+                    }
+                } else {
+                    observationCollection.add(createObservation(hObservation));
+                }
             }
         }
         return ObservationStream.of(this.observationCollection);
@@ -158,7 +162,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
-        final Value<?> value = new ObservationValueCreator(getCreatorContext().getDecoderRepository())
+        ObservationValueCreator creator =
+                new ObservationValueCreator(getCreatorContext().getDaoFactory().getObservationHelper());
+        final Value<?> value = creator
                 .visit(unproxy(hObservation, getSession()));
         OmObservation sosObservation = null;
         if (value != null) {
@@ -170,7 +176,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // add SpatialFilteringProfile
             if (hObservation.isSetGeometryEntity()) {
                 sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler()
-                        .switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getGeometryEntity().getGeometry()));
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getGeometryEntity()
+                                .getGeometry()));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);
@@ -178,10 +185,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
             // + setFirstResult
-            if (!value.isSetValue() && hObservation.hasDetectionLimit()) {
-                sosObservation
-                        .addParameter(createDetectionLimit(hObservation.getDetectionLimit(), value.getUnitObject()));
-            }
+            creator.checkDetectionLimit(value, sosObservation, request.getResponseFormat());
         }
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done in {} ms.", System.currentTimeMillis() - start);
@@ -190,8 +194,10 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private void addRelatedObservations(OmObservation sosObservation, DataEntity<?> hObservation)
             throws CodedException {
-        new RelatedObservationAdder(sosObservation, hObservation, getCreatorContext().getServiceURL().toString(),
-                getCreatorContext().getBindingRepository().isActive(MediaTypes.APPLICATION_KVP)).add();
+        new RelatedObservationAdder(sosObservation, hObservation, getCreatorContext().getServiceURL()
+                .toString(),
+                getCreatorContext().getBindingRepository()
+                        .isActive(MediaTypes.APPLICATION_KVP)).add();
     }
 
     private void addParameter(OmObservation observation, DataEntity<?> hObservation) throws OwsExceptionReport {
@@ -201,7 +207,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (!seriesParameter.containsKey(series.getId()) && series.hasParameters()) {
             seriesParameter.put(series.getId(), series.getParameters());
         }
-        if (seriesParameter.get(series.getId()) != null && !seriesParameter.get(series.getId()).isEmpty()) {
+        if (seriesParameter.get(series.getId()) != null && !seriesParameter.get(series.getId())
+                .isEmpty()) {
             new DatasetParameterAdder(observation, seriesParameter.get(series.getId())).add();
         }
         new ParameterAdder(observation, hObservation).add();
@@ -222,10 +229,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             throws OwsExceptionReport {
         final OmObservation o = new OmObservation();
         o.setObservationID(Long.toString(ho.getId()));
-        if (ho.isSetIdentifier() && !ho.getIdentifier().startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
+        if (ho.isSetIdentifier() && !ho.getIdentifier()
+                .startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
             final CodeWithAuthority identifier = new CodeWithAuthority(ho.getIdentifier());
             if (ho.isSetIdentifierCodespace()) {
-                identifier.setCodeSpace(ho.getIdentifierCodespace().getName());
+                identifier.setCodeSpace(ho.getIdentifierCodespace()
+                        .getName());
             }
             o.setIdentifier(identifier);
         }
@@ -250,10 +259,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private String createPhenomenon(final DataEntity<?> hObservation) throws OwsExceptionReport {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Phenomenon...");
-        final String phenID = hObservation.getDataset().getPhenomenon().getIdentifier();
+        final String phenID = hObservation.getDataset()
+                .getPhenomenon()
+                .getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
-            OmObservableProperty omObservableProperty =
-                    createObservableProperty(hObservation.getDataset().getPhenomenon());
+            OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getDataset()
+                    .getPhenomenon());
             observedProperties.put(phenID, omObservableProperty);
         }
         LOGGER.trace("Creating Phenomenon done in {} ms.", System.currentTimeMillis() - start);
@@ -264,9 +275,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         // TODO sfp full description
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Procedure...");
-        final String procedureId = hObservation.getDataset().getProcedure().getIdentifier();
+        final String procedureId = hObservation.getDataset()
+                .getProcedure()
+                .getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final SosProcedureDescription<?> procedure = createProcedure(hObservation.getDataset().getProcedure());
+            final SosProcedureDescription<?> procedure = createProcedure(hObservation.getDataset()
+                    .getProcedure());
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done in {} ms.", System.currentTimeMillis() - start);
@@ -276,9 +290,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private String createFeatureOfInterest(final DataEntity<?> hObservation) throws OwsExceptionReport {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Feature...");
-        final String foiID = hObservation.getDataset().getFeature().getIdentifier();
+        final String foiID = hObservation.getDataset()
+                .getFeature()
+                .getIdentifier();
         if (!features.containsKey(foiID)) {
-            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getDataset().getFeature());
+            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getDataset()
+                    .getFeature());
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done in {} ms.", System.currentTimeMillis() - start);
@@ -289,18 +306,11 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Offerings...");
         Set<String> offerings = Sets.newHashSet();
-        offerings.add(hObservation.getDataset().getOffering().getIdentifier());
+        offerings.add(hObservation.getDataset()
+                .getOffering()
+                .getIdentifier());
         LOGGER.trace("Creating Offerings done in {} ms.", System.currentTimeMillis() - start);
         return offerings;
-    }
-
-    private NamedValue<?> createDetectionLimit(DetectionLimitEntity detectionLimit, UoM uoM) {
-        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
-        final ReferenceType referenceType =
-                new ReferenceType(detectionLimit.getFlag() > 0 ? "exceed limit" : "below limit");
-        namedValue.setName(referenceType);
-        namedValue.setValue(new QuantityValue(detectionLimit.getDetectionLimit(), uoM));
-        return namedValue;
     }
 
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation, String procedureId,
@@ -316,27 +326,27 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (!Strings.isNullOrEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
-        if (hObservation.getDataset().isSetOmObservationType()) {
-            obsConst.setObservationType(hObservation.getDataset().getOmObservationType().getFormat());
+        DatasetEntity dataset = hObservation.getDataset();
+        if (dataset.isSetOMObservationType()) {
+            obsConst.setObservationType(dataset.getOmObservationType().getFormat());
         }
         observationConstellations.put(hashCode, obsConst);
-        DatasetEntity series = hObservation.getDataset();
-        if (series.isSetIdentifier()) {
-            addIdentifier(obsConst, series);
+        if (dataset.isSetIdentifier()) {
+            addIdentifier(obsConst, dataset);
         }
         obsConst.setObservationType(getResultModel());
         if (request.isSetRequestedLanguage()) {
-            addNameAndDescription(series, obsConst,
-                    getRequestedLanguage(), getI18N(), false);
+            addNameAndDescription(dataset, obsConst, getRequestedLanguage(), getI18N(), false);
             if (obsConst.isSetName()) {
-                obsConst.setHumanReadableIdentifier(obsConst.getFirstName().getValue());
+                obsConst.setHumanReadableIdentifier(obsConst.getFirstName()
+                        .getValue());
             }
         } else {
-            if (series.isSetName()) {
-                addName(obsConst, series);
+            if (dataset.isSetName()) {
+                addName(obsConst, dataset);
             }
-            if (series.isSetDescription()) {
-                obsConst.setDescription(series.getDescription());
+            if (dataset.isSetDescription()) {
+                obsConst.setDescription(dataset.getDescription());
             }
         }
 

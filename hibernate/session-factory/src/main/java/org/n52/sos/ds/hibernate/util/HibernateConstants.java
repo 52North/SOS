@@ -151,6 +151,8 @@ public interface HibernateConstants {
      */
     String C3P0_PRIVILEGE_SPAWNED_THREAD = "hibernate.c3p0.privilegeSpawnedThreads";
 
+    String C3P0_CONNECTION_CUSTOMIZER_CLASS_NAME = "hibernate.c3p0.connectionCustomizerClassName";
+
     String JDBC_BATCH_SIZE = AvailableSettings.STATEMENT_BATCH_SIZE;
 
     //FIXME Not a valid property, remove?
@@ -172,6 +174,8 @@ public interface HibernateConstants {
     String FUNC_EXTENT = "extent";
 
     String JDBC_TIME_ZONE = AvailableSettings.JDBC_TIME_ZONE;
+
+    String SPRING_PROFILE = "hibernate";
 
     String HBM2DDL_CHARSET_NAME = AvailableSettings.HBM2DDL_CHARSET_NAME;
 }

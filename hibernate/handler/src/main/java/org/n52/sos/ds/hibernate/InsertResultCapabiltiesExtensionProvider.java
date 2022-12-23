@@ -48,11 +48,10 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
  *
  * @author Christian Autermann
  */
-public class InsertResultCapabiltiesExtensionProvider
-        implements OwsCapabilitiesExtensionProvider {
+public class InsertResultCapabiltiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
 
-    private static final OwsCapabilitiesExtensionKey KEY
-            = new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+    private static final OwsCapabilitiesExtensionKey KEY =
+            new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
     @Inject
     private ContentCacheController contentCacheController;
 
@@ -66,7 +65,7 @@ public class InsertResultCapabiltiesExtensionProvider
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(procedureDescriptionFormatRepository
-                        .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
         return insertionCapabilities;

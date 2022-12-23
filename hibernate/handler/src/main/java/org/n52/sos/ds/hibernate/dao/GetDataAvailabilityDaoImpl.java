@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -42,11 +41,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -76,23 +72,16 @@ import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao, HibernateDao {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 
-    private Locale defaultLanguage;
-
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -195,13 +184,11 @@ public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAva
     }
 
     /**
-     * Check if extensions contains a temporal filter with valueReference
-     * phenomenonTime
+     * Check if extensions contains a temporal filter with valueReference phenomenonTime
      *
      * @param extensions
      *            Extensions to check
-     * @return <code>true</code>, if extensions contains a temporal filter with
-     *         valueReference phenomenonTime
+     * @return <code>true</code>, if extensions contains a temporal filter with valueReference phenomenonTime
      */
     private boolean hasPhenomenonTimeFilter(Extensions extensions) {
         boolean hasFilter = false;
@@ -217,8 +204,7 @@ public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAva
     }
 
     /**
-     * Get the temporal filter with valueReference phenomenonTime from
-     * extensions
+     * Get the temporal filter with valueReference phenomenonTime from extensions
      *
      * @param extensions
      *            To get filter from
@@ -236,8 +222,4 @@ public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAva
         return null;
     }
 
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
-    }
 }

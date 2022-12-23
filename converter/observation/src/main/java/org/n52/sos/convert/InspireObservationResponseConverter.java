@@ -50,6 +50,7 @@ import org.n52.shetland.inspire.omso.PointObservation;
 import org.n52.shetland.inspire.omso.PointTimeSeriesObservation;
 import org.n52.shetland.inspire.omso.ProfileObservation;
 import org.n52.shetland.inspire.omso.TrajectoryObservation;
+import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.ObservationMergeIndicator;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -71,6 +72,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.SosSettings;
+import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -93,6 +95,8 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
 
     private ContentCacheController contentCacheController;
 
+    private ProfileHandler profileHandler;
+
     @Setting(SosSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
         this.includeResultTimeForMerging = includeResultTimeForMerging;
@@ -101,6 +105,11 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
     @Inject
     public void setContentCacheController(ContentCacheController ctrl) {
         this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     public ContentCacheController getContentCacheController() {
@@ -152,11 +161,7 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
             AbstractObservationResponse resp = (AbstractObservationResponse) response;
             if (InspireOMSOConstants.NS_OMSO_30.equals(resp.getResponseFormat())
                     && resp.getObservationCollection().hasNext()) {
-                // if (resp.hasStreamingData()) {
                 checkData(request, resp);
-                // } else {
-                // checkForNonStreamingData(request, resp);
-                // }
             }
         }
         return response;
@@ -176,33 +181,38 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
         Map<String, List<OmObservation>> map = Maps.newHashMap();
         while (response.getObservationCollection().hasNext()) {
             OmObservation omObservation = response.getObservationCollection().next();
+            String observationType = checkForObservationTypeForStreaming(omObservation, request);
             if (omObservation.getValue() instanceof StreamingValue<?>) {
                 if (checkRequestedObservationTypeForOffering(omObservation, request)) {
-                    String observationType = checkForObservationTypeForStreaming(omObservation, request);
                     while (((StreamingValue<?>) omObservation.getValue()).hasNext()) {
                         OmObservation observation = ((StreamingValue<?>) omObservation.getValue()).next();
-                        if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
-                                    convertToProfileObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
-                                    convertToTrajectoryObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
-                                    convertToMultiPointObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION
-                                .equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
-                                    convertToPointTimeSeriesObservations(observation));
-                        } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
-                            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
-                                    convertToPointObservations(observation));
-                        }
+                        checkAndPutOrAdd(observation, map, observationType);
                     }
                 }
+            } else {
+                checkAndPutOrAdd(omObservation, map, observationType);
             }
         }
         response.setObservationCollection(mergeObservations(map));
+    }
+
+    private void checkAndPutOrAdd(OmObservation observation, Map<String, List<OmObservation>> map,
+            String observationType) throws CodedException {
+        if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
+                    convertToProfileObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
+                    convertToTrajectoryObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
+                    convertToMultiPointObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
+                    convertToPointTimeSeriesObservations(observation));
+        } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
+            putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION, convertToPointObservations(observation));
+        }
     }
 
     /**
@@ -415,7 +425,16 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
                 return InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION;
             }
         }
-        // TODO default setting
+        return checkForObservtionValue(observation);
+    }
+
+    private String checkForObservtionValue(OmObservation observation) {
+        if (observation.getValue() instanceof MultiObservationValues<?>) {
+            return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
+        } else if (observation.getValue() instanceof StreamingValue<?>
+                && this.profileHandler.getActiveProfile().isMergeValues()) {
+            return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
+        }
         return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
     }
 

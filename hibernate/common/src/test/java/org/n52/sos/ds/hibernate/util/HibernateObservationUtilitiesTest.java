@@ -62,9 +62,9 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.util.SosHelper;
 
 /**
@@ -77,7 +77,7 @@ import org.n52.sos.util.SosHelper;
  * @since 4.0.0
  *
  */
-public class HibernateObservationUtilitiesTest extends HibernateTestCase {
+public class HibernateObservationUtilitiesTest extends HibernateTestCase implements TransactionHelper {
     public static final String FEATURE_OF_INTEREST_TYPE = "junit_feature_of_interest_type";
 
     public static final String OFFERING = "junit_offering";
@@ -103,7 +103,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         ObservationStream resultList = HibernateObservationUtilities.createSosObservationFromObservationConstellation(
-                null, null, null, null, null, new OmObservationCreatorContext(null, null, null, null, null, null, null,
+                null, null, null, null, null, new HibernateOmObservationCreatorContext(null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null),
                 null);
         assertThat("result is null", resultList, is(not(nullValue())));
@@ -119,7 +119,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
         Session session = getSession();
 
         try {
-            Transaction transaction = session.beginTransaction();
+            Transaction transaction = getTransaction(session);
             GetObservationByIdRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 
@@ -164,6 +164,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             hResultTemplateEntity.setOffering(hOffering);
             hResultTemplateEntity.setPhenomenon(hObservableProperty);
             hResultTemplateEntity.setProcedure(hProcedure);
+            hResultTemplateEntity.setCategory(hCategory);
             hResultTemplateEntity.setIdentifier("test-rt-1");
             hResultTemplateEntity.setEncoding(
                     "<swe:TextEncoding xmlns:swe=\"http://www.opengis.net/swe/2.0\" "
@@ -230,9 +231,9 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             DaoFactory daoFactory = new DaoFactory();
             daoFactory.setSosHelper(sosHelper);
             // CALL
-            OmObservationCreatorContext ctx = new OmObservationCreatorContext(null, null, daoFactory,
-                    new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
-                    new FeatureQueryHandlerMock(), null, null, null, null, null,
+            HibernateOmObservationCreatorContext ctx = new HibernateOmObservationCreatorContext(null, null, daoFactory,
+                    sosHelper, new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class),
+                    null, new FeatureQueryHandlerMock(), null, null, null, null, null,
                     Mockito.mock(BindingRepository.class));
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(
                     observationsFromDataBase, request, Locale.ENGLISH, null, ctx, session);

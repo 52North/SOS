@@ -48,8 +48,7 @@ import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.AssessmentTypeEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -186,7 +185,23 @@ public class HibernateObservationBuilder {
         return featureOfInterest;
     }
 
-    protected PlatformEntity getPlatform() {
+    protected PlatformEntity getPlatform(boolean eReporting) {
+        if (eReporting) {
+            PlatformEntity platform =
+                    (PlatformEntity) session.createCriteria(PlatformEntity.class)
+                            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                            .add(Restrictions.eq(PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT))
+                            .uniqueResult();
+            if (platform == null) {
+                platform = new PlatformEntity();
+                platform.setIdentifier(EREPORTING_SAMPLING_POINT);
+                platform.setAssessmentType(getEReportingAssessmentType());
+                session.save(platform);
+                session.flush();
+                session.refresh(platform);
+            }
+            return platform;
+        }
         PlatformEntity platform = (PlatformEntity) session.createCriteria(PlatformEntity.class)
                 .add(Restrictions.eq(PlatformEntity.IDENTIFIER, PLATFORM)).uniqueResult();
         if (platform == null) {
@@ -301,15 +316,11 @@ public class HibernateObservationBuilder {
             series.setObservableProperty(getObservableProperty());
             series.setProcedure(getProcedure());
             series.setCategory(getCategory());
-            series.setPlatform(getPlatform());
+            series.setPlatform(getPlatform(series.hasEreportingProfile()));
             series.setFeature(getFeatureOfInterest());
             series.setOffering(offering);
             series.setDeleted(false);
             series.setPublished(true);
-
-            if (series.hasEreportingProfile()) {
-                series.getEreportingProfile().setSamplingPoint(getEReportingSamplingPoint());
-            }
 
             session.save(series);
             session.flush();
@@ -323,33 +334,33 @@ public class HibernateObservationBuilder {
         return series;
     }
 
-    protected EReportingSamplingPointEntity getEReportingSamplingPoint() {
+    protected PlatformEntity getEReportingSamplingPoint() {
 
-        EReportingSamplingPointEntity assessmentType =
-                (EReportingSamplingPointEntity) session.createCriteria(EReportingSamplingPointEntity.class)
+        PlatformEntity platform =
+                (PlatformEntity) session.createCriteria(PlatformEntity.class)
                         .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                        .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT))
+                        .add(Restrictions.eq(PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT))
                         .uniqueResult();
-        if (assessmentType == null) {
-            assessmentType = new EReportingSamplingPointEntity();
-            assessmentType.setIdentifier(EREPORTING_SAMPLING_POINT);
-            assessmentType.setAssessmentType(getEReportingAssessmentType());
-            session.save(assessmentType);
+        if (platform == null) {
+            platform = new PlatformEntity();
+            platform.setIdentifier(EREPORTING_SAMPLING_POINT);
+            platform.setAssessmentType(getEReportingAssessmentType());
+            session.save(platform);
             session.flush();
-            session.refresh(assessmentType);
+            session.refresh(platform);
         }
-        return assessmentType;
+        return platform;
 
     }
 
-    public EReportingAssessmentTypeEntity getEReportingAssessmentType() {
-        EReportingAssessmentTypeEntity assessmentType =
-                (EReportingAssessmentTypeEntity) session.createCriteria(EReportingAssessmentTypeEntity.class)
+    public AssessmentTypeEntity getEReportingAssessmentType() {
+        AssessmentTypeEntity assessmentType =
+                (AssessmentTypeEntity) session.createCriteria(AssessmentTypeEntity.class)
                         .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions
-                                .eq(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, EREPORTING_ASSESSMENT_TYPE))
+                                .eq(AssessmentTypeEntity.PROPERTY_ASSESSMENT_TYPE, EREPORTING_ASSESSMENT_TYPE))
                         .uniqueResult();
         if (assessmentType == null) {
-            assessmentType = new EReportingAssessmentTypeEntity();
+            assessmentType = new AssessmentTypeEntity();
             assessmentType.setAssessmentType(EREPORTING_ASSESSMENT_TYPE);
             assessmentType.setUri(EREPORTING_ASSESSMENT_TYPE);
             session.save(assessmentType);

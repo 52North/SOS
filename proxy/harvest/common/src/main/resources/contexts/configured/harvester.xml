@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:repo="http://www.springframework.org/schema/data/repository"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+        http://www.springframework.org/schema/data/repository
+        http://www.springframework.org/schema/data/repository/spring-repository.xsd">
+
+    <ctx:annotation-config />
+    <beans profile="proxy">
+ 		<bean id="defaultJobConfiguration" class="org.n52.bjornoya.schedule.DefaultJobConfiguration" />
+        <bean id="jobHandler" class="org.n52.bjornoya.schedule.JobHandler" />
+        <bean id="dataSourceHarvesterScheduler" class="org.n52.bjornoya.schedule.Scheduler" init-method="init" destroy-method="shutdown">
+            <property name="scheduler">
+                <bean  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+                    <property name="jobFactory">
+                        <bean class="org.n52.bjornoya.schedule.AutowiringSpringBeanJobFactory" />
+                    </property>
+                    <property name="transactionManager" ref="transactionManager"/>
+                </bean>
+            </property>
+        </bean>
+		<bean name="crudRepository" class="org.n52.sensorweb.server.helgoland.adapters.da.CRUDRepository"/>
+	    <bean name="dataSourceHarvesterHelper" class="org.n52.sensorweb.server.helgoland.adapters.harvest.DataSourceHarvesterHelper"/>
+		<bean name="dataSourceHarvestingJobFactory" class="org.n52.sensorweb.server.helgoland.adapters.harvest.DataSourceHarvestingJobFactory" init-method="init"/>
+    </beans>
+</beans>

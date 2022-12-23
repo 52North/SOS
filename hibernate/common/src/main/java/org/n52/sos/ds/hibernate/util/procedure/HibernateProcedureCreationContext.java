@@ -36,6 +36,7 @@ import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
@@ -64,10 +65,12 @@ public class HibernateProcedureCreationContext
             GeometryHandler geometryHandler,
             BindingRepository bindingRepository,
             ServiceOperatorRepository serviceOperatorRepository,
-            ContentCacheController contentCacheController, ProcedureDescriptionSettings procedureSettings) {
+            ContentCacheController contentCacheController,
+            ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
         super(serviceMetadataRepository, decoderRepository, factoryRepository, i18nr, converterRepository,
                 geometryHandler, bindingRepository, serviceOperatorRepository, contentCacheController,
-                procedureSettings);
+                procedureSettings, dbQueryFactory);
         this.daoFactory = daoFactory;
     }
 

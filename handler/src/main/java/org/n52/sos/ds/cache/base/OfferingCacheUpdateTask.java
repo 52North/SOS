@@ -41,14 +41,14 @@ import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.i18n.I18nEntity;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.old.dao.DatasetDao;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -170,7 +170,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Spatial Envelope
         ReferencedEnvelope envelop = getEnvelopeForOffering(offering);
         getCache().setEnvelopeForOffering(identifier, envelop);
-        getCache().updateGlobalEnvelope(envelop.getEnvelope());
+        if (envelop.isSetEnvelope()) {
+            getCache().updateGlobalEnvelope(envelop.getEnvelope());
+        }
 
         // Temporal extent
         // TODO get from datasets
@@ -309,7 +311,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.OFFERINGS, Long.toString(offering));
         map.put(IoParameters.EXPANDED, "true");
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @Override

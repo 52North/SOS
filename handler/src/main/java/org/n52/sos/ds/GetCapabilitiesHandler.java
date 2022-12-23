@@ -56,18 +56,18 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.OfferingDao;
-import org.n52.series.db.dao.PhenomenonDao;
-import org.n52.series.db.dao.ProcedureDao;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.DatasetDao;
+import org.n52.series.db.old.dao.OfferingDao;
+import org.n52.series.db.old.dao.PhenomenonDao;
+import org.n52.series.db.old.dao.ProcedureDao;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -90,14 +90,18 @@ import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.util.I18NHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler implements ApiQueryHelper, I18NHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesHandler.class);
@@ -110,6 +114,13 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
 
+    private DbQueryFactory dbQueryFactory;
+
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
@@ -119,6 +130,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             If an error occurs
      */
     @Override
+    @Transactional()
     protected List<SosObservationOffering> getContentsForSosV1(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;
@@ -197,7 +209,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
             }
 
             return sosOfferings;
-        } catch (HibernateException | DataAccessException e) {
+        } catch (HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage(ERROR_QUERYING_CAPABILITIES);
         } finally {
@@ -225,6 +237,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             * If an error occurs
      */
     @Override
+    @Transactional()
     protected List<SosObservationOffering> getContentsForSosV2(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;
@@ -316,7 +329,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
             }
 
             return sosOfferings;
-        } catch (HibernateException | DataAccessException e) {
+        } catch (HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage(ERROR_QUERYING_CAPABILITIES);
         } finally {
@@ -326,15 +339,13 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
     private Collection<OfferingEntity> getOfferings(Session session) {
         OfferingDao offeringDao = new OfferingDao(session);
-        Collection<OfferingEntity> offerings = offeringDao.getAllInstances(new DbQuery(IoParameters.createDefaults()));
-
-        Collection<OfferingEntity> allOfferings = offeringDao.get(new DbQuery(IoParameters.createDefaults()));
-        Collection<DatasetEntity> datasets = new DatasetDao(session).get(new DbQuery(IoParameters.createDefaults()));
-        Set<OfferingEntity> notVisibleOfferings = datasets.stream()
-                .filter(d -> d.isDeleted() || !d.isPublished() && !d.getDatasetType()
-                        .equals(DatasetType.not_initialized))
-                .map(d -> d.getOffering())
-                .collect(Collectors.toSet());
+        Collection<OfferingEntity> offerings =
+                offeringDao.getAllInstances(createDbQuery(IoParameters.createDefaults()));
+        Collection<OfferingEntity> allOfferings = offeringDao.get(createDbQuery(IoParameters.createDefaults()));
+        Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(IoParameters.createDefaults()));
+        Set<OfferingEntity> notVisibleOfferings = datasets.stream().filter(
+                d -> d.isDeleted() || !d.isPublished() && !d.getDatasetType().equals(DatasetType.not_initialized))
+                .map(d -> d.getOffering()).collect(Collectors.toSet());
         offerings.addAll(
                 allOfferings.stream().filter(o -> !notVisibleOfferings.contains(o)).collect(Collectors.toSet()));
         return offerings;
@@ -343,7 +354,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     private Collection<? extends SosObservationOffering> createAndGetParentOfferings(
             Collection<OfferingEntity> offerings, SectionSpecificContentObject sectionSpecificContentObject,
             Map<String, List<SosObservationOfferingExtension>> extensions, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Map<OfferingEntity, Set<OfferingEntity>> parentChilds = getParentOfferings(offerings);
 
         List<SosObservationOffering> sosOfferings = new ArrayList<>(parentChilds.size());
@@ -467,33 +478,32 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
 
     protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings,
-            Collection<ProcedureEntity> procedures, SosObservationOffering sosObservationOffering, Session session)
-            throws DataAccessException {
+            Collection<ProcedureEntity> procedures, SosObservationOffering sosObservationOffering, Session session) {
         for (ProcedureEntity procedure : procedures) {
             setUpPhenomenaForOffering(allOfferings, procedure, sosObservationOffering, session);
         }
     }
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, Collection<ProcedureEntity> procedures,
-            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
-            setUpPhenomenaForOffering(Sets.newHashSet(offering), procedures, sosObservationOffering, session);
+            SosObservationOffering sosObservationOffering, Session session) {
+        setUpPhenomenaForOffering(Sets.newHashSet(offering), procedures, sosObservationOffering, session);
     }
 
     protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings, ProcedureEntity procedure,
-            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
+            SosObservationOffering sosObservationOffering, Session session) {
         for (OfferingEntity offering : allOfferings) {
             setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
         }
     }
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
-            SosObservationOffering sosOffering, Session session) throws DataAccessException {
+            SosObservationOffering sosOffering, Session session) {
         Map<String, String> map = new HashMap<>();
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
 
         Collection<PhenomenonEntity> observableProperties =
-                new PhenomenonDao(session).get(new DbQuery(IoParameters.createFromSingleValueMap(map)));
+                new PhenomenonDao(session).get(createDbQuery(IoParameters.createFromSingleValueMap(map)));
         Set<String> validObsProps = getCache().getObservablePropertiesForOffering(offering.getIdentifier());
 
         Collection<String> phenomenons = new LinkedList<>();
@@ -561,7 +571,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
     private Collection<ProcedureEntity> getProceduresForOfferingEntity(
             Entry<OfferingEntity, Set<OfferingEntity>> entry, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Collection<ProcedureEntity> procedures = new HashSet<>();
         for (OfferingEntity offering : entry.getValue()) {
             procedures.addAll(getProceduresForOfferingEntity(offering, session));
@@ -571,9 +581,14 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     }
 
     private Collection<ProcedureEntity> getProceduresForOfferingEntity(OfferingEntity offering, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Map<String, String> map = new HashMap<>(1);
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
-        return new ProcedureDao(session).get(new DbQuery(IoParameters.createFromSingleValueMap(map)));
+        return new ProcedureDao(session).get(createDbQuery(IoParameters.createFromSingleValueMap(map)));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 }

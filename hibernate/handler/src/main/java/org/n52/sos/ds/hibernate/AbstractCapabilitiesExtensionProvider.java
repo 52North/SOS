@@ -35,15 +35,14 @@ import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
     private final String operation;
     private final OwsCapabilitiesExtensionKey key;
 
-    public AbstractCapabilitiesExtensionProvider(String service,
-                                                 String version,
-                                                 String operation) {
+    public AbstractCapabilitiesExtensionProvider(String service, String version, String operation) {
         this.operation = operation;
         this.key = new OwsCapabilitiesExtensionKey(service, version);
     }

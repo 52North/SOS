@@ -67,7 +67,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingSettings;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -81,8 +81,8 @@ import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public abstract class AbstractObservationDao implements HibernateDao {
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+public abstract class AbstractObservationDao extends AbstractDaoImpl {
 
     private static final String LOG_BINARY_LOGIC_INVALID = "The requested binary logic filter operator is invalid!";
 
@@ -232,7 +232,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
 
     public ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
             AbstractObservationRequest request, Locale language, String pdf,
-            OmObservationCreatorContext observationCreatorContext, Session session)
+            HibernateOmObservationCreatorContext observationCreatorContext, Session session)
             throws OwsExceptionReport, ConverterException {
         if (observations.isEmpty()) {
             return ObservationStream.empty();
@@ -247,8 +247,8 @@ public abstract class AbstractObservationDao implements HibernateDao {
     }
 
     public OmObservation toSosObservation(DataEntity<?> observation, AbstractObservationRequest request,
-            Locale language, String pdf, OmObservationCreatorContext observationCreatorContext, Session session)
-            throws OwsExceptionReport, ConverterException {
+            Locale language, String pdf, HibernateOmObservationCreatorContext observationCreatorContext,
+            Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(
@@ -278,8 +278,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
             BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) resultFilter;
             Junction junction;
             if (null == binaryLogicFilter.getOperator()) {
-                throw new NoApplicableCodeException()
-                        .withMessage(LOG_BINARY_LOGIC_INVALID);
+                throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             switch (binaryLogicFilter.getOperator()) {
                 case And:
@@ -289,8 +288,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
                     junction = Restrictions.disjunction();
                     break;
                 default:
-                    throw new NoApplicableCodeException()
-                        .withMessage(LOG_BINARY_LOGIC_INVALID);
+                    throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             for (Filter<?> filterPredicate : binaryLogicFilter.getFilterPredicates()) {
                 if (!(filterPredicate instanceof ComparisonFilter)) {
@@ -333,9 +331,8 @@ public abstract class AbstractObservationDao implements HibernateDao {
     }
 
     /**
-     * Check if the default SQL values for wildcard, single char or escape are
-     * used. If not replace the characters from the result filter with the
-     * default values.
+     * Check if the default SQL values for wildcard, single char or escape are used. If not replace the
+     * characters from the result filter with the default values.
      *
      * @param resultFilter
      *            Requested result filter
@@ -417,14 +414,13 @@ public abstract class AbstractObservationDao implements HibernateDao {
     }
 
     /**
-     * Check if the {@link ObservationEncoder} demands for merging of
-     * observations with the same timeseries.
+     * Check if the {@link ObservationEncoder} demands for merging of observations with the same timeseries.
      *
      * @param responseFormat
      *            Response format
      *
-     * @return <code>true</code>, if the {@link ObservationEncoder} demands for
-     *         merging of observations with the same timeseries.
+     * @return <code>true</code>, if the {@link ObservationEncoder} demands for merging of observations with
+     *         the same timeseries.
      */
     public boolean checkEncoderForMergeObservationValues(String responseFormat) {
         XmlEncoderKey key = new XmlEncoderKey(responseFormat, OmObservation.class);

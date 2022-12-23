@@ -38,6 +38,7 @@ import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Strings;
 
@@ -92,7 +93,7 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
     }
 
     @Override
-    public void write(BinaryAttachmentResponse response, OutputStream out) throws IOException {
+    public void write(BinaryAttachmentResponse response, OutputStream out) throws IOException, EncodingException {
         if (response == null) {
             return;
         }

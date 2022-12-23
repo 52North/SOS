@@ -728,17 +728,16 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
         }
         if (observation.isSetGeometryEntity()) {
             if (offering.isSetGeometry()) {
-                offering.getGeometryEntity().setGeometry(offering.getGeometryEntity().getGeometry()
-                        .union(observation.getGeometryEntity().getGeometry()));
+                offering.getGeometryEntity().expand(observation.getGeometryEntity());
             } else {
-                offering.setGeometryEntity(observation.getGeometryEntity());
+                offering.setGeometryEntity(observation.getGeometryEntity().copy());
             }
         } else if (observation.getDataset().isSetFeature() && observation.getDataset().getFeature().isSetGeometry()) {
             if (offering.isSetGeometry()) {
-                offering.getGeometryEntity().getGeometry()
-                        .union(observation.getDataset().getFeature().getGeometryEntity().getGeometry());
+                offering.getGeometryEntity().expand(observation.getDataset().getFeature().getGeometryEntity());
             } else {
-                offering.setGeometryEntity(observation.getDataset().getFeature().getGeometryEntity());
+                offering.setGeometryEntity(
+                        observation.getDataset().getFeature().getGeometryEntity().copy());
             }
         }
         session.saveOrUpdate(offering);

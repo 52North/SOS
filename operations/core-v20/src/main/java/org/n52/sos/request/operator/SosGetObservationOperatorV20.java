@@ -28,7 +28,9 @@
 package org.n52.sos.request.operator;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -66,8 +68,8 @@ import org.n52.svalbard.encode.ObservationEncoder;
 import com.google.common.collect.Sets;
 
 /**
- * class and forwards requests to the GetObservationDAO; after query of
- * Database, class encodes the ObservationResponse (thru using the IOMEncoder)
+ * class and forwards requests to the GetObservationDAO; after query of Database, class encodes the
+ * ObservationResponse (thru using the IOMEncoder)
  *
  * @since 4.0.0
  */
@@ -75,13 +77,14 @@ import com.google.common.collect.Sets;
 public class SosGetObservationOperatorV20 extends
         AbstractV2RequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
 
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
             new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     private boolean blockRequestsWithoutRestriction;
+    private Set<String> requiredGetObservationRequestParameter = new LinkedHashSet<>();
 
     public SosGetObservationOperatorV20() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationRequest.class);
@@ -100,6 +103,69 @@ public class SosGetObservationOperatorV20 extends
         final GetObservationResponse sosResponse = getOperationHandler().getObservation(request);
         setObservationResponseResponseFormatAndContentType(request, sosResponse);
         return sosResponse;
+    }
+
+    private boolean isBlockRequestsWithoutRestriction() {
+        return blockRequestsWithoutRestriction;
+    }
+
+    @Setting(CoreProfileOperatorSettings.BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION)
+    public void setBlockRequestsWithoutRestriction(boolean flag) {
+        this.blockRequestsWithoutRestriction = flag;
+    }
+
+    private boolean isRequiredGetObservationRequestParameter() {
+        return !requiredGetObservationRequestParameter.isEmpty();
+    }
+
+    @Setting(CoreProfileOperatorSettings.REQUIRED_GET_OBSERVATION_REQUEST_PARAMETERS)
+    public void setRequiredGetObservationRequestParameter(String values) {
+        this.requiredGetObservationRequestParameter.clear();
+        if (values != null && !values.isEmpty()) {
+            for (String value : values.split(",")) {
+                if (value != null && !value.isEmpty()) {
+                    this.requiredGetObservationRequestParameter.add(value.toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+    }
+
+    private boolean checkRequiredParameterMissing(GetObservationRequest request) {
+        if (isRequiredGetObservationRequestParameter()) {
+            for (String parameter : requiredGetObservationRequestParameter) {
+                switch (parameter) {
+                    case "observedproperty":
+                        if (!request.isSetObservableProperty()) {
+                            return true;
+                        }
+                        break;
+                    case "offering":
+                        if (!request.isSetOffering()) {
+                            return true;
+                        }
+                        break;
+                    case "procedure":
+                        if (!request.isSetProcedure()) {
+                            return true;
+                        }
+                        break;
+                    case "featureofinterest":
+                        if (!request.isSetFeatureOfInterest()) {
+                            return true;
+                        }
+                        break;
+                    case "temporalfilter":
+                        if (!request.isSetTemporalFilter()) {
+                            return true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        }
+        return false;
     }
 
     @Override
@@ -156,8 +222,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilter(request.getSpatialFilter(),
-                    SosConstants.GetObservationParams.featureOfInterest.name());
+            checkSpatialFilter(request.getSpatialFilter(), SosConstants.GetObservationParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -177,8 +242,7 @@ public class SosGetObservationOperatorV20 extends
             if (!request.isSetResponseFormat()) {
                 request.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
-            checkResponseFormat(request.getResponseFormat(), request.getService(),
-                    request.getVersion());
+            checkResponseFormat(request.getResponseFormat(), request.getService(), request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -189,9 +253,8 @@ public class SosGetObservationOperatorV20 extends
                     throw new MissingParameterValueException(SosConstants.GetObservationParams.resultType);
                 } else {
 
-                    if (!getResponseFormatsForObservationType(request.getResultModel(),
-                                    request.getService(), request.getVersion())
-                            .contains(request.getResponseFormat())) {
+                    if (!getResponseFormatsForObservationType(request.getResultModel(), request.getService(),
+                            request.getVersion()).contains(request.getResponseFormat())) {
                         throw new InvalidParameterValueException().withMessage(
                                 "The requested resultType {} is not valid for the responseFormat {}!",
                                 request.getResultModel(), request.getResponseFormat());
@@ -203,14 +266,12 @@ public class SosGetObservationOperatorV20 extends
         }
 
         if (getActiveProfile().isMergeValues()) {
-            if (!request.getExtensions()
-                    .containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
+            if (!request.getExtensions().containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
                 Extensions extensions = new Extensions();
                 extensions.addExtension(new SwesExtension<SweBoolean>()
                         .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())
                         .setValue((SweBoolean) new SweBoolean()
-                                .setValue(getProfileHandler().getActiveProfile()
-                                        .isMergeValues())
+                                .setValue(getProfileHandler().getActiveProfile().isMergeValues())
                                 .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
                 request.setExtensions(extensions);
             }
@@ -226,19 +287,10 @@ public class SosGetObservationOperatorV20 extends
         // check if parameters are set, if not throw ResponseExceedsSizeLimit
         // exception
         // TODO remove after finishing CITE tests
-        if (request.isEmpty() && isBlockRequestsWithoutRestriction()) {
+        if (request.isEmpty() && isBlockRequestsWithoutRestriction() || checkRequiredParameterMissing(request)) {
             throw new ResponseExceedsSizeLimitException()
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
-    }
-
-    private boolean isBlockRequestsWithoutRestriction() {
-        return blockRequestsWithoutRestriction;
-    }
-
-    @Setting(CoreProfileOperatorSettings.BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION)
-    public void setBlockRequestsWithoutRestriction(boolean flag) {
-        this.blockRequestsWithoutRestriction = flag;
     }
 
     /**
@@ -261,7 +313,7 @@ public class SosGetObservationOperatorV20 extends
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
                     final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
                     if (!offerings.contains(offArray[0])
-                        || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
+                            || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
                         exceptions.add(new InvalidOfferingParameterException(offeringId));
                     }
 
@@ -301,5 +353,9 @@ public class SosGetObservationOperatorV20 extends
     @Override
     public Metadata getSosOperationDefinition() {
         return Metadatas.GET_OBSERVATION;
+    }
+
+    private enum RequiredParameter {
+        observedproperty, offering, procedure, featureofinterest, temporalfilter;
     }
 }

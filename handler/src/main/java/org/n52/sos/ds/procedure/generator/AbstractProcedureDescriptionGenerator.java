@@ -42,14 +42,13 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
-import org.n52.series.db.DataAccessException;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.PhenomenonDao;
+import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
@@ -65,6 +64,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract generator class for procedure descriptions
  *
@@ -73,6 +74,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractProcedureDescriptionGenerator
         implements ProcedureDescriptionGenerator, I18nNameDescriptionAdder {
 
@@ -92,11 +94,16 @@ public abstract class AbstractProcedureDescriptionGenerator
 
     private ProcedureDescriptionSettings procedureSettings;
 
+    private DbQueryFactory dbQueryFactory;
+
     public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
-            ContentCacheController cacheController) {
+            ContentCacheController cacheController,
+            ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
-
+        this.procedureSettings = procedureSettings;
+        this.dbQueryFactory = dbQueryFactory;
     }
 
     public abstract SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
@@ -187,13 +194,8 @@ public abstract class AbstractProcedureDescriptionGenerator
 
     protected List<PhenomenonEntity> getObservablePropertiesForProcedure(ProcedureEntity procedure, Session session)
             throws OwsExceptionReport {
-        try {
-            PhenomenonDao dao = new PhenomenonDao(session);
-            return dao.getAllInstances(createDbQuery(procedure));
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying observable properties for sensor description!");
-        }
+        PhenomenonDao dao = new PhenomenonDao(session);
+        return dao.getAllInstances(createDbQuery(procedure));
     }
 
     protected TreeSet<String> getIdentifierList(Collection<PhenomenonEntity> observableProperties) {
@@ -207,7 +209,11 @@ public abstract class AbstractProcedureDescriptionGenerator
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    protected DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
     @VisibleForTesting

@@ -31,10 +31,8 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.OfferingDao;
+import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
@@ -57,7 +55,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
         try {
             // TODD Use TimerPeriod.expand from OfferingTimes
             List<OfferingEntity> offerings =
-                    new OfferingDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+                    new OfferingDao(getSession()).getAllInstances(createDbQuery(IoParameters.createDefaults()));
             TimePeriod phenomenonTime = new TimePeriod();
             TimePeriod resultTime = new TimePeriod();
             for (OfferingEntity offering : offerings) {
@@ -69,7 +67,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
             getCache().setMaxPhenomenonTime(phenomenonTime.getEnd());
             getCache().setMinResultTime(resultTime.getStart());
             getCache().setMaxResultTime(resultTime.getEnd());
-        } catch (HibernateException | DataAccessException dae) {
+        } catch (HibernateException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating observation time cache!"));
         }

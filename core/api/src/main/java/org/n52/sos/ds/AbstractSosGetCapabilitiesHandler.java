@@ -53,6 +53,7 @@ import javax.xml.namespace.QName;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.MediaTypeBindingKey;
+import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
@@ -128,7 +129,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @since 4.0.0
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosGetCapabilitiesHandler.class);
@@ -186,6 +187,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     @Inject
     private Optional<TransactionalSecurityConfiguration> transactionalSecurityConfiguration;
 
+    @Inject
+    private Optional<StaticCapabilitiesProvider> staticCapabilitiesProvider;
+
     public AbstractSosGetCapabilitiesHandler() {
         this(SosConstants.SOS);
     }
@@ -209,11 +213,16 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                 && !capabilitiesId.equals(GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
             createStaticCapabilitiesWithId(request, response);
         } else {
-            createDynamicCapabilities(request, response, showTransactionalOperations);
+            if (this.staticCapabilitiesProvider.isPresent()
+                    && this.staticCapabilitiesProvider.get().isProvideStaticCapabilities()) {
+                getStaticCapabilities(request, response);
+            }
+            if (!response.isStatic()) {
+                createDynamicCapabilities(request, response, showTransactionalOperations);
+            }
         }
-        if (getCache().getLastUpdateTime() != null && response.getCapabilities() != null && !response.getCapabilities()
-                .getUpdateSequence()
-                .isPresent()) {
+        if (getCache().getLastUpdateTime() != null && response.getCapabilities() != null
+                && !response.getCapabilities().getUpdateSequence().isPresent()) {
             response.getCapabilities()
                     .setUpdateSequence(DateTimeHelper.formatDateTime2IsoString(getCache().getLastUpdateTime()));
         }
@@ -228,16 +237,12 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
             String version;
 
             if (request.isSetAcceptVersions()) {
-                version = request.getAcceptVersions()
-                        .stream()
-                        .filter(v -> getServiceOperatorRepository().isVersionSupported(service, v))
-                        .findFirst()
+                version = request.getAcceptVersions().stream()
+                        .filter(v -> getServiceOperatorRepository().isVersionSupported(service, v)).findFirst()
                         .orElseThrow(this::versionNegotiationFailed);
             } else {
-                version = getServiceOperatorRepository().getSupportedVersions(service)
-                        .stream()
-                        .max(Comparables.version())
-                        .orElseThrow(() -> new InvalidServiceParameterException(service));
+                version = getServiceOperatorRepository().getSupportedVersions(service).stream()
+                        .max(Comparables.version()).orElseThrow(() -> new InvalidServiceParameterException(service));
             }
             request.setVersion(version);
             return version;
@@ -252,29 +257,23 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
 
     private void addSectionSpecificContent(SectionSpecificContentObject sectionSpecificContentObject,
             GetCapabilitiesRequest request, boolean showTransactionalOperations) throws OwsExceptionReport {
-        String version = sectionSpecificContentObject.getGetCapabilitiesResponse()
-                .getVersion();
-        String service = sectionSpecificContentObject.getGetCapabilitiesResponse()
-                .getService();
+        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+        String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
 
         if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities()
-                    .setServiceIdentification(
-                            getServiceIdentification(request, service, version, showTransactionalOperations));
+            sectionSpecificContentObject.getSosCapabilities().setServiceIdentification(
+                    getServiceIdentification(request, service, version, showTransactionalOperations));
         }
         if (isServiceProviderSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
-                    .setServiceProvider(this.serviceMetadataRepository.getServiceProviderFactory(service)
-                            .get());
+                    .setServiceProvider(this.serviceMetadataRepository.getServiceProviderFactory(service).get());
         }
         if (isOperationsMetadataSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities()
-                    .setOperationsMetadata(getOperationsMetadataForOperations(request, service, version,
-                            showTransactionalOperations));
+            sectionSpecificContentObject.getSosCapabilities().setOperationsMetadata(
+                    getOperationsMetadataForOperations(request, service, version, showTransactionalOperations));
         }
         if (isFilterCapabilitiesSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities()
-                    .setFilterCapabilities(getFilterCapabilities(version));
+            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(version));
         }
         if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
@@ -290,11 +289,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
             if (sectionSpecificContentObject.getRequestedSections() == ALL) {
                 sectionSpecificContentObject.getSosCapabilities()
                         .setExtensions(getAndMergeExtensions(service, version));
-            } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions()
-                    .isEmpty()) {
-                sectionSpecificContentObject.getSosCapabilities()
-                        .setExtensions(getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(),
-                                service, version));
+            } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
+                sectionSpecificContentObject.getSosCapabilities().setExtensions(getExtensions(
+                        sectionSpecificContentObject.getRequestedExtensionSesctions(), service, version));
             }
         }
     }
@@ -358,22 +355,17 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     private Set<URI> getProfiles(String service, String version, boolean showTransactionalOperations) {
-        Set<URI> profiles = Stream.of(getBindingRepository().getBindings()
-                .values(), getRequestOperatorRepository().getRequestOperators(), getDecoderRepository().getDecoders(),
-                getEncoderRepository().getEncoders(), getOperationHandlerRepository().getOperationHandlers()
-                        .values())
+        Set<URI> profiles = Stream.of(getBindingRepository().getBindings().values(),
+                getRequestOperatorRepository().getRequestOperators(), getDecoderRepository().getDecoders(),
+                getEncoderRepository().getEncoders(), getOperationHandlerRepository().getOperationHandlers().values())
                 .flatMap(Collection::stream)
                 .filter(o -> !(o instanceof AbstractTransactionalRequestOperator)
                         || o instanceof AbstractTransactionalRequestOperator && showTransactionalOperations)
-                .filter(c -> c instanceof ConformanceClass)
-                .map(c -> (ConformanceClass) c)
-                .map(c -> c.getConformanceClasses(service, version))
-                .flatMap(Set::stream)
-                .map(URI::create)
+                .filter(c -> c instanceof ConformanceClass).map(c -> (ConformanceClass) c)
+                .map(c -> c.getConformanceClasses(service, version)).flatMap(Set::stream).map(URI::create)
                 .collect(Collectors.toSet());
         if (Sos2Constants.SERVICEVERSION.equals(version)) {
-            checkBindingConformanceClasses(getBindingRepository().getBindings()
-                    .values(), profiles);
+            checkBindingConformanceClasses(getBindingRepository().getBindings().values(), profiles);
         }
 
         // FIXME additional profiles
@@ -384,35 +376,22 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     private void checkBindingConformanceClasses(Collection<Binding> values, Set<URI> profiles) {
-        Set<URI> collect = Stream.of(getBindingRepository().getBindings()
-                .values())
-                .flatMap(Collection::stream)
-                .map(b -> b.getKeys())
-                .flatMap(Set::stream)
-                .filter(k -> k instanceof MediaTypeBindingKey)
-                .map(k -> (MediaTypeBindingKey) k)
-                .map(k -> {
-                    if (k.getMediaType()
-                            .equals(MediaTypes.APPLICATION_KVP)) {
+        Set<URI> collect = Stream.of(getBindingRepository().getBindings().values()).flatMap(Collection::stream)
+                .map(b -> b.getKeys()).flatMap(Set::stream).filter(k -> k instanceof MediaTypeBindingKey)
+                .map(k -> (MediaTypeBindingKey) k).map(k -> {
+                    if (k.getMediaType().equals(MediaTypes.APPLICATION_KVP)) {
                         return ConformanceClasses.SOS_V2_KVP_CORE_BINDING;
-                    } else if (k.getMediaType()
-                            .equals(MediaTypes.APPLICATION_JSON)) {
+                    } else if (k.getMediaType().equals(MediaTypes.APPLICATION_JSON)) {
                         return "http://www.opengis.net/spec/SOS/2.0/conf/json";
-                    } else if (k.getMediaType()
-                            .equals(MediaTypes.APPLICATION_SOAP_XML)) {
+                    } else if (k.getMediaType().equals(MediaTypes.APPLICATION_SOAP_XML)) {
                         return ConformanceClasses.SOS_V2_SOAP_BINDING;
-                    } else if (k.getMediaType()
-                            .equals(MediaTypes.APPLICATION_XML)) {
+                    } else if (k.getMediaType().equals(MediaTypes.APPLICATION_XML)) {
                         return ConformanceClasses.SOS_V2_POX_BINDING;
-                    } else if (k.getMediaType()
-                            .equals(MediaTypes.APPLICATION_EXI)) {
+                    } else if (k.getMediaType().equals(MediaTypes.APPLICATION_EXI)) {
                         return "http://www.opengis.net/spec/SOS/2.0/conf/exi";
                     }
                     return null;
-                })
-                .filter(Objects::nonNull)
-                .map(URI::create)
-                .collect(Collectors.toSet());
+                }).filter(Objects::nonNull).map(URI::create).collect(Collectors.toSet());
         profiles.addAll(collect);
 
     }
@@ -427,8 +406,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
      * @param version
      *            Requested service version
      *
-     * @return OperationsMetadata for all operations supported by the requested
-     *         service and version
+     * @return OperationsMetadata for all operations supported by the requested service and version
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -441,9 +419,8 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         List<OwsDomain> constraints = Collections.emptyList();
         OwsOperationMetadataExtension owsExtendedCapabilities = null;
         /*
-         * check if an OwsExtendedCapabilities provider is available for this
-         * service and check if this provider provides OwsExtendedCapabilities
-         * for the request
+         * check if an OwsExtendedCapabilities provider is available for this service and check if this
+         * provider provides OwsExtendedCapabilities for the request
          */
         OwsOperationMetadataExtensionProvider provider =
                 getOwsExtendedCapabilitiesProviderRepository().getExtendedCapabilitiesProvider(service, version);
@@ -598,18 +575,14 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         switch (version) {
             case Sos2Constants.SERVICEVERSION:
                 for (final TimeOperator op : TimeOperator.values()) {
-                    ops.computeIfAbsent(op, createSynchronizedSet())
-                            .add(GmlConstants.QN_TIME_INSTANT_32);
-                    ops.computeIfAbsent(op, createSynchronizedSet())
-                            .add(GmlConstants.QN_TIME_PERIOD_32);
+                    ops.computeIfAbsent(op, createSynchronizedSet()).add(GmlConstants.QN_TIME_INSTANT_32);
+                    ops.computeIfAbsent(op, createSynchronizedSet()).add(GmlConstants.QN_TIME_PERIOD_32);
                 }
                 break;
             case Sos1Constants.SERVICEVERSION:
                 for (final TimeOperator op : TimeOperator.values()) {
-                    ops.computeIfAbsent(op, createSynchronizedSet())
-                            .add(GmlConstants.QN_TIME_INSTANT);
-                    ops.computeIfAbsent(op, createSynchronizedSet())
-                            .add(GmlConstants.QN_TIME_PERIOD);
+                    ops.computeIfAbsent(op, createSynchronizedSet()).add(GmlConstants.QN_TIME_INSTANT);
+                    ops.computeIfAbsent(op, createSynchronizedSet()).add(GmlConstants.QN_TIME_PERIOD);
                 }
                 break;
             default:
@@ -663,8 +636,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     protected Set<String> getFOI4offering(final String offering) throws OwsExceptionReport {
         final Set<String> featureIDs = new HashSet<>(0);
         final Set<String> features = getCache().getFeaturesOfInterestForOffering(offering);
-        if (!getProfileHandler().getActiveProfile()
-                .isListFeatureOfInterestsInOfferings() || features == null) {
+        if (!getProfileHandler().getActiveProfile().isListFeatureOfInterestsInOfferings() || features == null) {
             featureIDs.add(OGCConstants.UNKNOWN);
         } else {
             featureIDs.addAll(features);
@@ -673,26 +645,19 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     protected Collection<String> getObservationTypes(String offering) {
-        Set<String> observationTypes = getCache().getObservationTypesForOffering(offering)
-                .stream()
-                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED)
-                        .negate())
-                .collect(Collectors.toSet());
+        Set<String> observationTypes = getCache().getObservationTypesForOffering(offering).stream()
+                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate()).collect(Collectors.toSet());
 
         if (observationTypes.isEmpty()) {
-            getCache().getAllowedObservationTypesForOffering(offering)
-                    .stream()
-                    .filter(Predicate.isEqual(SosConstants.NOT_DEFINED)
-                            .negate())
-                    .forEach(observationTypes::add);
+            getCache().getAllowedObservationTypesForOffering(offering).stream()
+                    .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate()).forEach(observationTypes::add);
         }
         return observationTypes;
     }
 
     @Override
     protected Set<String> getExtensionSections(String service, String version) throws OwsExceptionReport {
-        return getAndMergeExtensions(service, version).stream()
-                .map(OwsCapabilitiesExtension::getSectionName)
+        return getAndMergeExtensions(service, version).stream().map(OwsCapabilitiesExtension::getSectionName)
                 .collect(Collectors.toSet());
     }
 
@@ -717,9 +682,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         List<OwsCapabilitiesExtension> extensions = new LinkedList<>();
         if (CollectionHelper.isNotEmpty(providers)) {
             Map<String, MergableExtension> map = new HashMap<>(providers.size());
-            providers.stream()
-                    .filter(Objects::nonNull)
-                    .map(OwsCapabilitiesExtensionProvider::getExtension)
+            providers.stream().filter(Objects::nonNull).map(OwsCapabilitiesExtensionProvider::getExtension)
                     .forEachOrdered(extension -> {
                         if (extension instanceof MergableExtension) {
                             map.merge(extension.getSectionName(), (MergableExtension) extension,
@@ -741,8 +704,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     private Collection<OwsCapabilitiesExtension> getExtensions(Set<String> requestedExtensionSections, String service,
             String version) throws OwsExceptionReport {
         return getAndMergeExtensions(service, version).stream()
-                .filter(e -> requestedExtensionSections.contains(e.getSectionName()))
-                .collect(Collectors.toList());
+                .filter(e -> requestedExtensionSections.contains(e.getSectionName())).collect(Collectors.toList());
     }
 
     protected void setUpPhenomenaForOffering(String offering, String procedure, SosObservationOffering sosOffering) {
@@ -751,35 +713,26 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
 
     protected void setUpPhenomenaForOffering(final Set<String> offerings, final String procedure,
             final SosObservationOffering sosOffering) {
-        Collection<String> phenomenons = offerings.stream()
-                .flatMap(offering -> {
-                    Collection<String> observableProperties = getCache().getObservablePropertiesForOffering(offering);
-                    return observableProperties.stream()
-                            .filter(observableProperty -> {
-                                Set<String> procedures =
-                                        getCache().getProceduresForObservableProperty(observableProperty);
-                                return procedures.contains(procedure)
-                                        || isHiddenChildProcedureObservableProperty(offering, procedures);
-                            });
-                })
-                .collect(Collectors.toList());
+        Collection<String> phenomenons = offerings.stream().flatMap(offering -> {
+            Collection<String> observableProperties = getCache().getObservablePropertiesForOffering(offering);
+            return observableProperties.stream().filter(observableProperty -> {
+                Set<String> procedures = getCache().getProceduresForObservableProperty(observableProperty);
+                return procedures.contains(procedure)
+                        || isHiddenChildProcedureObservableProperty(offering, procedures);
+            });
+        }).collect(Collectors.toList());
 
-        sosOffering.setCompositePhenomena(offerings.stream()
-                .map(getCache()::getCompositePhenomenonsForOffering)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet()));
-        sosOffering.setPhens4CompPhens(sosOffering.getCompositePhenomena()
-                .stream()
-                .collect(Collectors.toMap(Function.identity(),
-                        getCache()::getObservablePropertiesForCompositePhenomenon)));
+        sosOffering.setCompositePhenomena(offerings.stream().map(getCache()::getCompositePhenomenonsForOffering)
+                .flatMap(Set::stream).collect(Collectors.toSet()));
+        sosOffering.setPhens4CompPhens(sosOffering.getCompositePhenomena().stream().collect(
+                Collectors.toMap(Function.identity(), getCache()::getObservablePropertiesForCompositePhenomenon)));
 
         sosOffering.setObservableProperties(phenomenons);
     }
 
     private boolean isHiddenChildProcedureObservableProperty(String offering,
             Set<String> proceduresForObservableProperty) {
-        return getCache().getHiddenChildProceduresForOffering(offering)
-                .stream()
+        return getCache().getHiddenChildProceduresForOffering(offering).stream()
                 .anyMatch(proceduresForObservableProperty::contains);
     }
 
@@ -795,8 +748,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
 
     protected void setUpRelatedFeaturesForOffering(Stream<String> offerings, SosObservationOffering sosOffering) {
 
-        sosOffering.setRelatedFeatures(offerings.map(getCache()::getRelatedFeaturesForOffering)
-                .flatMap(Set::stream)
+        sosOffering.setRelatedFeatures(offerings.map(getCache()::getRelatedFeaturesForOffering).flatMap(Set::stream)
                 .collect(Collectors.toMap(Function.identity(), getCache()::getRolesForRelatedFeature)));
     }
 
@@ -835,10 +787,8 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     protected void setUpFeatureOfInterestTypesForOffering(Set<String> offerings, SosObservationOffering sosOffering) {
-        sosOffering.setFeatureOfInterestTypes(offerings.stream()
-                .map(getCache()::getAllObservationTypesForOffering)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet()));
+        sosOffering.setFeatureOfInterestTypes(offerings.stream().map(getCache()::getAllObservationTypesForOffering)
+                .flatMap(Set::stream).collect(Collectors.toSet()));
 
     }
 
@@ -850,13 +800,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     protected Set<String> getResponseFormatForOffering(String offering, String version) {
-        Set<String> responseFormats = getCache().getAllObservationTypesForOffering(offering)
-                .stream()
-                .map(observationType -> getResponseFormatsForObservationType(observationType, SosConstants.SOS,
-                        version))
-                .filter(Objects::nonNull)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+        Set<String> responseFormats = getCache().getAllObservationTypesForOffering(offering).stream().map(
+                observationType -> getResponseFormatsForObservationType(observationType, SosConstants.SOS, version))
+                .filter(Objects::nonNull).flatMap(Set::stream).collect(Collectors.toSet());
 
         switch (version) {
             case Sos1Constants.SERVICEVERSION:
@@ -869,8 +815,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     private Set<String> checkForMimeType(Set<String> responseFormats, boolean onlyMimeTypes) {
-        return responseFormats.stream()
-                .filter(format -> isMimeType(format) == onlyMimeTypes)
+        return responseFormats.stream().filter(format -> isMimeType(format) == onlyMimeTypes)
                 .collect(Collectors.toSet());
     }
 
@@ -901,9 +846,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             procedures.addAll(getCache().getHiddenChildProceduresForOffering(offering));
         }
-        return procedures.stream()
-                .filter(getCache().getPublishedProcedures()::contains)
-                .collect(Collectors.toSet());
+        return procedures.stream().filter(getCache().getPublishedProcedures()::contains).collect(Collectors.toSet());
     }
 
     private boolean isContentsSectionRequested(int sections) {
@@ -937,23 +880,15 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         // ?
         url.append('?');
         // service
-        url.append(OWSConstants.RequestParams.service.name())
-                .append('=')
-                .append(SosConstants.SOS);
+        url.append(OWSConstants.RequestParams.service.name()).append('=').append(SosConstants.SOS);
         // version
-        url.append('&')
-                .append(OWSConstants.RequestParams.version.name())
-                .append('=')
+        url.append('&').append(OWSConstants.RequestParams.version.name()).append('=')
                 .append(Sos2Constants.SERVICEVERSION);
         return url.toString();
     }
 
     protected String addParameter(String url, String parameter, String value) {
-        return new StringBuilder(url).append('&')
-                .append(parameter)
-                .append('=')
-                .append(value)
-                .toString();
+        return new StringBuilder(url).append('&').append(parameter).append('=').append(value).toString();
     }
 
     protected RequestOperatorRepository getRequestOperatorRepository() {
@@ -969,6 +904,10 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         response.setXmlString(this.capabilitiesExtensionService.getActiveStaticCapabilitiesDocument());
     }
 
+    private void getStaticCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) {
+        response.setXmlString(this.staticCapabilitiesProvider.get().get(response));
+    }
+
     private void createStaticCapabilitiesWithId(GetCapabilitiesRequest request, GetCapabilitiesResponse response)
             throws OwsExceptionReport {
         StaticCapabilities sc = this.capabilitiesExtensionService.getStaticCapabilities(request.getCapabilitiesId());
@@ -979,7 +918,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         response.setXmlString(sc.getDocument());
     }
 
-    private void createDynamicCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response,
+    protected void createDynamicCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response,
             boolean showTransactionalOperations) throws OwsExceptionReport {
         Set<String> availableExtensionSections = getExtensionSections(response.getService(), response.getVersion());
         Set<String> requestedExtensionSections = new HashSet<>(availableExtensionSections.size());
@@ -989,12 +928,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         SosCapabilities sosCapabilities = new SosCapabilities(request.getService(), request.getVersion(), null, null,
                 null, null, null, null, null, null);
 
-        SectionSpecificContentObject sectionSpecificContentObject =
-                new SectionSpecificContentObject().setRequest(request)
-                        .setResponse(response)
-                        .setRequestedExtensionSections(requestedExtensionSections)
-                        .setRequestedSections(requestedSections)
-                        .setSosCapabilities(sosCapabilities);
+        SectionSpecificContentObject sectionSpecificContentObject = new SectionSpecificContentObject()
+                .setRequest(request).setResponse(response).setRequestedExtensionSections(requestedExtensionSections)
+                .setRequestedSections(requestedSections).setSosCapabilities(sosCapabilities);
 
         addSectionSpecificContent(sectionSpecificContentObject, request, showTransactionalOperations);
         response.setCapabilities(sosCapabilities);
@@ -1004,14 +940,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     private List<OwsOperation> getOperations(String service, String version, boolean showTransactionalOperations)
             throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
-        List<OwsOperation> operations = getRequestOperatorRepository().getActiveRequestOperatorKeys()
-                .stream()
-                .filter(k -> k.getService()
-                        .equals(service))
-                .filter(k -> k.getVersion()
-                        .equals(version))
-                .map(getRequestOperatorRepository()::getRequestOperator)
-                .map(operator -> {
+        List<OwsOperation> operations = getRequestOperatorRepository().getActiveRequestOperatorKeys().stream()
+                .filter(k -> k.getService().equals(service)).filter(k -> k.getVersion().equals(version))
+                .map(getRequestOperatorRepository()::getRequestOperator).map(operator -> {
                     if (!(operator instanceof AbstractTransactionalRequestOperator)
                             || operator instanceof AbstractTransactionalRequestOperator
                                     && showTransactionalOperations) {
@@ -1023,9 +954,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                         }
                     }
                     return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                }).filter(Objects::nonNull).collect(Collectors.toList());
         exceptions.throwIfNotEmpty();
         return operations;
     }
@@ -1042,23 +971,19 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
 
     private OwsDomain getVersionParameter(String service, String version) {
         Set<String> supportedVersions = getServiceOperatorRepository().getSupportedVersions(service);
-        Stream<OwsValue> allowedValues = supportedVersions.stream()
-                .map(OwsValue::new);
+        Stream<OwsValue> allowedValues = supportedVersions.stream().map(OwsValue::new);
         return new OwsDomain(OWSConstants.RequestParams.version, new OwsAllowedValues(allowedValues));
     }
 
     private OwsDomain getCrsParameter(String service, String version) {
         Set<String> crs = this.geometryHandler.addOgcCrsPrefix(getGeometryHandler().getSupportedCRS());
-        Stream<OwsValue> allowedValues = crs.stream()
-                .map(OwsValue::new);
+        Stream<OwsValue> allowedValues = crs.stream().map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.crs, new OwsAllowedValues(allowedValues));
     }
 
     private OwsDomain getLanguageParameter(String service, String version) {
         Set<Locale> languages = getCache().getSupportedLanguages();
-        Stream<OwsValue> allowedValues = languages.stream()
-                .map(LocaleHelper::encode)
-                .map(OwsValue::new);
+        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::encode).map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.language, new OwsAllowedValues(allowedValues));
     }
 
@@ -1111,18 +1036,19 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     private static boolean isV2(GetCapabilitiesResponse response) {
-        return response.getVersion()
-                .equals(Sos2Constants.SERVICEVERSION);
+        return response.getVersion().equals(Sos2Constants.SERVICEVERSION);
     }
 
     private static boolean isV1(GetCapabilitiesResponse response) {
-        return response.getVersion()
-                .equals(Sos1Constants.SERVICEVERSION);
+        return response.getVersion().equals(Sos1Constants.SERVICEVERSION);
     }
 
-    private static <X, T> Function<X, Set<T>> createSynchronizedSet() {
-        return Suppliers.<X, Set<T>> asFunction(HashSet<T>::new)
-                .andThen(Collections::synchronizedSet);
+    private static <
+            X,
+            T> Function<X, Set<T>> createSynchronizedSet() {
+        return Suppliers.<
+                X,
+                Set<T>> asFunction(HashSet<T>::new).andThen(Collections::synchronizedSet);
     }
 
     protected static class SectionSpecificContentObject {

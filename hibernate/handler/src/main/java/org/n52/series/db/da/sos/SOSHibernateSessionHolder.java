@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.slf4j.Logger;
@@ -70,8 +70,7 @@ public class SOSHibernateSessionHolder implements HibernateSessionStore {
             throw new NoApplicableCodeException().withMessage("The parameter connection is null!");
         }
         if (!(connection instanceof Session)) {
-            throw new NoApplicableCodeException()
-                    .withMessage("The parameter connection is not an Hibernate Session!");
+            throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
         }
         return (Session) connection;
     }

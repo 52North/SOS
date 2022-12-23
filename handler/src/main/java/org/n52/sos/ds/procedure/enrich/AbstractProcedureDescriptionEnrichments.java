@@ -82,7 +82,9 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         this.ctx = ctx;
     }
 
-    public abstract AbstractRelatedProceduresEnrichment<T> createRelatedProceduresEnrichment();
+    public abstract AbstractRelatedProceduresEnrichment createRelatedProceduresEnrichment();
+
+    public abstract SensorMLEnrichment createIdentificationEnrichment();
 
     public AbstractProcedureDescriptionEnrichments<T> setProcedure(T procedure) {
         this.procedure = procedure;
@@ -202,7 +204,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
                         createValidTimeEnrichment(), createOfferingEnrichment(), createBoundingBoxEnrichment(),
                         createClassifierEnrichment(), createIdentificationEnrichment(), createContactsEnrichment(),
                         createKeywordEnrichment(), createObservablePropertyEnrichment(),
-                        createTypeOfEnrichmentEnrichment(), createRelatedProceduresEnrichment()),
+                        createTypeOfEnrichmentEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -218,10 +220,6 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     public ClassifierEnrichment createClassifierEnrichment() {
         return setValues(new ClassifierEnrichment(ctx));
-    }
-
-    public IdentificationEnrichment createIdentificationEnrichment() {
-        return setValues(new IdentificationEnrichment(ctx));
     }
 
     public ContactsEnrichment createContactsEnrichment() {

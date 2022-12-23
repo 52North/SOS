@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <ctx:annotation-config />
+    <beans profile="proxy">
+        <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.harvest.delete.physically" />
+            <property name="title" value="Should datasets physically deleted from metadata" />
+            <property name="description" value="Define whether the datasets should be physically deleted from metadata or only marked as deleted." />
+            <property name="order" value="2.0" />
+            <property name="group" ref="proxySettingDefinitionGroup" />
+            <property name="defaultValue" value="true" />
+        </bean>
+    </beans>
+</beans>

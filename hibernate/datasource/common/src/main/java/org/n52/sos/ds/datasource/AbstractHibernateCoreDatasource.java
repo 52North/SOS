@@ -493,7 +493,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     @Override
     public Set<String> getSpringProfiles() {
-        return null;
+        return Sets.newHashSet(HibernateConstants.SPRING_PROFILE);
     }
 
     /**

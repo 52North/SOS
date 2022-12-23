@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <ctx:annotation-config />
+    <beans profile="proxy">
+        <bean id="proxySettingDefinitionGroup"
+            class="org.n52.faroe.SettingDefinitionGroup">
+            <property name="title" value="Proxy" />
+            <property name="order" value="15.0" />
+        </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="harvest.full" />
+            <property name="title" value="Cron expression for execution of full update" />
+            <property name="description" value="Definition the cron expression for the execution of the full update. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
+            <property name="order" value="1.0" />
+            <property name="group" ref="proxySettingDefinitionGroup" />
+            <property name="defaultValue" value="0 0 03 * * ?" />
+        </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="harvest.temporal" />
+            <property name="title" value="Cron expression for execution of temporal update" />
+            <property name="description" value="Definition the cron expression for the execution of the temporal update. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
+            <property name="order" value="1.1" />
+            <property name="group" ref="proxySettingDefinitionGroup" />
+            <property name="defaultValue" value="0 0/5 * * * ?" />
+        </bean>
+    </beans>
+</beans>

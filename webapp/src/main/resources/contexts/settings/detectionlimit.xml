@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+    <bean id="detectionLimitSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="Detection Limit" />
+        <property name="description" value="Setting to define deection limit settings." />
+        <property name="order" value="10.0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.qualifier.definition.below" />
+        <property name="title" value="Qualifier definition below threshold" />
+        <property name="description" value="Definition of the qualifier defintion value for below threshold!" />
+        <property name="order" value="1.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.example.com/sensors/lower_threshold" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.qualifier.definition.above" />
+        <property name="title" value="Qualifier definition above threshold" />
+        <property name="description" value="Definition of the qualifier defintion value for above threshold!" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.example.com/sensors/upper_threshold" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.qualifier.description.below" />
+        <property name="title" value="Qualifier description below threshold" />
+        <property name="description" value="Definition of the qualifier description value for below threshold!" />
+        <property name="order" value="3.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="Lower limit for sensor" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.qualifier.description.above" />
+        <property name="title" value="Qualifier description above threshold" />
+        <property name="description" value="Definition of the qualifier description value for above threshold!" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="Upper limit for sensor" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.censoredreason.href.below" />
+        <property name="title" value="CensoredReason href below threshold" />
+        <property name="description" value="Definition of the censoredReason href value below threshold!" />
+        <property name="order" value="5.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.opengis.net/def/nil/OGC/0/BelowDetectionRange" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.censoredreason.href.above" />
+        <property name="title" value="CensoredReason href above threshold" />
+        <property name="description" value="Definition of the censoredReason href value above threshold!" />
+        <property name="order" value="6.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.opengis.net/def/nil/OGC/0/AboveDetectionRange" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.censoredreason.title.below" />
+        <property name="title" value="CensoredReason title below threshold" />
+        <property name="description" value="Definition of the censoredReason title value below threshold!" />
+        <property name="order" value="7.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="Below threshold of sensor" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="detectionlimit.censoredreason.title.above" />
+        <property name="title" value="CensoredReason title above threshold" />
+        <property name="description" value="Definition of the censoredReason title value above threshold!" />
+        <property name="order" value="8.0" />
+        <property name="group" ref="detectionLimitSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="Above threshold of sensor" />
+    </bean>
+</beans>

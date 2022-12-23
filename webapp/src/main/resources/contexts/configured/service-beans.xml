@@ -8,5 +8,5 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="serviceEntityFactory" class="org.n52.series.db.ServiceEntityFactory" />
+    <bean id="serviceEntityFactory" class="org.n52.sensorweb.server.db.factory.ServiceEntityFactory" />
 </beans>

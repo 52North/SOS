@@ -30,8 +30,7 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
-import org.n52.series.db.beans.ereporting.EReportingStationEntity;
+import org.n52.series.db.beans.sta.LocationEntity;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -61,7 +60,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
      * @return Default criteria
      */
     public Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingSamplingPointEntity.class).setResultTransformer(
+        return session.createCriteria(LocationEntity.class).setResultTransformer(
                 Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -74,11 +73,11 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
      *            Hibernate Session
      * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPointEntity getEReportingStationt(long stationId, Session session) {
+    public LocationEntity getEReportingStation(long stationId, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_ID, stationId));
+        c.add(Restrictions.eq(LocationEntity.PROPERTY_ID, stationId));
         LOGGER.trace("QUERY getEReportingStationt(stationId): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPointEntity) c.uniqueResult();
+        return (LocationEntity) c.uniqueResult();
     }
 
     /**
@@ -90,10 +89,10 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
      *            Hibernate Session
      * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPointEntity getEReportingStationt(String identifier, Session session) {
+    public LocationEntity getEReportingStation(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, identifier));
+        c.add(Restrictions.eq(LocationEntity.PROPERTY_IDENTIFIER, identifier));
         LOGGER.trace("QUERY getEReportingStationt(identifier): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPointEntity) c.uniqueResult();
+        return (LocationEntity) c.uniqueResult();
     }
 }

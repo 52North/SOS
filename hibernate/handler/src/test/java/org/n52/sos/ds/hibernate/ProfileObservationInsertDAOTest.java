@@ -255,7 +255,7 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(OFFERING3, PROCEDURE3, OBSPROP3, OBS_TIME, FEATURE3);
         GetObservationResponse getObsResponse =
-                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+                getObsDAO.queryObservationData(getObsReq, getGetObservationResponse(getObsReq));
         OmObservation omObservation = getObservation(getObsResponse);
         assertThat(omObservation.getObservationConstellation(), notNullValue());
         OmObservationConstellation obsConst = omObservation.getObservationConstellation();

@@ -29,17 +29,17 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<jsp:include page="common/header.jsp">
+<jsp:include page="./common/header.jsp">
     <jsp:param name="activeMenu" value="client" />
 </jsp:include>
-<link rel="stylesheet" href="<c:url value="/static/lib/prettify.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/lib/codemirror-3.16.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/css/codemirror.custom.css" />" type="text/css" />
-<script type="text/javascript" src="<c:url value="/static/lib/codemirror-3.16.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/prettify.min.js" />"></script>
+<link rel="stylesheet" href="<c:url value="./static/lib/prettify.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="./static/lib/codemirror-3.16.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="./static/css/codemirror.custom.css" />" type="text/css" />
+<script type="text/javascript" src="<c:url value="./static/lib/codemirror-3.16.js" />"></script>
+<script type="text/javascript" src="<c:url value="./static/lib/prettify.min.js" />"></script>
 <script type="text/javascript" src="<c:url value="./static/lib/XmlBeautify-1.2.3.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/js/client.js" />"></script>
-<jsp:include page="common/logotitle.jsp">
+<script type="text/javascript" src="<c:url value="./static/js/client.js" />"></script>
+<jsp:include page="./common/logotitle.jsp">
     <jsp:param name="title" value="52&deg;North SOS Test Client" />
     <jsp:param name="leadParagraph" value="Choose a request from the examples or write your own to test the SOS." />
 </jsp:include>
@@ -132,7 +132,7 @@
 
 <script type="text/javascript">
 	$(function() {
-	    $.getJSON("<c:url value="/static/conf/client-config.json"/>", function(config) {
+	    $.getJSON("<c:url value="./static/conf/client-config.json"/>", function(config) {
 	        function flatten(requests) {
 	            var s, v, b, o, t, r, transformed = [];
 	            for (s in requests) {
@@ -216,4 +216,4 @@
 	    })
 	});
 </script>
-<jsp:include page="common/footer.jsp" />
+<jsp:include page="./common/footer.jsp" />

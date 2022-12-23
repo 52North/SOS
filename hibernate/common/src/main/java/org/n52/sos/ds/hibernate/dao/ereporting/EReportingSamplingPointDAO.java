@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
@@ -62,7 +62,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      * @return Default criteria
      */
     public Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingSamplingPointEntity.class).setResultTransformer(
+        return session.createCriteria(PlatformEntity.class).setResultTransformer(
                 Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -75,11 +75,11 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      *            Hibernate session
      * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPointEntity getEReportingSamplingPoint(long samplingPointId, Session session) {
+    public PlatformEntity getEReportingSamplingPoint(long samplingPointId, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_ID, samplingPointId));
+        c.add(Restrictions.eq(PlatformEntity.PROPERTY_ID, samplingPointId));
         LOGGER.trace("QUERY getEReportingSamplingPoint(samplingPointId): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPointEntity) c.uniqueResult();
+        return (PlatformEntity) c.uniqueResult();
     }
 
     /**
@@ -91,11 +91,11 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      *            Hibernate session
      * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPointEntity getEReportingSamplingPoint(String identifier, Session session) {
+    public PlatformEntity getEReportingSamplingPoint(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, identifier));
+        c.add(Restrictions.eq(PlatformEntity.PROPERTY_IDENTIFIER, identifier));
         LOGGER.trace("QUERY getEReportingSamplingPoint(identifier): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPointEntity) c.uniqueResult();
+        return (PlatformEntity) c.uniqueResult();
     }
 
     /**
@@ -107,13 +107,13 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      *            Hibernate session
      * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPointEntity getOrInsert(AqdSamplingPoint samplingPoint, Session session) {
+    public PlatformEntity getOrInsert(AqdSamplingPoint samplingPoint, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, samplingPoint.getIdentifier()));
+        c.add(Restrictions.eq(PlatformEntity.PROPERTY_IDENTIFIER, samplingPoint.getIdentifier()));
         LOGGER.trace("QUERY getOrIntert(samplingPoint): {}", HibernateHelper.getSqlString(c));
-        EReportingSamplingPointEntity eReportingSamplingPoint = (EReportingSamplingPointEntity) c.uniqueResult();
+        PlatformEntity eReportingSamplingPoint = (PlatformEntity) c.uniqueResult();
         if (eReportingSamplingPoint == null) {
-            eReportingSamplingPoint = new EReportingSamplingPointEntity();
+            eReportingSamplingPoint = new PlatformEntity();
             addIdentifierNameDescription(samplingPoint, eReportingSamplingPoint, session);
             if (samplingPoint.hasAssessmentType()) {
                 eReportingSamplingPoint.setAssessmentType(new EReportingAssessmentTypeDAO().getOrInsert(

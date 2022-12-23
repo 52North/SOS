@@ -34,14 +34,16 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.ProcedureDao;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -53,19 +55,22 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.procedure.ProcedureConverter;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
-public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
+public class DescribeSensorHandler extends AbstractDescribeSensorHandler implements ApiQueryHelper {
 
     private HibernateSessionStore sessionStore;
 
     private DescribeSensorDao dao;
 
     private ProcedureConverter procedureConverter;
+
+    private DbQueryFactory dbQueryFactory;
 
     public DescribeSensorHandler() {
         super(SosConstants.SOS);
@@ -98,7 +103,13 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
         this.procedureConverter = procedureConverter;
     }
 
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
     @Override
+    @Transactional()
     public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
@@ -117,8 +128,10 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request, session));
             } else {
-                response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
+                response.addSensorDescription(createSensorDescription(entities.iterator()
+                        .next(), request, session));
             }
+
             return response;
         } catch (final HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
@@ -135,8 +148,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
             DescribeSensorRequest request, Session session) throws OwsExceptionReport {
-        return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
-                request.getVersion(), getRequestedLocale(request), session);
+        return procedureConverter.createSosProcedureDescription(Hibernate.unproxy(procedure, ProcedureEntity.class),
+                request.getProcedureDescriptionFormat(), request.getVersion(), getRequestedLocale(request), session);
     }
 
     private DbQuery createDbQuery(DescribeSensorRequest req) {
@@ -145,6 +158,12 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             map.put(IoParameters.PROCEDURES, req.getProcedure());
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        map.put(IoParameters.EXPANDED, Boolean.toString(true));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 }

@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.boot.Metadata;
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -49,11 +48,8 @@ import com.google.common.collect.ImmutableSet;
  *
  * @since 4.0.0
  */
-public class H2InMemoryDatasource extends AbstractH2Datasource {
+public class H2InMemoryDatasource extends AbstractH2Datasource implements H2InMemory {
     private static final String DIALECT = "H2/GeoDB (in memory)";
-
-    private static final String JDBC_URL =
-            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;";
 
     @Override
     public String getDialectName() {
@@ -62,8 +58,9 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getDatabaseExtensionDefinition(),
-                getFeatureConceptDefinition());
+        return ImmutableSet.<
+                SettingDefinition<?>> of(getDatabaseConceptDefinition(), getDatabaseExtensionDefinition(),
+                        getFeatureConceptDefinition());
     }
 
     @Override
@@ -81,6 +78,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         p.put(HibernateConstants.HBM2DDL_AUTO, HibernateConstants.HBM2DDL_CREATE);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
+        p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
+        p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -94,13 +93,17 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = new HashMap<>(4);
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
-        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_CONCEPT_KEY, current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
     }
 
+
     @Override
-    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
+    public void validatePrerequisites(Map<String, Object> settings) {
+        // Nothing to check
     }
+
 
     @Override
     @SuppressFBWarnings("DMI_EMPTY_DB_PASSWORD")

@@ -116,6 +116,15 @@ public class SosAuthenticationProvider implements AuthenticationProvider {
         return this.adminUserService.createAdminUser(username, getPasswordEncoder().encode(password));
     }
 
+    public void deleteAdmin(String username) {
+        this.adminUserService.deleteAdminUser(username);
+    }
+
+    public void deleteAllAdmins() {
+        this.adminUserService.deleteAll();
+    }
+
+
     public void setAdminUserName(AdministratorUser user, String name) {
         user.setUsername(name);
         this.adminUserService.saveAdminUser(user);

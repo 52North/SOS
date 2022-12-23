@@ -67,7 +67,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase
         Transaction transaction = null;
         try {
             session = getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             Criteria criteria = session.createCriteria(getObservationClass());
             try (ScrollableIterable<DataEntity<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
                 for (DataEntity<?> o : iterable) {

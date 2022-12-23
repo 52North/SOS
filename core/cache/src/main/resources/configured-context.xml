@@ -3,6 +3,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
+	<bean id="staticCapabilitiesProvider" class="org.n52.sos.ds.SosStaticCapabilitiesProvider" />
+
     <bean id="contentCacheController"
           class="org.n52.sos.cache.ctrl.SosContentCacheControllerImpl"/>
     <!--

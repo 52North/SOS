@@ -39,12 +39,15 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
+import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -55,11 +58,15 @@ import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
+import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
+import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.service.SosSettings;
 
@@ -73,8 +80,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 4.0.0
  *
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP"})
-public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler implements Constructable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP" })
+public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler
+        implements Constructable, TransactionHelper {
 
     @Inject
     private ConnectionProvider connectionProvider;
@@ -100,8 +108,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     @Override
     public void init() {
         sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper(),
-                getDaoFactory().getDecoderRepository());
+        helper = new ResultHandlingHelper(getDaoFactory().getObservationHelper());
     }
 
     @Override
@@ -115,7 +122,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         Transaction transaction = null;
         try {
             session = sessionHolder.getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
@@ -136,7 +143,25 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     if (sosObsConst.isSetProcedure()) {
                         procedure = obsConst.getProcedure();
                     }
-                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+                    // category
+                    CategoryEntity category = null;
+                    CategoryDAO categoryDAO = getDaoFactory().getCategoryDAO();
+                    if (sosObsConst.isSetCategoryParameter()) {
+                        NamedValue<String> categoryParameter = (NamedValue<String>) sosObsConst.getCategoryParameter();
+                        if (categoryParameter.getValue() instanceof SweText) {
+                            category =
+                                    categoryDAO.getOrInsertCategory((SweText) categoryParameter.getValue(), session);
+                        } else if (categoryParameter.getValue() instanceof SweCategory) {
+                            category = categoryDAO.getOrInsertCategory((SweCategory) categoryParameter.getValue(),
+                                    session);
+                        } else {
+                            throw new InvalidParameterValueException("om:parameter",
+                                    categoryParameter.getValue().getClass().getName());
+                        }
+                    } else {
+                        category = categoryDAO.getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
+                    }
+                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, category, session);
                 } else {
                     // TODO make better exception.
                     throw new InvalidObservationTypeException(request.getObservationTemplate().getObservationType());
@@ -171,9 +196,10 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     }
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
-            ProcedureEntity procedure, AbstractFeatureEntity<?> feature, Session session) throws OwsExceptionReport {
-        getDaoFactory().getResultTemplateDAO()
-                .checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+            ProcedureEntity procedure, AbstractFeatureEntity<?> feature, CategoryEntity category, Session session)
+            throws OwsExceptionReport {
+        getDaoFactory().getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature,
+                category, session);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty,

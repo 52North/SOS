@@ -44,9 +44,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.AssessmentTypeEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdSamplingPoint;
@@ -194,9 +194,9 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     private void addAssessmentType(Criteria c, String assessmentType) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria(getSamplingPointAssociationPath())
-                .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE)
-                .add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PLATFORM)
+                .createCriteria(PlatformEntity.PROPERTY_ASSESSMENT_TYPE)
+                .add(Restrictions.ilike(AssessmentTypeEntity.PROPERTY_ID, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_ID)));
         c.add(Subqueries.propertyIn(DatasetEntity.PROPERTY_ID, detachedCriteria));
     }
@@ -227,7 +227,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                 omObservation.getParameter()
                         .removeAll(remove);
                 EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
-                ectx.setSamplingPoint(dao.getOrInsert(samplingPoint, session));
+                ectx.setPlatform(dao.getOrInsert(samplingPoint, session));
             }
             if (samplingPoint == null && omObservation.getObservationConstellation()
                     .isSetFeatureOfInterest()) {
@@ -241,7 +241,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                                                 .getValue()
                                         : "")));
                 EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
-                ectx.setSamplingPoint(dao.getOrInsert(samplingPoint, session));
+                ectx.setPlatform(dao.getOrInsert(samplingPoint, session));
             }
             if (samplingPoint != null && samplingPoint.getAssessmentType() == null) {
                 addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint,
@@ -262,8 +262,8 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation observation) {
         String identifier = getSamplingPointIdentifier(observation);
         if (!Strings.isNullOrEmpty(identifier)) {
-            c.createCriteria(getSamplingPointAssociationPath())
-                    .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, identifier));
+            c.createCriteria(DatasetEntity.PROPERTY_PLATFORM)
+                    .add(Restrictions.eq(PlatformEntity.IDENTIFIER, identifier));
         }
         return c;
     }

@@ -57,6 +57,7 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.AbstractSchedulingContentCacheController;
 import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -69,8 +70,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
-public class SosContentCacheControllerImpl implements ContentCacheController, Constructable, Destroyable {
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
+public class SosContentCacheControllerImpl extends AbstractSchedulingContentCacheController
+        implements ContentCacheController, Constructable, Destroyable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosContentCacheControllerImpl.class);
 
     private static final AtomicInteger COMPLETE_UPDATE_COUNT = new AtomicInteger(0);
@@ -78,10 +80,12 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     private static final String STARTING_UPDATE = "Starting update {}";
     private static final String FINISHED_UPDATE = "Finished update {}";
     private static final String UPDATE_FAILED = "Update failed!";
-    private CompleteUpdate current;
-    private CompleteUpdate next;
+
     private volatile WritableContentCache cache;
     private final ReentrantLock lock = new ReentrantLock();
+
+    private CompleteUpdate currentUpdate;
+    private CompleteUpdate nextUpdate;
 
     private ContentCachePersistenceStrategy persistenceStrategy;
     private ContentCacheFactory cacheFactory;
@@ -125,8 +129,8 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
                 LOGGER.warn("Couldn't load cache from datasource, maybe the datasource isn't configured yet?", e);
             }
         }
+        setInitialized(true);
     }
-
 
     @Override
     public WritableContentCache getCache() {
@@ -158,7 +162,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
                 }
                 cache.setLastUpdateTime(DateTime.now());
             } finally {
-                current = null;
+                currentUpdate = null;
             }
         } else {
             throw new IllegalArgumentException("update may not be null");
@@ -171,14 +175,14 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     }
 
     private void runCurrent() throws OwsExceptionReport {
-        LOGGER.trace(STARTING_UPDATE, this.current);
-        this.current.execute();
-        LOGGER.trace(FINISHED_UPDATE, this.current);
+        LOGGER.trace(STARTING_UPDATE, this.currentUpdate);
+        this.currentUpdate.execute();
+        LOGGER.trace(FINISHED_UPDATE, this.currentUpdate);
         lock();
         try {
             persistenceStrategy.persistOnCompleteUpdate(getCache());
-            CompleteUpdate u = this.current;
-            this.current = null;
+            CompleteUpdate u = this.currentUpdate;
+            this.currentUpdate = null;
             u.signalWaiting();
         } finally {
             unlock();
@@ -189,8 +193,8 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
         update.execute(getCache());
         lock();
         try {
-            if (this.current != null) {
-                this.current.addUpdate(update);
+            if (this.currentUpdate != null) {
+                this.currentUpdate.addUpdate(update);
             } else {
                 persistenceStrategy.persistOnPartialUpdate(getCache());
             }
@@ -205,17 +209,17 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
         CompleteUpdate waitFor = null;
         lock();
         try {
-            if (current == null || current.isFinished()) {
-                current = update;
+            if (currentUpdate == null || currentUpdate.isFinished()) {
+                currentUpdate = update;
                 isCurrent = true;
-            } else if (current.isNotYetStarted()) {
-                waitFor = current;
-            } else if (next == null || next.isFinished()) {
-                next = update;
-                waitFor = current;
+            } else if (currentUpdate.isNotYetStarted()) {
+                waitFor = currentUpdate;
+            } else if (nextUpdate == null || nextUpdate.isFinished()) {
+                nextUpdate = update;
+                waitFor = currentUpdate;
                 isNext = true;
             } else {
-                waitFor = next;
+                waitFor = nextUpdate;
             }
         } finally {
             unlock();
@@ -229,8 +233,8 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
             }
             lock();
             try {
-                current = next;
-                next = null;
+                currentUpdate = nextUpdate;
+                nextUpdate = null;
             } finally {
                 unlock();
             }
@@ -256,7 +260,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
 
     @Override
     public boolean isUpdateInProgress() {
-        return current != null;
+        return currentUpdate != null;
     }
 
     @Override
@@ -265,7 +269,11 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     }
 
     private enum State {
-        WAITING, RUNNING, APPLYING_UPDATES, FINISHED, FAILED
+        WAITING,
+        RUNNING,
+        APPLYING_UPDATES,
+        FINISHED,
+        FAILED
     }
 
     private abstract class Update {
@@ -306,8 +314,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     }
 
     private class CompleteUpdate extends Update {
-        private final ConcurrentLinkedQueue<PartialUpdate> updates
-                = new ConcurrentLinkedQueue<>();
+        private final ConcurrentLinkedQueue<PartialUpdate> updates = new ConcurrentLinkedQueue<>();
 
         private final Lock lock = new ReentrantLock();
         private final Condition finished = lock.newCondition();

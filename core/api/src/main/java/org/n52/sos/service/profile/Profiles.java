@@ -53,7 +53,7 @@ public interface Profiles {
                 .setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(false);
     }
 
-    default Profile createHydrologyofile() {
+    default Profile createHydrologyProfile() {
         return new Profile("hydrology").setActiveProfile(false)
                 .setObservationResponseFormat(WaterMLConstants.NS_WML_20)
                 .setEncodeFeatureOfInterestInObservations(false)

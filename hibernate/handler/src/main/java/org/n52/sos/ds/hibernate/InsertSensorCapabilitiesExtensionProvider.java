@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Christian Autermann
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilitiesExtensionProvider {
 
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;

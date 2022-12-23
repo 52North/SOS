@@ -36,13 +36,12 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -50,13 +49,18 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.ds.dao.GetObservationDao;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GetObservationHandler extends AbstractGetObservationHandler implements ApiQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
@@ -64,6 +68,10 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     private HibernateSessionStore sessionStore;
 
     private GetObservationDao dao;
+
+    private DbQueryFactory dbQueryFactory;
+
+    private GeometryHandler geometryHandler;
 
     public GetObservationHandler() {
         super(SosConstants.SOS);
@@ -79,84 +87,76 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         this.dao = getObservationDao;
     }
 
+    @Inject
+    public void setDbQueryFactory(DbQueryFactory dbQueryFactory) {
+        this.dbQueryFactory = dbQueryFactory;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
     @Override
+    @Transactional
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
         if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) && request.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();
         }
-        // if (request.isSetResultFilter()) {
-        // throw new NotYetSupportedException("result filtering");
-        // }
+        GetObservationResponse response = new GetObservationResponse();
+        response.setService(request.getService());
+        response.setVersion(request.getVersion());
+        response.setResponseFormat(request.getResponseFormat());
+        response.setResultModel(request.getResultModel());
         Session session = sessionStore.getSession();
         try {
-            GetObservationResponse response = new GetObservationResponse();
-            response.setService(request.getService());
-            response.setVersion(request.getVersion());
-            response.setResponseFormat(request.getResponseFormat());
-            response.setResultModel(request.getResultModel());
             List<FeatureEntity> features = new FeatureDao(session).getAllInstances(createDbQuery(request));
             if (features == null || features.isEmpty()) {
                 return response;
             }
             request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));
-            dao.queryObservationData(request, response);
-            return response;
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for GetObservation!");
+            dao.queryObservationData(request, response, session);
         } finally {
             sessionStore.returnSession(session);
         }
+        return response;
     }
 
     @Override
     public boolean isSupported() {
-        return true;
+        return dao != null;
     }
 
-    private DbQuery createDbQuery(GetObservationRequest request) {
+    private GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    private DbQuery createDbQuery(GetObservationRequest request) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
         if (request.isSetFeatureOfInterest()) {
             map.put(IoParameters.FEATURES, listToString(request.getFeatureIdentifiers()));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
+            Envelope envelope = null;
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
-                if (request.getSpatialFilter().getGeometry().isGeometry()
-                        && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
-                    Envelope envelope =
-                            request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
-                    if (envelope != null) {
-                        List<Double> bbox = Lists.newArrayList();
-                        bbox.add(envelope.getMinX());
-                        bbox.add(envelope.getMinY());
-                        bbox.add(envelope.getMaxX());
-                        bbox.add(envelope.getMaxY());
-                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-                    }
-                } else if (request.getSpatialFilter().getGeometry().isEnvelope()
-                        && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()) {
-                    Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelope().get().getEnvelope();
-                    if (envelope != null) {
-                        List<Double> bbox = Lists.newArrayList();
-                        bbox.add(envelope.getMinX());
-                        bbox.add(envelope.getMinY());
-                        bbox.add(envelope.getMaxX());
-                        bbox.add(envelope.getMaxY());
-                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
-                    }
+                envelope = getGeometryHandler().getEnvelope(request.getSpatialFilter().getGeometry());
+                if (envelope != null) {
+                    List<Double> bbox = Lists.newArrayList();
+                    bbox.add(envelope.getMinX());
+                    bbox.add(envelope.getMinY());
+                    bbox.add(envelope.getMaxX());
+                    bbox.add(envelope.getMaxY());
+                    map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
                 }
-
             }
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    private Double[] toArray(double x, double y) {
-        Double[] array = new Double[2];
-        array[0] = x;
-        array[1] = y;
-        return array;
+    @Override
+    public DbQuery createDbQuery(IoParameters parameters) {
+        return dbQueryFactory.createFrom(parameters);
     }
 
 }

@@ -49,7 +49,7 @@
         <property name="order" value="1.3" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="optional" value="true" />
-        <property name="defaultValue" value="-9999.0,99999,NO_DATA" />
+        <property name="defaultValue" value="-9999.0,99999,NO_DATA,-777,-777.0" />
     </bean>
     <!-- Request interval restriction -->
     <bean class="org.n52.faroe.settings.StringSettingDefinition">

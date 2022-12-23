@@ -40,6 +40,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
@@ -311,8 +312,8 @@ public class ResultTemplateDAO {
      *             If the requested structure/encoding is invalid
      */
     public ResultTemplateEntity checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity dataset,
-            ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest, Session session)
-            throws OwsExceptionReport {
+            ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest, CategoryEntity category,
+            Session session) throws OwsExceptionReport {
         try {
             String offering = dataset.getOffering()
                     .getIdentifier();
@@ -322,7 +323,7 @@ public class ResultTemplateDAO {
             List<ResultTemplateEntity> resultTemplates =
                     getResultTemplateObject(offering, observableProperty, null, session);
             if (CollectionHelper.isEmpty(resultTemplates)) {
-                return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
+                return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, category, session);
             } else {
                 List<String> storedIdentifiers = new ArrayList<>(0);
 
@@ -383,7 +384,8 @@ public class ResultTemplateDAO {
                     if (!storedIdentifiers.contains(request.getIdentifier()
                             .getValue())) {
                         /* save it only if the identifier is different */
-                        return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
+                        return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, category,
+                                session);
                     }
                 }
                 return resultTemplates.iterator()
@@ -409,7 +411,8 @@ public class ResultTemplateDAO {
      */
     public ResultTemplateEntity checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity dataset,
             Session session) throws OwsExceptionReport {
-        return checkOrInsertResultTemplate(request, dataset, dataset.getProcedure(), dataset.getFeature(), session);
+        return checkOrInsertResultTemplate(request, dataset, dataset.getProcedure(), dataset.getFeature(),
+                dataset.getCategory(), session);
     }
 
     /**
@@ -431,12 +434,14 @@ public class ResultTemplateDAO {
      */
     private ResultTemplateEntity createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final DatasetEntity observationConstellation, ProcedureEntity procedure,
-            final AbstractFeatureEntity featureOfInterest, final Session session) throws EncodingException {
+            final AbstractFeatureEntity featureOfInterest, CategoryEntity category, final Session session)
+            throws EncodingException {
         final ResultTemplateEntity resultTemplate = new ResultTemplateEntity();
         resultTemplate.setIdentifier(request.getIdentifier()
                 .getValue());
         resultTemplate.setPhenomenon(observationConstellation.getObservableProperty());
         resultTemplate.setOffering(observationConstellation.getOffering());
+        resultTemplate.setCategory(category);
         if (procedure != null) {
             resultTemplate.setProcedure(procedure);
         }

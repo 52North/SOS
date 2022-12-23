@@ -56,8 +56,6 @@ public class InsertObservationInsertDAOTest extends AbstractObservationInsertDAO
         try {
             session = getSession();
             HibernateMetadataCache.init(session);
-            session = getSession();
-            HibernateMetadataCache.init(session);
             insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null, OmConstants.OBS_TYPE_MEASUREMENT);
             insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1, OmConstants.OBS_TYPE_MEASUREMENT);
             insertSensor(PROCEDURE3, OFFERING3, OBSPROP3, PROCEDURE2, OmConstants.OBS_TYPE_MEASUREMENT);

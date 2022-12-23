@@ -33,6 +33,8 @@ package org.n52.sos.request.operator;
  * @since 4.0.0
  */
 public interface CoreProfileOperatorSettings {
-    String BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION
-            = "service.blockGetObservationRequestsWithoutRestriction";
+    String BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION =
+            "service.blockGetObservationRequestsWithoutRestriction";
+
+    String REQUIRED_GET_OBSERVATION_REQUEST_PARAMETERS = "service.requiredGetObservationRequestParameters";
 }

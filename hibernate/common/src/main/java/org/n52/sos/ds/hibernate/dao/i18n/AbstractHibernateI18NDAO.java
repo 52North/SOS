@@ -54,13 +54,14 @@ import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 
 import com.google.common.collect.Maps;
 
 public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
                                                S extends AbstractI18NMetadata,
                                                H extends I18nEntity>
-        implements I18NDAO<S>, HibernateI18NDAO<S> {
+        implements I18NDAO<S>, HibernateI18NDAO<S>, TransactionHelper {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -246,7 +247,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
             throws OwsExceptionReport {
         Transaction transaction = null;
         try {
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             deleteOldValues(i18n.getIdentifier(), session);
             T entity = getEntity(i18n.getIdentifier(), session);
             for (Locale locale : i18n.getLocales()) {

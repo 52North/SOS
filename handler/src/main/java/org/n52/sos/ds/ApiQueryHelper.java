@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.FormatEntity;
 
 import com.google.common.base.Joiner;
@@ -41,8 +43,13 @@ public interface ApiQueryHelper {
         return Joiner.on(",").join(values);
     }
 
+    default String listToString(String... values) {
+        return Joiner.on(",").join(values);
+    }
+
     default Set<String> toStringSet(Collection<FormatEntity> formats) {
         return formats.stream().map(FormatEntity::getFormat).collect(Collectors.toSet());
     }
 
+    DbQuery createDbQuery(IoParameters parameters);
 }

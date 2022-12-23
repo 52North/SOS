@@ -27,56 +27,11 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class EReportingObservationContext extends ObservationContext {
-    private EReportingSamplingPointEntity samplingPoint;
 
-    /**
-     * @return the featureOfInterest
-     */
-    public EReportingSamplingPointEntity getSamplingPoint() {
-        return samplingPoint;
-    }
-
-    /**
-     * @param samplingPoint
-     *            the samplingPoint to set
-     */
-    public void setSamplingPoint(EReportingSamplingPointEntity samplingPoint) {
-        this.samplingPoint = samplingPoint;
-    }
-
-    public boolean isSetSamplingPoint() {
-        return getSamplingPoint() != null;
-    }
-
-    @Override
-    public void addIdentifierRestrictionsToCritera(Criteria criteria, boolean includeFeature,
-            boolean includeCategory) {
-        super.addIdentifierRestrictionsToCritera(criteria, includeFeature, includeCategory);
-        if (includeFeature && isSetSamplingPoint()) {
-            criteria.add(Restrictions.eq(EReportingDaoHelper.SAMPLING_POINT_ASSOCIATION_PATH, getSamplingPoint()));
-        }
-    }
-
-    @Override
-    public void addValuesToSeries(DatasetEntity contextual) {
-        super.addValuesToSeries(contextual);
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
-            contextual.setEreportingProfile(new EReportingProfileDatasetEntity());
-            if (isSetSamplingPoint()) {
-                contextual.getEreportingProfile().setSamplingPoint(getSamplingPoint());
-            }
-        }
-    }
 }

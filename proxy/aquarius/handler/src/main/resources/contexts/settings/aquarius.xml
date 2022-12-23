@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <ctx:annotation-config />
+    <beans profile="aquarius">
+        <bean id="aquariusSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+            <property name="title" value="AQUARIUS" />
+            <property name="order" value="16.0" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.timeseries.key" />
+            <property name="title" value="Should only timeseries data be returned with extended attribute key?" />
+            <property name="description" value="Define whether the service should only return timeseries data with extended attribute key." />
+            <property name="order" value="0.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.timeseries.value" />
+            <property name="title" value="Should only timeseries data be returned with extended attribute value" />
+            <property name="description" value="Define whether the service should only return timeseries data with extended attribute value!" />
+            <property name="order" value="0.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.location" />
+            <property name="title" value="Apply the same extended attribute of the timeseries to location queries?" />
+            <property name="description" value="Define whether the service should apply the same extended attribute of the timeseries to location queries." />
+            <property name="order" value="1.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="false" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.location.key" />
+            <property name="title" value="Should only locations be returned with extended attribute key?" />
+            <property name="description" value="Define whether the service should only return locations with extended attribute key." />
+            <property name="order" value="1.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.location.value" />
+            <property name="title" value="Should only locations be returned with extended attribute value" />
+            <property name="description" value="Define whether the service should only return locations with extended attribute value!" />
+            <property name="order" value="1.2" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.ChoiceSettingDefinition ">
+            <property name="key" value="proxy.aquarius.dataType" />
+            <property name="title" value="Select Raw or Corrected data" />
+            <property name="description" value="Define whether raw or corrected data should be provided!" />
+            <property name="order" value="2.0" />
+            <property name="options">
+              <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="RAW" value="RAW" />
+                <entry key="CORRECTED" value="CORRECTED" />
+              </map>
+            </property>
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="CORRECTED" />
+          </bean>
+          <bean class="org.n52.faroe.settings.ChoiceSettingDefinition ">
+            <property name="key" value="proxy.aquarius.published" />
+            <property name="title" value="Show published (TRUE), not published (FALSE) or all data (ALL)" />
+            <property name="description" value="Define whether data should be filtered matching the publish value.!" />
+            <property name="order" value="3.0" />
+            <property name="options">
+              <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="TRUE" value="TRUE" />
+                <entry key="FALSE" value="FALSE" />
+                <entry key="ALL" value="ALL" />
+              </map>
+            </property>
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="ALL" />
+          </bean>
+          <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.applyRounding" />
+            <property name="title" value="Should data values have rounding rules applied" />
+            <property name="description" value="Define whether data values should have rounding rules applied." />
+            <property name="order" value="4.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.returnFullCoverage" />
+            <property name="title" value="Should the full coverage be returned" />
+            <property name="description" value="Define whether the point results should include gap markers." />
+            <property name="order" value="5.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="false" />
+          </bean>
+          <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.includeGapMarkers" />
+            <property name="title" value="Should the point results include gap markers" />
+            <property name="description" value="Define whether the point results should include gap markers." />
+            <property name="order" value="6.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.detectionlimit.above" />
+            <property name="title" value="Definition of the qualifier identifier for &lt;code&gt;above sensor limit&lt;/code&gt;" />
+            <property name="description" value="Define the qualifier identifier for &lt;code&gt;above sensor limit&lt;/code&gt;." />
+            <property name="order" value="7.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="AboveDetectionLimit" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.detectionlimit.below" />
+            <property name="title" value="Definition of the qualifier identifier for &lt;code&gt;below sensor limit&lt;/code&gt;" />
+            <property name="description" value="Define the qualifier identifier for &lt;code&gt;below sensor limut&lt;/code&gt;." />
+            <property name="order" value="7.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+             <property name="defaultValue" value="BelowDetectionLimit" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.qualifiers" />
+            <property name="title" value="Definition of additional qualifier identifiers! (CSV list)" />
+            <property name="description" value="Define additional qualifier identifiers that should be processed! (CSV list)" />
+            <property name="order" value="8.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="Recreational,Recreational Repeats" />
+          </bean>
+           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.grades.file" />
+            <property name="title" value="Should the grades definitions from file be used?" />
+            <property name="description" value="Define whether the service should use the grade definitions from file and not request from service. (.../WEB-INF/classes/aquarius/grades.json)" />
+            <property name="order" value="9.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="false" />
+          </bean>
+           <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.location.configured" />
+            <property name="title" value="Provided locations" />
+            <property name="description" value="Limit the provided locations to the defined ids or empty for all." />
+            <property name="order" value="10.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+            <property name="defaultValue" value="" />
+          </bean>
+          <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+	        <property name="key" value="proxy.aquarius.update.counter" />
+	        <property name="title" value="Update cache after x location loaded!" />
+	        <property name="description" value="Define the number of loacations that should be harvested before the cache would be updated! A value of 0 would update after each location!" />
+	        <property name="order" value="11.0" />
+	        <property name="group" ref="aquariusSettingDefinitionGroup" />
+	        <property name="defaultValue" value="50" />
+	        <property name="minimum" value="0" />
+	      </bean>
+    </beans>
+</beans>

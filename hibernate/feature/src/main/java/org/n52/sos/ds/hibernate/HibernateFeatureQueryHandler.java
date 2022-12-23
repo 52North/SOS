@@ -70,9 +70,10 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.GeometryVisitorImpl;
 import org.n52.sos.ds.hibernate.create.HibernateFeatureVisitor;
-import org.n52.sos.ds.hibernate.create.HibernateGeometryVisitor;
+import org.n52.sos.ds.hibernate.create.HibernateFeatureVisitorContext;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -80,6 +81,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.service.SosSettings;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +113,8 @@ public class HibernateFeatureQueryHandler
 
     private ContentCacheController contentCacheController;
 
+    private ProfileHandler profileHandler;
+
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -129,6 +133,11 @@ public class HibernateFeatureQueryHandler
     @Inject
     public void setContentCacheController(ContentCacheController ctrl) {
         this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
@@ -190,7 +199,7 @@ public class HibernateFeatureQueryHandler
                             .setSession(session)
                             .setRequestedLanguage(queryObject.getI18N());
                     for (final AbstractFeatureEntity feature : features) {
-                        final Geometry geom = new HibernateGeometryVisitor(context).visit(feature);
+                        final Geometry geom = new GeometryVisitorImpl(context).visit(feature);
                         if (geom != null && !geom.isEmpty() && envelope.contains(geom)) {
                             identifiers.add(feature.getIdentifier());
                         }
@@ -269,7 +278,7 @@ public class HibernateFeatureQueryHandler
                             FeatureVisitorContext context = getDefaultContext()
                                     .setSession(session)
                                     .setRequestedLanguage(queryObject.getI18N());
-                            final Geometry geom = new HibernateGeometryVisitor(context).visit(feature);
+                            final Geometry geom = new GeometryVisitorImpl(context).visit(feature);
                             if (geom != null && !geom.isEmpty()) {
                                 envelope.expandToInclude(geom.getEnvelopeInternal());
                             }
@@ -387,24 +396,26 @@ public class HibernateFeatureQueryHandler
         if (feature == null) {
             return null;
         }
-        FeatureVisitorContext context = getDefaultContext()
+        HibernateFeatureVisitorContext context = (HibernateFeatureVisitorContext) getDefaultContext()
                 .setSession(session)
                 .setRequestedLanguage(queryObject.getI18N());
         return new HibernateFeatureVisitor(context).visit(feature);
     }
 
-    private FeatureVisitorContext getDefaultContext() {
-        return new FeatureVisitorContext()
-        .setStorageEPSG(getStorageEPSG())
+    private HibernateFeatureVisitorContext getDefaultContext() {
+        HibernateFeatureVisitorContext context = new HibernateFeatureVisitorContext()
+                .setDaoFactory(daoFactory);
+        context.setStorageEPSG(getStorageEPSG())
         .setStorage3DEPSG(getStorage3DEPSG())
         .setGeometryHandler(geometryHandler)
-        .setDaoFactory(daoFactory)
         .setShowAllLanguages(showAllLanguages)
         .setDefaultLanguage(defaultLocale)
         .setUpdateFeatureGeometry(updateFeatureGeometry)
         .setCreateFeatureGeometryFromSamplingGeometries(createFeatureGeometryFromSamplingGeometries)
         .setI18NDAORepository(i18NDAORepository)
-        .setCache((SosContentCache) contentCacheController.getCache());
+        .setCache((SosContentCache) contentCacheController.getCache())
+        .setActiveProfile(profileHandler.getActiveProfile());
+        return context;
     }
 
     protected AbstractFeatureEntity insertFeatureOfInterest(AbstractSamplingFeature samplingFeature,

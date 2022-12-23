@@ -46,9 +46,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  *
  * @author Christian Autermann
  */
-public class SOSDispatcherServlet
-        extends DispatcherServlet
-        implements ContextSwitcher {
+public class SOSDispatcherServlet extends DispatcherServlet implements ContextSwitcher {
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
     public static final String CONFIGURED_CONFIG_LOCATION_PARAM = "configuredConfigLocations";
     public static final String COMMON_CONFIG_LOCATION_PARAM = "commonConfigLocation";
@@ -68,9 +66,8 @@ public class SOSDispatcherServlet
         String def = getDefaultConfigLocations();
         String com = getCommonConfigLocation(servletContext);
         String set = isConfigured(servletContext) || loadSettings ? getSettingsConfigLocation(servletContext) : "";
-        String add = isConfigured(servletContext)
-                             ? getConfiguredConfigLocation(servletContext)
-                             : getUnconfiguredConfigLocation(servletContext);
+        String add = isConfigured(servletContext) ? getConfiguredConfigLocation(servletContext)
+                : getUnconfiguredConfigLocation(servletContext);
         return def + " " + com + " " + set + " " + add;
     }
 
@@ -81,9 +78,8 @@ public class SOSDispatcherServlet
 
     protected String getDefaultConfigLocations() {
         // -> /WEB-INF/dispatcher-servlet.xml
-        return XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_PREFIX +
-               getNamespace() +
-               XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_SUFFIX;
+        return XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_PREFIX + getNamespace()
+                + XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_SUFFIX;
     }
 
     private String getCommonConfigLocation(ServletContext servletContext) {
@@ -136,7 +132,7 @@ public class SOSDispatcherServlet
                 ((HotSwappableTargetSource) targetBean).swap(this);
             }
         } catch (NoSuchBeanDefinitionException e) {
-            //ignore
+            // ignore
         }
     }
 
@@ -153,11 +149,11 @@ public class SOSDispatcherServlet
 
     @Override
     public void loadSettings() {
-       this.loadSettings = true;
+        this.loadSettings = true;
     }
 
     @Override
     public void reset() {
-       this.configured = false;
+        this.configured = false;
     }
 }

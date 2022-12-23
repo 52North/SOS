@@ -39,10 +39,12 @@ import javax.inject.Inject;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.AssessmentTypeEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
@@ -61,6 +63,8 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ParameterCreator;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
@@ -95,6 +99,10 @@ public class DaoFactory {
     private boolean includeChildObservableProperties;
     private boolean staSupportsUrls;
     private SosHelper sosHelper;
+    private ObservationHelper observationHelper;
+    private boolean insertAdditionallyAsProfile;
+    private boolean updateFeatureGeometry;
+    private int trajectoryDetectionTimeGap = -1;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -143,6 +151,11 @@ public class DaoFactory {
         this.sosHelper = sosHelper;
     }
 
+    @Inject
+    public void setObservationHelper(ObservationHelper observationHelper) {
+        this.observationHelper = observationHelper;
+    }
+
     public boolean isIncludeChildObservableProperties() {
         return includeChildObservableProperties;
     }
@@ -167,15 +180,42 @@ public class DaoFactory {
         this.featureQueryHandler = featureQueryHandler;
     }
 
+    @Setting(SosSettings.INSERT_ADDITIONALLY_AS_PROFILE)
+    public void setInsertAdditionallyAsProfile(boolean insertAdditionallyAsProfile) {
+        this.insertAdditionallyAsProfile = insertAdditionallyAsProfile;
+    }
+
+    public boolean isInsertAdditionallyAsProfile() {
+        return insertAdditionallyAsProfile;
+    }
+
+    @Setting(SosSettings.UPDATE_FEATURE_GEOMETRY)
+    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
+        this.updateFeatureGeometry = updateFeatureGeometry;
+    }
+
+    public boolean isUpdateFeatureGeometry() {
+        return updateFeatureGeometry;
+    }
+
+    @Setting(SosSettings.TRAJECTORY_DETECTION_TIME_GAP)
+    public void setTrajectoryDetectionTimeGap(int trajectoryDetectionTimeGap) {
+        this.trajectoryDetectionTimeGap = trajectoryDetectionTimeGap;
+    }
+
+    public int getTrajectoryDetectionTimeGap() {
+        return trajectoryDetectionTimeGap;
+    }
+
     public AbstractSeriesDAO getSeriesDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingSeriesDAO(this);
         }
         return new SeriesDAO(this);
     }
 
     public boolean isSeriesDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return true;
         } else {
             return HibernateHelper.isEntitySupported(DataEntity.class);
@@ -191,28 +231,28 @@ public class DaoFactory {
      * @throws OwsExceptionReport If no Hibernate Observation data access is supported
      */
     public AbstractSeriesObservationDAO getObservationDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingObservationDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesObservationDAO(this);
     }
 
     public AbstractObservationTimeDAO getObservationTimeDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingObservationTimeDAO();
         }
         return new SeriesObservationTimeDAO();
     }
 
     public AbstractSeriesValueDAO getValueDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingValueDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesValueDAO(this);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesValueTimeDAO(this);
@@ -274,8 +314,8 @@ public class DaoFactory {
         return new OfferingDAO(this);
     }
 
-    public ParameterDAO getParameterDAO() {
-        return new ParameterDAO();
+    public ParameterCreator getParameterDAO() {
+        return new ParameterCreator();
     }
 
     public FormatDAO getProcedureDescriptionFormatDAO() {
@@ -302,6 +342,10 @@ public class DaoFactory {
         return sosHelper;
     }
 
+    public ObservationHelper getObservationHelper() {
+        return observationHelper;
+    }
+
     public FeatureQueryHandler getFeatureQueryHandler() {
         return featureQueryHandler;
     }
@@ -320,6 +364,14 @@ public class DaoFactory {
 
     public EncoderRepository getEncoderRepository() {
         return encoderRepository;
+    }
+
+    public CategoryEntity getDefaultCategory() {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setIdentifier(SosConstants.SOS);
+        categoryEntity.setName(SosConstants.SOS);
+        categoryEntity.setDescription("Default SOS category");
+        return categoryEntity;
     }
 
 }

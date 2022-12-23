@@ -27,7 +27,6 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -41,12 +40,10 @@ import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
@@ -62,7 +59,6 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -71,7 +67,6 @@ import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -92,12 +87,10 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
@@ -105,7 +98,6 @@ import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -344,6 +336,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = getDefaultObservationCriteria(session);
         addObservationIdentifierToCriteria(criteria, identifiers, session);
         return criteria.list();
+    }
+
+    public DataEntity<?> getObservationBy(Long dataset, Date samplingTimeStart, Date samplingTimeEnd, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, dataset));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, samplingTimeStart));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, samplingTimeEnd));
+        return (DataEntity<?>) c.uniqueResult();
     }
 
     /**
@@ -590,8 +590,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             AbstractFeatureEntity feature, OmObservation containerObservation,
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
             Map<String, FormatEntity> formatCache, Session session) throws OwsExceptionReport {
-        List<OmObservation> unfoldObservations = new ObservationUnfolder(containerObservation,
-                getDaoFactory().getSweHelper(), getDaoFactory().getGeometryHandler()).unfold();
+        List<OmObservation> unfoldObservations =
+                new ObservationUnfolder(containerObservation, getDaoFactory().getSweHelper(),
+                        getDaoFactory().getGeometryHandler(), getDaoFactory().getTrajectoryDetectionTimeGap())
+                                .unfold();
         for (OmObservation sosObservation : unfoldObservations) {
             DatasetEntity dataset = insertObservationSingleValue(observationConstellation, feature, sosObservation,
                     codespaceCache, unitCache, formatCache, session);
@@ -1359,72 +1361,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     protected abstract Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation);
 
-    /**
-     * @param sosObservation
-     *            {@link OmObservation} to check
-     * @param session
-     *            Hibernate {@link Session}
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    public void checkForDuplicatedObservations(OmObservation sosObservation, DatasetEntity observationConstellation,
-            Session session) throws OwsExceptionReport {
-        Criteria c = getTemoralReferencedObservationCriteriaFor(sosObservation, observationConstellation, session);
-        // add times check (start/end phen, result)
-        List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
-        filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));
-        filters.add(getResultTimeFilter(c, sosObservation.getResultTime(), sosObservation.getPhenomenonTime()));
-        c.add(SosTemporalRestrictions.filter(filters));
-        if (sosObservation.isSetHeightDepthParameter()) {
-            NamedValue<BigDecimal> hdp = sosObservation.getHeightDepthParameter();
-            addParameterRestriction(c, hdp);
-        }
-        c.setMaxResults(1);
-        LOGGER.trace("QUERY checkForDuplicatedObservations(): {}", HibernateHelper.getSqlString(c));
-        if (!c.list().isEmpty()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("procedure=").append(sosObservation.getObservationConstellation().getProcedureIdentifier());
-            builder.append("observedProperty=")
-                    .append(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
-            builder.append("featureOfInter=")
-                    .append(sosObservation.getObservationConstellation().getFeatureOfInterestIdentifier());
-            builder.append("phenomenonTime=").append(sosObservation.getPhenomenonTime().toString());
-            builder.append("resultTime=").append(sosObservation.getResultTime().toString());
-            // TODO for e-Reporting SampligPoint should be added.
-            if (sosObservation.isSetHeightDepthParameter()) {
-                NamedValue<BigDecimal> hdp = sosObservation.getHeightDepthParameter();
-                builder.append("height/depth=").append(hdp.getName().getHref()).append("/")
-                        .append(hdp.getValue().getValue());
-            }
-            throw new NoApplicableCodeException().withMessage("The observation for %s already exists in the database!",
-                    builder.toString());
-        }
-    }
-
-    private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
-        c.add(Subqueries.propertyIn(DataEntity.PROPERTY_PARAMETERS, getParameterRestriction(c, hdp.getName().getHref(),
-                hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
-    }
-
-    protected DetachedCriteria getParameterRestriction(Criteria c, String name, Object value, Class<?> clazz) {
-        DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
-        addParameterNameRestriction(detachedCriteria, name);
-        addParameterValueRestriction(detachedCriteria, value);
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(ParameterEntity.PROPERTY_ID)));
-        return detachedCriteria;
-    }
-
-    protected DetachedCriteria addParameterNameRestriction(DetachedCriteria detachedCriteria, String name) {
-        detachedCriteria.add(Restrictions.eq(ParameterEntity.NAME, name));
-        return detachedCriteria;
-    }
-
-    protected DetachedCriteria addParameterValueRestriction(DetachedCriteria detachedCriteria, Object value) {
-        detachedCriteria.add(Restrictions.eq(ParameterEntity.VALUE, value));
-        return detachedCriteria;
-    }
-
     private TemporalFilter getPhenomeonTimeFilter(Criteria c, Time phenomenonTime) {
         return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, Sos2Constants.EN_PHENOMENON_TIME);
     }
@@ -1447,10 +1383,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 throw new NoApplicableCodeException().withMessage(ERROR_CREATING_RESULT_TIME_LOG);
             }
         }
-    }
-
-    public ParameterFactory getParameterFactory() {
-        return ParameterFactory.getInstance();
     }
 
     private GeometryHandler getGeometryHandler() {

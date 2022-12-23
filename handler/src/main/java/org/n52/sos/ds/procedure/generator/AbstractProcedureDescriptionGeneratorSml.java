@@ -41,15 +41,15 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.series.db.DataAccessException;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.ValueType;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
+import org.n52.series.db.old.dao.DatasetDao;
+import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -69,6 +69,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.JavaHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -105,8 +106,9 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix,
-            boolean isAddOutputsToSensorML) {
-        super(i18NDAORepository, cacheController);
+            boolean isAddOutputsToSensorML, ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
+        super(i18NDAORepository, cacheController, procedureSettings, dbQueryFactory);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
         this.profileHandler = profileHandler;
@@ -180,7 +182,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
                 }
             }
             return outputs;
-        } catch (final HibernateException | DataAccessException he) {
+        } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -198,7 +200,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     @SuppressWarnings("rawtypes")
     private SmlIo createOutputFromDatasets(ProcedureEntity procedure, PhenomenonEntity observableProperty,
-            Session session) throws DataAccessException {
+            Session session) {
         DatasetDao<DatasetEntity> datasetDao = new DatasetDao<>(session);
         List<DatasetEntity> allInstances = datasetDao.getAllInstances(createDbQuery(procedure, observableProperty));
         if (allInstances == null) {
@@ -251,23 +253,23 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQueryWithLimit(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         map.put(IoParameters.LIMIT, Long.toString(1));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    protected boolean isStation(ProcedureEntity procedure, Session session) throws DataAccessException {
+    protected boolean isStation(ProcedureEntity procedure, Session session) {
         List<DatasetEntity> datasets = new DatasetDao<>(session).getAllInstances(createDbQueryWithLimit(procedure));
         if (datasets != null && !datasets.isEmpty()) {
             DatasetEntity dataset = datasets.iterator().next();

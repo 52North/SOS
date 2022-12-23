@@ -32,10 +32,10 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
-<jsp:include page="common/header.jsp">
+<jsp:include page="./common/header.jsp">
     <jsp:param name="activeMenu" value="home" />
 </jsp:include>
-<jsp:include page="common/logotitle.jsp">
+<jsp:include page="./common/logotitle.jsp">
 	<jsp:param name="title" value="Get Involved!" />
 	<jsp:param name="leadParagraph" value="There are various ways to get involved with the 52&deg;North Initiative. What are your interests? (If you want to get involved in open source, but don't know how to start, you might want to read this <a href='http://blog.smartbear.com/software-quality/bid/167051/14-Ways-to-Contribute-to-Open-Source-without-Being-a-Programming-Genius-or-a-Rock-Star'>blog entry</a>.)" />
 </jsp:include>
@@ -84,9 +84,9 @@
                         "<center><strong>Installation completed!</strong></center>" +
                         "Potential next steps:" +
                         "<ul>" +
-                        "<li>Insert up-to-date <a href='<c:url value="/admin/datasource/"/>'>sample data</a></li>" +
-                        "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="/client"/>'>test client</a> with the provided example requests</li></c:if>" +
-                        "<li>Finalize the configuration using the <a href='<c:url value="/admin/"/>'>admin interface</a>, e.g. en-/disable <a href='<c:url value="/admin/operations/"/>'>operations</a>, <a href='<c:url value="/admin/encodings/"/>'>encodings</a>, <a href='<c:url value="/admin/bindings/"/>'>bindings</a>, <a href='<c:url value="/admin/extensions/" />'>extensions</a></li>" +
+                        "<li>Insert up-to-date <a href='<c:url value="./admin/datasource/"/>'>sample data</a></li>" +
+                        "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="./client"/>'>test client</a> with the provided example requests</li></c:if>" +
+                        "<li>Finalize the configuration using the <a href='<c:url value="./admin/"/>'>admin interface</a>, e.g. en-/disable <a href='<c:url value="./admin/operations/"/>'>operations</a>, <a href='<c:url value="./admin/encodings/"/>'>encodings</a>, <a href='<c:url value="./admin/bindings/"/>'>bindings</a>, <a href='<c:url value="./admin/extensions/" />'>extensions</a></li>" +
                         "</ul>",
                         "success",
                         false);
@@ -95,4 +95,4 @@
     });
 </script>
 
-<jsp:include page="common/footer.jsp" />
+<jsp:include page="./common/footer.jsp" />

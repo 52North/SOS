@@ -51,12 +51,14 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.PredefinedInsertionHandler;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.TransactionHelper;
 import org.n52.sos.predefined.Phenomenon;
 import org.n52.sos.predefined.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HibernatePredefinedInsertionHandler implements PredefinedInsertionHandler, Constructable {
+public class HibernatePredefinedInsertionHandler
+        implements PredefinedInsertionHandler, Constructable, TransactionHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernatePredefinedInsertionHandler.class);
 
@@ -80,10 +82,9 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
         Transaction transaction = null;
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             for (Phenomenon phenomenon : observableProperties) {
-                getDaoFactory().getObservablePropertyDAO()
-                        .getOrInsertObservableProperty(convert(phenomenon), session);
+                getDaoFactory().getObservablePropertyDAO().getOrInsertObservableProperty(convert(phenomenon), session);
             }
             session.flush();
             transaction.commit();
@@ -106,7 +107,7 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
         Transaction transaction = null;
         try {
             session = getHibernateSessionHolder().getSession();
-            transaction = session.beginTransaction();
+            transaction = getTransaction(session);
             for (Unit unit : untis) {
                 getDaoFactory().getUnitDAO().getOrInsertUnit(convert(unit), session);
             }
@@ -128,7 +129,7 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
     private void checkExceptionAndThrow(HibernateException pe) throws CodedException {
         if (pe instanceof SQLGrammarException && ((SQLGrammarException) pe).getSQLState().equals("42501")) {
             throw new NoApplicableCodeException()
-            .withMessage("The user does not have the privileges to write data into the database!");
+                    .withMessage("The user does not have the privileges to write data into the database!");
         }
     }
 

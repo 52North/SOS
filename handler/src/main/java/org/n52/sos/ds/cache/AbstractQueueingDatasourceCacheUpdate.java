@@ -28,7 +28,7 @@
 package org.n52.sos.ds.cache;
 
 import org.n52.iceland.util.action.CompositeParallelAction;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +77,7 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
                     action.setCache(getCache());
                     action.setErrors(getErrors());
                     action.setSessionFactory(sessionFactory);
+                    action.setDbQueryFactory(getDbQueryFactory());
                 }
 
                 @Override

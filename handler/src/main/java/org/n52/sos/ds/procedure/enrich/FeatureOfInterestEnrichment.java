@@ -36,10 +36,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
+import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
@@ -48,6 +47,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.I18nNameDescriptionAdder;
+import org.n52.sos.ds.feature.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.FeatureVisitorImpl;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
@@ -104,7 +105,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment
         try {
             return createFeatures(
                     new HashSet<>(new FeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
-        } catch (InvalidSridException | DataAccessException e) {
+        } catch (InvalidSridException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying data for GetFeatureOfInterest!");
         }
@@ -116,17 +117,27 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment
             map.put(IoParameters.FEATURES, listToString(featureOfInterestIDs));
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities)
             throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
         for (final FeatureEntity feature : featureEntities) {
-            final AbstractFeature abstractFeature = createFeature(feature);
+            final AbstractFeature abstractFeature = new FeatureVisitorImpl(getDefaultContext()).visit(feature);
             map.put(abstractFeature.getIdentifier(), abstractFeature);
         }
         return map;
+    }
+
+    private FeatureVisitorContext getDefaultContext() {
+        FeatureVisitorContext context =
+                new FeatureVisitorContext().setGeometryHandler(getProcedureCreationContext().getGeometryHandler())
+                        .setShowAllLanguages(getProcedureCreationContext().isShowAllLanguageValues())
+                        .setDefaultLanguage(getProcedureCreationContext().getDefaultLocale())
+                        .setI18NDAORepository(getProcedureCreationContext().getI18nr())
+                        .setCache(getProcedureCreationContext().getCache());
+        return context;
     }
 
     private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {

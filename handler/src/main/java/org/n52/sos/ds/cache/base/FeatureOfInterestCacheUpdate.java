@@ -33,12 +33,12 @@ import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
+import org.n52.series.db.old.dao.DatasetDao;
+import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         startStopwatch();
         try {
             Collection<FeatureEntity> features =
-                    new FeatureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+                    new FeatureDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
                 getCache().addFeatureOfInterest(identifier);
@@ -120,6 +120,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     private DbQuery createDatasetDbQuery(FeatureEntity feature) {
         IoParameters parameters = IoParameters.createDefaults()
                 .extendWith(IoParameters.FEATURES, Long.toString(feature.getId()));
-        return new DbQuery(parameters);
+        return createDbQuery(parameters);
     }
+
 }

@@ -28,6 +28,8 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,9 +41,12 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.jfree.data.general.Dataset;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.series.db.beans.AbstractDatasetEntity;
 import org.n52.series.db.beans.CompositeDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetAggregationEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -58,9 +63,9 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
-import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
+import org.n52.sos.ds.utils.HibernateUnproxy;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
@@ -90,11 +95,11 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
 
     boolean isDeletePhysically();
 
-    default void deleteObservation(Collection<DatasetEntity> serieses, Collection<TemporalFilter> filters,
+    default void deleteObservation(Collection<DatasetEntity> datasets, Collection<TemporalFilter> filters,
             Session session) throws OwsExceptionReport {
         boolean temporalFilters = filters != null && !filters.isEmpty();
         Set<Long> modifiedDatasets = new HashSet<>();
-        for (Long s : getSeriesInlcudeChildObs(serieses.stream()
+        for (Long s : getSeriesInlcudeChildObs(datasets.stream()
                 .map(DatasetEntity::getId)
                 .collect(Collectors.toSet()), session)) {
             Query<?> q = session.createQuery(getUpdateQueryString(filters, temporalFilters));
@@ -130,7 +135,7 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                 filters, session);
     }
 
-    default Set<Long> getSeriesInlcudeChildObs(Collection<Long> serieses, Session session) {
+    default Set<Long> getSeriesInlcudeChildObs(Collection<Long> datasets, Session session) {
         StringBuilder builder = new StringBuilder();
         builder.append("select distinct o2.")
                 .append(DataEntity.PROPERTY_DATASET_ID)
@@ -156,12 +161,12 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                 .append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         Query<?> q = session.createQuery(builder.toString());
-        q.setParameter(DataEntity.PROPERTY_DATASET, serieses);
+        q.setParameter(DataEntity.PROPERTY_DATASET, datasets);
         List<Long> list = (List<Long>) q.list();
         if (list != null && !list.isEmpty()) {
-            serieses.addAll(list);
+            datasets.addAll(list);
         }
-        return serieses instanceof Set ? (Set<Long>) serieses : new LinkedHashSet<>(serieses);
+        return datasets instanceof Set ? (Set<Long>) datasets : new LinkedHashSet<>(datasets);
     }
 
     default Set<Long> getParents(Collection<Long> modifiedDatasets, Collection<TemporalFilter> filters,
@@ -397,67 +402,117 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
     /**
      * Check if {@link Dataset} should be updated
      *
-     * @param serieses
+     * @param datasets
      *            Deleted observation
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    default void checkSeriesForFirstLatest(Collection<Long> serieses, Session session) throws OwsExceptionReport {
-        if (!serieses.isEmpty()) {
+    default void checkSeriesForFirstLatest(Collection<Long> datasets, Session session) throws OwsExceptionReport {
+        if (!datasets.isEmpty()) {
             AbstractSeriesObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Map<Long, SeriesTimeExtrema> minMaxTimes = observationDAO.getMinMaxSeriesTimesById(
-                    serieses instanceof Set ? (Set<Long>) serieses : new LinkedHashSet<>(serieses), session);
-            for (Long id : serieses) {
-                DatasetEntity series = session.get(DatasetEntity.class, id);
+                    datasets instanceof Set ? (Set<Long>) datasets : new LinkedHashSet<>(datasets), session);
+            Set<Long> aggregations = new LinkedHashSet<>();
+            for (Long id : datasets) {
+                DatasetEntity dataset = session.get(DatasetEntity.class, id);
+                if (dataset.isSetAggregation()) {
+                    aggregations.add(dataset.getAggregation().getId());
+                }
                 boolean update = false;
-                if (minMaxTimes.containsKey(series.getId())) {
-                    SeriesTimeExtrema extrema = minMaxTimes.get(series.getId());
-                    if (!series.isSetFirstValueAt()
-                            || series.isSetFirstValueAt() && !DateTimeHelper.makeDateTime(series.getFirstValueAt())
-                                    .equals(extrema.getMinPhenomenonTime())) {
-                        series.setFirstValueAt(extrema.getMinPhenomenonTime()
+                if (minMaxTimes.containsKey(dataset.getId())) {
+                    SeriesTimeExtrema extrema = minMaxTimes.get(dataset.getId());
+                    if (!dataset.isSetFirstValueAt() || dataset.isSetFirstValueAt() && !DateTimeHelper
+                            .makeDateTime(dataset.getFirstValueAt()).equals(extrema.getMinPhenomenonTime())) {
+                        dataset.setFirstValueAt(extrema.getMinPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(
-                                observationDAO.getMinObservation(series, extrema.getMinPhenomenonTime(), session),
+                                observationDAO.getMinObservation(dataset, extrema.getMinPhenomenonTime(), session),
                                 session);
-                        series.setFirstObservation(o);
-                        if (series.getValueType()
+                        dataset.setFirstObservation(o);
+                        if (dataset.getValueType()
                                 .equals(ValueType.quantity)) {
-                            series.setFirstQuantityValue(((QuantityDataEntity) o).getValue());
+                            dataset.setFirstQuantityValue(((QuantityDataEntity) o).getValue());
                         }
                         update = true;
                     }
-                    if (!series.isSetLastValueAt()
-                            || series.isSetLastValueAt() && !DateTimeHelper.makeDateTime(series.getLastValueAt())
+                    if (!dataset.isSetLastValueAt()
+                            || dataset.isSetLastValueAt() && !DateTimeHelper.makeDateTime(dataset.getLastValueAt())
                                     .equals(extrema.getMaxPhenomenonTime())) {
-                        series.setLastValueAt(extrema.getMaxPhenomenonTime()
+                        dataset.setLastValueAt(extrema.getMaxPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(
-                                observationDAO.getMaxObservation(series, extrema.getMaxPhenomenonTime(), session),
+                                observationDAO.getMaxObservation(dataset, extrema.getMaxPhenomenonTime(), session),
                                 session);
-                        series.setLastObservation(o);
-                        if (series.getValueType()
+                        dataset.setLastObservation(o);
+                        if (dataset.getValueType()
                                 .equals(ValueType.quantity)) {
-                            series.setLastQuantityValue(((QuantityDataEntity) o).getValue());
+                            dataset.setLastQuantityValue(((QuantityDataEntity) o).getValue());
 
                         }
                         update = true;
                     }
+                    if (!dataset.isSetResultTimeStart() || dataset.isSetResultTimeStart() && !DateTimeHelper
+                            .makeDateTime(dataset.getResultTimeEnd()).equals(extrema.getMinResultTime())) {
+                        dataset.setFirstValueAt(extrema.getMinResultTime()
+                                .toDate());
+                        update = true;
+                    }
+                    if (!dataset.isSetResultTimeEnd()
+                            || dataset.isSetResultTimeEnd() && !DateTimeHelper.makeDateTime(dataset.getResultTimeEnd())
+                                    .equals(extrema.getMaxResultTime())) {
+                        dataset.setResultTimeEnd(extrema.getMaxResultTime()
+                                .toDate());
+                        update = true;
+                    }
                 } else {
-                    series.setFirstValueAt(null);
-                    series.setFirstQuantityValue(null);
-                    series.setFirstObservation(null);
-                    series.setLastValueAt(null);
-                    series.setLastQuantityValue(null);
-                    series.setLastObservation(null);
+                    dataset.setFirstValueAt(null);
+                    dataset.setFirstQuantityValue(null);
+                    dataset.setFirstObservation(null);
+                    dataset.setLastValueAt(null);
+                    dataset.setLastQuantityValue(null);
+                    dataset.setLastObservation(null);
+                    dataset.setResultTimeStart(null);
+                    dataset.setResultTimeEnd(null);
+                    dataset.setGeometryEntity(null);
                     update = true;
                 }
                 if (update) {
-                    session.saveOrUpdate(series);
+                    session.saveOrUpdate(dataset);
                     session.flush();
                 }
+                if (!aggregations.isEmpty()) {
+                    updateAggregations(aggregations, session);
+                }
+            }
+        }
+    }
+
+    default void updateAggregations(Set<Long> aggregations, Session session) {
+        for (Long id : aggregations) {
+            DatasetAggregationEntity aggregation = session.get(DatasetAggregationEntity.class, id);
+            Set<Date> samplingTimeStart = new LinkedHashSet<>();
+            Set<Date> samplingTimeEnd = new LinkedHashSet<>();
+            Set<Date> resultTimeStart = new LinkedHashSet<>();
+            Set<Date> resultTimeEnd = new LinkedHashSet<>();
+            GeometryEntity geom = new GeometryEntity();
+            if (aggregation.isSetDatasets()) {
+                for (AbstractDatasetEntity ade : aggregation.getDatasets()) {
+                    samplingTimeStart.add(ade.getSamplingTimeStart());
+                    samplingTimeEnd.add(ade.getSamplingTimeEnd());
+                    resultTimeStart.add(ade.getResultTimeStart());
+                    resultTimeEnd.add(ade.getResultTimeEnd());
+                    if (ade.getGeometry() != null) {
+                        geom.union(ade.getGeometryEntity());
+                    }
+                }
+                aggregation.setSamplingTimeStart(Collections.min(samplingTimeStart));
+                aggregation.setSamplingTimeEnd(Collections.max(samplingTimeEnd));
+                aggregation.setResultTimeStart(Collections.min(resultTimeStart));
+                aggregation.setResultTimeEnd(Collections.max(resultTimeEnd));
+                session.saveOrUpdate(aggregation);
+                session.flush();
             }
         }
     }

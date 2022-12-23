@@ -39,7 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.parameter.ParameterTextEntity;
+import org.n52.series.db.beans.parameter.TextParameterEntity;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -166,7 +166,7 @@ public class ExtensionFesFilterCriteriaAdder {
 
     private Class<?> getClassFor(String value, ComparisonOperator operator) {
         // TODO check for other types
-        return ParameterTextEntity.class;
+        return TextParameterEntity.class;
     }
 
     private Criterion getRestrictionIn(String name, Set<String> values) {

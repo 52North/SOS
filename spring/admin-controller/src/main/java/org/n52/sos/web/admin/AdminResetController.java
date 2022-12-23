@@ -85,7 +85,6 @@ public class AdminResetController extends AbstractReloadContextController {
         if (persistenceStrategy != null) {
             persistenceStrategy.remove();
         }
-
         env.setActiveProfiles("undefined");
         contextSwitcher.reset();
         contextSwitcher.loadSettings();
@@ -93,4 +92,5 @@ public class AdminResetController extends AbstractReloadContextController {
 
         return new RedirectView(ControllerConstants.Paths.ROOT, true);
     }
+
 }

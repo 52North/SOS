@@ -35,10 +35,9 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.series.db.DataAccessException;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.ProcessMethod;
 import org.n52.shetland.ogc.sensorML.ProcessModel;
@@ -49,6 +48,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -60,9 +60,11 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
 
     ProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
-            boolean isAddOutputsToSensorML) {
-        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
-                isAddOutputsToSensorML);
+            boolean isAddOutputsToSensorML, ProcedureDescriptionSettings procedureSettings,
+            DbQueryFactory dbQueryFactory) {
+        super(profileHandler, geometryHandler, i18ndaoRepository,
+                cacheController, srsNamePrefixUrl,
+                isAddOutputsToSensorML, procedureSettings, dbQueryFactory);
     }
 
     @Override
@@ -88,19 +90,14 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
     public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
             Session session) throws OwsExceptionReport {
         setLocale(i18n);
-        try {
-            // 2 try to get position from entity
-            if (isStation(procedure, session)) {
-                // 2.1 if position is available -> system -> own class <- should
-                // be compliant with SWE lightweight profile
-                return new SosProcedureDescription<>(createSmlSystem(procedure, session));
-            } else {
-                // 2.2 if no position is available -> processModel -> own class
-                return new SosProcedureDescription<>(createSmlProcessModel(procedure, session));
-            }
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for DescribeSensor document!");
+        // 2 try to get position from entity
+        if (isStation(procedure, session)) {
+            // 2.1 if position is available -> system -> own class <- should
+            // be compliant with SWE lightweight profile
+            return new SosProcedureDescription<>(createSmlSystem(procedure, session));
+        } else {
+            // 2.2 if no position is available -> processModel -> own class
+            return new SosProcedureDescription<>(createSmlProcessModel(procedure, session));
         }
     }
 

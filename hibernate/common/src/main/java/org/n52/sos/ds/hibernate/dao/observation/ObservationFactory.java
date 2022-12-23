@@ -39,6 +39,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -119,6 +120,13 @@ public abstract class ObservationFactory {
     public ProfileDataEntity profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
+    }
+
+    public abstract Class<? extends TrajectoryDataEntity> trajectoryClass();
+
+    public TrajectoryDataEntity trajectory()
+            throws OwsExceptionReport {
+        return instantiate(trajectoryClass());
     }
 
     public abstract Class<? extends ReferencedDataEntity> referenceClass();

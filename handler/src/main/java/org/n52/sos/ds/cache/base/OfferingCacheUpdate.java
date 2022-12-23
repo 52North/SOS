@@ -32,10 +32,10 @@ import java.util.Locale;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.OfferingDao;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
@@ -54,7 +54,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @since 4.0.0
  */
-@SuppressFBWarnings({"EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask>
         implements ApiQueryHelper, DatasourceCacheUpdateHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
@@ -72,13 +72,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private GeometryHandler geometryHandler;
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
-            HibernateSessionStore sessionStore) {
-        this(threads, defaultLanguage, geometryHandler, sessionStore, null);
+            HibernateSessionStore sessionStore, DbQueryFactory dbQueryFactory) {
+        this(threads, defaultLanguage, geometryHandler, sessionStore, null, dbQueryFactory);
+
     }
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
-            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
+            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate,
+            DbQueryFactory dbQueryFactory) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
+        setDbQueryFactory(dbQueryFactory);
         if (offeringIdsToUpdate != null) {
             this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
         }
@@ -93,7 +96,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             }
             if (offeringsToUpdate == null) {
                 if (offeringsIdToUpdate == null || offeringsIdToUpdate.isEmpty()) {
-                    return offeringDAO.get(new DbQuery(IoParameters.createDefaults()));
+                    return offeringDAO.get(createDbQuery(IoParameters.createDefaults()));
                 }
             }
         } catch (Exception e) {

@@ -45,6 +45,7 @@ import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.beans.sampling.SamplingEntity;
 import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
@@ -77,7 +78,7 @@ public class ObservationContext {
     private boolean mobile;
     private boolean insitu = true;
     private ValueType valueType;
-
+    private boolean includeCategory;
 
     /**
      * Indicates that the series of the observation should be published
@@ -121,7 +122,16 @@ public class ObservationContext {
      *            the category to set
      */
     public ObservationContext setCategory(CategoryEntity category) {
+        return setCategory(category, false);
+    }
+
+    /**
+     * @param category
+     *            the category to set
+     */
+    public ObservationContext setCategory(CategoryEntity category, boolean include) {
         this.category = category;
+        this.includeCategory = include;
         return this;
     }
 
@@ -259,13 +269,13 @@ public class ObservationContext {
         if (contextual.getCategory() == null && isSetCategory()) {
             contextual.setCategory(getCategory());
         }
-        if (contextual.getPlatform() == null && isSetCategory()) {
+        if (contextual.getPlatform() == null && isSetPlatform()) {
             contextual.setPlatform(getPlatform());
         }
-        if (!contextual.isSetOmObservationType() && isSetObservationType()) {
+        if (!contextual.isSetOMObservationType() && isSetObservationType()) {
             contextual.setOmObservationType(getObservationType());
         }
-        if (!contextual.hasUnit() && isSetUnit()) {
+        if (!contextual.isSetUnit() && isSetUnit()) {
             contextual.setUnit(getUnit());
         }
         if (!contextual.hasVerticalMetadata() && isSetVerticalMetadata()) {
@@ -274,6 +284,10 @@ public class ObservationContext {
         contextual.setHidden(isHiddenChild());
         contextual.setMobile(isMobile());
         contextual.setInsitu(isInsitu());
+        if (DatasetType.trajectory.equals(contextual.getDatasetType())
+                && ValueType.not_initialized.equals(contextual.getValueType())) {
+            contextual.setValueType(getValueType());
+        }
         if (HibernateHelper.isEntitySupported(SamplingEntity.class)) {
             contextual.setSamplingProfile(new SamplingProfileDatasetEntity());
         }
@@ -334,5 +348,38 @@ public class ObservationContext {
 
     public boolean isSetValueType() {
         return getValueType() != null;
+    }
+
+    /**
+     * @return the includeCategory
+     */
+    public boolean isIncludeCategory() {
+        return includeCategory;
+    }
+
+    /**
+     * @param includeCategory the includeCategory to set
+     */
+    public void setIncludeCategory(boolean includeCategory) {
+        this.includeCategory = includeCategory;
+    }
+
+    public ObservationContext copy(ObservationContext context) {
+        setCategory(context.getCategory());
+        setFeatureOfInterest(context.getFeatureOfInterest());
+        setHiddenChild(context.isHiddenChild());
+        setIncludeCategory(context.isIncludeCategory());
+        setInsitu(context.isInsitu());
+        setMobile(context.isMobile());
+        setObservationType(context.getObservationType());
+        setOffering(context.getOffering());
+        setPhenomenon(context.getPhenomenon());
+        setPlatform(context.getPlatform());
+        setProcedure(context.getProcedure());
+        setPublish(context.isPublish());
+        setUnit(context.getUnit());
+        setValueType(context.getValueType());
+        setVertical(context.getVertical());
+        return this;
     }
 }

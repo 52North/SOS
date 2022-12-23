@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sos-parent</artifactId>
         <groupId>org.n52.sensorweb-server.sos</groupId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-webapp</artifactId>
@@ -175,11 +175,8 @@
                             </includes>
                             <excludes>
                                 <exclude>WEB-INF/classes/application.properties</exclude>
-                                <exclude>WEB-INF/**/series-database-config.xml</exclude>
-                                <exclude>WEB-INF/**/services-beans.xml</exclude>
+                                <exclude>WEB-INF/**/*.xml</exclude>
                                 <exclude>WEB-INF/**/series-hibernate.cfg.xml</exclude>
-                                <exclude>WEB-INF/**/dispatcher.xml</exclude>
-                                <exclude>WEB-INF/**/spi-impl-dao_tasks.xm</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -433,8 +430,25 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>com.cosium.spring.data</groupId>
+			<artifactId>spring-data-jpa-entity-graph</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+            <artifactId>classloader-leak-prevention-servlet3</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -580,15 +594,32 @@
             <artifactId>sos-hibernate-datasource-mysql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+        <!-- proxy -->
         <dependency>
+		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+		    <artifactId>helgoland-adapters-common</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+        <dependency>
+		    <groupId>org.n52.sensorweb-server.helgoland-adapters</groupId>
+		    <artifactId>helgoland-adapters-harvest</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+		<dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sos-hibernate-datasource-oracle</artifactId>
+            <artifactId>sos-proxy-datasource-common</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <scope>provided</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-proxy-aquarius-datasource</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-proxy-aquarius-handler</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- CONVERTER -->
@@ -823,7 +854,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.helgoland</groupId>
           <artifactId>helgoland-io</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -897,7 +927,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.helgoland</groupId>
          <artifactId>helgoland-spi</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -937,6 +966,32 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.dao-impl</groupId>
           <artifactId>dao-impl-dao</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+         </dependency>
+         <dependency>
+          <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+          <artifactId>dao-impl-repo</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -960,6 +1015,11 @@
               <artifactId>gt-metadata</artifactId>
             </exclusion>
           </exclusions>
+         </dependency>
+         <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repos</artifactId>
+            <scope>runtime</scope>
          </dependency>
          <dependency>
           <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -987,10 +1047,15 @@
               <artifactId>gt-metadata</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>com.neovisionaries</groupId>
-              <artifactId>nv-i18n</artifactId>
+                <groupId>com.neovisionaries</groupId>
+                <artifactId>nv-i18n</artifactId>
             </exclusion>
           </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -1030,6 +1095,47 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- CVE fixes -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <scope>runtime</scope>
+        </dependency> 
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -1191,7 +1297,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${webappConfigurationFolder}/datasource.properties" />
+                                        <copy file="${datasourceConfigurationFile}" tofile="${webappConfigurationFolder}/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -1226,6 +1332,31 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+         <profile>
+            <id>docker</id>
+            <dependencies>
+	            <dependency>
+				  <groupId>org.eclipse.jetty</groupId>
+				  <artifactId>jetty-slf4j-impl</artifactId>
+				  <scope>runtime</scope>
+				</dependency>
+            </dependencies>
+        </profile>
+         <profile>
+            <id>oracle</id>
+            <dependencies>
+                 <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>sos-hibernate-datasource-oracle</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.oracle.database.jdbc</groupId>
+                    <artifactId>ojdbc8</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

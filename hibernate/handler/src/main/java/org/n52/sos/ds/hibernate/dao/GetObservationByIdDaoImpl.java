@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -40,13 +39,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
@@ -58,9 +54,9 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
-import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
-import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.values.dataset.HibernateChunkSeriesStreamingValue;
+import org.n52.sos.ds.hibernate.values.dataset.HibernateSeriesStreamingValue;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
@@ -74,7 +70,7 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetObservationByIdDaoImpl extends AbstractObservationDao
         implements org.n52.sos.ds.dao.GetObservationByIdDao {
 
@@ -84,13 +80,11 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
 
-    private OmObservationCreatorContext observationCreatorContext;
+    private HibernateOmObservationCreatorContext observationCreatorContext;
 
     private DaoFactory daoFactory;
 
     private EncoderRepository encoderRepository;
-
-    private Locale defaultLanguage;
 
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
@@ -113,13 +107,8 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
     }
 
     @Inject
-    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
+    public void setOmObservationCreatorContext(HibernateOmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -218,14 +207,16 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, session);
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         for (DatasetEntity series : serieses) {
-            ObservationStream createSosObservationFromSeries =
-                    HibernateObservationUtilities.createSosObservationFromSeries(series, request,
+            ObservationStream createSosObservationFromSeries = series.hasEreportingProfile()
+                    ? HibernateObservationUtilities.createSosObservationFromEReportingSeries(series, request,
+                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
+                            session)
+                    : HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
                             session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
-            HibernateSeriesStreamingValue streamingValue =
-                    new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(
+                    sessionHolder.getConnectionProvider(), daoFactory, request, series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);
@@ -244,8 +235,4 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
         return null;
     }
 
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
-    }
 }

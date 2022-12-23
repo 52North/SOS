@@ -48,6 +48,9 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.observation.AdditionalObservationCreator;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +73,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     protected final DatasetEntity dataset;
 
     public SeriesOmObservationCreator(DatasetEntity series, AbstractObservationRequest request, Locale i18n,
-            String pdf, OmObservationCreatorContext creatorContext, Session session) {
+            String pdf, HibernateOmObservationCreatorContext creatorContext, Session session) {
         super(request, i18n, pdf, creatorContext, session);
         this.dataset = series;
     }

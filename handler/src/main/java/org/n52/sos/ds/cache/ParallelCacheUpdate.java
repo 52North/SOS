@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.cache;
 
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 
 public class ParallelCacheUpdate
         extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {

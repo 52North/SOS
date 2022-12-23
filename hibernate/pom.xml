@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-parent</artifactId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
     <artifactId>sos-hibernate</artifactId>
     <packaging>pom</packaging>
@@ -15,8 +15,8 @@
         <module>common</module>
         <module>handler</module>
         <module>feature</module>
-            <module>h2</module>
-            <module>datasource</module>
+        <module>h2</module>
+        <module>datasource</module>
         <module>utils</module>
         <module>c3p0</module>
     </modules>

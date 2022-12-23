@@ -46,9 +46,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -64,9 +62,9 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
-import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
-import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.values.dataset.HibernateChunkSeriesStreamingValue;
+import org.n52.sos.ds.hibernate.values.dataset.HibernateSeriesStreamingValue;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.ObservationEncoder;
@@ -80,7 +78,7 @@ import com.google.common.collect.Maps;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
-@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
+@SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetObservationDaoImpl extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDaoImpl.class);
 
@@ -92,11 +90,9 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
 
     private DaoFactory daoFactory;
 
-    private OmObservationCreatorContext observationCreatorContext;
+    private HibernateOmObservationCreatorContext observationCreatorContext;
 
     private boolean overallExtrema;
-
-    private Locale defaultLanguage;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -114,18 +110,13 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
     }
 
     @Inject
-    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
+    public void setOmObservationCreatorContext(HibernateOmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
     }
 
     @Setting("profile.hydrology.overallExtrema")
     public void setOverallExtrema(boolean overallExtrema) {
         this.overallExtrema = overallExtrema;
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -141,7 +132,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         } finally {
             sessionHolder.returnSession(session);
         }
-
     }
 
     @Override
@@ -237,7 +227,8 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
     }
 
     private List<DatasetEntity> getSeries(AbstractSeriesDAO seriesDAO, GetObservationRequest request,
-            List<String> features, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            List<String> features, IndeterminateValue sosIndeterminateTime, Session session)
+            throws OwsExceptionReport {
         if (!overallExtrema) {
             return seriesDAO.getSeries(request, features, session);
         }
@@ -295,14 +286,16 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = getMaxNumberOfValuesPerSeries(serieses.size());
         for (DatasetEntity series : serieses) {
-            ObservationStream createSosObservationFromSeries =
-                    HibernateObservationUtilities.createSosObservationFromSeries(series, request,
+            ObservationStream createSosObservationFromSeries = series.hasEreportingProfile()
+                    ? HibernateObservationUtilities.createSosObservationFromEReportingSeries(series, request,
+                            getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
+                            observationCreatorContext, session)
+                    : HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
                             observationCreatorContext, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
-            HibernateSeriesStreamingValue streamingValue =
-                    new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(
+                    sessionHolder.getConnectionProvider(), daoFactory, request, series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
@@ -329,8 +322,4 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         return null;
     }
 
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
-    }
 }

@@ -39,6 +39,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
@@ -70,6 +71,9 @@ public interface ObservationVisitor<T> {
     T visit(DataArrayDataEntity o) throws OwsExceptionReport;
 
     T visit(ProfileDataEntity o)
+            throws OwsExceptionReport;
+
+    T visit(TrajectoryDataEntity o)
             throws OwsExceptionReport;
 
     T visit(ReferencedDataEntity o)

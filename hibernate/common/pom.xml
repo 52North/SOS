@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-hibernate</artifactId>
-        <version>5.5.2</version>
+        <version>6.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-hibernate-common</artifactId>
@@ -28,6 +28,15 @@
                     <artifactId>nv-i18n</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-repos</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -150,18 +159,13 @@
             <artifactId>hibernate-commons-annotations</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
+         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>2.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -169,6 +173,10 @@
             <artifactId>hamcrest-core</artifactId>
             <version>2.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

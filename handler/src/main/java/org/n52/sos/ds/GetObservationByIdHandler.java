@@ -34,7 +34,7 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -45,6 +45,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.dao.GetObservationByIdDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -73,6 +74,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
     }
 
     @Override
+    @Transactional()
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
@@ -84,7 +86,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
             response.setResultModel(request.getResultModel());
             List<OmObservation> omObservations = Lists.newArrayList();
             if (dao != null) {
-                omObservations.addAll(dao.queryObservationsById(request));
+                omObservations.addAll(dao.queryObservationsById(request, session));
             }
             response.setObservationCollection(ObservationStream.of(omObservations));
             return response;
@@ -97,6 +99,6 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
 
     @Override
     public boolean isSupported() {
-        return true;
+        return dao != null;
     }
 }

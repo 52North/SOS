@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.n52.series.db.beans.DatasetAggregationEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.beans.sta.DatastreamEntity;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -110,8 +110,6 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
         if (isDeletePhysically()) {
             // delete observations
             deleteObservations(identifier, session);
-            // delete datastreams
-            deleteDatastream(procedure, session);
             // delete result templates
             getDaoFactory().getResultTemplateDAO()
                     .delete(procedure, session);
@@ -160,39 +158,18 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
         }
     }
 
-    default void deleteDatastream(ProcedureEntity procedure, Session session) {
-        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(DELETE_PARAMETER);
-            builder.append(DatastreamEntity.class.getSimpleName());
-            builder.append(WHERE_PARAMETER)
-                    .append(DatastreamEntity.PROPERTY_SENSOR)
-                    .append(EQUAL_PARAMETER)
-                    .append(DatastreamEntity.PROPERTY_SENSOR);
-            Query<?> q = session.createQuery(builder.toString());
-            q.setParameter(DatastreamEntity.PROPERTY_SENSOR, procedure);
-            int executeUpdate = q.executeUpdate();
-            logExecution(executeUpdate);
-            session.flush();
-        }
-    }
-
     default void deleteDatastream(DatasetEntity dataset, Session session) {
-        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
+        if (dataset.isSetAggregation() && HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
             StringBuilder builder = new StringBuilder();
             builder.append(DELETE_PARAMETER);
-            builder.append(DatastreamEntity.class.getSimpleName());
+            builder.append(DatasetAggregationEntity.class.getSimpleName());
             builder.append(WHERE_PARAMETER);
-            builder.append("exists elements(")
-                    .append(DatastreamEntity.PROPERTY_DATASETS)
-                    .append(")");
-            builder.append(AND_PARAMETER);
-            builder.append(":")
-                    .append(DatastreamEntity.PROPERTY_DATASETS)
-                    .append(" member of ")
-                    .append(DatastreamEntity.PROPERTY_DATASETS);
+            builder.append(DatasetAggregationEntity.PROPERTY_ID);
+            builder.append(EQUAL_PARAMETER);
+            builder.append(DatasetAggregationEntity.PROPERTY_ID);
             Query<?> q = session.createQuery(builder.toString());
-            q.setParameter(DatastreamEntity.PROPERTY_DATASETS, dataset);
+            q.setParameter(DatasetAggregationEntity.PROPERTY_ID, dataset.getAggregation()
+                    .getId());
             int executeUpdate = q.executeUpdate();
             logExecution(executeUpdate);
             session.flush();
@@ -227,9 +204,9 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
     default void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session)
             throws OwsExceptionReport {
         if (identifier != null && !identifier.isEmpty()) {
-            List<DatasetEntity> series = getDaoFactory().getSeriesDAO()
+            List<DatasetEntity> dataset = getDaoFactory().getSeriesDAO()
                     .updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag, session);
-            deleteObservation(series, Collections.<TemporalFilter> emptyList(), session);
+            deleteObservation(dataset, Collections.<TemporalFilter> emptyList(), session);
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }

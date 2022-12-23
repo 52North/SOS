@@ -169,7 +169,7 @@ The development the 52°North Sensor Observation Service implementations was sup
 
 ## Contact
 
- - Carsten Hollmann (c.hollmann@52north.org)
+ - Carsten Hollmann [(CarstenHollmann)](https://github.com/CarstenHollmann/)
  - Christian Autermann (c.autermann@52north.org)
  - Eike Hinderk Jürrens [(EHJ-52n)](https://github.com/EHJ-52n/)
  

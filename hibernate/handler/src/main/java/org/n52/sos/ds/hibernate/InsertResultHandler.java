@@ -162,9 +162,9 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
         try {
             session = getHibernateSessionHolder().getSession();
+            transaction = getTransaction(session);
             final ResultTemplateEntity resultTemplate = getDaoFactory().getResultTemplateDAO()
                     .getResultTemplateObject(request.getTemplateIdentifier(), session);
-            transaction = getTransaction(session);
             final OmObservation o = getSingleObservationFromResultValues(response.getVersion(), resultTemplate,
                     request.getResultValues(), session);
             final List<OmObservation> observations = getSingleObservationsFromObservation(o);

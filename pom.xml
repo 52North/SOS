@@ -98,7 +98,7 @@
 		<version.springframework.data>2.7.6</version.springframework.data>
 		<version.spring-data-entity-graph>2.7.10</version.spring-data-entity-graph>
 		<version.aspectj>1.9.9.1</version.aspectj>
-		<version.saxon>11.4</version.saxon>
+		<version.saxon>12.0</version.saxon>
 		<version.elasticsearch>7.17.6</version.elasticsearch>
 		<version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
 		<version.httpcore>4.4.16</version.httpcore>

@@ -106,7 +106,7 @@
 		<version.junit>5.9.1</version.junit>
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
-		<version.netty>4.1.84.Final</version.netty>
+		<version.netty>4.1.87.Final</version.netty>
 		<version.jetty>11.0.13</version.jetty>
 	</properties>
 

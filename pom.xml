@@ -95,7 +95,7 @@
 		<version.helgoland-adapters>2.0.1</version.helgoland-adapters>
 		<version.springframework>5.3.24</version.springframework>
 		<version.springframework.security>5.7.5</version.springframework.security>
-		<version.springframework.data>2.7.6</version.springframework.data>
+		<version.springframework.data>2.7.8</version.springframework.data>
 		<version.spring-data-entity-graph>2.7.10</version.spring-data-entity-graph>
 		<version.aspectj>1.9.9.1</version.aspectj>
 		<version.saxon>12.0</version.saxon>

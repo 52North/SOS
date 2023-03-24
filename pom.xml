@@ -101,14 +101,14 @@
         <version.netcdf>5.3.3</version.netcdf>
         <version.jts>1.16.1</version.jts>
         <!-- 52N dependency versions -->
-        <version.arctic-sea>7.6.1</version.arctic-sea>
+        <version.arctic-sea>8.2.0</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.helgoland.api>3.3.4</version.helgoland.api>
         <version.dao-impl>3.3.6</version.dao-impl>
         <version.db-model>3.0.9</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
-        <version.springframework>5.2.8.RELEASE</version.springframework>
+        <version.springframework>5.3.24</version.springframework>
+        <version.springframework.security>5.7.5</version.springframework.security>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.1</version.saxon>
         <version.elasticsearch>7.8.0</version.elasticsearch>
@@ -342,6 +342,10 @@
                     <exclusion>
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -2045,6 +2049,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
+                        <release>17</release>
                         <failOnViolation>false</failOnViolation>
                     </configuration>
                 </plugin>

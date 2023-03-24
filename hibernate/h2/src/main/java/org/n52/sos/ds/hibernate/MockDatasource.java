@@ -195,6 +195,11 @@ public class MockDatasource implements Datasource {
     }
 
     @Override
+    public Set<String> getSpringProfiles() {
+        return null;
+    }
+
+    @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         // TODO Auto-generated method stub
         return null;

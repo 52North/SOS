@@ -61,6 +61,12 @@
         <dependency>
             <groupId>org.n52.sensorweb-server.dao-impl</groupId>
             <artifactId>dao-impl-dao</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>

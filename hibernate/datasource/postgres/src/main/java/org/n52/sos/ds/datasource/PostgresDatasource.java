@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.Set;
 
 /**
  * ProstgreSQL datasource

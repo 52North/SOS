@@ -531,4 +531,9 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      */
     protected abstract String[] parseURL(String url);
 
+    @Override
+    public Set<String> getSpringProfiles() {
+        return null;
+    }
+
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+
+    <!-- Add SameSite to the cookies -->
+    <CookieProcessor
+            sameSiteCookies="strict" />
+
+</Context>

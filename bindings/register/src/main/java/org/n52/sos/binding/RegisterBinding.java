@@ -180,12 +180,7 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             // metadata
             if (!isTypeRequest) {
                 SosInsertionMetadata metadata = new SosInsertionMetadata();
-                List<String> featureOfInterestTypes = checkForFeatureOfInterestTypeParameter(procDesc, parameters);
-                if (!featureOfInterestTypes.isEmpty()) {
-                    metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
-                } else {
-                    metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
-                }
+                setMetadataFeatureOfInterestTypes(parameters, procDesc, metadata);
                 List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
                 if (!observationTypes.isEmpty()) {
                     metadata.setObservationTypes(observationTypes);
@@ -211,6 +206,15 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             return request;
         }
         throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
+    }
+
+    private void setMetadataFeatureOfInterestTypes(Map<String, String> parameters, SosProcedureDescription<?> procDesc, SosInsertionMetadata metadata) throws OwsExceptionReport {
+        List<String> featureOfInterestTypes = checkForFeatureOfInterestTypeParameter(procDesc, parameters);
+        if (!featureOfInterestTypes.isEmpty()) {
+            metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
+        } else {
+            metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
+        }
     }
 
     private void setRequestObservableProperty(Map<String, String> parameters, SosProcedureDescription<?> procDesc, InsertSensorRequest request, boolean isTypeRequest) throws OwsExceptionReport {

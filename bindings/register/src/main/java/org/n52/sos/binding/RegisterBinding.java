@@ -181,31 +181,35 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             if (!isTypeRequest) {
                 SosInsertionMetadata metadata = new SosInsertionMetadata();
                 setMetadataFeatureOfInterestTypes(parameters, procDesc, metadata);
-                List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
-                if (!observationTypes.isEmpty()) {
-                    metadata.setObservationTypes(observationTypes);
-                } else if (procDesc.getProcedureDescription() instanceof AbstractProcess
-                        && ((AbstractProcess) procDesc.getProcedureDescription()).isSetOutputs()) {
-                    metadata.setObservationTypes(getObservationTypeFrom(
-                            ((AbstractProcess) procDesc.getProcedureDescription()).getOutputs()));
-                } else if (procDesc.getProcedureDescription() instanceof SensorML
-                        && ((SensorML) procDesc.getProcedureDescription()).isWrapper()) {
-                    Set<String> obsTyp = Sets.newHashSet();
-                    for (AbstractProcess abstractProcess : ((SensorML) procDesc.getProcedureDescription())
-                            .getMembers()) {
-                        if (abstractProcess.isSetOutputs()) {
-                            obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
-                        }
-                    }
-                    metadata.setObservationTypes(obsTyp);
-                } else {
-                    metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
-                }
+                setMetadataObservationTypes(parameters, procDesc, metadata);
                 request.setMetadata(metadata);
             }
             return request;
         }
         throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
+    }
+
+    private void setMetadataObservationTypes(Map<String, String> parameters, SosProcedureDescription<?> procDesc, SosInsertionMetadata metadata) throws OwsExceptionReport {
+        List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
+        if (!observationTypes.isEmpty()) {
+            metadata.setObservationTypes(observationTypes);
+        } else if (procDesc.getProcedureDescription() instanceof AbstractProcess
+                && ((AbstractProcess) procDesc.getProcedureDescription()).isSetOutputs()) {
+            metadata.setObservationTypes(getObservationTypeFrom(
+                    ((AbstractProcess) procDesc.getProcedureDescription()).getOutputs()));
+        } else if (procDesc.getProcedureDescription() instanceof SensorML
+                && ((SensorML) procDesc.getProcedureDescription()).isWrapper()) {
+            Set<String> obsTyp = Sets.newHashSet();
+            for (AbstractProcess abstractProcess : ((SensorML) procDesc.getProcedureDescription())
+                    .getMembers()) {
+                if (abstractProcess.isSetOutputs()) {
+                    obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
+                }
+            }
+            metadata.setObservationTypes(obsTyp);
+        } else {
+            metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
+        }
     }
 
     private void setMetadataFeatureOfInterestTypes(Map<String, String> parameters, SosProcedureDescription<?> procDesc, SosInsertionMetadata metadata) throws OwsExceptionReport {

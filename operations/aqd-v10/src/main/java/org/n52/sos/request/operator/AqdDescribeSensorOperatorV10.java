@@ -46,7 +46,7 @@ public class AqdDescribeSensorOperatorV10 extends
     }
 
     @Override
-    public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
+    public DescribeSensorResponse receiveSensorDescription(DescribeSensorRequest request) throws OwsExceptionReport {
         return (DescribeSensorResponse) changeResponseServiceVersion(getOperationHandler()
                 .getSensorDescription((DescribeSensorRequest) changeRequestServiceVersion(request)));
     }

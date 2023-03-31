@@ -89,7 +89,7 @@ public class InsertFeatureOfInterestOperator extends
     }
 
     @Override
-    public InsertFeatureOfInterestResponse receive(InsertFeatureOfInterestRequest request) throws OwsExceptionReport {
+    public InsertFeatureOfInterestResponse receiveSensorDescription(InsertFeatureOfInterestRequest request) throws OwsExceptionReport {
         InsertFeatureOfInterestResponse response = getOperationHandler().insertFeatureOfInterest(request);
         getServiceEventBus().submit(new FeatureInsertion(request, response));
         return response;

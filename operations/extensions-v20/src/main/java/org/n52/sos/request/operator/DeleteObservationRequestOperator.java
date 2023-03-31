@@ -60,7 +60,7 @@ public class DeleteObservationRequestOperator extends
     }
 
     @Override
-    public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
+    public DeleteObservationResponse receiveSensorDescription(DeleteObservationRequest request) throws OwsExceptionReport {
         DeleteObservationResponse response = getOperationHandler().deleteObservation(request);
         return response;
     }

@@ -63,7 +63,7 @@ public class SosGetResultOperatorV20
     }
 
     @Override
-    public GetResultResponse receive(GetResultRequest request) throws OwsExceptionReport {
+    public GetResultResponse receiveSensorDescription(GetResultRequest request) throws OwsExceptionReport {
         return getOperationHandler().getResult(request);
     }
 

@@ -67,7 +67,7 @@ public class SosDescribeSensorOperatorV100 extends
     }
 
     @Override
-    public DescribeSensorResponse receive(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
+    public DescribeSensorResponse receiveSensorDescription(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
         DescribeSensorResponse response = getOperationHandler().getSensorDescription(sosRequest);
         response.setOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()));
         return response;

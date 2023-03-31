@@ -70,7 +70,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
     }
 
     @Override
-    public UpdateSensorResponse receive(UpdateSensorRequest request) throws OwsExceptionReport {
+    public UpdateSensorResponse receiveSensorDescription(UpdateSensorRequest request) throws OwsExceptionReport {
         UpdateSensorResponse response = getOperationHandler().updateSensorDescription(request);
         getServiceEventBus().submit(new SensorModification(request, response));
         return response;

@@ -130,7 +130,7 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEYS = getKey();
 
-    private static final ObservationMergeIndicator INDICATOR =
+    static final ObservationMergeIndicator INDICATOR =
             new ObservationMergeIndicator().setFeatureOfInterest(true).setProcedure(true);
 
     private DecoderRepository decoderRepository;
@@ -180,7 +180,8 @@ public class EprtrConverter implements RequestResponseModifier {
             throws OwsExceptionReport {
         if (response instanceof GetObservationResponse) {
             if (mergeForEprtr()) {
-                return mergeObservations((GetObservationResponse) response);
+                MergeObservation mergeObservation = new MergeObservation();
+                return mergeObservation.mergeObservations((GetObservationResponse) response);
             } else {
                 return checkGetObservationFeatures((GetObservationResponse) response);
             }
@@ -191,12 +192,13 @@ public class EprtrConverter implements RequestResponseModifier {
         return response;
     }
 
-    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
-        response.setObservationCollection(
-                ObservationStream.of(mergeObservations(mergeStreamingData(response.getObservationCollection()))));
-        checkObservationFeatures(response.getObservationCollection());
-        return response;
-    }
+
+//    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
+//        response.setObservationCollection(
+//                ObservationStream.of(mergeObservations(mergeStreamingData(response.getObservationCollection()))));
+//        checkObservationFeatures(response.getObservationCollection());
+//        return response;
+//    }
 
     private List<OmObservation> mergeObservations(List<OmObservation> observations) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(observations)) {
@@ -236,7 +238,7 @@ public class EprtrConverter implements RequestResponseModifier {
         return response;
     }
 
-    private List<OmObservation> checkObservationFeatures(ObservationStream observationStream)
+    List<OmObservation> checkObservationFeatures(ObservationStream observationStream)
             throws NoSuchElementException, OwsExceptionReport {
         List<OmObservation> processed = new LinkedList<>();
         while (observationStream != null && observationStream.hasNext()) {
@@ -309,7 +311,7 @@ public class EprtrConverter implements RequestResponseModifier {
         return false;
     }
 
-    private List<OmObservation> mergeStreamingData(ObservationStream observationStream) throws OwsExceptionReport {
+    List<OmObservation> mergeStreamingData(ObservationStream observationStream) throws OwsExceptionReport {
         List<OmObservation> processed = new LinkedList<>();
         while (observationStream.hasNext()) {
             OmObservation observation = observationStream.next();
@@ -325,7 +327,7 @@ public class EprtrConverter implements RequestResponseModifier {
         return processed;
     }
 
-    private boolean checkForProcedure(OmObservation sosObservation) {
+    boolean checkForProcedure(OmObservation sosObservation) {
         boolean isPollution = POLLUTANT_RELEASE.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
                 || POLLUTANT_TRANSFER.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
                 || WASTE_TRANSFER.equals(sosObservation.getObservationConstellation().getProcedureIdentifier());
@@ -337,7 +339,7 @@ public class EprtrConverter implements RequestResponseModifier {
                 .equals(observationToAdd.getObservationConstellation().getProcedure());
     }
 
-    private OmObservation convertObservation(OmObservation sosObservation) throws OwsExceptionReport {
+    OmObservation convertObservation(OmObservation sosObservation) throws OwsExceptionReport {
         if (POLLUTANT_RELEASE.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getPollutantReleaseArray(sosObservation.getValue().getValue().getUnit()));
@@ -592,7 +594,7 @@ public class EprtrConverter implements RequestResponseModifier {
         return encoding;
     }
 
-    private void mergeValues(OmObservation combinedSosObs, OmObservation sosObservation) {
+    void mergeValues(OmObservation combinedSosObs, OmObservation sosObservation) {
         SweDataArray combinedValue = (SweDataArray) combinedSosObs.getValue().getValue().getValue();
         SweDataArray value = (SweDataArray) sosObservation.getValue().getValue().getValue();
         if (value.isSetValues()) {

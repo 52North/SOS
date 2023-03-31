@@ -176,21 +176,7 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             request.setProcedureDescriptionFormat(procDesc.getDescriptionFormat());
             // observable properties
             // get from parameter or from sml:output
-            List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameters);
-            if (!observableProperties.isEmpty()) {
-                request.setObservableProperty(observableProperties);
-            } else if (procDesc.getProcedureDescription() instanceof AbstractSensorML) {
-                request.setObservableProperty(getObservablePropertyFromAbstractSensorML(
-                        (AbstractSensorML) procDesc.getProcedureDescription()));
-            } else if (isTypeRequest) {
-                request.setObservableProperty(Lists.newArrayList("not_defined"));
-            } else {
-                throw new NoApplicableCodeException().withMessage(
-                        "The sensor description does not contain sml:outputs which is used to "
-                        + "fetch the possible observableProperties! "
-                                + "Please add an sml:ouput section or define the observableProperties"
-                                + " via 'observableProperty' URL parameter!'");
-            }
+            setRequestObservableProperty(parameters, procDesc, request, isTypeRequest);
             // metadata
             if (!isTypeRequest) {
                 SosInsertionMetadata metadata = new SosInsertionMetadata();
@@ -225,6 +211,24 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             return request;
         }
         throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
+    }
+
+    private void setRequestObservableProperty(Map<String, String> parameters, SosProcedureDescription<?> procDesc, InsertSensorRequest request, boolean isTypeRequest) throws OwsExceptionReport {
+        List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameters);
+        if (!observableProperties.isEmpty()) {
+            request.setObservableProperty(observableProperties);
+        } else if (procDesc.getProcedureDescription() instanceof AbstractSensorML) {
+            request.setObservableProperty(getObservablePropertyFromAbstractSensorML(
+                    (AbstractSensorML) procDesc.getProcedureDescription()));
+        } else if (isTypeRequest) {
+            request.setObservableProperty(Lists.newArrayList("not_defined"));
+        } else {
+            throw new NoApplicableCodeException().withMessage(
+                    "The sensor description does not contain sml:outputs which is used to "
+                    + "fetch the possible observableProperties! "
+                            + "Please add an sml:ouput section or define the observableProperties"
+                            + " via 'observableProperty' URL parameter!'");
+        }
     }
 
     private static SosProcedureDescription<?> getSosProcedureDescription(Object object) throws CodedException {

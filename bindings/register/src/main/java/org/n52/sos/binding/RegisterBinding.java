@@ -55,6 +55,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -148,14 +149,7 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
         Object object = decode(req);
         if (object != null) {
             SosProcedureDescription<?> procDesc = null;
-            if (object instanceof SosProcedureDescription<?>) {
-                procDesc = (SosProcedureDescription<?>) object;
-            } else if (object instanceof AbstractFeature) {
-                procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
-            } else {
-                throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
-                        object.getClass().getName());
-            }
+            procDesc = getSosProcedureDescription(object);
 
             InsertSensorRequest request = new InsertSensorRequest();
             request.setRequestContext(getRequestContext(req));
@@ -182,55 +176,80 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             request.setProcedureDescriptionFormat(procDesc.getDescriptionFormat());
             // observable properties
             // get from parameter or from sml:output
-            List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameters);
-            if (!observableProperties.isEmpty()) {
-                request.setObservableProperty(observableProperties);
-            } else if (procDesc.getProcedureDescription() instanceof AbstractSensorML) {
-                request.setObservableProperty(getObservablePropertyFromAbstractSensorML(
-                        (AbstractSensorML) procDesc.getProcedureDescription()));
-            } else if (isTypeRequest) {
-                request.setObservableProperty(Lists.newArrayList("not_defined"));
-            } else {
-                throw new NoApplicableCodeException().withMessage(
-                        "The sensor description does not contain sml:outputs which is used to "
-                        + "fetch the possible observableProperties! "
-                                + "Please add an sml:ouput section or define the observableProperties"
-                                + " via 'observableProperty' URL parameter!'");
-            }
+            setRequestObservableProperty(parameters, procDesc, request, isTypeRequest);
             // metadata
             if (!isTypeRequest) {
                 SosInsertionMetadata metadata = new SosInsertionMetadata();
-                List<String> featureOfInterestTypes = checkForFeatureOfInterestTypeParameter(procDesc, parameters);
-                if (!featureOfInterestTypes.isEmpty()) {
-                    metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
-                } else {
-                    metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
-                }
-                List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
-                if (!observationTypes.isEmpty()) {
-                    metadata.setObservationTypes(observationTypes);
-                } else if (procDesc.getProcedureDescription() instanceof AbstractProcess
-                        && ((AbstractProcess) procDesc.getProcedureDescription()).isSetOutputs()) {
-                    metadata.setObservationTypes(getObservationTypeFrom(
-                            ((AbstractProcess) procDesc.getProcedureDescription()).getOutputs()));
-                } else if (procDesc.getProcedureDescription() instanceof SensorML
-                        && ((SensorML) procDesc.getProcedureDescription()).isWrapper()) {
-                    Set<String> obsTyp = Sets.newHashSet();
-                    for (AbstractProcess abstractProcess : ((SensorML) procDesc.getProcedureDescription())
-                            .getMembers()) {
-                        if (abstractProcess.isSetOutputs()) {
-                            obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
-                        }
-                    }
-                    metadata.setObservationTypes(obsTyp);
-                } else {
-                    metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
-                }
+                setMetadataFeatureOfInterestTypes(parameters, procDesc, metadata);
+                setMetadataObservationTypes(parameters, procDesc, metadata);
                 request.setMetadata(metadata);
             }
             return request;
         }
         throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
+    }
+
+    private void setRequestObservableProperty(Map<String, String> parameters, SosProcedureDescription<?> procDesc, InsertSensorRequest request, boolean isTypeRequest) throws OwsExceptionReport {
+        List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameters);
+        if (!observableProperties.isEmpty()) {
+            request.setObservableProperty(observableProperties);
+        } else if (procDesc.getProcedureDescription() instanceof AbstractSensorML) {
+            request.setObservableProperty(getObservablePropertyFromAbstractSensorML(
+                    (AbstractSensorML) procDesc.getProcedureDescription()));
+        } else if (isTypeRequest) {
+            request.setObservableProperty(Lists.newArrayList("not_defined"));
+        } else {
+            throw new NoApplicableCodeException().withMessage(
+                    "The sensor description does not contain sml:outputs which is used to "
+                    + "fetch the possible observableProperties! "
+                            + "Please add an sml:ouput section or define the observableProperties"
+                            + " via 'observableProperty' URL parameter!'");
+        }
+    }
+
+    private void setMetadataObservationTypes(Map<String, String> parameters, SosProcedureDescription<?> procDesc, SosInsertionMetadata metadata) throws OwsExceptionReport {
+        List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
+        if (!observationTypes.isEmpty()) {
+            metadata.setObservationTypes(observationTypes);
+        } else if (procDesc.getProcedureDescription() instanceof AbstractProcess
+                && ((AbstractProcess) procDesc.getProcedureDescription()).isSetOutputs()) {
+            metadata.setObservationTypes(getObservationTypeFrom(
+                    ((AbstractProcess) procDesc.getProcedureDescription()).getOutputs()));
+        } else if (procDesc.getProcedureDescription() instanceof SensorML
+                && ((SensorML) procDesc.getProcedureDescription()).isWrapper()) {
+            Set<String> obsTyp = Sets.newHashSet();
+            for (AbstractProcess abstractProcess : ((SensorML) procDesc.getProcedureDescription())
+                    .getMembers()) {
+                if (abstractProcess.isSetOutputs()) {
+                    obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
+                }
+            }
+            metadata.setObservationTypes(obsTyp);
+        } else {
+            metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
+        }
+    }
+
+    private void setMetadataFeatureOfInterestTypes(Map<String, String> parameters, SosProcedureDescription<?> procDesc, SosInsertionMetadata metadata) throws OwsExceptionReport {
+        List<String> featureOfInterestTypes = checkForFeatureOfInterestTypeParameter(procDesc, parameters);
+        if (!featureOfInterestTypes.isEmpty()) {
+            metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
+        } else {
+            metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
+        }
+    }
+
+    private SosProcedureDescription<?> getSosProcedureDescription(Object object) throws CodedException {
+        SosProcedureDescription<?> procDesc;
+        if (object instanceof SosProcedureDescription<?>) {
+            procDesc = (SosProcedureDescription<?>) object;
+        } else if (object instanceof AbstractFeature) {
+            procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
+        } else {
+            throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
+                    object.getClass().getName());
+        }
+        return procDesc;
     }
 
     private String getServiceParameterValue(Map<String, String> map) {

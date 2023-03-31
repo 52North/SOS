@@ -1,0 +1,68 @@
+{
+    "generalConfig": {
+        "outputPath": "/tmp/generated/prerendered",
+        "width": "800",
+        "height": "500",
+        "language": "de",
+        "grid": true,
+        "generalize": false
+    },
+    "phenomenonStyles": [
+        {
+            "id": "70000",
+            "title": "Dataset 7 from phenomenonStyles config (without legend)",
+            "chartQualifier": "phenomenonStyles_without_legend",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "line",
+                "properties": {
+                    "color": "#00ffff",
+                    "lineType": "solid",
+                    "width": 2
+                }
+            }
+        },
+        {
+            "id": "70000",
+            "title": "Dataset 7 from phenomenonStyles config (with legend)",
+            "chartQualifier": "phenomenonStyles_with_legend",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "config": {
+                "legend": true
+            },
+            "style": {
+                "chartType": "line",
+                "properties": {
+                    "color": "#00ffff",
+                    "lineType": "solid",
+                    "width": 2
+                }
+            }
+        }
+    ],
+    "datasetStyles": [
+        {
+            "id": "60000",
+            "title": "Dataset 6 from seriesStyles config  (without legend)",
+            "chartQualifier": "datasetStyles_with_legend",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "bar",
+                "properties": {
+                    "interval": "byDay",
+                    "width": 0.8,
+                    "color": "#0000ff"
+                }
+            }
+        }
+    ]
+}

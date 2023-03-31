@@ -64,7 +64,7 @@ public class DeleteResultTemplateOperator extends
     }
 
     @Override
-    public DeleteResultTemplateResponse receive(DeleteResultTemplateRequest request) throws OwsExceptionReport {
+    public DeleteResultTemplateResponse receiveSensorDescription(DeleteResultTemplateRequest request) throws OwsExceptionReport {
         DeleteResultTemplateResponse response = getOperationHandler().deleteResultTemplates(request);
         getServiceEventBus().submit(new ResultTemplatesDeletion(request, response));
         return response;

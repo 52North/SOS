@@ -29,7 +29,6 @@ package org.n52.sos.converter;
 
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -39,33 +38,11 @@ import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
-import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
-import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
-import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.sos.request.GetResultRequest;
-import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
-import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
-import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
-import org.n52.shetland.ogc.sos.response.GetResultResponse;
-import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.PrefixedIdentifierHelper;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -90,38 +67,10 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         this.helper = helper;
     }
 
-    /**
-     * Get the keys
-     *
-     * @return Set of keys
-     */
-    private Set<RequestResponseModifierKey> getKeyTypes() {
-        Set<String> services = Sets.newHashSet(SosConstants.SOS);
-        Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
-        requestResponseMap.put(new GetCapabilitiesRequest(SosConstants.SOS), new GetCapabilitiesResponse());
-        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
-        requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
-        requestResponseMap.put(new GetFeatureOfInterestRequest(), new GetFeatureOfInterestResponse());
-        requestResponseMap.put(new DescribeSensorRequest(), new DescribeSensorResponse());
-        requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
-        requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
-        requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
-        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
-
-        services.stream().forEach(service -> versions.stream()
-                .forEach(version -> requestResponseMap.keySet().stream().forEach(request -> {
-                    keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request,
-                            requestResponseMap.get(request)));
-                })));
-        return keys;
-    }
-
     @Override
     public Set<RequestResponseModifierKey> getKeys() {
         if (REQUEST_RESPONSE_MODIFIER_KEY_TYPES == null) {
-            REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+            REQUEST_RESPONSE_MODIFIER_KEY_TYPES = helper.getKeyTypes();
         }
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }

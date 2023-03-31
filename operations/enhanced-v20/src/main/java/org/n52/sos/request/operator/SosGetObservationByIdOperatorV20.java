@@ -67,7 +67,7 @@ public class SosGetObservationByIdOperatorV20 extends
     }
 
     @Override
-    public GetObservationByIdResponse receive(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
+    public GetObservationByIdResponse receiveSensorDescription(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
         if (!sosRequest.isSetResponseFormat()) {
             sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
         }

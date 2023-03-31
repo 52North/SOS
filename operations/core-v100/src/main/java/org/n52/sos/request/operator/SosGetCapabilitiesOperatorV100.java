@@ -62,7 +62,7 @@ public class SosGetCapabilitiesOperatorV100 extends
     }
 
     @Override
-    public GetCapabilitiesResponse receive(GetCapabilitiesRequest sosRequest) throws OwsExceptionReport {
+    public GetCapabilitiesResponse receiveSensorDescription(GetCapabilitiesRequest sosRequest) throws OwsExceptionReport {
         return getOperationHandler().getCapabilities(sosRequest);
     }
 

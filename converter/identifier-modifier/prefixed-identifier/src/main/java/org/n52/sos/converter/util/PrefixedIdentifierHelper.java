@@ -27,11 +27,28 @@
  */
 package org.n52.sos.converter.util;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.request.*;
+import org.n52.shetland.ogc.sos.response.*;
 import org.n52.sos.converter.PrefixedIdentifierModifier;
 
 import com.google.common.base.Strings;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Helper class for the {@link PrefixedIdentifierModifier}
@@ -154,4 +171,31 @@ public class PrefixedIdentifierHelper {
                 || isSetOfferingPrefix() || isSetProcedurePrefix();
     }
 
+    /**
+     * Get the keys
+     *
+     * @return Set of keys
+     */
+    public Set<RequestResponseModifierKey> getKeyTypes() {
+        Set<String> services = Sets.newHashSet(SosConstants.SOS);
+        Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
+        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
+        requestResponseMap.put(new GetCapabilitiesRequest(SosConstants.SOS), new GetCapabilitiesResponse());
+        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
+        requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
+        requestResponseMap.put(new GetFeatureOfInterestRequest(), new GetFeatureOfInterestResponse());
+        requestResponseMap.put(new DescribeSensorRequest(), new DescribeSensorResponse());
+        requestResponseMap.put(new GetDataAvailabilityRequest(), new GetDataAvailabilityResponse());
+        requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
+        requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
+
+        services.stream().forEach(service -> versions.stream()
+                .forEach(version -> requestResponseMap.keySet().stream().forEach(request -> {
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request,
+                            requestResponseMap.get(request)));
+                })));
+        return keys;
+    }
 }

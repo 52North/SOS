@@ -188,23 +188,14 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         if (parameterValues == null || parameterValues.isEmpty()) {
             return null;
         }
-        String value;
-        String valueReference;
-        String operator;
 
-        switch (parameterValues.size()) {
-            case 2:
-                valueReference = parameterValues.get(0);
-                value = parameterValues.get(1);
-                return createTemporalFilter(value, name, valueReference);
-            case 3:
-                valueReference = parameterValues.get(0);
-                operator = parameterValues.get(1);
-                value = parameterValues.get(2);
-                return createTemporalFilter(name, value, operator, valueReference);
-            default:
-                throw new DecodingException(name, "The temporal filter parameter value is not valid!");
-        }
+        ParameterValuesSizeEqualTwo parameterValuesSizeEqualTwo = new ParameterValuesSizeEqualTwo();
+        parameterValuesSizeEqualTwo.pmtValueSizeTwo(name, parameterValues);
+
+        ParameterValuesSizeEqualThree parameterValuesSizeEqualThree = new ParameterValuesSizeEqualThree();
+        parameterValuesSizeEqualThree.pmtValueSizeThree(name, parameterValues);
+
+        return null;
     }
 
     protected ThrowingTriConsumer<R, String, String, DecodingException> decodeTime(

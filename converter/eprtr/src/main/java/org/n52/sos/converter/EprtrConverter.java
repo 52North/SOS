@@ -278,13 +278,17 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private boolean isPrtr(List<NamedValue<?>> parameters) {
         for (NamedValue<?> namedValue : parameters) {
-            if (namedValue.getName().getHref().equalsIgnoreCase(METHOD_BASIS_CODE)
-                    || namedValue.getName().getHref().equalsIgnoreCase(ACCIDENTIAL_QUANTITY)
-                    || namedValue.getName().getHref().equalsIgnoreCase(MEDIUM_CODE)) {
+            if (isNameValueEqualsIgnoreCase(namedValue)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isNameValueEqualsIgnoreCase(NamedValue<?> namedValue) {
+        return namedValue.getName().getHref().equalsIgnoreCase(METHOD_BASIS_CODE)
+                || namedValue.getName().getHref().equalsIgnoreCase(ACCIDENTIAL_QUANTITY)
+                || namedValue.getName().getHref().equalsIgnoreCase(MEDIUM_CODE);
     }
 
     private boolean containsConfidentialCode(List<NamedValue<?>> parameters) {

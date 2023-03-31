@@ -326,9 +326,10 @@ public class EprtrConverter implements RequestResponseModifier {
     }
 
     private boolean checkForProcedure(OmObservation sosObservation) {
-        return POLLUTANT_RELEASE.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
+        boolean isPollution = POLLUTANT_RELEASE.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
                 || POLLUTANT_TRANSFER.equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
                 || WASTE_TRANSFER.equals(sosObservation.getObservationConstellation().getProcedureIdentifier());
+        return isPollution;
     }
 
     private boolean checkForProcedure(OmObservation observation, OmObservation observationToAdd) {

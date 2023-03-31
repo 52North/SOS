@@ -133,19 +133,19 @@ public class DeleteObservationRequestOperator extends
      */
     private void checkOfferingId(final Set<String> offeringIds) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = getCache().getOfferings();
+            final Set<String> stringSet = getCache().getOfferings();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offeringId : offeringIds) {
                 if (offeringId == null || offeringId.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
                     final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
-                    if (!offerings.contains(offArray[0])
+                    if (!stringSet.contains(offArray[0])
                             || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
                         exceptions.add(new InvalidOfferingParameterException(offeringId));
                     }
 
-                } else if (!offerings.contains(offeringId)) {
+                } else if (!stringSet.contains(offeringId)) {
                     exceptions.add(new InvalidOfferingParameterException(offeringId));
                 }
             }

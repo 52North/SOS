@@ -55,6 +55,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -148,14 +149,7 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
         Object object = decode(req);
         if (object != null) {
             SosProcedureDescription<?> procDesc = null;
-            if (object instanceof SosProcedureDescription<?>) {
-                procDesc = (SosProcedureDescription<?>) object;
-            } else if (object instanceof AbstractFeature) {
-                procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
-            } else {
-                throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
-                        object.getClass().getName());
-            }
+            procDesc = getSosProcedureDescription(object);
 
             InsertSensorRequest request = new InsertSensorRequest();
             request.setRequestContext(getRequestContext(req));
@@ -231,6 +225,19 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             return request;
         }
         throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
+    }
+
+    private static SosProcedureDescription<?> getSosProcedureDescription(Object object) throws CodedException {
+        SosProcedureDescription<?> procDesc;
+        if (object instanceof SosProcedureDescription<?>) {
+            procDesc = (SosProcedureDescription<?>) object;
+        } else if (object instanceof AbstractFeature) {
+            procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
+        } else {
+            throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
+                    object.getClass().getName());
+        }
+        return procDesc;
     }
 
     private String getServiceParameterValue(Map<String, String> map) {

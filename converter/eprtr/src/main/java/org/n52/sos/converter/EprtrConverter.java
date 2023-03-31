@@ -118,11 +118,11 @@ public class EprtrConverter implements RequestResponseModifier {
     private static final String CITY_NAME = "CityName";
     private static final String POSTCODE_CODE = "PostcodeCode";
     private static final String COUNTRY_ID = "CountryID";
-    private static final String CONFIDENTIAL_INDICATOR = "ConfidentialIndicator";
+    static final String CONFIDENTIAL_INDICATOR = "ConfidentialIndicator";
     private static final String METHOD_BASIS_CODE = "MethodBasisCode";
     private static final String ACCIDENTIAL_QUANTITY = "AccidentialQuantity";
     private static final String MEDIUM_CODE = "MediumCode";
-    private static final String CONFIDENTIAL_CODE = "ConfidentialCode";
+    static final String CONFIDENTIAL_CODE = "ConfidentialCode";
     private static final String POLLUTANT_RELEASE = "PollutantRelease";
     private static final String POLLUTANT_TRANSFER = "PollutantTransfer";
     private static final String WASTE_TRANSFER = "WasteTransfer";
@@ -200,36 +200,36 @@ public class EprtrConverter implements RequestResponseModifier {
 //        return response;
 //    }
 
-    private List<OmObservation> mergeObservations(List<OmObservation> observations) throws OwsExceptionReport {
-        if (CollectionHelper.isNotEmpty(observations)) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observations) {
-                if (checkForProcedure(sosObservation)) {
-                    if (mergedObservations.isEmpty()) {
-                        if (!sosObservation.isSetGmlID()) {
-                            sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                        }
-                        mergedObservations.add(convertObservation(sosObservation));
-                    } else {
-                        boolean combined = false;
-                        for (final OmObservation combinedSosObs : mergedObservations) {
-                            if (checkForMerge(combinedSosObs, sosObservation, INDICATOR)) {
-                                mergeValues(combinedSosObs, convertObservation(sosObservation));
-                                combined = true;
-                                break;
-                            }
-                        }
-                        if (!combined) {
-                            mergedObservations.add(convertObservation(sosObservation));
-                        }
-                    }
-                }
-            }
-            return mergedObservations;
-        }
-        return Lists.newArrayList(observations);
-    }
+//    private List<OmObservation> mergeObservations(List<OmObservation> observations) throws OwsExceptionReport {
+//        if (CollectionHelper.isNotEmpty(observations)) {
+//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+//            int obsIdCounter = 1;
+//            for (final OmObservation sosObservation : observations) {
+//                if (checkForProcedure(sosObservation)) {
+//                    if (mergedObservations.isEmpty()) {
+//                        if (!sosObservation.isSetGmlID()) {
+//                            sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+//                        }
+//                        mergedObservations.add(convertObservation(sosObservation));
+//                    } else {
+//                        boolean combined = false;
+//                        for (final OmObservation combinedSosObs : mergedObservations) {
+//                            if (checkForMerge(combinedSosObs, sosObservation, INDICATOR)) {
+//                                mergeValues(combinedSosObs, convertObservation(sosObservation));
+//                                combined = true;
+//                                break;
+//                            }
+//                        }
+//                        if (!combined) {
+//                            mergedObservations.add(convertObservation(sosObservation));
+//                        }
+//                    }
+//                }
+//            }
+//            return mergedObservations;
+//        }
+//        return Lists.newArrayList(observations);
+//    }
 
     private OwsServiceResponse checkGetObservationFeatures(GetObservationResponse response)
             throws NoSuchElementException, OwsExceptionReport {
@@ -264,11 +264,12 @@ public class EprtrConverter implements RequestResponseModifier {
     private void checkFeature(AbstractFeature abstractFeature) {
         if (abstractFeature instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature asf = (AbstractSamplingFeature) abstractFeature;
+            AssessConfidential assessConfidential = new AssessConfidential();
             if (asf.isSetParameter() && isPrtr(asf.getParameters())
-                    && !containsConfidentialIndicator(asf.getParameters())) {
+                    && !assessConfidential.containsConfidentialIndicator(asf.getParameters())) {
                 NamedValue<Boolean> confidentialIndicator = new NamedValue<>();
                 confidentialIndicator.setName(new ReferenceType(CONFIDENTIAL_INDICATOR));
-                if (containsConfidentialCode(asf.getParameters())) {
+                if (assessConfidential.containsConfidentialCode(asf.getParameters())) {
                     confidentialIndicator.setValue(new BooleanValue(true));
                 } else {
                     confidentialIndicator.setValue(new BooleanValue(false));
@@ -293,23 +294,23 @@ public class EprtrConverter implements RequestResponseModifier {
                 || namedValue.getName().getHref().equalsIgnoreCase(MEDIUM_CODE);
     }
 
-    private boolean containsConfidentialCode(List<NamedValue<?>> parameters) {
-        for (NamedValue<?> namedValue : parameters) {
-            if (namedValue.getName().getHref().equalsIgnoreCase(CONFIDENTIAL_CODE)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean containsConfidentialCode(List<NamedValue<?>> parameters) {
+//        for (NamedValue<?> namedValue : parameters) {
+//            if (namedValue.getName().getHref().equalsIgnoreCase(CONFIDENTIAL_CODE)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    private boolean containsConfidentialIndicator(List<NamedValue<?>> parameters) {
-        for (NamedValue<?> namedValue : parameters) {
-            if (namedValue.getName().getHref().equalsIgnoreCase(CONFIDENTIAL_INDICATOR)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean containsConfidentialIndicator(List<NamedValue<?>> parameters) {
+//        for (NamedValue<?> namedValue : parameters) {
+//            if (namedValue.getName().getHref().equalsIgnoreCase(CONFIDENTIAL_INDICATOR)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     List<OmObservation> mergeStreamingData(ObservationStream observationStream) throws OwsExceptionReport {
         List<OmObservation> processed = new LinkedList<>();
@@ -379,6 +380,7 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private List<String> createPollutantReleaseBlock(OmObservation sosObservation) {
         List<String> values = new LinkedList<>();
+        AssessConfidential assessConfidential = new AssessConfidential();
         values.add(getYear(sosObservation.getPhenomenonTime()));
         // MediumCode
         values.add(getMediumCode(sosObservation.getObservationConstellation()));
@@ -389,7 +391,7 @@ public class EprtrConverter implements RequestResponseModifier {
         values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
         values.add(getParameter(sosObservation.getParameterHolder(), ACCIDENTIAL_QUANTITY));
         String confidentialCode = getParameter(sosObservation.getParameterHolder(), CONFIDENTIAL_CODE);
-        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(assessConfidential.getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
         values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), REMARK_TEXT));
         return values;
@@ -427,13 +429,14 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private List<String> createPollutantTransferBlock(OmObservation sosObservation) {
         List<String> values = new LinkedList<>();
+        AssessConfidential assessConfidential = new AssessConfidential();
         values.add(getYear(sosObservation.getPhenomenonTime()));
         values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
         values.add(getParameter(sosObservation.getParameterHolder(), METHOD_BASIS_CODE));
         values.add(getParameter(sosObservation.getParameterHolder(), METHOD_USED));
         values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
         String confidentialCode = getParameter(sosObservation.getParameterHolder(), CONFIDENTIAL_CODE);
-        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(assessConfidential.getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
         values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), REMARK_TEXT));
         return values;
@@ -460,6 +463,7 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private List<String> createWasteTransferBlock(OmObservation sosObservation) throws OwsExceptionReport {
         List<String> values = new LinkedList<>();
+        AssessConfidential assessConfidential = new AssessConfidential();
         values.add(getYear(sosObservation.getPhenomenonTime()));
         values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
         values.add(getWasteTreatmentCode(sosObservation.getObservationConstellation().getOfferings()));
@@ -467,18 +471,18 @@ public class EprtrConverter implements RequestResponseModifier {
         values.add(getParameter(sosObservation.getParameterHolder(), METHOD_BASIS_CODE));
         values.add(getParameter(sosObservation.getParameterHolder(), METHOD_USED));
         String confidentialCode = getParameter(sosObservation.getParameterHolder(), CONFIDENTIAL_CODE);
-        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(assessConfidential.getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
         values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), REMARK_TEXT));
         values.add(getWasteHandlerPartyParameter(sosObservation.getParameterHolder(), WASTE_HANDLER_PARTY));
         return values;
     }
 
-    private String getConfidentialIndicator(String confidentialCode, ParameterHolder parameterHolder) {
-        String confidentialIndicator = getParameter(parameterHolder, CONFIDENTIAL_INDICATOR);
-        return confidentialIndicator != null && !confidentialIndicator.isEmpty() ? confidentialIndicator
-                : confidentialCode != null && !confidentialCode.isEmpty() ? "true" : "false";
-    }
+//    private String getConfidentialIndicator(String confidentialCode, ParameterHolder parameterHolder) {
+//        String confidentialIndicator = getParameter(parameterHolder, CONFIDENTIAL_INDICATOR);
+//        return confidentialIndicator != null && !confidentialIndicator.isEmpty() ? confidentialIndicator
+//                : confidentialCode != null && !confidentialCode.isEmpty() ? "true" : "false";
+//    }
 
     private SweDataArray getWasteTransferArray(String unit) {
         SweDataRecord record = new SweDataRecord();
@@ -537,7 +541,7 @@ public class EprtrConverter implements RequestResponseModifier {
         return Integer.toString(((TimeInstant) phenomenonTime).getValue().getYear());
     }
 
-    private String getParameter(ParameterHolder holder, String name) {
+    String getParameter(ParameterHolder holder, String name) {
         Object parameterObject = getParameterObject(holder, name);
         return parameterObject != null ? parameterObject.toString() : "";
     }

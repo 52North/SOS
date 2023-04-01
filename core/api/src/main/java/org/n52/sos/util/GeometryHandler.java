@@ -44,6 +44,7 @@ import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
@@ -51,6 +52,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.series.db.beans.HibernateRelations;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -551,8 +553,8 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                 return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             default:
                 throw new InvalidParameterValueException("spatialFilter", filter.getOperator().name());
-            // Sos2Constants.GetObservationParams.spatialFilter =
-            // "spatialFilter"
+                // Sos2Constants.GetObservationParams.spatialFilter =
+                // "spatialFilter"
         }
     }
 
@@ -694,7 +696,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      *             If an error occurs
      */
     private Geometry transform(final Geometry geometry, final int targetSRID,
-            final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
+                               final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
         if (sourceCRS.equals(targetCRS)) {
             return geometry;
@@ -844,4 +846,28 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                 FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
     }
 
+    public Geometry createGeometry(final HibernateRelations.HasCoordinate coodinates)
+            throws OwsExceptionReport {
+        if (coodinates.isSetLongLat()) {
+            int epsg = getStorageEPSG();
+            if (coodinates.isSetSrid()) {
+                epsg = coodinates.getSrid();
+            }
+            final String wktString = getWktString(coodinates.getLon(), coodinates.getLat(), epsg);
+            Geometry geom;
+            try {
+                geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
+            } catch (ParseException e) {
+                throw new NoApplicableCodeException().causedBy(e);
+            }
+            if (coodinates.isSetAlt()) {
+                geom.getCoordinate().z = JavaHelper.asDouble(coodinates.getAlt());
+                if (geom.getSRID() == getStorage3DEPSG()) {
+                    geom.setSRID(getStorage3DEPSG());
+                }
+            }
+            return geom;
+        }
+        return null;
+    }
 }

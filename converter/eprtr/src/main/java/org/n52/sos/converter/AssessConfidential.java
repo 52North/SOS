@@ -35,5 +35,4 @@ public class AssessConfidential {
         return confidentialIndicator != null && !confidentialIndicator.isEmpty() ? confidentialIndicator
                 : confidentialCode != null && !confidentialCode.isEmpty() ? "true" : "false";
     }
-
 }

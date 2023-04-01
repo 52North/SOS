@@ -188,14 +188,23 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         if (parameterValues == null || parameterValues.isEmpty()) {
             return null;
         }
+        String value;
+        String valueReference;
+        String operator;
 
-        ParameterValuesSizeEqualTwo parameterValuesSizeEqualTwo = new ParameterValuesSizeEqualTwo();
-        parameterValuesSizeEqualTwo.pmtValueSizeTwo(name, parameterValues);
-
-        ParameterValuesSizeEqualThree parameterValuesSizeEqualThree = new ParameterValuesSizeEqualThree();
-        parameterValuesSizeEqualThree.pmtValueSizeThree(name, parameterValues);
-
-        return null;
+        switch (parameterValues.size()) {
+            case 2:
+                valueReference = parameterValues.get(0);
+                value = parameterValues.get(1);
+                return createTemporalFilter(value, name, valueReference);
+            case 3:
+                valueReference = parameterValues.get(0);
+                operator = parameterValues.get(1);
+                value = parameterValues.get(2);
+                return createTemporalFilter(name, value, operator, valueReference);
+            default:
+                throw new DecodingException(name, "The temporal filter parameter value is not valid!");
+        }
     }
 
     protected ThrowingTriConsumer<R, String, String, DecodingException> decodeTime(
@@ -286,7 +295,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     }
 
     private TemporalFilter createTemporalFilter(String name, String value, TimeOperator timeOperator,
-            String valueReference) throws DecodingException {
+                                                String valueReference) throws DecodingException {
         String[] times = value.split("/");
         final Time time;
         if (times.length == 1 && timeOperator != TimeOperator.TM_During) {
@@ -346,8 +355,8 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         double[] coordinates = values.stream().mapToDouble(Double::valueOf).toArray();
 
         geometry = factory.createPolygon(new Coordinate[] { new Coordinate(coordinates[0], coordinates[1]),
-            new Coordinate(coordinates[0], coordinates[3]), new Coordinate(coordinates[2], coordinates[3]),
-            new Coordinate(coordinates[2], coordinates[1]), new Coordinate(coordinates[0], coordinates[1]) });
+                new Coordinate(coordinates[0], coordinates[3]), new Coordinate(coordinates[2], coordinates[3]),
+                new Coordinate(coordinates[2], coordinates[1]), new Coordinate(coordinates[0], coordinates[1]) });
 
         return new SpatialFilter(SpatialOperator.BBOX, geometry, valueReference);
     }

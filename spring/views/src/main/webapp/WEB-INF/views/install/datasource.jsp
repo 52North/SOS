@@ -37,47 +37,58 @@
     <jsp:param name="leadParagraph" value="" />
 </jsp:include>
 
-<form action="<c:url value="/install/datasource" />" method="POST" class="form-horizontal">
+<script type="text/javascript" src="<c:url value="/static/js/install/datasource.js" />"></script>
+
+<div id="url_sources" data-value='<c:url value="/install/datasource/sources" />'></div>
+
+<form action="<c:url value="/install/datasource" />" method="POST" class="form">
     <fieldset>
-        <div class="control-group">
-            <label class="control-label" for="datasource">Datasource</label>
-            <div class="controls">
-                <select name="datasource" id="datasource">
-                    <option disabled="true" selected="true" value="" style="display: none;"></option>
-                </select>
-                <span class="help-block">Select the datasource you want to use for the SOS.</span>
+        <div class="form-group">
+            <div class="control-group">
+                <div class="form-row">
+                    <div class="col-md-2 textright">
+                        <label class="col-form-label" for="datasource">Datasource</label>
+                    </div>
+                    <div class="col">
+                        <select name="datasource" id="datasource">
+                            <option disabled="true" selected="true" value="" class="nodisplay"></option>
+                        </select>
+                        <br />
+                        <span class="text-muted"><span class="badge badge-warning">required</span> Select the datasource you want to use for the SOS.</span>
+                    </div>
+                </div>
             </div>
         </div>
     </fieldset>
     <fieldset id="settings"></fieldset>
-    <fieldset id="actions" style="display: none;">
+    <fieldset id="actions" class="nodisplay">
         <legend>Actions</legend>
-       		 <p><span class="label label-important">Note!</span></p> 
-        <div class="control-group" id="create">
-            <div class="controls">
+       		 <p><span class="badge badge-danger">Note!</span></p> 
+        <div class="form-group" id="create">
+            <div class="form-control">
                 <label class="checkbox">
                     <input type="checkbox" name="create_tables" checked="checked" />
                     <strong>Create tables</strong> &mdash; This will create the necessary tables in the database.
                 </label>
             </div>
         </div>
-        <div class="control-group" id="overwrite">
-            <div class="controls">
+        <div class="form-group" id="overwrite">
+            <div class="form-control">
                 <label class="checkbox">
                     <input type="checkbox" name="overwrite_tables" />
                     <strong>Delete existing tables</strong> &mdash; This will delete all existing tables in the database.
                 </label>
-                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span>
+                <span class="nodisplay form-text"><span class="badge badge-danger">Warning!</span>
                     This will erase the entire database.</span>
             </div>
         </div>
-        <div class="control-group" id="update">
-            <div class="controls">
+        <div class="form-group" id="update">
+            <div class="form-control">
                 <label class="checkbox">
                     <input type="checkbox" name="update_tables" />
                     <strong>Force updating existing tables</strong> &mdash; This will update all existing tables in the database if needed.
                 </label>
-                <span style="display: none;" class="help-block"><span class="label label-important">Warning!</span>
+                <span class="nodisplay form-text"><span class="badge badge-danger">Warning!</span>
                      EXPERIMENTAL!!! This updates the entire database if needed. Or check /misc/db for an update script!</span>
             </div>
         </div>
@@ -88,127 +99,5 @@
         <button id="next" type="submit" class="btn btn-info pull-right">Next</button>
     </div>
 </form>
-
-
-<script type="text/javascript">
-    warnIfNotHttps();
-    $.getJSON("<c:url value="/install/datasource/sources" />", function(datasources) {
-        var datasource, selected,
-            $datasource = $("#datasource"),
-            $settings = $("#settings"),
-            $actions = $("#actions"),
-            $create = $("#create"),
-            $overwrite = $("#overwrite"),
-            $update = $("#update");
-
-        for (datasource in datasources) {
-            if (datasources.hasOwnProperty(datasource)) {
-                $datasource.append($("<option>").text(datasource));
-                if (datasources[datasource].selected) {
-                    selected = datasource;
-                }
-            }
-        }
-        datasource = null;
-
-        $datasource.change(function() {
-            var d = $(this).val();
-            if (d !== datasource) {
-                datasource = d;
-
-                /* create settings */
-                $settings.slideUp("fast", function() {
-                    $settings.children().remove();
-                    generateSettings(datasources[d].settings, {}, $settings, false);
-                    /* save settings as default values
-                     * to keep them between switches */
-                    $settings.find(":input").on("change", function() {
-                        var $this = $(this), name = $this.attr("name"),
-                            i, settings = datasources[d]["settings"].sections;
-                        for (i = 0; i < settings.length; ++i) {
-                            if (settings[i].settings.hasOwnProperty(name)) {
-                                settings[i]["settings"][name]["default"] = $this.val();
-                            }
-                        }
-                    });
-                    $settings.slideDown("fast");
-                });
-
-                /* adjust actions */
-                $actions.slideUp("fast", function() {
-                    var schema = datasources[d].needsSchema;
-                    $create.hide();
-                    $overwrite.hide();
-                    $update.hide();
-                    if (schema) {
-                        $create.show();
-                        $overwrite.show();
-                        $update.show();
-                        $actions.slideDown("fast");}
-                });
-            }
-        });
-
-		$("input[name=create_tables]").change(function() {
-			var $update_tables = $("input[name=update_tables]");
-            if ($(this).attr("checked")) {
-				if ($update_tables.attr("checked")) {
-					$update_tables.attr({
-						"checked": false})
-						.parent().next().toggle("fast");
-				}
-            }
-        });
-
-        $("input[name=overwrite_tables]").click(function(){
-            $(this).parent().next().toggle("fast");
-        });
-
-        $("input[name=overwrite_tables]").change(function() {
-            var $create_tables = $("input[name=create_tables]");
-			var $update_tables = $("input[name=update_tables]");
-            if ($(this).attr("checked")) {
-                $create_tables.attr({
-                    "checked": "checked",
-                    "disabled": true })
-                .parent("label").addClass("muted");
-				if ($update_tables.attr("checked")) {
-					$update_tables.attr({
-						"checked": false})
-						.parent().next().toggle("fast");
-				}
-            } else {
-                $create_tables.removeAttr("disabled")
-                    .parent("label").removeClass("muted");
-            }
-        });
-
-        $("input[name=update_tables]").click(function(){
-            $(this).parent().next().toggle("fast");
-        });
-
-		$("input[name=update_tables]").change(function() {
-            var $create_tables = $("input[name=create_tables]");
-			var $overwrite_tables = $("input[name=overwrite_tables]");
-            if ($(this).attr("checked")) {
-                $create_tables.attr({
-                    "checked": false}).removeAttr("disabled")
-                    .parent("label").removeClass("muted");
-				if ($overwrite_tables.attr("checked")) {
-					$overwrite_tables.attr({
-						"checked": false})
-						.parent().next().toggle("fast");
-				}
-            } else {
-
-            }
-        });
-
-        if (selected) {
-            $datasource.val(selected).trigger("change");
-        }
-
-    });
-</script>
 
 <jsp:include page="../common/footer.jsp" />

@@ -37,95 +37,12 @@
 	<jsp:param name="leadParagraph" value="You can change these settings later in the administrative backend." />
 </jsp:include>
 
-<script type="text/javascript">
-    if (document.referrer) {
-        if (document.referrer.matches(/install\/database/)) {
-            showSuccess("Database configuration successfully tested.");
-        }
-    }
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/install/settings.js" />"></script>
 
-<%
-    String ip = request.getHeader("X-Forwarded-For");
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("Proxy-Client-IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("WL-Proxy-Client-IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("HTTP_CLIENT_IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getRemoteAddr();
-    }
-    pageContext.setAttribute("clientIp", ip);
-%>
-
-<script type="text/javascript">
-    function waitForElementToDisplayAfter(selector, time, content) {
-        if($(selector).length > 0) {
-            $(selector).after(content);
-            return;
-        }
-        else {
-            setTimeout(function() {
-                waitForElementToDisplayAfter(selector, time, content);
-            }, time);
-        }
-    }
-
-    $( document ).ready(function() {
-        waitForElementToDisplayAfter(
-            "#service_transactionalallowedips > div.controls > span.help-block",
-            1000,
-            "<br /><span class='alert alert-info'>" +
-            "Consider entering the IP of your machine: " +
-            "<code>" +
-            "<c:out value="${clientIp}" escapeXml="false"/>" +
-            "</code>" +
-            "</span>"
-        );
-    });
-</script>
-
-<form action="<c:url value="/install/settings" />" method="POST" class="form-horizontal">
+<div id="settings_url" data-value='<c:url value="/settingDefinitions.json?exclude=${exclude}" />'></div>
+<div id="settings_data" data-value='${ settings }'></div>
+<form action="<c:url value="/install/settings" />" method="POST" class="">
 	<div id="settings"></div>
-	<script type="text/javascript">
-	$.getJSON('<c:url value="/settingDefinitions.json?exclude=${exclude}" />', function(settingDefinitions) {
- 		var $container = $("#settings");
-		var settings = ${settings};
-		generateSettings(settingDefinitions, settings, $container, true);
-		$("#service_identification .control-group:first").before("<legend>Standard Settings</legend>");
-		$("#service_provider .control-group:first").before("<legend>Standard Settings</legend>");
-		$("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
-		$("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
-
-		if (!settings["service.serviceURL"]) {
-			$("input[name='service.serviceURL']").val(window.location.toString()
-				.replace(/install\/settings.*/, "service")).trigger("input");
-		}
-
-		$(".required").bind("keyup input change", function() {
-            var valid = true;
-            $(".required").each(function(){
-                var val = $(this).val();
-                return valid = (val !== null && val !== undefined && val !== "");
-            });
-            if (valid) {
-                $("button[type=submit]").removeAttr("disabled");
-            } else {
-                $("button[type=submit]").attr("disabled", true);
-            }
-        });
-
-        $(".required:first").trigger("change");
-        parsehash();
-	});
-    </script>
 
 	<hr/>
 	<div>

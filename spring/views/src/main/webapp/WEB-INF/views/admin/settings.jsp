@@ -33,196 +33,34 @@
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
 
-<%
-    String ip = request.getHeader("X-Forwarded-For");
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("Proxy-Client-IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("WL-Proxy-Client-IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("HTTP_CLIENT_IP");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-    }
-    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-        ip = request.getRemoteAddr();
-    }
-    pageContext.setAttribute("clientIp", ip);
-%>
 
-<script type="text/javascript">
-    function waitForElementToDisplayAfter(selector, time, content) {
-        if($(selector).length > 0) {
-            $(selector).after(content);
-            return;
-        }
-        else {
-            setTimeout(function() {
-                waitForElementToDisplayAfter(selector, time, content);
-            }, time);
-        }
-    }
+<div id="url_settings" data-value='<c:url value="/admin/settings" />'></div>
 
-    $( document ).ready(function() {
-        waitForElementToDisplayAfter(
-            "#service_transactionalallowedips > div.controls > span.help-block",
-            1000,
-            "<br /><span class='alert alert-info'>" +
-            "Consider entering the IP of your machine: " +
-            "<code>" +
-            "<c:out value="${clientIp}" escapeXml="false"/>" +
-            "</code>" +
-            "</span>"
-        );
-    });
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/admin/settings.js" />"></script>
+
 
 <div class="row">
-    <div class="span9">
+    <div class="col-lg-9">
         <h2>Change SOS Configuration</h2>
         <p class="lead">You can change the current SOS settings or export the settings to back them up and use them in another installation.</p>
     </div>
-    <div class="span3 header-img-span">
+    <div class="col-lg-3 header-img-span">
         <div class="row">
-            <div class="span3">
+            <div class="col-lg-3">
                 <img src="<c:url value="/static/images/52n-logo-220x80.png"/>" />
             </div>
         </div>
         <div class="row">
-            <div class="span3">
+            <div class="col-lg-3">
                 <a id="export" class="btn btn-block btn-info" href="settings.json" target="_blank">Export Settings</a>
             </div>
         </div>
     </div>
 </div>
 
-<form id="settings" class="form-horizontal"></form>
+<form id="settings" class=""></form>
 
-<script type="text/javascript">
-    $(function(){
-        $.getJSON('<c:url value="/settingDefinitions.json" />', function(settingDefinitions) {
-            var $container = $("#settings"),
-                $button = $("<button>").attr("type", "button").addClass("btn btn-info").text("Save");
+<div id="url_settingDefinitions" data-value='<c:url value="/settingDefinitions.json" />'></div>
 
-            $button.click(function() {
-                $.post('<c:url value="/admin/settings" />', $container.serializeArray())
-                .fail(function(e) {
-                    showError("Failed to save settings: " + e.status + " " + e.statusText);
-                    $("input#admin_password_facade,input[name=admin_password],input[name=current_password]").val("");
-                })
-                .done(function() {
-                    $("html,body").animate({ "scrollTop": 0}, "fast");
-                    showSuccess("Settings saved!");
-                    $("input#admin_password_facade,input[name=admin_password],input[name=current_password]").val("");
-                });
-            });
-
-            settingDefinitions.sections.push({
-                "id": "credentials",
-                "title": "Credentials",
-                "settings": {
-                    "admin_username": {
-                        "type": "string",
-                        "title": "Admin name",
-                        "description": "The new administrator user name.",
-                        "required": true,
-                        "default": "${admin_username}"
-                    },
-					"current_password": {
-						"type": "password",
-						"title": "Current Password",
-						"description": "The current administrator password."
-					},
-                    "admin_password_facade": {
-                        "type": "string",
-                        "title": "New Password",
-                        "description": "The new administrator password."
-                    }
-                }
-            });
-
-            var settings = ${settings};
-            generateSettings(settingDefinitions, settings, $container, true);
-            $("#service_identification .control-group:first").before("<legend>Standard Settings</legend>");
-            $("#service_provider .control-group:first").before("<legend>Standard Settings</legend>");
-            $("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
-            $("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
-            $("<div>").addClass("form-actions").append($button).appendTo($container);
-
-            function setSosUrl() {
-                $("input[name='service.serviceURL']").val(window.location.toString()
-                    .replace(/admin\/settings.*/, "service")).trigger("input");
-            }
-
-            if (!settings["service.serviceURL"]) {
-              setSosUrl();
-            }
-
-            $(".required").bind("keyup input change", function() {
-                var valid = true;
-                $(".required").each(function(){
-                    var val = $(this).val();
-                    return valid = (val !== null && val !== undefined && val !== "");
-                });
-                if (valid) {
-                    $button.removeAttr("disabled");
-                } else {
-                    $button.attr("disabled", true);
-                }
-            });
-
-            $(".required:first").trigger("change");
-
-			$("input[name=admin_password_facade]").removeAttr("name").attr("id","admin_password_facade");
-			$("form#settings").append($("<input>").attr({ "type":"hidden", "name": "admin_password" }));
-			$("input#admin_password_facade").bind('focus', function() {
-				$(this).val($("input[name=admin_password]").val());
-			}).bind('blur', function() {
-				$(this).val($(this).val().replace(/./g, String.fromCharCode(8226)));
-			}).bind("keyup input", function() {
-				$("input[name=admin_password]").val($(this).val());
-			});
-
-            var $defaultButton = $("<button>").attr("type", "button")
-                .attr("disabled", true).css("margin-left", "5px").addClass("btn")
-                .text("Defaults").click(function() {
-                function getSettings(section) {
-                    for (var i = 0; i < settingDefinitions.sections.length; ++i) {
-                        if (settingDefinitions.sections[i].title === section) {
-                            return settingDefinitions.sections[i].settings;
-                        }
-                    }
-                }
-                var activeId = $(".tab-pane.active").attr("id");
-                var section = $(".nav.nav-tabs li a[href=#" + activeId + "]").text();
-                var s = getSettings(section);
-                for (var key in s) {
-                    if (key === "service.serviceURL") {
-                        setSosUrl();
-                    } else {
-                        setSetting(key, (s[key]["default"] !== undefined
-                            && s[key]["default"] !== null) ? s[key]["default"] : "", settingDefinitions);
-                    }
-                }
-                $(".required").trigger("input").trigger("change");
-            });
-            $("div.form-actions").append($defaultButton);
-
-            $('a[data-toggle=tab]').on('shown', function (e) {
-                var id = $(e.target).attr("href");
-                if (id === "#service_settings" || id === "#miscellaneous_settings") {
-                    $defaultButton.removeAttr("disabled");
-                } else {
-                    $defaultButton.attr("disabled", true);
-                }
-            });
-
-            parsehash();
-        });
-    });
-</script>
 <br/>
 <jsp:include page="../common/footer.jsp" />

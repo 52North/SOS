@@ -25,18 +25,39 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-$(function() {
+$(function () {
+
+    if (window.location.pathname.slice(-1) === "/") {
+        window.location.href = window.location.href.slice(0, -1);
+    }
+
+
+    const url_client_config = $("#url_client_config").attr("data-value");
+    const url_service = $("#url_service").attr("data-value");
+
+    var availableOperations = [];
+    $(".operations").each(function (index, obj) {
+        availableOperations.push(
+            {
+                method: obj.attributes.getNamedItem("data-method").value,
+                binding: obj.attributes.getNamedItem("data-binding").value,
+                service: obj.attributes.getNamedItem("data-service").value,
+                version: obj.attributes.getNamedItem("data-version").value,
+                operation: obj.attributes.getNamedItem("data-operation").value
+            }
+        )
+    });
 
     function Set() {
         this.data = {};
     }
 
     Set.prototype = {
-        add: function(key, val) {
+        add: function (key, val) {
             if (val === undefined) {
                 val = true;
             }
-            if (key === undefined || key ===  null) {
+            if (key === undefined || key === null) {
                 throw new Error("invalid key");
             }
             if (typeof key === "object") {
@@ -55,10 +76,10 @@ $(function() {
                 this.data[key] = val;
             }
         },
-        get: function(key) {
+        get: function (key) {
             return this.data[key];
         },
-        remove: function(key) {
+        remove: function (key) {
             var item;
             for (var j = 0; j < arguments.length; j++) {
                 item = arguments[j];
@@ -71,10 +92,10 @@ $(function() {
                 }
             }
         },
-        has: function(key) {
+        has: function (key) {
             return Object.prototype.hasOwnProperty.call(this, key);
         },
-        isEmpty: function() {
+        isEmpty: function () {
             for (var key in this.data) {
                 if (this.has(key)) {
                     return false;
@@ -82,10 +103,10 @@ $(function() {
             }
             return true;
         },
-        keys: function() {
+        keys: function () {
             return Object.keys(this.data);
         },
-        clear: function() {
+        clear: function () {
             this.data = {};
         }
     };
@@ -99,17 +120,17 @@ $(function() {
         this.$accept = $("#accept");
         this.$method = $("#method");
 
-        this.$request = $("#request").on("change",function() {
+        this.$request = $("#request").on("change", function () {
             self.onRequestChange.apply(self, arguments);
         });
-        this.$url = $("#url").val(this.sosUrl).on("change", function() {
+        this.$url = $("#url").val(this.sosUrl).on("change", function () {
             self.onUrlChange.apply(self, arguments);
         });
-        this.$send = $("#send-button").on("click", function() {
+        this.$send = $("#send-button").on("click", function () {
             self.onSend.apply(self, arguments);
         });
 
-        this.$contentType.on("change", function(){
+        this.$contentType.on("change", function () {
             self.onContentTypeChange.apply(self, arguments);
         });
 
@@ -129,10 +150,10 @@ $(function() {
         });
 
         // select the language for syntax highlighting
-        $("#mode a").on("click", function(e) {
+        $("#mode a").on("click", function (e) {
             e.preventDefault(); self.changeSyntax($(this).data("mode"));
         });
-        $("#permalink").on("click", function() {
+        $("#permalink").on("click", function () {
             window.prompt("Permalink\n NOTE: Chrome is limited to 2000 chars. Please use another browser for large requests!", self.createPermalink());
         });
         this.createFilters("service", "version", "binding", "operation");
@@ -141,7 +162,7 @@ $(function() {
         this.processQuery();
     }
     Client.prototype = {
-        processQuery: function() {
+        processQuery: function () {
             if ($.queryParam["load"]) {
                 this.loadRequestById($.queryParam["load"]);
             }
@@ -161,11 +182,11 @@ $(function() {
                 this.editor.setValue($.queryParam["request"]);
             }
         },
-        createPermalink: function() {
+        createPermalink: function () {
             var link = document.location.protocol
-            		+ "//"
-                    +  document.location.host
-                    +  document.location.pathname;
+                + "//"
+                + document.location.host
+                + document.location.pathname;
             link += "?method=" + encodeURIComponent(this.$method.val());
             link += "&accept=" + encodeURIComponent(this.$accept.val());
             link += "&contentType=" + encodeURIComponent(this.$contentType.val());
@@ -173,7 +194,7 @@ $(function() {
             link += "&request=" + encodeURIComponent(this.editor.getValue());
             return link;
         },
-        onContentTypeChange: function() {
+        onContentTypeChange: function () {
             var ct = this.$contentType.val();
             if (ct.matches(/application\/json/)) {
                 this.changeSyntax("application/json");
@@ -181,72 +202,72 @@ $(function() {
                 this.changeSyntax("application/xml");
             }
         },
-        createFilters: function() {
+        createFilters: function () {
             var self = this, e, pl, jq, id, i, j;
             this.filters = [];
             for (i = 0; i < arguments.length; ++i) {
-				e = arguments[i],
-				pl = e + "s",
-				jq = "$" + e,
-				id = "#" + e;
+                e = arguments[i],
+                    pl = e + "s",
+                    jq = "$" + e,
+                    id = "#" + e;
                 // currently selected value
                 this[e] = null;
                 this.filters.push(e);
                 // supported values
                 this[pl] = new Set();
-                this.availableOperations.forEach(function(r) {
-					// check if we actually have a matching request example
-					for (j = 0; j < self.requests.length; ++j) {
-						if (self.requests[j][e] === r[e]) {
-							self[pl].add(r[e]);
-							break;
-						}
-					}
+                this.availableOperations.forEach(function (r) {
+                    // check if we actually have a matching request example
+                    for (j = 0; j < self.requests.length; ++j) {
+                        if (self.requests[j][e] === r[e]) {
+                            self[pl].add(r[e]);
+                            break;
+                        }
+                    }
                 });
                 this[pl] = this[pl].keys();
                 this[pl].sort();
                 // JQuery object
                 // javascripts great loop closures......
-                this[jq] = $(id).on("change", (function(filter) {
-                    return function() {
+                this[jq] = $(id).on("change", (function (filter) {
+                    return function () {
                         self.onFilterChange.apply(self, [filter]);
                     };
                 })(e));
                 // append valid values
                 this[jq].append($("<option>").attr("value", "any")
                     .text("Any " + e.slice(0, 1).toUpperCase() + e.slice(1)));
-                this[pl].forEach(function(s) {
+                this[pl].forEach(function (s) {
                     self[jq].append($("<option>").attr("value", s)
-							.text(self.toHumanReadableString(s)));
+                        .text(self.toHumanReadableString(s)));
                 });
 
                 this[jq].trigger("change");
                 this[jq].attr("disabled", this[jq].find("option").length <= 1);
             }
         },
-		toHumanReadableString: function(contentType) {
-			switch (contentType) {
-				case "application/x-kvp":
-					return "KVP";
-				case "application/soap+xml":
-					return "SOAP";
-				case "text/xml":
-				case "application/xml":
-					return "POX";
-				case "application/json":
-					return "JSON";
-				default:
-					return contentType;
-			}
-		},
-        filter: function(requests) {
+        toHumanReadableString: function (contentType) {
+            switch (contentType) {
+                case "application/x-kvp":
+                    return "KVP";
+                case "application/soap+xml":
+                    return "SOAP";
+                case "text/xml":
+                case "application/xml":
+                    return "POX";
+                case "application/json":
+                    return "JSON";
+                default:
+                    return contentType;
+            }
+        },
+        filter: function (requests) {
             var filtered = [];
             for (var i = 0; i < requests.length; ++i) {
                 if (this.isSupported(requests[i])) {
                     filtered.push(requests[i]);
                 }
             }
-            filtered.sort(function(a, b) {
+            filtered.sort(function (a, b) {
                 if (a.binding === b.binding) {
                     if (a.service === b.service) {
                         if (a.version === b.version) {
@@ -261,10 +282,10 @@ $(function() {
             });
             return filtered;
         },
-        changeSyntax: function(type) {
+        changeSyntax: function (type) {
             this.editor.setOption("mode", type);
         },
-        isSupported: function(request) {
+        isSupported: function (request) {
             var i, ao;
             if (request.requiredOperations) {
                 for (i = 0; i < request.requiredOperations.length; ++i) {
@@ -294,26 +315,26 @@ $(function() {
             }
             return false;
         },
-        appendDefaultOption: function(text, $select) {
+        appendDefaultOption: function (text, $select) {
             $select.append($("<option>")
-                    .attr({"disabled": true, "selected": true})
-                    .hide().val("").html(text));
+                .attr({ "disabled": true, "selected": true })
+                .hide().val("").html(text));
         },
-        obj2param: function(obj) {
+        obj2param: function (obj) {
             var q = [];
             for (var key in obj)
                 q.push(key + "=" + encodeURIComponent(
-                        (obj[key] instanceof Array) ? obj[key].join(",") : obj[key]));
+                    (obj[key] instanceof Array) ? obj[key].join(",") : obj[key]));
             return q.join("&");
         },
-        xml2string: function(xml) {
-            return typeof(xml) === "string" ? xml : xml.xml ? xml.xml : new XMLSerializer().serializeToString(xml);
+        xml2string: function (xml) {
+            return typeof (xml) === "string" ? xml : xml.xml ? xml.xml : new XMLSerializer().serializeToString(xml);
         },
-        onUrlChange: function() {
+        onUrlChange: function () {
             var url = this.$url.val();
             //remove query string if present, we just want to examine the binding
             if (url.indexOf('?' > -1)) {
-            	url = url.split("?")[0];
+                url = url.split("?")[0];
             }
             if (url.endsWith("json")) {
                 this.$contentType.val("application/json");
@@ -337,28 +358,28 @@ $(function() {
                 this.$send.attr("disabled", true);
             }
         },
-        getContentTypeHeader: function() {
+        getContentTypeHeader: function () {
             var v = this.$contentType.val();
             return v ? v : null;
         },
-        getAcceptHeader: function() {
+        getAcceptHeader: function () {
             var v = this.$accept.val();
             return v ? v : null;
         },
-        getMethod: function() {
+        getMethod: function () {
             return this.$method.val();
         },
-        showResponse: function(xhr) {
+        showResponse: function (xhr) {
             var xml = this.xml2string(xhr.responseText);
             this.$response.fadeOut("fast").children().remove();
             this.$response.append($("<h3>").text("Response"));
-            this.$response.append($("<pre>").text((xhr.status + " " + xhr.statusText + "\n" + xhr.getAllResponseHeaders()).trim()));
+            this.$response.append($("<pre class='p-4 border'>").text((xhr.status + " " + xhr.statusText + "\n" + xhr.getAllResponseHeaders()).trim()));
             this.$response.append($("<pre>").addClass("prettyprint").addClass("linenums").text(xml));
             prettyPrint();
             this.$response.fadeIn("fast");
             $("html, body").animate({ scrollTop: this.$response.offset().top }, "slow");
         },
-        onServiceResponse: function(xhr, status) {
+        onServiceResponse: function (xhr, status) {
             var contentType;
             switch (status) {
                 case "success":
@@ -373,43 +394,46 @@ $(function() {
                     if (xhr.responseText && xhr.responseText.indexOf("ExceptionReport") >= 0) {
                         this.showResponse(xhr);
                     } else if (contentType && (contentType.startsWith("application/json") ||
-                                               contentType.startsWith("text/xml") ||
-                                               contentType.startsWith("application/xml") ||
-                                               contentType.startsWith("application/soap+xml"))) {
+                        contentType.startsWith("text/xml") ||
+                        contentType.startsWith("application/xml") ||
+                        contentType.startsWith("application/soap+xml"))) {
                         this.showResponse(xhr);
                     }
                     break;
                 case "timeout":
-                    this.showError("Request timed out &hellip;");
+                    showError("Request timed out &hellip;");
                     break;
                 case "abort":
-                    this.showError("Request aborted &hellip;");
+                    showError("Request aborted &hellip;");
                     break;
                 case "parsererror":
-                    this.showError("Unparsable response &hellip;");
+                    showError("Unparsable response &hellip;");
                     break;
             }
             this.$send.removeAttr("disabled");
         },
-        onSend: function() {
+        onSend: function () {
             var self = this,
                 method = this.getMethod(),
                 request = $.trim(this.editor.getValue()),
                 contentType = this.getContentTypeHeader(),
                 accept = this.getAcceptHeader(),
                 options;
-			this.$send.attr("disabled", true);
-			options = { headers: {}, type: method, complete: function() {
-				self.onServiceResponse.apply(self, arguments);
-			}};
+            this.$send.attr("disabled", true);
+            options = {
+                headers: {}, type: method, complete: function () {
+                    self.onServiceResponse.apply(self, arguments);
+                },
+                dataType: "text",
+            };
 
-			if (contentType) { options.headers["Content-Type"] = contentType; }
-			if (accept) { options.headers["Accept"] = accept; }
-			if (request) { options.data = request; }
+            if (contentType) { options.headers["Content-Type"] = contentType; }
+            if (accept) { options.headers["Accept"] = accept; }
+            if (request) { options.data = request; }
 
-			$.ajax(this.$url.val(), options);
+            $.ajax(this.$url.val(), options);
         },
-        onFilterChange: function(filter) {
+        onFilterChange: function (filter) {
             var old = this[filter];
             this[filter] = this["$" + filter].val();
             if (this[filter] === "any") {
@@ -419,7 +443,7 @@ $(function() {
                 this.updateExamples();
             }
         },
-        updateExamples: function() {
+        updateExamples: function () {
             var def, text, id, example, examples = {};
 
             // apply current filters
@@ -445,7 +469,7 @@ $(function() {
 
             // fill the drop down
             for (id in examples) {
-                if (examples.hasOwnProperty(id)){
+                if (examples.hasOwnProperty(id)) {
                     def = examples[id];
                     text = "";
                     text += "[" + this.toHumanReadableString(def.binding) + "]";
@@ -453,21 +477,21 @@ $(function() {
                     if (def.title) {
                         text += " - " + def.title;
                     }
-                    text += " (" + def.service   + " " + def.version   + ")";
+                    text += " (" + def.service + " " + def.version + ")";
                     $("<option>").attr({ value: id }).html(text).appendTo(this.$request);
                 }
             }
             // disable if no examples match
             this.$request.attr("disabled", this.$request.find("option").length <= 1);
         },
-        onRequestChange: function() {
+        onRequestChange: function () {
             var id = this.$request.val();
             if (id >= 0) {
                 this.loadRequest(this.requests[id]);
             }
             this.updateExamples();
         },
-        loadRequestById: function(id) {
+        loadRequestById: function (id) {
             for (var i = 0; i < this.requests.length; ++i) {
                 if (this.requests[i].id === $.queryParam["load"]) {
                     this.loadRequest(this.requests[i]);
@@ -476,7 +500,7 @@ $(function() {
             }
             showMessage("The specified request could not be found or is not supported.", "warning");
         },
-        loadRequest: function(definition) {
+        loadRequest: function (definition) {
             var self = this;
             this.$method.val(definition.method);
 
@@ -503,27 +527,27 @@ $(function() {
                     this.$accept.val("");
                 }
             } else {
-            	this.$contentType.val("");
-            	this.$accept.val("");
+                this.$contentType.val("");
+                this.$accept.val("");
             }
             this.$contentType.trigger("change");
             this.$accept.trigger("change");
 
             if (definition.request) {
-                if (typeof(definition.request) === "string") {
+                if (typeof (definition.request) === "string") {
                     if (definition.request.endsWith("xml")) {
-                        $.get(definition.request, function(data) {
+                        $.get(definition.request, function (data) {
                             var xml = self.xml2string(data);
                             self.editor.setValue(new XmlBeautify().beautify(xml));
                         });
                     } else if (definition.request.endsWith("json")) {
-                        $.get(definition.request, function(data) {
+                        $.get(definition.request, function (data) {
                             self.editor.setValue(JSON.stringify(data, undefined, 2));
                         });
                     } else {
                         this.editor.setValue(definition.request);
                     }
-                } else if (typeof(definition.request) === "object") {
+                } else if (typeof (definition.request) === "object") {
                     this.editor.setValue(JSON.stringify(definition.request, undefined, 2));
                 }
             } else {
@@ -532,4 +556,87 @@ $(function() {
         }
     };
     window.Client = Client;
+
+    $.getJSON(url_client_config, function (config) {
+        function flatten(requests) {
+            var s, v, b, o, t, r, transformed = [];
+            for (s in requests) {
+                for (v in requests[s]) {
+                    for (b in requests[s][v]) {
+                        for (o in requests[s][v][b]) {
+                            for (t in requests[s][v][b][o]) {
+                                r = requests[s][v][b][o][t];
+                                r.service = s;
+                                r.version = v;
+                                r.operation = o;
+                                r.title = t;
+                                r.headers = {};
+                                switch (b) {
+                                    case "KVP":
+                                    case "/kvp":
+                                        r.method = "GET";
+                                        r.headers["Accept"] = "application/xml";
+                                        r.binding = "application/x-kvp";
+                                        break;
+                                    case "POX":
+                                    case "/pox":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/xml";
+                                        r.headers["Content-Type"] = "application/xml";
+                                        r.binding = "application/xml";
+                                        break;
+                                    case "SOAP":
+                                    case "/soap":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/soap+xml";
+                                        r.headers["Content-Type"] = "application/soap+xml";
+                                        r.binding = "application/soap+xml";
+                                        break;
+                                    case "JSON":
+                                    case "/json":
+                                        r.method = "POST";
+                                        r.headers["Accept"] = "application/json";
+                                        r.headers["Content-Type"] = "application/json";
+                                        r.binding = "application/json";
+                                        break;
+                                    default:
+                                        if (console && console.log) {
+                                            console.log("Unsupported binding" + b);
+                                        }
+                                        break;
+                                }
+                                if (r.binding) {
+                                    transformed.push(r);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return transformed;
+        }
+
+        if (!config.examples) {
+            /* transform old format */
+            config = { examples: flatten(config) };
+        }
+
+        /* accept endpoint based configs */
+        for (var i = 0; i < config.examples.length; ++i) {
+            switch (config.examples[i].binding) {
+                case "/kvp": config.examples[i].binding = "application/x-kvp"; break;
+                case "/soap": config.examples[i].binding = "application/soap+xml"; break;
+                case "/pox": config.examples[i].binding = "application/xml"; break;
+                case "/json": config.examples[i].binding = "application/json"; break;
+            }
+        }
+
+        config.sosUrl = document.location.protocol + "//"
+            + document.location.host + url_service;
+        config.availableOperations = availableOperations;
+        new Client(config);
+    })
+        .fail(function () {
+            alert('Error while loading request data!');
+        })
 });

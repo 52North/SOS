@@ -66,7 +66,22 @@ if (!String.prototype.matches) {
         }
         return b;
     })(window.location.search.substr(1).split('&'));
+
+    /* put warnings on empty fields */
+    $("input[type=text], input[type=password], textarea").bind("keyup input", function () {
+        var $this = $(this);
+        if ($this.val() === "") {
+            $this.parents(".control-group").addClass("warning");
+        } else {
+            $this.parents(".control-group").removeClass("warning");
+        }
+    }).trigger("input");
+    
 })(jQuery);
+
+function showInstallWarning() {
+    showMessage('You first have to complete the installation process! Click <a href="./install/index"><strong>here</strong></a> to start it.', "warning");
+}
 
 function showMessage(text, type, autoclose) {
     function closeAlert(a) {
@@ -96,7 +111,7 @@ function showError(error, autoclose) {
 	if (autoclose === undefined) {
 		autoclose = false;
 	}
-    showMessage("<strong>Error!</strong> " + error, "error", autoclose);
+    showMessage("<strong>Error!</strong> " + error, "warning", autoclose);
 }
 
 function showSuccess(message) {
@@ -113,8 +128,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
         }
     }
     function generateStringSetting($setting, setting, settingValues) {
-        var $label = $("<label>").addClass("control-label").attr("for", setting.id).html(setting.title);
-        var $controls = $("<div>").addClass("controls");
+        var $label = $("<label>").addClass("col-form-label").attr("for", setting.id).html(setting.title);
         var $input = null;
         switch (setting.type) {
         case "integer":
@@ -124,39 +138,43 @@ function generateSettings(settings, settingValues, container, tabbed) {
         case "uri":
         case "file":
         case "string":
-            $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");
+            $input = $("<input>").attr("type", "text");
             break;
         case "password":
-            $input = $("<input>").attr("type", "password").attr("name", setting.id).addClass("span8");
+            $input = $("<input>").attr("type", "password");
             break;
         case "text":
             $input = $("<textarea>").attr("rows", 5) // TODO make this a setting
-            .attr("name", setting.id).addClass("span8");
             break;
         }
+        $input.attr("name", setting.id).addClass("col-lg-8 form-control");
+
         if (settingValues[setting.id] !== null && settingValues[setting.id] !== undefined) {
             $input.val(settingValues[setting.id]);
         } else if (setting["default"] !== undefined && setting["default"] !== null) {
             $input.val(setting["default"]);
         }
-        var $description = $("<span>").addClass("help-block").html(setting.description);
+        var $description = $("<span>").addClass("text-muted").html(setting.description);
         if (setting.required) {
-            var $required = $("<span>").addClass("label label-warning").text("required");
+            var $required = $("<span>").addClass("badge badge-warning").text("required");
             $description.prepend(" ").prepend($required);
             $input.bind("keyup input", required);
             $input.addClass("required");
         } else {
-            var $optional = $("<span>").addClass("label label-info").text("optional");
+            var $optional = $("<span>").addClass("badge badge-info").text("optional");
             $description.prepend(" ").prepend($optional);
         }
-        $setting.append($label).append($controls.append($input).append($description));
+        var $col1 = $("<div>").addClass("col-md-2 textright").append($label);
+        var $col2 = $("<div>").addClass("col").append($input).append($description);
+        var $formrow = $("<div>").addClass("form-row").append($col1).append($col2);
+
+        $setting.append($formrow);
     }
 
     function generateChoiceSetting($setting, setting, settingValues) {
-        var $controls = $("<div>").addClass("controls");
-        var $label = $("<label>").attr("for", setting.id).addClass("control-label").text(setting.title);
-        var $input = $("<select>").attr("name", setting.id).addClass("span8");
-        var $description = $("<span>").addClass("help-block").html(setting.description);
+        var $label = $("<label>").attr("for", setting.id).addClass("col-form-label").text(setting.title);
+        var $input = $("<select>").attr("name", setting.id).addClass("col-md-8");
+        var $description = $("<span>").addClass("text-muted").html(setting.description);
         $.each(setting.options, function(val, desc) {
             $("<option>").attr("value", val).text(desc).appendTo($input);
         });
@@ -172,34 +190,44 @@ function generateSettings(settings, settingValues, container, tabbed) {
                 $input.addClass("required");
                 $option.attr("disabled", true).css("display", "none");
             } else {
-                var $optional = $("<span>").addClass("label label-info").text("optional");
+                var $optional = $("<span>").addClass("badge badge-info").text("optional");
                 $description.prepend(" ").prepend($optional);
             }
         }
 
         if (setting.required) {
-            var $required = $("<span>").addClass("label label-warning").text("required");
+            var $required = $("<span>").addClass("badge badge-warning").text("required");
             $description.prepend(" ").prepend($required);
             $input.bind("change", required);
         }
-        $setting.append($label).append($controls.append($input).append($description));
+        
+        var $col1 = $("<div>").addClass("col-md-2 textright").append($label);
+        var $col2 = $("<div>").addClass("col").append($input).append("<br />").append($description);
+        var $formrow = $("<div>").addClass("form-row").append($col1).append($col2);
+
+        $setting.append($formrow);
     }
 
     function generateBooleanSetting($setting, setting, settingValues) {
-        var $controls = $("<div>").addClass("controls");
         var $input = $("<input>").attr("type", "checkbox").attr("name", setting.id);
         var $label = $("<label>").addClass("checkbox").text(setting.title);
-        var $description = $("<span>").addClass("help-block").html(setting.description);
-        $setting.append($label).append($controls.append($label.prepend($input)).append($description));
+        var $description = $("<span>").addClass("text-muted").html(setting.description);
+        
+        var $col1 = $("<div>").addClass("col-md-2 textright");
+        var $col2 = $("<div>").addClass("col").append($input).append($label).append("<br />").append($description);
+        var $formrow = $("<div>").addClass("form-row").append($col1).append($col2);
+        $setting.append($formrow);
+
         if (settingValues[setting.id] !== null && typeof settingValues[setting.id] === "boolean") {
         	 $input.attr("checked", settingValues[setting.id]);
         } else if (typeof setting["default"] === "boolean") {
         	 $input.attr("checked", setting["default"]);
         }
+
     }
 
     function generateMultilingualSetting($setting, setting, settingValues) {
-        var $label, $hidden, key, $controls, $description, $blocks;
+        var key, $controls, $blocks;
 
         var onAdd = function(e) {
             var $block = createBlock();
@@ -238,12 +266,12 @@ function generateSettings(settings, settingValues, container, tabbed) {
             var $block = $("<div>")
                 .addClass("block");
             var $wrapper = $("<div>")
-                .addClass("input-append input-prepend")
+                .addClass("input-group input-group")
                 .appendTo($block);
 
             //globe
             $("<span>")
-                .addClass("add-on")
+                .addClass("input-group-prepend")
                 .append($("<i>")
                     .addClass("icon-globe"))
                 .appendTo($wrapper);
@@ -252,12 +280,12 @@ function generateSettings(settings, settingValues, container, tabbed) {
             var $lang = $("<input>")
                 .attr("type", "text")
                 .attr("placeholder", "Language")
-                .addClass("lang span2")
+                .addClass("lang col-lg-2 form-control")
                 .appendTo($wrapper);
 
             //=
             $("<span>")
-                .addClass("add-on")
+                .addClass("input-group-append")
                 .text("=")
                 .appendTo($wrapper);
 
@@ -265,13 +293,13 @@ function generateSettings(settings, settingValues, container, tabbed) {
             var $text = $("<input>")
                 .attr("type", "text")
                 .attr("placeholder", "Text...")
-                .addClass("text")
+                .addClass("text form-control")
                 .appendTo($wrapper);
 
             // add button
             var $add = $("<button>")
                 .attr("type", "button")
-                .addClass("btn add")
+                .addClass("btn add input-group-append")
                 .append($("<i>")
                     .addClass("icon-plus"))
                 .appendTo($wrapper);
@@ -280,7 +308,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
             // add button
             var $remove = $("<button>")
                 .attr("type", "button")
-                .addClass("btn remove")
+                .addClass("btn remove input-group-append")
                 .append($("<i>")
                     .addClass("icon-minus"))
                 .appendTo($wrapper);
@@ -299,15 +327,12 @@ function generateSettings(settings, settingValues, container, tabbed) {
         $setting.addClass("multilingual");
 
         $label = $("<label>")
-            .addClass("control-label")
+            .addClass("col-form-label")
             .attr("for", setting.id)
-            .html(setting.title)
-            .appendTo($setting);
+            .html(setting.title);
 
         $controls = $("<div>")
-            .addClass("controls")
-            .appendTo($setting);
-
+            .addClass("controls");
 
         $hidden = $("<input>")
             .attr("type", "hidden")
@@ -337,10 +362,17 @@ function generateSettings(settings, settingValues, container, tabbed) {
 
         if (setting.description) {
             $description = $("<span>")
-                .addClass("help-block")
-                .html(setting.description)
-                .appendTo($controls);
+                .addClass("form-text")
+                .html(setting.description);
         }
+
+        var $col1 = $("<div>").addClass("col-md-2 textright").append($label);
+        var $col2 = $("<div>").addClass("col")
+            .append($blocks)    
+            .append("<br />")
+            .append($description);
+        var $formrow = $("<div>").addClass("form-row").append($col1).append($col2);
+        $setting.append($formrow);
 
         onChange();
     }
@@ -377,7 +409,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
             return;
         } /* generate the tab title */
         section.id = section.title.toLowerCase().replace(/\W/g, "_");
-        var $tabHead = $("<li>").append($("<a>").text(section.title).attr("href", "#" + section.id).attr("data-toggle", "tab")); /* generate the tab pane */
+        var $tabHead = $('<li class="nav-item">').append($('<a class="nav-link">').text(section.title).attr("href", "#" + section.id).attr("data-toggle", "tab")); /* generate the tab pane */
         var $tabPane = $("<div>").addClass("tab-pane").attr("id", section.id);
         if (section.description) {
             $("<p>").html(section.description).appendTo($tabPane);
@@ -413,7 +445,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
             generateTabbedSection(section, $tabTitles, $tabs, settingValues);
         });
         $tabs.children(":first").addClass("active");
-        $tabTitles.children(":first").addClass("active");
+        $tabTitles.children(":first").children(":first").addClass("active");
         $container.append($tabTitles).append($tabs);
     } else {
         $.each(settings.sections, function(_, section) {
@@ -510,7 +542,7 @@ function warnIfNotHttps() {
         showMessage(
                 "<b>Warning!</b> The password will be transferred in clear text. "
                 + "Use this site only in safe environments (i.e. <b>NOT</b> on "
-                + "public Wi-Fi or internet caf&eacute;s)!");
+                + "public Wi-Fi or internet caf&eacute;s)!", "primary");
     }
 }
 

@@ -37,29 +37,16 @@
     <jsp:param name="leadParagraph" value="Disable or enable encodings" />
 </jsp:include>
 
-<link rel="stylesheet" href="<c:url value='/static/lib/jquery.tablesorter-bootstrap-2.712.min.css' />">
-<script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter-2.7.12.min.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter.widgets-2.7.12.min.js'/>"></script>
+
+
+<div id="url_encodings_json" data-value='<c:url value="/admin/encodings/json" />'></div>
+<script type="text/javascript" src="<c:url value="/static/js/admin/encodings.js" />"></script>
 
 <div class="btn-group pull-right">
     <button id="activateAll" class="btn btn-success"><i class="icon-ok-circle icon-white" style="color:#fff;"></i></button>
     <button id="disableAll" class="btn btn-danger"><i class="icon-ban-circle icon-white"></i></button>
 </div>
 
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    $("#activateAll").on("click", function() {
-        $("tbody > tr > td.status > button.btn-danger").each(function(){
-            $( this ).click();
-        });
-    });
-    $("#disableAll").on("click", function() {
-        $("tbody > tr > td.status > button.btn-success").each(function(){
-            $( this ).click();
-        });
-    });
-});
-</script>
 
 <table id="observationEncodings" class="table table-striped table-bordered">
     <caption>Observation Encodings</caption>
@@ -86,144 +73,5 @@ jQuery(document).ready(function($) {
     </thead>
     <tbody></tbody>
 </table>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-
-    $.extend($.tablesorter.themes.bootstrap, {
-        table: "table table-bordered",
-        header: "bootstrap-header",
-        sortNone: "bootstrap-icon-unsorted",
-        sortAsc: "icon-chevron-up",
-        sortDesc: "icon-chevron-down"
-    });
-
-    function observationEncodings(encodings) {
-        var $tbody = $("#observationEncodings tbody"), i, o, $row, $button;
-        for (i = 0; i < encodings.length; ++i) {
-            o = encodings[i];
-            $row = $("<tr>");
-            $("<td>").addClass("service").text(o.service).appendTo($row);
-            $("<td>").addClass("version").text(o.version).appendTo($row);
-            $("<td>").addClass("encoding").text(o.responseFormat).appendTo($row);
-            $button = $("<button>").attr("type", "button")
-                    .addClass("btn btn-small btn-block").on("click", function() {
-                var $b = $(this),
-                    $tr = $b.parents("tr"),
-                    active = !$b.hasClass("btn-success"),
-                    j = {
-                        service: $tr.find(".service").text(),
-                        version: $tr.find(".version").text(),
-                        responseFormat: $tr.find(".encoding").text(),
-                        active: active
-                    };
-                $b.prop("disabled", true);
-                $.ajax("<c:url value='/admin/encodings/json'/>", {
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(j)
-                }).fail(function(e) {
-                    showError("Failed to save observation encoding: " 
-                        + e.status + " " + e.statusText);
-                    $b.prop("disabled", false);
-                }).done(function() {
-                    $b.toggleClass("btn-danger btn-success")
-                      .text(active ? "active" : "inactive")
-                      .prop("disabled", false);
-                    
-                });
-            });
-            if (o.active) { 
-                $button.addClass("btn-success").text("active"); 
-            } else {
-                $button.addClass("btn-danger").text("inactive"); 
-                
-            }
-            $("<td>").addClass("status").append($button).appendTo($row);
-            
-            $tbody.append($row);    
-        }
-        
-        $("#observationEncodings").tablesorter({
-            theme : "bootstrap",
-            widgets : [ "uitheme", "zebra" ],
-            headerTemplate: "{content} {icon}",
-            widthFixed: true,
-            headers: { 
-                0: { sorter: "text" },
-                1: { sorter: "text" },
-                2: { sorter: "text" },
-                3: { sorter: false } 
-            },
-            sortList: [ [0,0], [1,1], [2,0] ]
-        });
-    }
-
-    function procedureEncodings(encodings) {
-        var $tbody = $("#procedureEncodings tbody"), i, o, $row, $button;
-        for (i = 0; i < encodings.length; ++i) {
-            o = encodings[i];
-            $row = $("<tr>");
-            $("<td>").addClass("service").text(o.service).appendTo($row);
-            $("<td>").addClass("version").text(o.version).appendTo($row);
-            $("<td>").addClass("encoding").text(o.procedureDescriptionFormat).appendTo($row);
-            $button = $("<button>").attr("type", "button")
-                    .addClass("btn btn-small btn-block").on("click", function() {
-                var $b = $(this),
-                    $tr = $b.parents("tr"),
-                    active = !$b.hasClass("btn-success"),
-                    j = {
-                        service: $tr.find(".service").text(),
-                        version: $tr.find(".version").text(),
-                        procedureDescriptionFormat: $tr.find(".encoding").text(),
-                        active: active
-                    };
-                $b.prop("disabled", true);
-                $.ajax("<c:url value='/admin/encodings/json'/>", {
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(j)
-                }).fail(function(e) {
-                    showError("Failed to save procedure description encoding: " 
-                        + e.status + " " + e.statusText);
-                    $b.prop("disabled", false);
-                }).done(function() {
-                    $b.toggleClass("btn-danger btn-success")
-                      .text(active ? "active" : "inactive")
-                      .prop("disabled", false);
-                    
-                });
-            });
-            if (o.active) { 
-                $button.addClass("btn-success").text("active"); 
-            } else {
-                $button.addClass("btn-danger").text("inactive"); 
-                
-            }
-            $("<td>").addClass("status").append($button).appendTo($row);
-            
-            $tbody.append($row);    
-        }
-                $("#procedureEncodings").tablesorter({
-            theme : "bootstrap",
-            widgets : [ "uitheme", "zebra" ],
-            headerTemplate: "{content} {icon}",
-            widthFixed: true,
-            headers: { 
-                0: { sorter: "text" },
-                1: { sorter: "text" },
-                2: { sorter: "text" },
-                3: { sorter: false } 
-            },
-            sortList: [ [0,0], [1,1], [2,0] ]
-        });
-    }
-
-    $.getJSON("<c:url value='/admin/encodings/json'/>", function(j) {
-        observationEncodings(j.observationEncodings);
-        procedureEncodings(j.procedureEncodings);
-    });
-});
-</script>
 
 <jsp:include page="../common/footer.jsp" />

@@ -29,11 +29,13 @@ package org.n52.sos.web.common;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.janmayen.Json;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -148,6 +150,12 @@ public final class JstlFunctions {
         for (Entry<?, ?> entry : map.entrySet()) {
             node.put(entry.getKey().toString(), String.valueOf(entry.getValue()));
         }
+        return Json.print(node);
+    }
+
+    public static String collectionToJson(Collection<?> obj) {
+        ArrayNode node = Json.nodeFactory().arrayNode(obj.size());
+        obj.forEach(c -> node.add(c.toString()));
         return Json.print(node);
     }
 

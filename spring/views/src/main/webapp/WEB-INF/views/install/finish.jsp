@@ -36,38 +36,38 @@
 	<jsp:param name="leadParagraph" value="All configuration options are set. Click on 'Install' to finish the installation." />
 </jsp:include>
 
-<script type="text/javascript">
-    if (document.referrer) {
-        if (document.referrer.matches(/install\/settings/)) {
-            showSuccess("Settings successfully tested.");
-        }
-    }
-    warnIfNotHttps();
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/install/finish.js" />"></script>
 
 <p>Please enter credentials to login into the administrator panel below. You can reset your admin password by executing the file <code>sql/reset_admin.sql</code> (located inside the SOS installation directory in the webapps folder of your application server) on your database.</p>
 
 <hr />
 
-<form action="<c:url value="/install/finish" />" method="POST" class="form-horizontal">
+<form action="<c:url value="/install/finish" />" method="POST" class="">
 
 	<div class="control-group">
-		<label class="control-label" for="sos_website">Username</label>
-		<div class="controls">
-			<input class="input-xlarge" type="text" name="admin_username" autocomplete="off" placeholder="admin" value="${admin_username}"/>
-			<span class="help-block"><span class="label label-warning">required</span> The username to login into the admin backend.</span>
-		</div>
+        <div class="form-row">
+            <div class="col-md-2 textright">
+                <label class="col-form-label" for="sos_website">Username</label>
+            </div>
+            <div class="col">
+                <input class="col-lg-8 form-control required" type="text" name="admin_username" autocomplete="off" placeholder="admin" value="${admin_username}"/>
+                <span class="text-muted"><span class="badge badge-warning">required</span> The username to login into the admin backend.</span>
+            </div>
+        </div>
 	</div>
 
-	<div class="control-group">
-		<label class="control-label" for="password">Password</label>
-		<div class="controls">
-			<input type="hidden" name="admin_password" value="${admin_password}"/>
-			<input id="password" class="input-xlarge" type="text" autocomplete="off" placeholder="password" value="${admin_password}"/>
-			<span class="help-block"><span class="label label-warning">required</span> The password to login into the admin backend.</span>
-		</div>
+    <div class="control-group">
+        <div class="form-row">
+            <div class="col-md-2 textright">
+                <label class="col-form-label" for="password">Password</label>
+            </div>
+            <div class="col">
+                <input type="hidden" name="admin_password" value="${admin_password}"/>
+                <input id="password" class="col-lg-8 form-control required" type="password" autocomplete="off" placeholder="password" value="${admin_password}"/>
+                <span class="text-muted"><span class="badge badge-warning">required</span> The password to login into the admin backend.</span>
+            </div>
+        </div>
 	</div>
-
 	<hr/>
 	
 	 <p>Clicking 'Install' will persist all settings in the database and (depending on your configuration) create or delete tables and insert test data.</p>
@@ -77,34 +77,5 @@
 		<button class="btn btn-info pull-right" type="submit">Install</button>
 	</div>
 	<br/>
-	<script type="text/javascript">
-            $(function(){
-                var $pwFacade = $("input#password"),
-                    $pwHidden = $("input[name=admin_password]"),
-                    $submit = $('button[type=submit]'),
-                    $inputs = $("input[type=text]");
-			
-                $inputs.bind("keyup input", function() {
-                    var empty = false;
-                    $inputs.each(function() {
-                        if ($(this).val() === "") { 
-                            empty = true;
-                        }
-                    });
-                    $submit.attr("disabled", empty);	
-		}).trigger("input");
-                $pwFacade.bind('focus', function() {
-                    $pwFacade.val($pwHidden.val());
-                }).bind('blur', function() {
-                    $pwFacade.val($pwFacade.val().replace(/./g, String.fromCharCode(8226)));
-                }).bind("keyup input", function() {
-                    $pwHidden.val($pwFacade.val());
-                }).trigger("blur");
-                $submit.click(function() {
-                    $submit.attr("disabled", true);
-                    $submit.parents("form").submit();
-                });
-            });
-	</script>
 </form>
 <jsp:include page="../common/footer.jsp" />

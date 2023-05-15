@@ -34,15 +34,15 @@
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
 
-<link rel="stylesheet" href="<c:url value="/static/lib/prettify.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/lib/codemirror-2.34.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="/static/css/prettify.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="/static/css/codemirror.css" />" type="text/css" />
 <link rel="stylesheet" href="<c:url value="/static/css/codemirror.custom.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-toggle-buttons.css" />" type="text/css" />
-<script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34-xml.js" />"></script>
+
+<script type="text/javascript" src="<c:url value="/static/lib/codemirror.js" />"></script>
+
 <script type="text/javascript" src="<c:url value="/static/lib/prettify.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/XmlBeautify-1.2.3.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/jquery.toggle.buttons.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/lib/XmlBeautify.js" />"></script>
+
 
 <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/EventMixin.js" />"></script>
@@ -54,18 +54,7 @@
     <jsp:param name="leadParagraph" value="" />
 </jsp:include>
 
-<style type="text/css">
-.i18ncontainer { margin-left: 2px; }
-.multilingual input.text { width: 655px; }
-.multilingual .control-label { font-weight: bold; }
-</style>
-
-<script type="text/javascript">
-    function xml2string(xml) {
-        return typeof(xml) === "string" ? xml : xml.xml ? xml.xml
-                : new XMLSerializer().serializeToString(xml);
-    }
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/admin/i18n.js" />"></script>
 
 <div id="current-setting"></div>
 
@@ -83,52 +72,16 @@
 </div>
 
 <p id="back-top" style="display: none;"><a href="#top"><i class="icon-chevron-up"></i>Back to Top</a></p>
-<script type="text/javascript">
-</script>
-<script type="text/javascript">
-	new I18NController({
-		name: "Procedure",
-		div: "#i18n-procedures",
-		identifiers: ${procedures},
-		url: "<c:url value="/admin/i18n/ajax/procedures" />",
-		properties: {
-			name: "Name",
-			description: "Description",
-			shortName: "Short Name",
-			longName: "Long Name"
-		},
-	});
-	new I18NController({
-		name: "Offering",
-		div: "#i18n-offerings",
-		identifiers: ${offerings},
-		url: "<c:url value="/admin/i18n/ajax/offerings" />",
-		properties: {
-			name: "Name",
-			description: "Description"
-		},
-	});
-	new I18NController({
-		name: "Observable Property",
-		div: "#i18n-observableProperties",
-		identifiers: ${observableProperties},
-		url: "<c:url value="/admin/i18n/ajax/observableProperties" />",
-		properties: {
-			name: "Name",
-			description: "Description"
-		},
-	});
-	new I18NController({
-		name: "Feature",
-		div: "#i18n-features",
-		identifiers: ${features},
-		url: "<c:url value="/admin/i18n/ajax/features" />",
-		properties: {
-			name: "Name",
-			description: "Description"
-		},
-	});
 
-</script>
+<div id="url_procedures" data-value='<c:url value="/admin/i18n/ajax/procedures" />'></div>
+<div id="url_offerings" data-value='<c:url value="/admin/i18n/ajax/offerings" />'></div>
+<div id="url_observableProperties" data-value='<c:url value="/admin/i18n/ajax/observableProperties" />'></div>
+<div id="url_features" data-value='<c:url value="/admin/i18n/ajax/features" />'></div>
+
+
+<div id="procedures_identifier" data-value="${sos:collectionToJson(procedures)}"></div>
+<div id="offerings_identifier" data-value="${sos:collectionToJson(offerings)}"></div>
+<div id="observableProperties_identifier" data-value="${sos:collectionToJson(observableProperties)}"></div>
+<div id="features_identifier" data-value="${sos:collectionToJson(features)}"></div>
 
 <jsp:include page="../common/footer.jsp" />

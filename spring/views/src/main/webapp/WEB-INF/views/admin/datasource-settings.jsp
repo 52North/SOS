@@ -41,56 +41,16 @@
 
 
 <script type="text/javascript" src="<c:url value="/static/lib/parseuri.js" />"></script>
+<script type="text/javascript" src="<c:url value="/static/js/admin/datasource-settings.js" />"></script>
 
-<form action="<c:url value="/admin/datasource/settings"/>" method="POST" class="form-horizontal">
+<div id="error_data" data-value="${error}"></div>
+<div id="settings_data" data-value='${settings}'></div>
+
+<form action="<c:url value="/admin/datasource/settings"/>" method="POST" class="">
     <div id="settings"></div>
     <div class="form-actions">
         <button id="save" type="submit" class="btn btn-info">Save</button>
     </div>
 </form>
-
-
-<script type="text/javascript">
-    $(function(){
-        warnIfNotHttps();
-        if ('${error}' !== '')  {
-            showError('${error}');
-        }
-        var settings;
-
-            <c:if test="${not empty settings}">
-        settings = ${settings}
-            </c:if>
-
-        if (settings) {
-            generateSettings(settings.settings, {}, "#settings", false);
-        } else {
-            $("#save").attr("disabled", true);
-            showWarning("There are no settings to change");
-        }
-
-        $("input[type=text],input[type=password],textarea").trigger("input");
-        $(".required").bind("keyup input change", function() {
-            var valid = true;
-            $(".required").each(function(){
-                var val = $(this).val();
-                return valid = (val !== null && val !== undefined && val !== "");
-            });
-
-            var val = $(this).val();
-            if (val !== null && val !== undefined && val !== "") {
-                $(this).parents(".control-group").removeClass("error");
-            } else {
-                $(this).parents(".control-group").addClass("error");
-            }
-
-            if (valid) {
-                $("#save").removeAttr("disabled");
-            } else {
-                $("#save").attr("disabled", true);
-            }
-        });
-    });
-</script>
 
 <jsp:include page="../common/footer.jsp" />

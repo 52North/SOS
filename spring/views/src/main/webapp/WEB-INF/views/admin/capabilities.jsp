@@ -34,17 +34,13 @@
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
 
-<link rel="stylesheet" href="<c:url value="/static/lib/prettify.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/lib/codemirror-2.34.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="/static/css/prettify.css" />" type="text/css" />
+<link rel="stylesheet" href="<c:url value="/static/css/codemirror.css" />" type="text/css" />
 <link rel="stylesheet" href="<c:url value="/static/css/codemirror.custom.css" />" type="text/css" />
-<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-toggle-buttons.css" />" type="text/css" />
-<script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/codemirror-2.34-xml.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/prettify.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/XmlBeautify-1.2.3.js" />"></script>
-<script type="text/javascript" src="<c:url value="/static/lib/jquery.toggle.buttons.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
+<link rel="stylesheet" href="<c:url value="/static/css/capabilities.css" />" type="text/css" />
+
+<script type="text/javascript" src="<c:url value="/static/lib/codemirror.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/EventMixin.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/capabilities/StaticCapabilitiesController.js" />"></script>
 <script type="text/javascript" src="<c:url value="/static/js/capabilities/OfferingExtensionController.js" />"></script>
@@ -56,69 +52,9 @@
     <jsp:param name="leadParagraph" value="" />
 </jsp:include>
 
-<style type="text/css">
-    .btn-icon { height: 30px; }
-    .btn-icon i { margin-right: 0px !important; }
-    .btn-single { margin-bottom: 1px;}
-    #stcaps-publish { margin-bottom: -11px; }
-    #back-top {
-        position: fixed;
-        bottom: 30px;
-        margin-left: -150px;
-    }
-    #back-top a {
-        width: 108px;
-        display: block;
-        text-align: center;
-        font: 11px Arial, Helvetica, sans-serif;
-        text-transform: uppercase;
-        text-decoration: none;
-        color: #bbb;
-        /* background color transition */
-        -webkit-transition: 1s;
-        -moz-transition: 1s;
-        transition: 1s;
-    }
-    #back-top a:hover {
-        color: #000;
-    }
-    #back-top i {
-        display: block;
-        margin-bottom: 7px;
-        margin-left: 48px;
-        -webkit-border-radius: 15px;
-        -moz-border-radius: 15px;
-        border-radius: 15px;
-        -webkit-transition: 1s;
-        -moz-transition: 1s;
-        transition: 1s;
-    }
-</style>
+<div id="url_base" data-value='<c:url value="/" />'></div>
 
-<script type="text/javascript">
-    jQuery(document).ready(function($) {
-        $(window).scroll(function () {
-            var pos = $(this).scrollTop();
-            if (pos > "fast" && pos < $(document).height() 
-                                    - ($(this).height() + 400)) {
-                $('#back-top').fadeIn();
-            } else {
-                $('#back-top').fadeOut();
-            }
-        });
-        $('#back-top a').click(function () {
-            $('body, html').animate({
-                scrollTop: 0
-            }, 400);
-            return false;
-        });
-    });
-
-    function xml2string(xml) {
-        return typeof(xml) === "string" ? xml : xml.xml ? xml.xml 
-                : new XMLSerializer().serializeToString(xml); 
-    }
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/admin/capabilities.js" />"></script>
 
 <div id="current-setting"></div>
 
@@ -130,7 +66,7 @@
 <div class="tab-content">
     <div class="active tab-pane" id="static-capabilities">
         <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
+            <div class="col-lg-12 form-inline" style="margin-bottom: 5px;">
                 <select id="stcaps-id">
                     <option disabled="disabled" selected="selected" style="display: none;" value="">
                         Static Capabilities
@@ -143,7 +79,7 @@
                     <button id="stcaps-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
                 </div>
                 <button id="stcaps-addnew" title="Add a new static capabilities document" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="stcaps-add-new-form" class="input-append input-prepend control-group" style="display: none;">
+                <div id="stcaps-add-new-form" class="input-group input-group control-group" style="display: none;">
                     <input class="input-xlarge" id="stcaps-add-new-form-input" type="text" placeholder="Identifier"/>
                     <div class="btn-group">
                         <button type="button" title="Add" class="btn btn-icon stcaps-add-new-form-button" id="stcaps-add-new-form-ok"><i class="icon-ok"></i></button>
@@ -155,11 +91,11 @@
                 </div>
             </div>
         </div>
-        <textarea id="stcaps-editor" class="span12"></textarea>
+        <textarea id="stcaps-editor" class="col-lg-12"></textarea>
     </div>
     <div class="tab-pane" id="capabilities-extensions">
         <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
+            <div class="col-lg-12 form-inline" style="margin-bottom: 5px;">
                 <select id="capext-id">
                     <option disabled="disabled" selected="selected" style="display: none;" value="">Capabilities Extensions</option>
                 </select>
@@ -169,7 +105,7 @@
                     <button id="capext-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
                 </div>
                 <button id="capext-addnew" title="Add new Extension" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="capext-add-new-form" class="input-append input-prepend control-group" style="display: none;">
+                <div id="capext-add-new-form" class="input-group input-group control-group" style="display: none;">
                     <input class="input-xlarge" id="capext-add-new-form-input" type="text" placeholder="Identifier"/>
                     <div class="btn-group">
                         <button type="button" title="Add" class="btn btn-icon capext-add-new-form-button" id="capext-add-new-form-ok"><i class="icon-ok"></i></button>
@@ -184,11 +120,11 @@
                 </div>
             </div>
         </div>
-        <textarea id="capext-editor" class="span12"></textarea>
+        <textarea id="capext-editor" class="col-lg-12"></textarea>
     </div>
     <div class="tab-pane" id="offering-extensions">
         <div class="row">
-            <div class="span12 form-inline" style="margin-bottom: 5px;">
+            <div class="col-lg-12 form-inline" style="margin-bottom: 5px;">
                 <select id="offext-off-id">
                     <option disabled="disabled" selected="selected" style="display: none;" value="">Offering</option>
                 </select>
@@ -199,7 +135,7 @@
                     <button id="offext-validate" title="Validate" type="button" class="btn btn-icon"><i class="icon-wrench"></i></button>
                 </div>
                 <button id="offext-addnew" title="Add new Extension" type="button" class="btn btn-icon btn-single"><i class="icon-plus"></i></button>
-                <div id="offext-add-new-form" class="input-append input-prepend control-group" style="display: none;">
+                <div id="offext-add-new-form" class="input-group input-group control-group" style="display: none;">
                     <input class="input-xlarge" id="offext-add-new-form-input" type="text" placeholder="Identifier"/>
                     <div class="btn-group">
                         <button type="button" title="Add" class="btn btn-icon offext-add-new-form-button" id="offext-add-new-form-ok"><i class="icon-ok"></i></button>
@@ -214,122 +150,10 @@
                 </div>
             </div>
         </div>
-        <textarea id="offext-editor" class="span12"></textarea>
+        <textarea id="offext-editor" class="col-lg-12"></textarea>
     </div>
 </div>
 
 <p id="back-top" style="display: none;"><a href="#top"><i class="icon-chevron-up"></i>Back to Top</a></p>
-
-<script type="text/javascript">
-    var baseUrl = "<c:url value="/"/>",
-        scc = new StaticCapabilitiesController(baseUrl),
-        cec = new CapabilitiesExtensionController(baseUrl),
-        oec = new OfferingExtensionController(baseUrl);
-    
-    var changed = 0;
-
-    function onChange() {
-        if (++changed < 3) {
-            return;
-        }
-        var code = function(e) {
-                return "<code>" + e + "</code>"; 
-            },
-            toCodeList = function(a) { 
-                return (a.length > 1 ? a.slice(0, -1).map(code).join(", ") + " and " : "") + code(a[a.length-1]); 
-            },
-            verb = function(col) { 
-                return col.length === 1 ? "is" : "are"; 
-            },
-            ext = function(col) { 
-                return "Extension" + (col.length === 1 ? "" : "s"); 
-            },
-            formatCapabilitiesExtensions = function() {
-                var hasEnabled = cec.hasEnabledExtensions(),
-                    hasDisabled = cec.hasDisabledExtensions(),
-                    html = "";
-                if (hasEnabled || hasDisabled) {
-                    html += "<p>";
-                    if (hasEnabled) {
-                        var active = cec.getEnabledExtensions();
-                        html += " The Capabilities "+ ext(active) + " " + toCodeList(active) + " " + verb(active) + " active";
-                    }
-                    if (hasDisabled) {
-                        var inactive = cec.getDisabledExtensions();
-                        html += (hasEnabled) ? " while" : ("The Capabilties " + ext(inactive)) + " ";
-                        html += toCodeList(inactive) + " " + verb(inactive) + " inactive";
-                    }
-                    html + ".</p>";
-                }
-                return html;
-            },
-            formatOfferingExtensions = function() {
-                var html = "", 
-                    offs = {},
-                    copy = function(name, col) {
-                        for (var a in col) {
-                            if (col.hasOwnProperty(a) && col[a].length > 0) {
-                                (offs[a] = offs[a] || {})[name] = col[a];
-                            }
-                        }
-                    };
-
-                if (oec.hasEnabledExtensions()) 
-                    copy("active", oec.getEnabledExtensions());
-                if (oec.hasDisabledExtensions()) 
-                    copy("inactive", oec.getDisabledExtensions());
-                
-
-                for (var key in offs) {
-                    html += "<p>";
-                    if (offs[key].active) {
-                        html += " " + ext(offs[key].active) + " " 
-                             + toCodeList(offs[key].active) + " " 
-                             + verb(offs[key].active) 
-                             + " active for Offering " + code(key);
-                        if (offs[key].inactive) {
-                            html += " while " + toCodeList(offs[key].inactive) 
-                                 + " " + verb(offs[key].inactive) + " not";
-                        }
-                        html += ".";
-                    } else if (offs[key].inactive) {
-                        html += ext(offs[key].inactive) + " " 
-                             + toCodeList(offs[key].inactive) + " " 
-                             + verb(offs[key].inactive) 
-                             + " inactive for Offering " + code(key) + ".";
-                    }
-                    html += "</p>";
-                }
-                return html;
-            },
-            html = "",
-            lead = "",
-            $cs = $("#current-setting");
-
-
-        if (scc.isStatic()) {
-            lead  = "The current Capabilities are based on the <strong>static</strong> capabilities " + code(scc.getCurrent()) + ".";
-        } else {
-            lead  = "The current Capabilities are based on the <strong>dynamic</strong> capabilities.";
-            html += formatCapabilitiesExtensions();
-            html += formatOfferingExtensions();
-        }
-        $("p.lead").fadeOut("fast", function() {
-            $(this).children().remove().addBack().html(lead).fadeIn("fast");
-        });
-        if ($cs.children().length === 0) {
-            $cs.hide().html(html).fadeIn();
-        } else {
-            $cs.fadeOut("fast", function() {
-                $(this).children().remove().addBack().html(html).fadeIn("fast");  
-            });
-        }
-    }
-
-    scc.on("change", onChange).on("ready", onChange);
-    cec.on("change", onChange).on("ready", onChange);
-    oec.on("change", onChange).on("ready", onChange);
-
-</script>
 
 <jsp:include page="../common/footer.jsp" />

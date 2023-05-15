@@ -41,6 +41,9 @@
 </jsp:include>
 <hr/>
 
+<script type="text/javascript" src="<c:url value="/static/js/get-involved.js" />"></script>
+
+
 <h4>Tell the world!</h4>
 <p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:sensorweb@52north.org" target="_blank">sensorweb@52north.org</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/bin/view/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
 
@@ -66,33 +69,5 @@
 
 <br/>
 
-<script type="text/javascript">
-    $(function() {
-        var serviceUrl = "${serviceUrl}" ? "${serviceUrl}" 
-                : document.location.protocol + "//" 
-                + document.location.host + "<c:url value="/sos" />",
-            subject = "I've installed the 52N SOS",
-            body = "Check out my installed SOS instance at " + serviceUrl;
-        $(".telltheworld").each(function() {
-            $(this).attr("href", $(this).attr("href") 
-                + "?subject=" + encodeURIComponent(subject) 
-                + "&body=" + encodeURIComponent(body));
-        });
-	if ($.queryParam["install"] === "finished")  {
-            window.setTimeout(function() {
-                showMessage(
-                        "<center><strong>Installation completed!</strong></center>" +
-                        "Potential next steps:" +
-                        "<ul>" +
-                        "<li>Insert up-to-date <a href='<c:url value="./admin/datasource/"/>'>sample data</a></li>" +
-                        "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="./client"/>'>test client</a> with the provided example requests</li></c:if>" +
-                        "<li>Finalize the configuration using the <a href='<c:url value="./admin/"/>'>admin interface</a>, e.g. en-/disable <a href='<c:url value="./admin/operations/"/>'>operations</a>, <a href='<c:url value="./admin/encodings/"/>'>encodings</a>, <a href='<c:url value="./admin/bindings/"/>'>bindings</a>, <a href='<c:url value="./admin/extensions/" />'>extensions</a></li>" +
-                        "</ul>",
-                        "success",
-                        false);
-            }, 1000);
-	}	
-    });
-</script>
 
 <jsp:include page="./common/footer.jsp" />

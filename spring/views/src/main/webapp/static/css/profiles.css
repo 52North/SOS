@@ -1,0 +1,51 @@
+.btn-icon {
+    height: 30px;
+}
+
+.btn-icon i {
+    margin-right: 0px !important;
+}
+
+.btn-single {
+    margin-bottom: 1px;
+}
+
+#stcaps-publish {
+    margin-bottom: -11px;
+}
+
+#back-top {
+    position: fixed;
+    bottom: 30px;
+    margin-left: -150px;
+}
+
+#back-top a {
+    width: 108px;
+    display: block;
+    text-align: center;
+    font: 11px Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #bbb;
+    /* background color transition */
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    transition: 1s;
+}
+
+#back-top a:hover {
+    color: #000;
+}
+
+#back-top i {
+    display: block;
+    margin-bottom: 7px;
+    margin-left: 48px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    transition: 1s;
+}

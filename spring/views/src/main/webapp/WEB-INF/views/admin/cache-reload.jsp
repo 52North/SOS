@@ -30,72 +30,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <button type="button" id="reloadCapsCache" class="btn">Reload Capabilities Cache</button>
 
-<script type="text/javascript">
-	var setReloadCapsCacheButtonLoading = function(loading){
-	    var $b = $("#reloadCapsCache");
-	    if (loading) {
-	        $b.attr("disabled", true);
-	        $b.text("Loading Cache...")
-	    } else {
-	        $b.removeAttr("disabled");
-	        $b.text("Reload Capabilities Cache");
-	        //trigger event on loading completion
-	        $(document).trigger("cache-loading-complete");
-	    }
-	};
-	
-	$("#reloadCapsCache").click(function() {
-	    setReloadCapsCacheButtonLoading(true);
-	    $.ajax({
-	        url: "<c:url value="/admin/cache/reload"/>",
-	        type: "POST"
-	    }).done(function(e) {
-	        showSuccess("Capabilties cache reload initiated.");
-	        startCacheReloadCheck();
-	    }).fail(function(error){
-	        showError("Capabilites cache reload failed: " + error.responseText);
-	        setReloadCapsCacheButtonLoading(false);
-	    });
-	});
-	
-	var cacheReloadCheckInterval;
-	var cacheReloadCheckInProgress = false;
-	
-	var checkCacheReload = function() {
-	    if (cacheReloadCheckInProgress){
-	        //cache reload check already in progress 
-	        return;
-	    }
-	
-	    cacheReloadCheckInProgress = true;
-	    $.ajax({
-	        url: "<c:url value="/admin/cache/loading"/>",
-	        type: "GET"
-	    }).done(function(data) {
-	        if (data.loading){
-	            setReloadCapsCacheButtonLoading(true);              
-	        } else {
-	            stopCacheReloadCheck();
-	            setReloadCapsCacheButtonLoading(false);             
-	        }
-	    }).fail(function(error){
-	        showError("Couldn't check capabilites cache reload status: " + error.responseText);
-	        stopCacheReloadCheck();
-	        setReloadCapsCacheButtonLoading(false);
-	    }).always(function(){
-	        cacheReloadCheckInProgress = false;
-	    });
-	            
-	};
-	
-	var startCacheReloadCheck = function() {
-	    cacheReloadCheckInterval = setInterval(checkCacheReload, 2000);
-	};
-	
-	var stopCacheReloadCheck = function() {
-	    if (cacheReloadCheckInterval !== undefined) {
-	        clearInterval(cacheReloadCheckInterval);
-	        cacheReloadCheckInterval = undefined;
-	    }
-	};    
-</script>
+<script type="text/javascript" src="<c:url value="/static/js/admin/cache-reload.js" />"></script>
+
+<div id="url_loading" data-value='<c:url value="/admin/cache/loading" />'></div>
+<div id="url_reload" data-value='<c:url value="/admin/cache/reload" />'></div>

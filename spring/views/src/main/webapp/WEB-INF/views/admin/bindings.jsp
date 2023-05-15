@@ -37,29 +37,14 @@
     <jsp:param name="leadParagraph" value="Disable or enable bindings" />
 </jsp:include>
 
-<link rel="stylesheet" href="<c:url value='/static/lib/jquery.tablesorter-bootstrap-2.712.min.css' />">
-<script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter-2.7.12.min.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter.widgets-2.7.12.min.js'/>"></script>
+
+<div id="url_bindings_json" data-value='<c:url value="/admin/bindings/json" />'></div>
+<script type="text/javascript" src="<c:url value="/static/js/admin/bindings.js" />"></script>
 
 <div class="btn-group pull-right">
     <button id="activateAll" class="btn btn-success"><i class="icon-ok-circle icon-white" style="color:#fff;"></i></button>
     <button id="disableAll" class="btn btn-danger"><i class="icon-ban-circle icon-white"></i></button>
 </div>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    $("#activateAll").on("click", function() {
-        $("tbody > tr > td.status > button.btn-danger").each(function(){
-            $( this ).click();
-        });
-    });
-    $("#disableAll").on("click", function() {
-        $("tbody > tr > td.status > button.btn-success").each(function(){
-            $( this ).click();
-        });
-    });
-});
-</script>
 
 <table id="bindings" class="table table-striped table-bordered">
     <colgroup>
@@ -74,77 +59,5 @@ jQuery(document).ready(function($) {
     </thead>
     <tbody></tbody>
 </table>
-
-<script type="text/javascript">
-    jQuery(document).ready(function($) {
-
-        $.extend($.tablesorter.themes.bootstrap, {
-            table: "table table-bordered",
-            header: "bootstrap-header",
-            sortNone: "bootstrap-icon-unsorted",
-            sortAsc: "icon-chevron-up",
-            sortDesc: "icon-chevron-down"
-        });
-
-        function bindings(encodings) {
-            var $tbody = $("#bindings tbody"), i, o, $row, $button;
-            for (i = 0; i < encodings.length; ++i) {
-                o = encodings[i];
-                $row = $("<tr>");
-                $("<td>").addClass("binding").text(o.binding).appendTo($row);
-                $button = $("<button>").attr("type", "button")
-                        .addClass("btn btn-small btn-block").on("click", function() {
-                    var $b = $(this),
-                            $tr = $b.parents("tr"),
-                            active = !$b.hasClass("btn-success"),
-                            j = {
-                        binding: $tr.find(".binding").text(),
-                        active: active
-                    };
-                    $b.prop("disabled", true);
-                    $.ajax("<c:url value='/admin/bindings/json'/>", {
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(j)
-                    }).fail(function(e) {
-                        showError("Failed to save binding: "
-                                + e.status + " " + e.statusText);
-                        $b.prop("disabled", false);
-                    }).done(function() {
-                        $b.toggleClass("btn-danger btn-success")
-                                .text(active ? "active" : "inactive")
-                                .prop("disabled", false);
-
-                    });
-                });
-                if (o.active) {
-                    $button.addClass("btn-success").text("active");
-                } else {
-                    $button.addClass("btn-danger").text("inactive");
-
-                }
-                $("<td>").addClass("status").append($button).appendTo($row);
-
-                $tbody.append($row);
-            }
-
-            $("#bindings").tablesorter({
-                theme: "bootstrap",
-                widgets: ["uitheme", "zebra"],
-                headerTemplate: "{content} {icon}",
-                widthFixed: true,
-                headers: {
-                    0: {sorter: "text"},
-                    1: {sorter: false}
-                },
-                sortList: [[0, 0]]
-            });
-        }
-
-        $.getJSON("<c:url value='/admin/bindings/json'/>", function(j) {
-            bindings(j.bindings);
-        });
-    });
-</script>
 
 <jsp:include page="../common/footer.jsp" />

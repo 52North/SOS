@@ -37,32 +37,26 @@
 	<jsp:param name="title" value="Administration Panel" />
 	<jsp:param name="leadParagraph" value="Use the admin menu above to select different administrative tasks." />
 </jsp:include>
-<p class="pull-right">
-<jsp:include page="cache-reload.jsp" />
-</p>
-<div class="pull-right">
-    <div class="span3">
+<div class="row">
+    <jsp:include page="cache-reload.jsp" />
+    <div class="col-lg-3">
         <a id="export" class="btn btn-block btn-info" href="configuration.json" target="_blank">Export Configuration</a>
     </div>
 </div>
 
-<c:if test="${warning}">
-    <script type="text/javascript">
-    showMessage('<b>Warning!</b> You are using the default credentials to log in. Please change them \
-                   <a href="<c:url value="/admin/settings#credentials"/>">here</a> as soon as possible!');
-    </script>
-</c:if>
-
+<div id="warning" data-value="${warning}"></div>
 
 <c:if test="${sos:hasClient()}">
 <div class="row" style="margin-top: 50px">
-    <div class="span12">
+    <div class="col-lg-12">
     <p>A test data set can be inserted using the <a href="<c:url value="/client?load=exampleData"/>">Test client</a>. For this the JSON Binding and the <code>Batch</code>, <code>InsertSensor</code>, <code>InsertObservation</code> and <code>InsertResultTemplate</code> operations have to be active. Be aware that it only can be removed by cleaning the entire database.</p>
+    </div>
+</div>
 </c:if>
 
 
 <div class="row" style="margin-top: 40px">
-    <div class="span12">
+    <div class="col-lg-12">
         <c:if test="${not empty metadata.VERSION}">
             <p><strong>Version:</strong> ${fn:escapeXml(metadata.VERSION)}</p>
         </c:if>

@@ -41,16 +41,17 @@
 		<link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.cssmenu.no-hover.css" />" type="text/css"/>
-		<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
+		<link rel="stylesheet" href="<c:url value="/static/css/bootstrap.min.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/application.css" />" type="text/css" />
 		<style type="text/css">
 			#ja-cssmenu li {
 				cursor: default !important;
 			}
 		</style>
-		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
+		<script type="text/javascript" src="<c:url value="/static/lib/jquery-3.6.4.min.js" />"></script>
+		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap.bundle.min.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
+		<script type="text/javascript" src="<c:url value="/static/js/install/header.js" />"></script>
 		<title>52&deg;North SOS installer</title>
 	</head>
 	<body>
@@ -70,33 +71,11 @@
 					</div>
 				</div>
 			</div>
-			<script type="text/javascript">
-				$("#ja-cssmenu li:nth-child(${param.step}) a")
-					.addClass("active");
-				$("#ja-cssmenu li,#ja-cssmenu a,#ja-cssmenu span").hover(function(e){
-					e.preventDefault();
-				});
-				$(function(){
-					/* put warnings on empty fields */
-					$("input[type=text], input[type=password], textarea").bind("keyup input", function() {
-						var $this = $(this);
-						if ($this.val() === "") {
-							$this.parents(".control-group").addClass("warning");
-						} else {
-							$this.parents(".control-group").removeClass("warning");
-						}
-					}).trigger("input");
-				});
-            </script>
 			<div class="container">
-				<div id="content" class="span12">
+				<div id="content" class="col-lg-12">
 					<c:if test="${not empty error}">
-						<div class="alert alert-error">
+						<div class="alert alert-danger">
 							<strong>Error!</strong> ${fn:escapeXml(error)}
 						</div>
 						<c:remove var="error" scope="session" />
 					</c:if>
-                    <div id="noscript" class="alert alert-danger">
-                        <strong>Warning!</strong> This page makes heavy use of JavaScript and is virtually unusable if JavaScript is disabled.
-                    </div>
-                    <script type="text/javascript">$("#noscript").hide();</script>

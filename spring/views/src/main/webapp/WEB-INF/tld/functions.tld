@@ -65,4 +65,9 @@
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
         <function-signature>java.lang.String mapToJson(java.util.Map)</function-signature>
     </function>
+    <function>
+        <name>collectionToJson</name>
+        <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
+        <function-signature>java.lang.String collectionToJson(java.util.Collection)</function-signature>
+    </function>
 </taglib>

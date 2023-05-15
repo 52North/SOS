@@ -37,6 +37,9 @@
 	<jsp:param name="leadParagraph" value="Use this functionality with care!" />
 </jsp:include>
 <hr/>
+
+<script type="text/javascript" src="<c:url value="/static/js/admin/reset.js" />"></script>
+
 <p>If you click on the Reset button, the database access configuration of this SOS instance will be deleted. The database will stay intact and can be used for a new SOS install.</p>
 
 <p>If you merely want to remove test data, use the test data removal function on the database admin page. If you want to overwrite the existing database, please select the option to delete existing tables in the installation wizard.</p>
@@ -48,7 +51,7 @@
     <h3>Are you really sure?</h3>
   </div>
   <div class="modal-body">
-     <p><span class="label label-important">Warning!</span> This will delete the database configuration of this SOS instance.</p>
+     <p><span class="badge badge-danger">Warning!</span> This will delete the database configuration of this SOS instance.</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -56,21 +59,7 @@
   </div>
 </div>
 <div class="pagination-centered">
-    <button type="button" id="showDialog" class="btn btn-danger btn-large">Reset</button>
+    <button type="button" id="showDialog" class="btn btn-danger btn-lg">Reset</button>
 </div>
-<script type="text/javascript">
-    $("#confirmDialog").modal({
-        "keyboard": true,
-        "show": false
-    });
-    $("#showDialog").click(function(){
-        $("#confirmDialog").modal("show");
-    });
-    $(function() {
-        $("#reset").click(function() {
-            $("#reset-form").submit();
-        });
-    });
-</script>
 <br/>
 <jsp:include page="../common/footer.jsp" />

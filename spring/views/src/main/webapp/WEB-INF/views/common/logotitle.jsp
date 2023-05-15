@@ -34,12 +34,12 @@
     <jsp:include page="extra-title.jsp" />
 </c:if>
 <div class="row">
-	<div class="span9">
+	<div class="col-md-9">
 
 		<h2>${param.title}</h2>
 		<p class="lead">${param.leadParagraph}</p>
 	</div>
-	<div class="span3 header-img-span">
+	<div class="col-md-3 header-img-span">
 		<img src="<c:url value="/static/images/52n-logo-220x80.png"/>"/>
 	</div>
 </div>

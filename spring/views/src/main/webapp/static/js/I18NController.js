@@ -56,7 +56,7 @@
         _createSelect: function() {
             var i;
             var self = this;
-            var $select = $("<select>").addClass("span12");
+            var $select = $("<select>").addClass("col-lg-12");
 
             $("<option>").hide().val("")
                     .attr({"disabled": true, "selected": true})

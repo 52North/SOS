@@ -8,6 +8,7 @@ body {
     margin:0;
     font-family:'Trebuchet MS',Helvetica,sans-serif;
     line-height: 1.6;
+    font-size: 14px;
 }
 p {
 	line-height: 1.6;
@@ -343,4 +344,20 @@ div#wait > div#wait-loader {
   /* the next two values depend on the size of the image */
   margin-left: -33px;
   margin-top: -33px;
+}
+
+div#settings {
+    font-size: 14px;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.textright {
+    text-align: right;
+}
+
+.floatright {
+    float: right;
 }

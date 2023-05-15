@@ -5,6 +5,11 @@
   background-color: #f7f7f9 !important;
   border: 1px solid #e1e1e8 !important;
   color: #48484c !important;
+
+  height: auto;
+  overflow-y: hidden;
+  overflow-x: hidden;
+
 }
 ol.linenums li { line-height: 1em !important; }
 

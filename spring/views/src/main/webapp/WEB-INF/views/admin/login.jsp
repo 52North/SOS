@@ -36,41 +36,35 @@
 	<jsp:param name="leadParagraph" value="Please login to view the admin console." />
 </jsp:include>
 <hr/>
-<form action="<c:url value="/login" />" method="POST" class="form-horizontal">
+
+<script type="text/javascript" src="<c:url value="/static/js/admin/login.js" />"></script>
+
+<form action="<c:url value="/login" />" method="POST" class="">
+
 	<div class="control-group">
-		<label class="control-label" for="username">Username</label>
-		<div class="controls">
-			<input class="input-xlarge" type="text" name="username" autocomplete="off"/>
-		</div>
+        <div class="form-row">
+            <div class="col-md-2 textright">
+                <label class="col-form-label" for="sos_website">Username</label>
+            </div>
+            <div class="col">
+                <input class="col-lg-8 form-control required" type="text" name="username" autocomplete="off"/>
+            </div>
+        </div>
 	</div>
-	<div class="control-group">
-		<label class="control-label" for="password">Password</label>
-		<div class="controls">
-			<input class="input-xlarge" type="password" name="password" autocomplete="off">
-				<span id="passwordReset" class="help-block">You can reset your admin password by executing the file <code>sql/reset_admin.sql</code> (located inside the SOS installation directory in the webapps folder of your application server) on your database.</span>
-			</input>
-		</div>
+    <div class="control-group">
+        <div class="form-row">
+            <div class="col-md-2 textright">
+                <label class="col-form-label" for="password">Password</label>
+            </div>
+            <div class="col">
+                <input id="password" name="password" class="col-lg-8 form-control required" type="password" autocomplete="off"/>
+				<span id="passwordReset" class="text-muted"><span class="badge badge-secondary">Info</span> You can reset your admin password by executing the file <code>sql/reset_admin.sql</code> (located inside the SOS installation directory in the webapps folder of your application server) on your database.</span>
+            </div>
+        </div>
 	</div>
 	<div class="form-actions">
 		<button class="btn" type="submit">Login</button>
 	</div>
+
 </form>
-<script type="text/javascript">
-	$(function(){
-        warnIfNotHttps();
-		$("#passwordReset").hide();
-		if ($.queryParam["error"]) {
-			showError("Incorrect username/password. Please try again!");
-			$("#passwordReset").fadeIn();
-		}
-		$("input[type=text],input[type=password]").bind("keyup input", function() {
-			var empty = false;
-			$("input[type=text], input[type=password]").each(function(i,e) {
-				if ($(e).val() === "") { empty = true; }
-			});
-			$("button[type=submit]").attr("disabled", empty);
-		}).trigger("input");
-		$("input[name=username]").focus();
-	});
-</script>
 <jsp:include page="../common/footer.jsp" />

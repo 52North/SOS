@@ -40,52 +40,9 @@
 <jsp:include page="cache-reload.jsp" />
 </p>
 
-<script type="text/javascript">
-    var loadCacheSummary = function() {
-        $.ajax({
-            url: "<c:url value="/admin/cache/summary"/>",
-            type: "GET",
-            dataType: "json"
-        }).done(function(data) {
-            var $cacheSummaryDiv = $("#cacheSummary");
-            $cacheSummaryDiv.empty();
-            var $table = $("<table />").appendTo($cacheSummaryDiv); 
-            $.each(data, function (key, val) {
-                var $tr = $("<tr />").appendTo($table);
-                $("<td />").appendTo($tr).text(key);
-                $("<td />").appendTo($tr).text(val);
-            });
-        }).fail(function(error){
-            showError("Capabilites cache summary request failed: " + error.responseText);
-        });
-    };
+<script type="text/javascript" src="<c:url value="/static/js/admin/cache.js" />"></script>
 
-    $(document).on("cache-loading-complete", function(){
-    	loadCacheSummary();
-    });
-
-    //document ready
-    $(function() {
-        loadCacheSummary();
-    });
-</script>
-
-<style>
-div#cacheSummary table {
-  border-collapse:collapse;
-  
-}
-
-div#cacheSummary table td {
-  text-align: left;
-  padding: 3px;
-}
-
-div#cacheSummary table td:first-child{
-  font-weight: bold;
-}
-</style>
-
+<div id="url_summary" data-value='<c:url value="/admin/cache/summary" />'></div>
 <div id="cacheSummary" class="row"></div>
-        
+
 <jsp:include page="../common/footer.jsp" />

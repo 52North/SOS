@@ -43,25 +43,23 @@
 		<link href="<c:url value="/static/images/favicon.ico" />" rel="shortcut icon" type="image/x-icon" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/52n.cssmenu.css" />" type="text/css"/>
-		<link rel="stylesheet" href="<c:url value="/static/lib/bootstrap-2.3.1.min.css" />" type="text/css" />
+		<link rel="stylesheet" href="<c:url value="/static/css/bootstrap.min.css" />" type="text/css" />
 		<link rel="stylesheet" href="<c:url value="/static/css/application.css" />" type="text/css" />
-		<script type="text/javascript" src="<c:url value="/static/js/arrays.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/lib/jquery-1.8.2.min.js" />"></script>
-		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap-2.3.1.min.js" />"></script>
+		<script type="text/javascript" src="<c:url value="/static/lib/jquery-3.6.4.min.js" />"></script>
+		<script type="text/javascript" src="<c:url value="/static/lib/bootstrap.bundle.min.js" />"></script>
         <script type="text/javascript" src="<c:url value="/static/js/jquery.additions.js" />"></script>
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
 		<title>52&deg;North Sensor Observation Service</title>
-
-        <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
-            <script type="text/javascript">
-                $(function() {
-                        showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
-                });
-	    </script>
-	</c:if>
 	</head>
-	<body>
-		<div id="wrap">
+    <c:choose>
+        <c:when test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
+            <body onload="showInstallWarning()">
+        </c:when>
+        <c:otherwise>
+            <body>
+        </c:otherwise>
+    </c:choose>
+        <div id="wrap">
 			<div id="main" class="clearfix">
 				<div id="navigation_h">
 					<div id="wopper" class="wopper">
@@ -69,13 +67,13 @@
 							<div id="ja-mainnav">
 								<ul id="ja-cssmenu" class="clearfix">
 									<li>
-										<a id="home-menuitem" class="menu-item0" href="<c:url value="/index" />">
+										<a id="home-menuitem" class="menu-item0 ${param.activeMenu == 'home' ? 'active' : ''}" href="<c:url value="/index" />">
 											<span class="menu-title">Home</span>
 										</a>
                                     </li>
                                     <c:if test="${sos:hasClient()}">
                                         <li>
-                                            <a id="client-menuitem" class="menu-item1" href="<c:url value="/client" />">
+                                            <a id="client-menuitem" class="menu-item1 ${param.activeMenu == 'client' ? 'active' : ''}" href="<c:url value="/client" />">
                                                 <span class="menu-title">Client</span>
                                             </a>
                                             <ul>
@@ -90,7 +88,7 @@
                                         </li>
                                     </c:if>
                                         <li>
-                                            <a id="documentation-menuitem" class="menu-item2" href="<c:url value="/documentation" />">
+                                            <a id="documentation-menuitem" class="menu-item2 ${param.activeMenu == 'documentation' ? 'active' : ''}" href="<c:url value="/documentation" />">
                                                 <span class="menu-title">Documentation</span>
                                             </a>
                                             <ul>
@@ -105,13 +103,19 @@
                                         </li>
                                     <c:if test="${sos:hasAdministrator()}">
                                         <li>
-                                            <a id="admin-menuitem" class="menu-item3" href="<c:url value="/admin/index" />">
-                                                <span class="menu-title">Admin</span>
-                                            </a>
+                                            <sec:authorize access="!hasRole('ROLE_ADMIN')">
+                                                <a id="admin-menuitem" 
+                                                        class="menu-item3 ${param.activeMenu == 'admin' ? 'active' : ''}"
+                                                        href="<c:url value="/admin/index" />">
+                                                    <span class="menu-title">Admin</span>
+                                                </a>
+                                            </sec:authorize>
                                             <sec:authorize access="hasRole('ROLE_ADMIN')">
-                                                <script type="text/javascript">
-                                                    $("#admin-menuitem").addClass("havechild");
-                                                </script>
+                                                <a id="admin-menuitem" 
+                                                        class="menu-item3 havechild ${param.activeMenu == 'admin' ? 'active' : ''}"
+                                                        href="<c:url value="/admin/index" />">
+                                                    <span class="menu-title">Admin</span>
+                                                </a>
                                                 <ul>
                                                     <li>
                                                         <a class="first-item havesubchild"  href="<c:url value="/admin/settings" />">
@@ -210,7 +214,7 @@
                                         </li>
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
-										<li style="float: right;">
+										<li id="logout-menuitem-li">
 											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/logout" />">
 												<span class="menu-title">Logout</span>
 											</a>
@@ -221,12 +225,6 @@
 						</div>
 					</div>
 				</div>
-				<script type="text/javascript">
-					$("#ja-cssmenu li a#${param.activeMenu}-menuitem").addClass("active");
-				</script>
+                
 				<div class="container">
-					<div id="content" class="span12">
-                        <div id="noscript" class="alert alert-danger">
-                           <strong>Warning!</strong> This page makes heavy use of JavaScript and is virtually unusable if JavaScript is disabled.
-                        </div>
-                        <script type="text/javascript">$("#noscript").hide();</script>
+					<div id="content" class="col-lg-12">

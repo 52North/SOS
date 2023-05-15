@@ -40,16 +40,9 @@
 </jsp:include>
 <hr/>
 
-<style type="text/css">
-.icon-plus { padding-bottom: 2px; margin-left: 5px; }
-.remove-logger i { vertical-align: text-top !important; }
-</style>
+<link rel="stylesheet" href="<c:url value="/static/css/logging.css" />" type="text/css" />
 
-<c:if test="${not empty error}">
-    <script type="text/javascript">
-        showError("${error}");
-    </script>
-</c:if>
+<div id="error" data-error="${error}"></div>
 
 <legend id="messages-header">Latest Log Messages</legend>
 <div id="messages-table">
@@ -65,10 +58,10 @@
     <p class="pull-right"><small>You can download the complete log file <a href="<c:url value="/admin/logging/file"/>" target="_blank">here</a>.</small></p>
 </div>
 
-<form method="POST" class="form-horizontal">
+<form method="POST" class="">
     <legend>Log Levels</legend>
     <div class="control-group" id="rootLogger">
-        <label class="control-label" for="rootLogLevel">Root Log Level</label>
+        <label class="col-form-label" for="rootLogLevel">Root Log Level</label>
         <div class="controls">
             <select name="rootLogLevel" class="input-xlarge">
                 <c:forEach var="level" items="<%= Level.values()%>">
@@ -82,13 +75,13 @@
                     </c:choose>
                 </c:forEach>
             </select>
-            <span class="help-block">The log level of the <code>root</code> logger. This level is applied to all not explicitly configured loggers.</span>
+            <span class="form-text">The log level of the <code>root</code> logger. This level is applied to all not explicitly configured loggers.</span>
         </div>
     </div>
     <div id="level-container">
         <c:forEach var="logger" items="${loggerLevels}">
             <div class="control-group">
-                <label class="control-label" for="${logger.key}"><code>${logger.key}</code></label>
+                <label class="col-form-label" for="${logger.key}"><code>${logger.key}</code></label>
                 <div class="controls">
                     <select name="${logger.key}" class="input-xlarge logger">
                         <c:forEach var="level" items="<%= Level.values()%>">
@@ -109,7 +102,7 @@
     </div>
 
     <div class="pull-right">
-        <a href="#add-logger" data-toggle="modal" role="button" title="Add new Logger" class="btn btn-mini"><i class="icon-plus"></i></a>
+        <a href="#add-logger" data-toggle="modal" role="button" title="Add new Logger" class="btn btn-xs"><i class="icon-plus"></i></a>
     </div>
 
     <legend>General Configuration</legend>
@@ -144,17 +137,17 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="daysToKeep">Days of log files to keep</label>
+        <label class="col-form-label" for="daysToKeep">Days of log files to keep</label>
         <div class="controls">
             <input type="text" class="input-xlarge" name="daysToKeep" value="${daysToKeep}" />
-            <span class="help-block">How many days of log files should be kept?</span>
+            <span class="form-text">How many days of log files should be kept?</span>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for"maxFileSize">Max file size</label>
+        <label class="col-form-label" for"maxFileSize">Max file size</label>
         <div class="controls">
             <input type="text" class="input-xlarge"  name="maxFileSize" value="${maxFileSize}" />
-            <span class="help-block">What should be the maximum size of a log file?</span>
+            <span class="form-text">What should be the maximum size of a log file?</span>
         </div>
     </div>
     <div class="form-actions">
@@ -169,16 +162,16 @@
         <h3>Add new Logger</h3>
     </div>
     <div class="modal-body">
-        <div class="form form-horizontal">
+        <div class="form ">
             <div class="control-group">
-                <label class="control-label" for="new-logger-name">Logger</label>
+                <label class="col-form-label" for="new-logger-name">Logger</label>
                 <div class="controls">
                     <input type="text" id="new-logger-name" class="input-xlarge" />
-                    <span class="help-block">The Logger identification (usually a package name or prefix).</span>
+                    <span class="form-text">The Logger identification (usually a package name or prefix).</span>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="new-logger-level">Level</label>
+                <label class="col-form-label" for="new-logger-level">Level</label>
                 <div class="controls">
                     <select id="new-logger-level" class="input-xlarge">
                         <c:forEach var="level" items="<%= Level.values()%>">
@@ -192,7 +185,7 @@
                             </c:choose>
                         </c:forEach>
                     </select>
-                    <span class="help-block">The Level that is applied to the Logger.</span>
+                    <span class="form-text">The Level that is applied to the Logger.</span>
                 </div>
             </div>
         </div>
@@ -202,111 +195,5 @@
         <a href="#" role="button" data-dismiss="modal" aria-hidden="true" class="btn">Discard</a>
     </div>
 </div>
-
-<script type="text/javascript">
-
-
-    function confirm(logger, callback) {
-
-        var $modal = $("<div>").addClass("modal fade hide confirm");
-        var $header = $("<div>").addClass("modal-header");
-        $("<button>").addClass("close").attr("type", "button")
-            .html("&times;")
-            .on("click", function() {
-                $modal.modal("hide");
-                $modal.remove();
-                callback(false);
-        }).appendTo($header);
-        $("<h3>").text("Are you really sure?").appendTo($header);
-        var $body = $("<div>").addClass("modal-body");
-        $("<p>")
-            .html("This will remove the logger <code>" + logger + "</code>.")
-            .appendTo($body);
-        var $footer = $("<div>").addClass("modal-footer");
-        $("<button>").addClass("btn").text("Cancel")
-            .on("click", function() {
-                $modal.modal("hide");
-                $modal.remove();
-                callback(false);
-            }).appendTo($footer);
-        $("<button>")
-            .addClass("btn btn-danger")
-            .text("Remove")
-            .on("click", function() {
-                $modal.modal("hide");
-                $modal.remove();
-                callback(true);
-            }).appendTo($footer);
-        $modal.append($header).append($body).append($footer).appendTo($("body"));
-        $modal.modal({ "keyboards": true, "show": true });
-    }
-    $("#messages-table").hide();
-    $("#messages-header").wrapInner($("<a>").attr("href", "#"));
-    $("#messages-header").children("a").prepend($("<i>").addClass("icon-chevron-right"));
-    $("#messages-header").click(function(e) {
-        e.preventDefault();
-        $(this).find("i").toggleClass("icon-chevron-right icon-chevron-down");
-        $("#messages-table").slideToggle();
-    });
-    $(".remove-logger").live("click", function(e) {
-        e.preventDefault();
-        var $this = $(this),
-            name = $this.parents(".controls").find("select").attr("name");
-        confirm(name, function(confirmed) {
-            if (confirmed) {
-                $this.parents(".control-group").slideUp(function() {
-                    $this.remove();
-                });
-            }
-        });
-
-    });
-    $("#new-logger-name").on("input keyup", function() {
-        var val = $(this).val();
-        var loggers = [];
-        $("select.logger").each(function(){
-            loggers.push($(this).attr("name"));
-        });
-
-        if (!val || loggers.contains(val)) {
-            $(this).parents(".control-group").addClass("error");
-            $("#add-logger-button").attr("disabled", true);
-        } else {
-            $(this).parents(".control-group").removeClass("error");
-            $("#add-logger-button").removeAttr("disabled");
-        }
-    }).trigger("input");
-
-    $("#add-logger").on("hidden", function() {
-        $(this).find("input").val("");
-    });
-
-    var fileSizePattern = /^\s*[0-9]+\s*((k|m|g)b?s?)?\s*$/i;
-    $("input[name=maxFileSize]").on("input keyup", function() {
-        if (fileSizePattern.test($(this).val())) {
-            $(this).parents(".control-group").removeClass("error");
-        } else {
-            $(this).parents(".control-group").addClass("error");
-        }
-    });
-
-    $("#add-logger-button").on("click", function(e) {
-        e.preventDefault();
-        var $dialog = $(this).parents(".modal");
-        var logger = $("#new-logger-name").val();
-        var level = $("#new-logger-level").val();
-        var $group = $("<div>").addClass("control-group").hide();
-        $("<label>").addClass("control-label").attr("for", logger)
-            .append($("<code>").text(logger)).appendTo($group);
-        $("<div>").addClass("controls")
-            .append($("#rootLogger select").clone().attr("name", logger).addClass("logger").val(level))
-            .append($("<a>").addClass("remove-logger").attr({"title": "Remove Logger", "href": "#" })
-                .append($("<i>").addClass("icon-trash")))
-            .appendTo($group);
-        $("#level-container").append($group);
-        $group.slideDown();
-        $dialog.modal("hide");
-    });
-</script>
 <br/>
 <jsp:include page="../common/footer.jsp" />

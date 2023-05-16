@@ -51,15 +51,14 @@
 		<script type="text/javascript" src="<c:url value="/static/js/application.js" />"></script>
 		<title>52&deg;North Sensor Observation Service</title>
 	</head>
-    <c:choose>
-        <c:when test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
-            <body onload="showInstallWarning()">
-        </c:when>
-        <c:otherwise>
-            <body>
-        </c:otherwise>
-    </c:choose>
-        <div id="wrap">
+
+
+    <body>
+    <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
+        <div id="installWarning"></div>
+    </c:if>
+
+    <div id="wrap">
 			<div id="main" class="clearfix">
 				<div id="navigation_h">
 					<div id="wopper" class="wopper">

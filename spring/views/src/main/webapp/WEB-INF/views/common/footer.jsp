@@ -79,7 +79,6 @@
             <li><a href="<c:url value="/license" />">Licenses</a></li>
             <li><a href="http://52north.org/about/contact" target="_blank">Contact</a></li>
             <li><a href="http://52north.org/about/imprint" target="_blank">Imprint</a></li>
-            <li><a id="scrollToTop" href="#" onclick="scrollToTop(0, 800)">Top</a></li>
         </ul>
         <br/>
         <small>Copyright &copy; 2023 52&deg;North Spatial Information Research GmbH. All Rights Reserved.

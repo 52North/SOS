@@ -76,12 +76,13 @@ if (!String.prototype.matches) {
             $this.parents(".control-group").removeClass("warning");
         }
     }).trigger("input");
+})(jQuery);
 
+$(function() {
     if ($("#installWarning").length) {
         showMessage('You first have to complete the installation process! Click <a href="./install/index"><strong>here</strong></a> to start it.', "warning");
     }
-    
-})(jQuery);
+});
 
 function showMessage(text, type, autoclose) {
     function closeAlert(a) {

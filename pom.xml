@@ -107,7 +107,7 @@
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
 		<version.netty>4.1.87.Final</version.netty>
-		<version.jetty>11.0.13</version.jetty>
+		<version.jetty>11.0.14</version.jetty>
 	</properties>
 
 	<dependencyManagement>

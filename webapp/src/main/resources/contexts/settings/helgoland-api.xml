@@ -58,7 +58,7 @@
         <property name="description" value="Definition of the request interval restriction. Defined in ISO-8601 duration (&lt;code&gt;https://en.wikipedia.org/wiki/ISO_8601#Durations&lt;/code&gt;) notation!" />
         <property name="order" value="2.0" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
-        <property name="optional" value="true" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="P370D" />
     </bean>
      <bean class="org.n52.faroe.settings.StringSettingDefinition">

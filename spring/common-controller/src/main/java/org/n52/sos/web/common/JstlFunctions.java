@@ -42,6 +42,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.springframework.core.env.AbstractEnvironment;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @since 4.0.0
@@ -150,13 +151,17 @@ public final class JstlFunctions {
         for (Entry<?, ?> entry : map.entrySet()) {
             node.put(entry.getKey().toString(), String.valueOf(entry.getValue()));
         }
-        return Json.print(node);
+        return HtmlUtils.htmlEscape(Json.print(node));
     }
 
     public static String collectionToJson(Collection<?> obj) {
         ArrayNode node = Json.nodeFactory().arrayNode(obj.size());
         obj.forEach(c -> node.add(c.toString()));
-        return Json.print(node);
+        return HtmlUtils.htmlEscape(Json.print(node));
+    }
+
+    public static String htmlEscape(String json) {
+        return HtmlUtils.htmlEscape(json);
     }
 
     public static boolean supportsI18N() {

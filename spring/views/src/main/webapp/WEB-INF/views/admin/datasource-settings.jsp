@@ -28,6 +28,7 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
 <jsp:include page="../common/header.jsp">
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
@@ -44,7 +45,7 @@
 <script type="text/javascript" src="<c:url value="/static/js/admin/datasource-settings.js" />"></script>
 
 <div id="error_data" data-value="${error}"></div>
-<div id="settings_data" data-value='${settings}'></div>
+<div id="settings_data" data-value='${sos:htmlEscape(settings) }'></div>
 
 <form action="<c:url value="/admin/datasource/settings"/>" method="POST" class="">
     <div id="settings"></div>

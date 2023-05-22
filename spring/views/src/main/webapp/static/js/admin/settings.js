@@ -28,8 +28,9 @@
 $(function () {
 
     var url = $("#url_settingDefinitions").attr("data-value");
-    var settings = $("#settings_data").attr("data-value");
+    var settings = JSON.parse($("#settings_data").attr("data-value"));
     var url_settings = $("#url_settings").attr("data-value");
+    var admin_username = $("#admin_username").attr("data-value");
 
     $.getJSON(url, function (settingDefinitions) {
         var $container = $("#settings"),
@@ -57,7 +58,7 @@ $(function () {
                     "title": "Admin name",
                     "description": "The new administrator user name.",
                     "required": true,
-                    "default": "${admin_username}"
+                    "default": admin_username
                 },
                 "current_password": {
                     "type": "password",

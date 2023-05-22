@@ -70,4 +70,9 @@
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
         <function-signature>java.lang.String collectionToJson(java.util.Collection)</function-signature>
     </function>
+    <function>
+        <name>htmlEscape</name>
+        <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
+        <function-signature>java.lang.String htmlEscape(java.lang.String)</function-signature>
+    </function>
 </taglib>

@@ -40,7 +40,7 @@ function show_dbconnection_check_success() {
 
 function generate_settings() {
     var url = $("#settings_url").attr("data-value");
-    var settings = $("#settings_data").attr("data-value");
+    var settings = JSON.parse($("#settings_data").attr("data-value"));
     
     $.getJSON(url, function (settingDefinitions) {
         var $container = $("#settings");

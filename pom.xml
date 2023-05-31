@@ -104,7 +104,7 @@
         <version.arctic-sea>8.2.0</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.helgoland.api>3.3.4</version.helgoland.api>
-        <version.dao-impl>3.3.6</version.dao-impl>
+        <version.dao-impl>3.3.8</version.dao-impl>
         <version.db-model>3.0.9</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework>5.3.24</version.springframework>

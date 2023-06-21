@@ -295,7 +295,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     }
 
     private TemporalFilter createTemporalFilter(String name, String value, TimeOperator timeOperator,
-            String valueReference) throws DecodingException {
+                                                String valueReference) throws DecodingException {
         String[] times = value.split("/");
         final Time time;
         if (times.length == 1 && timeOperator != TimeOperator.TM_During) {
@@ -355,8 +355,8 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         double[] coordinates = values.stream().mapToDouble(Double::valueOf).toArray();
 
         geometry = factory.createPolygon(new Coordinate[] { new Coordinate(coordinates[0], coordinates[1]),
-            new Coordinate(coordinates[0], coordinates[3]), new Coordinate(coordinates[2], coordinates[3]),
-            new Coordinate(coordinates[2], coordinates[1]), new Coordinate(coordinates[0], coordinates[1]) });
+                new Coordinate(coordinates[0], coordinates[3]), new Coordinate(coordinates[2], coordinates[3]),
+                new Coordinate(coordinates[2], coordinates[1]), new Coordinate(coordinates[0], coordinates[1]) });
 
         return new SpatialFilter(SpatialOperator.BBOX, geometry, valueReference);
     }

@@ -69,7 +69,7 @@ public class SosGetFeatureOfInterestOperatorV20 extends
     }
 
     @Override
-    public GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
+    public GetFeatureOfInterestResponse receiveSensorDescription(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
         return getOperationHandler().getFeatureOfInterest(request);
     }
 

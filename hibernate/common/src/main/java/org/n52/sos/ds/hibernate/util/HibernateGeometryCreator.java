@@ -27,43 +27,9 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.n52.series.db.beans.HibernateRelations.HasCoordinate;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.JTSHelper;
-import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.util.GeometryHandler;
-
 public class HibernateGeometryCreator {
 
     public HibernateGeometryCreator() {
-    }
-
-    public Geometry createGeometry(final HasCoordinate coodinates, GeometryHandler geometryHandler)
-            throws OwsExceptionReport {
-        if (coodinates.isSetLongLat()) {
-            int epsg = geometryHandler.getStorageEPSG();
-            if (coodinates.isSetSrid()) {
-                epsg = coodinates.getSrid();
-            }
-            final String wktString = geometryHandler.getWktString(coodinates.getLon(), coodinates.getLat(), epsg);
-            Geometry geom;
-            try {
-                geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-            } catch (ParseException e) {
-                throw new NoApplicableCodeException().causedBy(e);
-            }
-            if (coodinates.isSetAlt()) {
-                geom.getCoordinate().z = JavaHelper.asDouble(coodinates.getAlt());
-                if (geom.getSRID() == geometryHandler.getStorage3DEPSG()) {
-                    geom.setSRID(geometryHandler.getStorage3DEPSG());
-                }
-            }
-            return geom;
-        }
-        return null;
     }
 
 }

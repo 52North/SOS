@@ -79,7 +79,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     @Override
-    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+    public GetObservationResponse receiveSensorDescription(GetObservationRequest request) throws OwsExceptionReport {
         ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);

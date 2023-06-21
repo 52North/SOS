@@ -1,0 +1,33 @@
+{
+    "phenomenonIntervals": {
+        "60000": {
+            "statusIntervals": {
+                "50 - 100 Percent": {
+                    "upper": 100.0,
+                    "lower": 90.0,
+                    "color": "#0000FF"
+                },
+                "0 - 49 Percent": {
+                    "upper": 10.0,
+                    "lower": 0.0,
+                    "color": "#FF0000"
+                }
+            }
+        }
+    },
+    "datasetIntervals": {
+        "70000": {
+            "statusIntervals": {
+                "over 20": {
+                    "lower": 20.0,
+                    "color": "#FF0000"
+                },
+                "0 - 10": {
+                    "upper": 5.0,
+                    "lower": 0.0,
+                    "color": "#0000FF"
+                }
+            }
+        }
+    }
+}

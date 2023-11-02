@@ -31,7 +31,7 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
 
   - [INSPIRE Download Service](http://inspire.ec.europa.eu/id/document/tg/download-sos) for measurement data
   - [Guidelines for the use of Observations & Measurements and Sensor Web Enablement-related standards in INSPIRE (D2.9)](http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)
-  - [OGC Hydro Profile] (http://docs.opengeospatial.org/bp/14-004r1/14-004r1.html), including GetDataAvailability operation
+  - [OGC Hydro Profile](https://docs.ogc.org/bp/14-004r1/14-004r1.html), including GetDataAvailability operation
   - [SensorML 1.0.1 and 2.0](http://www.opengeospatial.org/standards/sensorml)
   - [WaterML 2.0](http://www.opengeospatial.org/standards/waterml)
   - [AQD e-Reporting flows E](https://www.eionet.europa.eu/aqportal/requirements/dataflows)

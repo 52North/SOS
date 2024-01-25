@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -166,8 +167,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                         .next() instanceof TrajectoryDataEntity) {
                     size = 0;
                     for (DataEntity<?> observation : observations) {
-                        size += ((TrajectoryDataEntity) observation).getValue()
-                                .size();
+                        size += ((TrajectoryDataEntity) observation).getValue().size();
                     }
                 }
                 addElementCount(builder, size, blockSeparator);
@@ -175,14 +175,16 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             for (final DataEntity<?> obs : observations) {
                 DataEntity<?> observation = unproxy(obs, session);
                 if (observation instanceof ProfileDataEntity) {
-                    builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
+                    TreeSet<DataEntity<?>> val = new TreeSet<>(((ProfileDataEntity) observation).getValue());
+                    builder.append(createResultValuesFromObservations(val,
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
                             ((ProfileDataEntity) observation).getDataset()
                                     .getVerticalMetadata(),
                             session));
                     builder.append(blockSeparator);
                 } else if (observation instanceof TrajectoryDataEntity) {
-                    builder.append(createResultValuesFromObservations(((TrajectoryDataEntity) observation).getValue(),
+                    TreeSet<DataEntity<?>> val = new TreeSet<>(((TrajectoryDataEntity) observation).getValue());
+                    builder.append(createResultValuesFromObservations(val,
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false, null,
                             session));
                     builder.append(blockSeparator);

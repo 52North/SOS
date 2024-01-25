@@ -29,6 +29,7 @@ package org.n52.sos.ds.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.TreeSet;
 
 import org.n52.janmayen.NcName;
 import org.n52.series.db.beans.BlobDataEntity;
@@ -148,7 +149,7 @@ public class SweAbstractDataComponentCreator
     public SweDataRecord visit(ComplexDataEntity o)
             throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
-        for (DataEntity<?> sub : o.getValue()) {
+        for (DataEntity<?> sub : new TreeSet<>(o.getValue())) {
             String fieldName = getFieldName(sub);
             record.addField(new SweField(fieldName, this.visit(sub)));
         }

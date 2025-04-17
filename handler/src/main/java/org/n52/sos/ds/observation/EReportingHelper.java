@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.observation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +72,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
- *
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class EReportingHelper {
@@ -88,15 +88,12 @@ public class EReportingHelper {
     /**
      * Creates an {@link ObservationValue} from the {@link DataEntity}
      *
-     * @param omObservation
-     *            Corresponding {@link OmObservation}
-     * @param observation
-     *            {@link DataEntity} to create {@link ObservationValue} from
+     * @param omObservation Corresponding {@link OmObservation}
+     * @param observation   {@link DataEntity} to create {@link ObservationValue} from
      * @return Created {@link ObservationValue}.
-     * @throws CodedException
-     *             If an error occurs
+     * @throws CodedException If an error occurs
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation, DataEntity observation)
             throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
@@ -111,10 +108,8 @@ public class EReportingHelper {
     /**
      * Creates an {@link SweDataArray} object from the {@link DataEntity}
      *
-     * @param omObservation
-     *            Corresponding {@link OmObservation}
-     * @param observation
-     *            {@link DataEntity} to create {@link SweDataArray} from
+     * @param omObservation Corresponding {@link OmObservation}
+     * @param observation   {@link DataEntity} to create {@link SweDataArray} from
      * @return Created {@link SweDataArray}
      */
     public SweDataArray createSweDataArray(OmObservation omObservation, DataEntity observation) {
@@ -131,10 +126,8 @@ public class EReportingHelper {
     /**
      * Merge {@link SweDataArray}s to a single {@link SweDataArray}
      *
-     * @param combinedValue
-     *            {@link SweDataArray} which the data is to be added
-     * @param value
-     *            {@link SweDataArray} to be added to the other
+     * @param combinedValue {@link SweDataArray} which the data is to be added
+     * @param value         {@link SweDataArray} to be added to the other
      * @return Merged {@link SweDataArray}
      */
     public SweDataArray mergeValues(SweDataArray combinedValue, SweDataArray value) {
@@ -245,14 +238,15 @@ public class EReportingHelper {
     }
 
     private List<List<String>> createValue(OmObservation omObservation, DataEntity observation,
-            PrimaryObservation primaryObservation) {
+                                           PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
         addTimes(value, DataTimeCreator.createPhenomenonTime(observation));
         addIntegerValue(value, observation.getEreportingProfile().getVerification());
         addIntegerValue(value, observation.getEreportingProfile().getValidation());
         addValue(value, observation, omObservation);
         if (primaryObservation.isMultyDayPrimaryObservation()) {
-            addDoubleValue(value, observation.getEreportingProfile().getDataCapture());
+            BigDecimal dc = observation.getEreportingProfile().getDataCapture();
+            addDoubleValue(value, (dc != null) ? dc.doubleValue() : null);
         }
         List<List<String>> list = Lists.newArrayList();
         list.add(value);
@@ -307,7 +301,7 @@ public class EReportingHelper {
             set.add(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown));
         }
         if (eReportingQualityData.isSetUncertaintyEstimation()) {
-            set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingQualityData.getUncertaintyEstimation()));
+            set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingQualityData.getUncertaintyEstimation().doubleValue()));
         } else if (force) {
             set.add(GmdDomainConsistency.uncertaintyEstimation(GmlConstants.NilReason.unknown));
         }

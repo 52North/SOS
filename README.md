@@ -53,7 +53,8 @@ In the [Sensor Web Server database model](https://github.com/52North/sensorweb-s
 
 ## Quick Start
 
- Getting started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceVDocumentation#Installation) helps you install and configure the 52°North SOS.
+Getting started – the [installation guide](https://github.com/52North/SOS/wiki/Installation) helps you install and configure the 52°North SOS.
+
  
 ### Docker
 

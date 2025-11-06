@@ -30,6 +30,7 @@ package org.n52.sos.ds.cache.base;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.old.dao.OfferingDao;
@@ -40,9 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
  * @since 4.0.0
  */
 public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -52,10 +51,10 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
     public void execute() {
         LOGGER.debug("Executing ObservationTimeCacheUpdate");
         startStopwatch();
-        try {
+        try (Session session = createSessionIfNotExists()) {
             // TODD Use TimerPeriod.expand from OfferingTimes
             List<OfferingEntity> offerings =
-                    new OfferingDao(getSession()).getAllInstances(createDbQuery(IoParameters.createDefaults()));
+                    new OfferingDao(session).getAllInstances(createDbQuery(IoParameters.createDefaults()));
             TimePeriod phenomenonTime = new TimePeriod();
             TimePeriod resultTime = new TimePeriod();
             for (OfferingEntity offering : offerings) {

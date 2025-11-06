@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- *
  * @since 4.0.0
  */
 public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractThreadableDatasourceCacheUpdate>
@@ -50,7 +49,7 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
     private final ThreadLocalSessionFactory sessionFactory;
 
     public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName,
-            HibernateSessionStore sessionStore) {
+                                                 HibernateSessionStore sessionStore) {
         this.threads = threads;
         this.threadGroupName = threadGroupName;
         this.sessionFactory = new ThreadLocalSessionFactory(sessionStore);
@@ -72,25 +71,19 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
                 new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName,
                         updatesToExecute) {
 
-                @Override
-                protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
-                    action.setCache(getCache());
-                    action.setErrors(getErrors());
-                    action.setSessionFactory(sessionFactory);
-                    action.setDbQueryFactory(getDbQueryFactory());
-                }
-
-                @Override
-                protected void post(AbstractThreadableDatasourceCacheUpdate action) {
-                    if (action.getSession() != null) {
-                        try {
-                            action.getSession().clear();
-                        } catch (Exception e) {
-                            LOGGER.error("Error while returning connection after cache update!", e);
-                        }
+                    @Override
+                    protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
+                        action.setCache(getCache());
+                        action.setErrors(getErrors());
+                        action.setSessionFactory(sessionFactory);
+                        action.setDbQueryFactory(getDbQueryFactory());
                     }
-                }
-            };
+
+                    @Override
+                    protected void post(AbstractThreadableDatasourceCacheUpdate action) {
+                        LOGGER.debug("finished AbstractThreadableDatasourceCacheUpdate");
+                    }
+                };
         // execute multiple threads
         compositeParallelAction.execute();
 

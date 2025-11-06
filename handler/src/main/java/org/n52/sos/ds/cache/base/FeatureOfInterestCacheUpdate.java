@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
@@ -47,9 +48,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 /**
- *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
  * @since 4.0.0
  */
 public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -59,17 +58,17 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     public void execute() {
         LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
         startStopwatch();
-        try {
+        try (Session session = createSessionIfNotExists()) {
             Collection<FeatureEntity> features =
-                    new FeatureDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
+                    new FeatureDao(session).get(createDbQuery(IoParameters.createDefaults()));
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
                 getCache().addFeatureOfInterest(identifier);
                 Collection<DatasetEntity> datasets =
-                        new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
+                        new DatasetDao<>(session).get(createDatasetDbQuery(featureEntity));
                 if (datasets != null && !datasets.isEmpty()) {
                     if (datasets.stream().anyMatch(
-                        d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
+                            d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
                         getCache().addPublishedFeatureOfInterest(identifier);
                     }
                     getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(datasets));
@@ -109,8 +108,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     /**
      * Get identifiers from featureOfInterest entities
      *
-     * @param features
-     *            FeatureOfInterest entities
+     * @param features FeatureOfInterest entities
      * @return Identifiers from featureOfInterest entities
      */
     protected Set<String> getFeatureIdentifiers(Collection<FeatureEntity> features) {

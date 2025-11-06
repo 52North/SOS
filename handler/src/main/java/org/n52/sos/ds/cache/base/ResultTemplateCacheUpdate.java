@@ -61,7 +61,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
         LOGGER.debug("Executing ResultTemplateCacheUpdate");
         startStopwatch();
         if (HibernateHelper.isEntitySupported(ResultTemplateEntity.class)) {
-            List<ResultTemplateEntity> resultTemplates = getResultTemplateObjects(getSession());
+            List<ResultTemplateEntity> resultTemplates = getResultTemplateObjects();
             for (ResultTemplateEntity resultTemplate : resultTemplates) {
                 String id = resultTemplate.getIdentifier();
                 getCache().addResultTemplate(id);
@@ -75,11 +75,13 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
         LOGGER.debug("Finished executing ResultTemplateCacheUpdate ({})", getStopwatchResult());
     }
 
-    private List<ResultTemplateEntity> getResultTemplateObjects(Session session) {
-        return session.createCriteria(ResultTemplateEntity.class)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
+    private List<ResultTemplateEntity> getResultTemplateObjects() {
+        try (Session session = createSessionIfNotExists()) {
+            return session.createCriteria(ResultTemplateEntity.class)
+                    .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
+                    .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
+                    .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
+        }
     }
 
 }

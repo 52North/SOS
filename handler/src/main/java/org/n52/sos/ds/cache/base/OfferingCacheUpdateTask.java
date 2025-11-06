@@ -331,8 +331,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     @Override
     public void execute() {
-        try {
-            getOfferingInformationFromDbAndAddItToCacheMaps(getSession());
+        try (Session session = createSessionIfNotExists()) {
+            getOfferingInformationFromDbAndAddItToCacheMaps(session);
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);
         } catch (Exception e) {

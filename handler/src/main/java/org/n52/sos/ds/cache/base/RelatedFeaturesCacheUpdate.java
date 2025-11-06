@@ -28,6 +28,7 @@
 package org.n52.sos.ds.cache.base;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
@@ -39,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
  * @since 4.0.0
  */
 public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -49,8 +49,8 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
     public void execute() {
         LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
-        try {
-            for (RelatedFeatureEntity relatedFeature : new RelatedFeatureDao(getSession())
+        try (Session session = createSessionIfNotExists()) {
+            for (RelatedFeatureEntity relatedFeature : new RelatedFeatureDao(session)
                     .getAllInstances(createDbQuery(IoParameters.createDefaults()))) {
                 String identifier = relatedFeature.getFeature().getIdentifier();
                 for (OfferingEntity offering : relatedFeature.getOfferings()) {

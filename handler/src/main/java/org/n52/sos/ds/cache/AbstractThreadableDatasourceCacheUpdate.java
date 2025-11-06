@@ -45,8 +45,7 @@ public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDa
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
-    public Session getSession() {
+    public Session createSessionIfNotExists() {
         if (super.getSession() == null && sessionFactory != null) {
             setSession(sessionFactory.getSession());
         }

@@ -30,6 +30,7 @@ package org.n52.sos.ds.cache.base;
 import java.util.Collection;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
@@ -57,12 +58,12 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     public void execute() {
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
-        try {
+        try (Session session = createSessionIfNotExists()) {
             Collection<PhenomenonEntity> observableProperties =
-                    new PhenomenonDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
+                    new PhenomenonDao(session).get(createDbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
                 Collection<DatasetEntity> datasets =
-                        new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
+                        new DatasetDao<>(session).get(createDatasetDbQuery(observableProperty));
                 String identifier = observableProperty.getIdentifier();
 
                 if (observableProperty.isSetName()) {

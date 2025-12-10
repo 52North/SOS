@@ -37,8 +37,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
@@ -132,6 +134,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.DatasetFactory;
 import org.n52.sos.ds.hibernate.util.ParameterCreator;
 import org.n52.sos.ds.utils.HibernateUnproxy;
+import org.n52.sos.exception.sos.concrete.InvalidObservationParameterException;
 import org.n52.sos.request.InternalInsertResultTemplateRequest;
 import org.n52.sos.util.GeometryHandler;
 
@@ -754,8 +757,25 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private <
             V,
             T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
-        observation.setDeleted(false);
 
+        // check if this observation is unique
+        // We can skip all processing if this is the case, and also prevent unique index errors in the database
+        //TODO: gate this behind a feature flag
+        daos.observation().addTime(omObservation, observation);
+        Criteria criteria = session.createCriteria(DataEntity.class)
+                //.add(Restrictions.eq("valueType", observation.getValueType()))
+                .add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, dataset.getId()))
+                .add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, observation.getSamplingTimeStart()))
+                .add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, observation.getSamplingTimeEnd()))
+                .add(Restrictions.eq(DataEntity.RESULT_TIME, observation.getResultTime()))
+                .add(Restrictions.eq("verticalFrom", observation.getVerticalFrom()))
+                .add(Restrictions.eq("verticalTo", observation.getVerticalTo()));
+        if (criteria.uniqueResult() != null) {
+            throw new InvalidObservationParameterException("Violates unique constraint " +
+                    "(value_type,fk_dataset_id,sampling_time_start,sampling_time_end,result_time,vertical_from,vertical_to)");
+        }
+
+        observation.setDeleted(false);
         if (parent == null) {
             daos.observation().addIdentifier(omObservation, observation, session, caches.codespaces);
         } else {
@@ -765,7 +785,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         daos.observation().addName(omObservation, observation, session, caches.codespaces);
         daos.observation().addDescription(omObservation, observation);
-        daos.observation().addTime(omObservation, observation);
+
         observation.setValue(value);
         if (samplingGeometry != null) {
             GeometryEntity geometryEntity = new GeometryEntity();

@@ -30,6 +30,7 @@ package org.n52.sos.ds.cache.base;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -46,7 +47,6 @@ import com.google.common.collect.Lists;
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- *
  * @since 4.0.0
  */
 public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<ProcedureCacheUpdateTask>
@@ -60,8 +60,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     /**
      * constructor
      *
-     * @param threads
-     *            Thread count
+     * @param threads        Thread count
      * @param dbQueryFactory The db query factory
      */
     public ProcedureCacheUpdate(int threads, HibernateSessionStore sessionStore, DbQueryFactory dbQueryFactory) {
@@ -74,7 +73,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         // single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        procedures = new ProcedureDao(getSession()).get(createDbQuery(IoParameters.createDefaults()));
+        Session session = sessionFactory.getSession();
+        procedures = new ProcedureDao(session).get(createDbQuery(IoParameters.createDefaults()));
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // multi-threaded execution

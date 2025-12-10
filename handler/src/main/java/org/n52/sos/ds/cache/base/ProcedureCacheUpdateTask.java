@@ -171,7 +171,8 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate i
 
     @Override
     public void execute() {
-        try (Session session = createSessionIfNotExists()) {
+        try {
+            Session session = getSession();
             getProcedureInformationFromDbAndAddItToCacheMaps(session);
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);

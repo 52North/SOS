@@ -51,7 +51,8 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
     public void execute() {
         LOGGER.debug("Executing ObservationTimeCacheUpdate");
         startStopwatch();
-        try (Session session = createSessionIfNotExists()) {
+        try {
+            Session session = getSession();
             // TODD Use TimerPeriod.expand from OfferingTimes
             List<OfferingEntity> offerings =
                     new OfferingDao(session).getAllInstances(createDbQuery(IoParameters.createDefaults()));

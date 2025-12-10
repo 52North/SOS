@@ -53,12 +53,12 @@ public abstract class DatasourceCacheUpdate extends ThreadableAction {
         return cache;
     }
 
-    public List<OwsExceptionReport> getErrors() {
-        return Collections.unmodifiableList(errors);
-    }
-
     public void setCache(SosWritableContentCache cache) {
         this.cache = cache;
+    }
+
+    public List<OwsExceptionReport> getErrors() {
+        return errors;
     }
 
     public void setErrors(List<OwsExceptionReport> errors) {

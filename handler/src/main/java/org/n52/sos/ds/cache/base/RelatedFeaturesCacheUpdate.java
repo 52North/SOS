@@ -49,7 +49,8 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
     public void execute() {
         LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
-        try (Session session = createSessionIfNotExists()) {
+        try {
+            Session session = getSession();
             for (RelatedFeatureEntity relatedFeature : new RelatedFeatureDao(session)
                     .getAllInstances(createDbQuery(IoParameters.createDefaults()))) {
                 String identifier = relatedFeature.getFeature().getIdentifier();

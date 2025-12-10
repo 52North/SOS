@@ -28,8 +28,10 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
+import org.hibernate.Session;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
@@ -51,10 +53,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
  * @since 4.0.0
  */
-@SuppressFBWarnings({ "EI_EXPOSE_REP2" })
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask>
         implements ApiQueryHelper, DatasourceCacheUpdateHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
@@ -72,14 +73,14 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private GeometryHandler geometryHandler;
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
-            HibernateSessionStore sessionStore, DbQueryFactory dbQueryFactory) {
+                               HibernateSessionStore sessionStore, DbQueryFactory dbQueryFactory) {
         this(threads, defaultLanguage, geometryHandler, sessionStore, null, dbQueryFactory);
 
     }
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
-            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate,
-            DbQueryFactory dbQueryFactory) {
+                               HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate,
+                               DbQueryFactory dbQueryFactory) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
         setDbQueryFactory(dbQueryFactory);
         if (offeringIdsToUpdate != null) {
@@ -90,20 +91,24 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     private Collection<OfferingEntity> getOfferingsToUpdate() {
-        try {
-            if (offeringDAO == null) {
-                offeringDAO = new OfferingDao(getSession());
-            }
-            if (offeringsToUpdate == null) {
-                if (offeringsIdToUpdate == null || offeringsIdToUpdate.isEmpty()) {
-                    return offeringDAO.get(createDbQuery(IoParameters.createDefaults()));
+        if (offeringsToUpdate == null) {
+            Session session = sessionFactory.getSession();
+            try {
+                if (offeringDAO == null) {
+                    offeringDAO = new OfferingDao(session);
                 }
+                if (offeringsToUpdate == null) {
+                    if (offeringsIdToUpdate == null || offeringsIdToUpdate.isEmpty()) {
+                        this.offeringsToUpdate = offeringDAO.get(createDbQuery(IoParameters.createDefaults()));
+                    }
+                }
+            } catch (Exception e) {
+                getErrors().add(new GenericThrowableWrapperException(e)
+                        .withMessage("Error while processing procedure cache update task!"));
             }
-        } catch (Exception e) {
-            getErrors().add(new GenericThrowableWrapperException(e)
-                    .withMessage("Error while processing procedure cache update task!"));
         }
-        return offeringsToUpdate;
+        return this.offeringsToUpdate;
+
     }
 
     @Override

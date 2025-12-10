@@ -58,7 +58,8 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     public void execute() {
         LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
         startStopwatch();
-        try (Session session = createSessionIfNotExists()) {
+        try {
+            Session session = getSession();
             Collection<FeatureEntity> features =
                     new FeatureDao(session).get(createDbQuery(IoParameters.createDefaults()));
             for (FeatureEntity featureEntity : features) {

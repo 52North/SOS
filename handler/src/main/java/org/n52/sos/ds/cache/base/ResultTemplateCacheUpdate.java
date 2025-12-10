@@ -49,8 +49,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -76,12 +75,11 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
     }
 
     private List<ResultTemplateEntity> getResultTemplateObjects() {
-        try (Session session = createSessionIfNotExists()) {
-            return session.createCriteria(ResultTemplateEntity.class)
-                    .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
-                    .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                    .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
-        }
+        Session session = getSession();
+        return session.createCriteria(ResultTemplateEntity.class)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
     }
 
 }

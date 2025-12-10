@@ -58,7 +58,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     public void execute() {
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
-        try (Session session = createSessionIfNotExists()) {
+        try {
+            Session session = getSession();
             Collection<PhenomenonEntity> observableProperties =
                     new PhenomenonDao(session).get(createDbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {

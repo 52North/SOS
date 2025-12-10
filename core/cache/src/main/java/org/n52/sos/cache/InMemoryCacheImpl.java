@@ -1902,7 +1902,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
             try {
                 featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.debug("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }
@@ -1914,7 +1914,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
             try {
                 observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for observableProperty with identifier '{}' and humanReadableName '{}'!",
+                LOG.debug("Duplicate entry for observableProperty with identifier '{}' and humanReadableName '{}'!",
                         identifier, humanReadableName);
             }
         }
@@ -1926,7 +1926,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
             try {
                 procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for procedure with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.debug("Duplicate entry for procedure with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }
@@ -1938,7 +1938,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
             try {
                 offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for offering with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.debug("Duplicate entry for offering with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }

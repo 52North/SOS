@@ -46,7 +46,7 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
     private final String threadGroupName;
 
-    private final ThreadLocalSessionFactory sessionFactory;
+    protected final ThreadLocalSessionFactory sessionFactory;
 
     public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName,
                                                  HibernateSessionStore sessionStore) {

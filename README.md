@@ -117,8 +117,8 @@ The development the 52°North Sensor Observation Service implementations was con
 | [Christian Autermann](https://52north.org/about-us/profile/) | [52&deg;North](http://52north.org) |
 | Christoph Stasch| [52&deg;North](http://52north.org) |
 | Shane StClair | [Axiom Data Science](http://www.axiomdatascience.com) |
-| Victor Gonz&aacute;lez | [geomati.co](http://geomati.co/en) |
-| Oscar Fonts | [geomati.co](http://geomati.co/en) |
+| Victor Gonz&aacute;lez | [geomatico](https://geomatico.es/en) |
+| Oscar Fonts | [geomatico](https://geomatico.es/en) |
 | Carlos Giraldo | [Instituto Tecnol&oacute;gico de Galicia (ITG)](http://www.itg.es/) |
 | Alexander Kmoch | [Z_GIS](http://www.zgis.at),  [Universit&auml;t Salzburg</a> (Austria and Germany)](http://www.uni-salzburg.at) |
 | Carl Schroedl | Center for Integrated Data Analytics ([CIDA](http://cida.usgs.gov)), [USGS](http://www.usgs.gov) |

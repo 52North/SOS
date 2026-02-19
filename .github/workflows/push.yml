@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Set up settings.xml for GitHub Packages
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 11

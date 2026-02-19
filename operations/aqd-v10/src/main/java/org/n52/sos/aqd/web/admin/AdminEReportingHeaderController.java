@@ -64,9 +64,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * TODO JavaDoc
+ * Controller for AQD e-Reporting administration.
  *
- * @author Christian Autermann
+ * Handles retrieval and saving of reporting obligations and authorities.
+ *
+ * @author
+ *   Christian Autermann (original)
+ *   Updated by ChatGPT – 2026 fix for JSON handling
  */
 @Controller
 @RequestMapping(value = "/admin/ereporting")
@@ -76,9 +80,7 @@ public class AdminEReportingHeaderController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminEReportingHeaderController.class);
 
     private EReportObligationRepository reportObligationRepository;
-
     private EncoderRepository encoderRepository;
-
     private DecoderRepository decoderRepository;
 
     @Inject
@@ -105,20 +107,26 @@ public class AdminEReportingHeaderController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public String getJSON() throws OwsExceptionReport, EncodingException {
         ObjectNode node = Json.nodeFactory().objectNode();
+
         Encoder<JsonNode, ReportObligation> reportObligationEncoder =
                 encoderRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
         Encoder<JsonNode, RelatedParty> relatedPartyEncoder =
                 encoderRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
+
         node.set(AQDJSONConstants.REPORTING_AUTHORITY,
                 relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
+
         ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
         for (ReportObligationType reportObligationType : ReportObligationType.values()) {
-            ReportObligation reportObligation = reportObligationRepository.getReportObligation(reportObligationType);
-            ros.addObject().put(AQDJSONConstants.ID, reportObligationType.name())
+            ReportObligation reportObligation =
+                    reportObligationRepository.getReportObligation(reportObligationType);
+            ros.addObject()
+                    .put(AQDJSONConstants.ID, reportObligationType.name())
                     .put(AQDJSONConstants.NAME, reportObligationType.getTitle())
                     .put(AQDJSONConstants.DESCRIPTION, reportObligationType.getDescription())
                     .set(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
         }
+
         return Json.print(node);
     }
 
@@ -126,6 +134,7 @@ public class AdminEReportingHeaderController extends AbstractController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void save(@RequestBody String json) throws OwsExceptionReport, DecodingException {
         LOG.info("Saving {}", json);
+
         Decoder<ReportObligation, JsonNode> reportObligationDecoder =
                 decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
         Decoder<RelatedParty, JsonNode> relatedPartyDecoder =
@@ -133,16 +142,34 @@ public class AdminEReportingHeaderController extends AbstractController {
 
         JsonNode node = Json.loadString(json);
 
-        RelatedParty relatedParty = relatedPartyDecoder.decode(node.path(AQDJSONConstants.REPORTING_AUTHORITY));
+        // Decode and save reporting authority
+        RelatedParty relatedParty =
+                relatedPartyDecoder.decode(node.path(AQDJSONConstants.REPORTING_AUTHORITY));
         reportObligationRepository.saveReportingAuthority(relatedParty);
 
-        JsonNode obligations = node.path(AQDJSONConstants.REPORT_OBLIGATIONS);
-        Iterator<String> it = obligations.fieldNames();
-        while (it.hasNext()) {
-            String id = it.next();
-            ReportObligation reportObligation = reportObligationDecoder.decode(obligations.path(id));
-            reportObligationRepository.saveReportObligation(ReportObligationType.valueOf(id), reportObligation);
+        // Decode and save report obligations (fixed: correct array handling)
+        JsonNode obligationsNode = node.path(AQDJSONConstants.REPORT_OBLIGATIONS);
+        if (obligationsNode.isArray()) {
+            for (JsonNode obligationNode : obligationsNode) {
+                String id = obligationNode.path(AQDJSONConstants.ID).asText(null);
+                if (id == null) {
+                    LOG.warn("Skipping obligation without ID: {}", obligationNode);
+                    continue;
+                }
+
+                ReportObligation reportObligation =
+                        reportObligationDecoder.decode(obligationNode.path(AQDJSONConstants.VALUE));
+
+                try {
+                    ReportObligationType type = ReportObligationType.valueOf(id);
+                    reportObligationRepository.saveReportObligation(type, reportObligation);
+                } catch (IllegalArgumentException e) {
+                    LOG.warn("Unknown ReportObligationType '{}'", id, e);
+                }
+            }
+        } else {
+            LOG.warn("Expected an array for '{}', but got: {}", AQDJSONConstants.REPORT_OBLIGATIONS,
+                    obligationsNode.getNodeType());
         }
     }
-
 }

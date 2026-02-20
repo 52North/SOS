@@ -97,7 +97,7 @@
 		<version.springframework.security>5.7.14</version.springframework.security>
 		<version.springframework.data>2.7.11</version.springframework.data>
 		<version.spring-data-entity-graph>2.7.10</version.spring-data-entity-graph>
-		<version.aspectj>1.9.9.1</version.aspectj>
+		<version.aspectj>1.9.25.1</version.aspectj>
 		<version.saxon>12.0</version.saxon>
 		<version.elasticsearch>8.19.8</version.elasticsearch>
 		<version.sos.test.suite>2.0.0-M1</version.sos.test.suite>

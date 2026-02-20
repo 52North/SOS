@@ -103,7 +103,7 @@
 		<version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
 		<version.httpcore>4.4.16</version.httpcore>
 		<version.httpcoponents>4.5.14</version.httpcoponents>
-		<version.junit>5.9.1</version.junit>
+		<version.junit>6.0.3</version.junit>
 		<version.exificient>1.0.4</version.exificient>
 		<version.jaxb>2.3.0</version.jaxb>
 		<version.netty>4.1.129.Final</version.netty>

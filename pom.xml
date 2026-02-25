@@ -78,7 +78,7 @@
 		<version.h2>2.1.214</version.h2>
 		<version.geodb>0.9</version.geodb>
 		<version.hibernate>5.6.14.Final</version.hibernate>
-		<version.c3p0>0.9.5.5</version.c3p0>
+		<version.c3p0>0.12.0</version.c3p0>
 		<version.hikaricp>4.0.3</version.hikaricp>
 		<version.geotools>28.1</version.geotools>
 		<version.jackson>2.14.0</version.jackson>

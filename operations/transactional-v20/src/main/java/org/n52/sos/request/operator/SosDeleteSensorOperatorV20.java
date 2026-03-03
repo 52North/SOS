@@ -71,7 +71,7 @@ public class SosDeleteSensorOperatorV20 extends
     }
 
     @Override
-    public DeleteSensorResponse receive(DeleteSensorRequest request) throws OwsExceptionReport {
+    public DeleteSensorResponse receiveSensorDescription(DeleteSensorRequest request) throws OwsExceptionReport {
         DeleteSensorResponse response = getOperationHandler().deleteSensor(request);
         getServiceEventBus().submit(new SensorDeletion(request, response));
         return response;

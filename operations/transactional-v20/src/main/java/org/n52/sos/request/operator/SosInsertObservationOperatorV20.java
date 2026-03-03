@@ -83,7 +83,7 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     @Override
-    public InsertObservationResponse receive(final InsertObservationRequest request) throws OwsExceptionReport {
+    public InsertObservationResponse receiveSensorDescription(final InsertObservationRequest request) throws OwsExceptionReport {
         InsertObservationResponse response = getOperationHandler().insertObservation(request);
         getServiceEventBus().submit(new ObservationInsertion(request, response));
         return response;

@@ -116,7 +116,7 @@ public class SosInsertSensorOperatorV20 extends
     }
 
     @Override
-    public InsertSensorResponse receive(InsertSensorRequest request) throws OwsExceptionReport {
+    public InsertSensorResponse receiveSensorDescription(InsertSensorRequest request) throws OwsExceptionReport {
         InsertSensorResponse response = getOperationHandler().insertSensor(request);
         getServiceEventBus().submit(new SensorInsertion(request, response));
         return response;

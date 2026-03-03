@@ -99,7 +99,7 @@ public class SosGetObservationOperatorV20 extends
     }
 
     @Override
-    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+    public GetObservationResponse receiveSensorDescription(GetObservationRequest request) throws OwsExceptionReport {
         final GetObservationResponse sosResponse = getOperationHandler().getObservation(request);
         setObservationResponseResponseFormatAndContentType(request, sosResponse);
         return sosResponse;

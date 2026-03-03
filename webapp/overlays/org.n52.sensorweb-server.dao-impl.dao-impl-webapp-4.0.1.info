@@ -1,0 +1,3 @@
+1679409775581
+WEB-INF/classes(?:$|/.+)
+WEB-INF/(?:[^/]+/)*?[^/]*?\.xml, WEB-INF/(?:[^/]+/)*?series-hibernate\.cfg\.xml, WEB-INF/classes/application\.properties

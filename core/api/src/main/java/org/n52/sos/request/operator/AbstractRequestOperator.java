@@ -379,7 +379,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
             preProcessRequest(request);
             checkForModifierAndProcess(request);
             checkParameters(request);
-            A response = receive(request);
+            A response = receiveSensorDescription(request);
             this.serviceEventBus.submit(new ResponseEvent(response));
             postProcessResponse(response);
             return checkForModifierAndProcess(request, response);
@@ -461,7 +461,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
         return response;
     }
 
-    protected abstract A receive(Q request) throws OwsExceptionReport;
+    protected abstract A receiveSensorDescription(Q request) throws OwsExceptionReport;
 
     protected abstract void checkParameters(Q request) throws OwsExceptionReport;
 

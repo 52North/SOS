@@ -101,7 +101,7 @@ public class GetDataAvailabilityOperator extends
     }
 
     @Override
-    public GetDataAvailabilityResponse receive(GetDataAvailabilityRequest sosRequest) throws OwsExceptionReport {
+    public GetDataAvailabilityResponse receiveSensorDescription(GetDataAvailabilityRequest sosRequest) throws OwsExceptionReport {
         return getOperationHandler().getDataAvailability(sosRequest);
     }
 

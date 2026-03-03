@@ -67,7 +67,7 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     @Override
-    public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    public GetCapabilitiesResponse receiveSensorDescription(GetCapabilitiesRequest request) throws OwsExceptionReport {
         return modifyCapabilities((GetCapabilitiesResponse) changeResponseServiceVersion(
                 getOperationHandler().getCapabilities((GetCapabilitiesRequest) changeRequestServiceVersion(request))));
     }

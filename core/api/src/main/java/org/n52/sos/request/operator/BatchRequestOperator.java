@@ -54,7 +54,7 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
     }
 
     @Override
-    protected BatchResponse receive(BatchRequest request) throws OwsExceptionReport {
+    protected BatchResponse receiveSensorDescription(BatchRequest request) throws OwsExceptionReport {
         for (OwsServiceRequest r : request) {
             r.setRequestContext(request.getRequestContext());
         }

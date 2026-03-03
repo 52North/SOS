@@ -104,7 +104,7 @@ public class SosGetObservationByIdOperatorV100
     }
 
     @Override
-    protected GetObservationByIdResponse receive(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
+    protected GetObservationByIdResponse receiveSensorDescription(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
         GetObservationByIdResponse sosResponse = getOperationHandler().getObservationById(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         return sosResponse;

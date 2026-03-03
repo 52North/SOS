@@ -69,7 +69,7 @@ public class SosGetResultTemplateOperatorV20 extends
     }
 
     @Override
-    public GetResultTemplateResponse receive(GetResultTemplateRequest request) throws OwsExceptionReport {
+    public GetResultTemplateResponse receiveSensorDescription(GetResultTemplateRequest request) throws OwsExceptionReport {
         return getOperationHandler().getResultTemplate(request);
     }
 

@@ -93,7 +93,7 @@ public class SosInsertResultTemplateOperatorV20 extends
     }
 
     @Override
-    public InsertResultTemplateResponse receive(InsertResultTemplateRequest request) throws OwsExceptionReport {
+    public InsertResultTemplateResponse receiveSensorDescription(InsertResultTemplateRequest request) throws OwsExceptionReport {
         InsertResultTemplateResponse response = getOperationHandler().insertResultTemplate(request);
         getServiceEventBus().submit(new ResultTemplateInsertion(request, response));
         return response;

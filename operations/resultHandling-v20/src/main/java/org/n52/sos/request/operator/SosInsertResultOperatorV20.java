@@ -70,7 +70,7 @@ public class SosInsertResultOperatorV20 extends
     }
 
     @Override
-    public InsertResultResponse receive(InsertResultRequest request) throws OwsExceptionReport {
+    public InsertResultResponse receiveSensorDescription(InsertResultRequest request) throws OwsExceptionReport {
         InsertResultResponse response = getOperationHandler().insertResult(request);
         getServiceEventBus().submit(new ResultInsertion(request, response));
         return response;

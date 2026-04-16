@@ -23,16 +23,13 @@
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log
-            </fileNamePattern>
+            <fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>7</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%date %level [%thread] [%file:%line] %msg%n
-            </pattern>
+            <pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -51,7 +48,7 @@
     </appender>
 
     <logger name="org.n52" level="INFO" />
-    <logger name="org.n52.sos.aquarius" level="DEBUG" />
+    <logger name="org.n52.sos.aquarius" level="ERROR" />
     <logger name="org.springframework" level="WARN" />
     <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
     <logger name="org.hibernate.SQL" level="ERROR" />

@@ -26,13 +26,11 @@
             <fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log </fileNamePattern>
             <!-- keep ${config.logger.history.max} days' worth of history -->
             <maxHistory>${config.logger.history.max}</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>${config.logger.maxFileSize}</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>${config.logger.maxFileSize}</maxFileSize>
+            <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%date %level [%thread] [%file:%line] %msg%n
-            </pattern>
+            <pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
         </encoder>
     </appender>
 

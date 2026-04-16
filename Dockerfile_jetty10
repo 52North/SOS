@@ -49,9 +49,6 @@ RUN mkdir -p ${WEBAPP}/WEB-INF/tmp \
              /usr/local/bin/bcrypt
 USER jetty:jetty
 
-VOLUME ${WEBAPP}/WEB-INF/tmp
-VOLUME /etc/sos
-
 HEALTHCHECK --start-period=60s --interval=30s \
             --timeout=20s --retries=3 \
   CMD wget http://localhost:8080${SOS_CONTEXT_PATH} -q -O - > /dev/null 2>&1

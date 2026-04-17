@@ -152,7 +152,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
             update.setErrors(errors);
             update.setSession(session);
 
-            LOGGER.debug("Starting cache update");
+            LOGGER.info("Starting cache update");
             long cacheUpdateStartTime = System.currentTimeMillis();
 
             update.execute();

@@ -42,12 +42,12 @@ import com.google.common.base.Joiner;
  */
 public abstract class CompositeCacheUpdate extends AbstractDatasourceCacheUpdate {
 
-    @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(CompositeCacheUpdate.class);
 
     private CompositeAction<AbstractDatasourceCacheUpdate> delegatedAction;
 
     public CompositeCacheUpdate(DbQueryFactory dbQueryFactory, AbstractDatasourceCacheUpdate... actions) {
+        LOGGER.info("Running CacheUpdate - this may take a while.");
         setDbQueryFactory(dbQueryFactory);
         this.delegatedAction = new CompositeSerialAction<AbstractDatasourceCacheUpdate>(actions) {
             @Override

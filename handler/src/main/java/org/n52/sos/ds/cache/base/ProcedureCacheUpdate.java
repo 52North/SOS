@@ -71,17 +71,17 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     @Override
     public void execute() {
         // single threaded updates
-        LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
+        LOGGER.info("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         Session session = sessionFactory.getSession();
         procedures = new ProcedureDao(session).get(createDbQuery(IoParameters.createDefaults()));
-        LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
+        LOGGER.info("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // multi-threaded execution
-        LOGGER.debug("Executing ProcedureCacheUpdate (Multi-Threaded Tasks)");
+        LOGGER.info("Executing ProcedureCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();
         super.execute();
-        LOGGER.debug("Finished executing ProcedureCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
+        LOGGER.info("Finished executing ProcedureCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
     }
 
     @Override

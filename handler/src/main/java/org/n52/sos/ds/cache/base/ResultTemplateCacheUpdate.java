@@ -57,7 +57,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing ResultTemplateCacheUpdate");
+        LOGGER.info("Executing ResultTemplateCacheUpdate");
         startStopwatch();
         if (HibernateHelper.isEntitySupported(ResultTemplateEntity.class)) {
             List<ResultTemplateEntity> resultTemplates = getResultTemplateObjects();
@@ -71,7 +71,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
                 }
             }
         }
-        LOGGER.debug("Finished executing ResultTemplateCacheUpdate ({})", getStopwatchResult());
+        LOGGER.info("Finished executing ResultTemplateCacheUpdate ({})", getStopwatchResult());
     }
 
     private List<ResultTemplateEntity> getResultTemplateObjects() {

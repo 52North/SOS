@@ -56,7 +56,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
+        LOGGER.info("Executing FeatureOfInterestCacheUpdate");
         startStopwatch();
         try {
             Session session = getSession();
@@ -87,7 +87,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
             getErrors().add(new NoApplicableCodeException().causedBy(he)
                     .withMessage("Error while updating featureOfInterest cache!"));
         }
-        LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
+        LOGGER.info("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }
 
     private Collection<String> getProcedures(Collection<DatasetEntity> datasets) {

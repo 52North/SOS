@@ -56,7 +56,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
+        LOGGER.info("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
         try {
             Session session = getSession();
@@ -93,7 +93,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
             getErrors().add(new NoApplicableCodeException().causedBy(he)
                     .withMessage("Error while updating featureOfInterest cache!"));
         }
-        LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
+        LOGGER.info("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
     }
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {

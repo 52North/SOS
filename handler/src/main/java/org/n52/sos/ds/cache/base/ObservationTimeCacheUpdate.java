@@ -49,7 +49,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing ObservationTimeCacheUpdate");
+        LOGGER.info("Executing ObservationTimeCacheUpdate");
         startStopwatch();
         try {
             Session session = getSession();
@@ -71,7 +71,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating observation time cache!"));
         }
-        LOGGER.debug("Finished executing ObservationTimeCacheUpdate ({})", getStopwatchResult());
+        LOGGER.info("Finished executing ObservationTimeCacheUpdate ({})", getStopwatchResult());
     }
 
 }

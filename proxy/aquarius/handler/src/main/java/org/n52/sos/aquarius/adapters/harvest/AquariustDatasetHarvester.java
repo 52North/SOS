@@ -57,7 +57,7 @@ public class AquariustDatasetHarvester extends AbstractAquariusHarvester {
     @Transactional(rollbackFor = Exception.class)
     public void harvestDatasets(LocationDataServiceResponse location, Map<String, DatasetEntity> datasets,
             AquariusConnector connector) throws OwsExceptionReport {
-        LOGGER.debug("Start harvesting datasets/timeSeries!");
+        LOGGER.info("Start harvesting datasets/timeSeries!");
         ServiceEntity service = getOrInsertServiceEntity();
         if (checkLocation(location)) {
             LOGGER.debug("Harvesting timeseries for location '{}'", location.getLocationName());

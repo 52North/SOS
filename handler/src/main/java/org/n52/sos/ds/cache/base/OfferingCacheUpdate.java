@@ -113,16 +113,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
+        LOGGER.info("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         this.offeringsToUpdate = getOfferingsToUpdate();
-        LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
+        LOGGER.info("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         // execute multi-threaded updates
-        LOGGER.debug("Executing OfferingCacheUpdate (Multi-Threaded Tasks)");
+        LOGGER.info("Executing OfferingCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();
         super.execute();
-        LOGGER.debug("Finished executing OfferingCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
+        LOGGER.info("Finished executing OfferingCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
     }
 
     @Override

@@ -47,7 +47,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
+        LOGGER.info("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
         try {
             Session session = getSession();
@@ -63,6 +63,6 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating related feature cache!"));
         }
-        LOGGER.debug("Finished executing RelatedFeaturesCacheUpdate ({})", getStopwatchResult());
+        LOGGER.info("Finished executing RelatedFeaturesCacheUpdate ({})", getStopwatchResult());
     }
 }

@@ -38,7 +38,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.janmayen.function.Consumers;
 import org.n52.janmayen.function.Functions;

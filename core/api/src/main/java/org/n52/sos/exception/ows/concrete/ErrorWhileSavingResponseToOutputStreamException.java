@@ -30,6 +30,7 @@ package org.n52.sos.exception.ows.concrete;
 import org.n52.janmayen.http.HTTPStatus;
 
 import java.io.IOException;
+import java.io.Serial;
 
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
@@ -41,6 +42,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  * @since 4.0.0
  */
 public class ErrorWhileSavingResponseToOutputStreamException extends NoApplicableCodeException {
+    @Serial
     private static final long serialVersionUID = 52L;
 
     public ErrorWhileSavingResponseToOutputStreamException(final IOException ioe) {

@@ -76,10 +76,10 @@ public interface TemporalRestriction {
      */
     default Criterion getCriterion(AbstractTimePrimitiveFieldDescriptor ref, Time time, Integer count)
             throws UnsupportedTimeException {
-        if (time instanceof TimePeriod) {
-            return filterWithPeriod((TimePeriod) time, ref, false, count);
-        } else if (time instanceof TimeInstant) {
-            return filterWithInstant((TimeInstant) time, ref, count);
+        if (time instanceof TimePeriod period) {
+            return filterWithPeriod(period, ref, false, count);
+        } else if (time instanceof TimeInstant instant) {
+            return filterWithInstant(instant, ref, count);
         } else {
             throw new UnsupportedTimeException(time);
         }

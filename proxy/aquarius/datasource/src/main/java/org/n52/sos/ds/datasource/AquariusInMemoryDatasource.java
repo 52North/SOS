@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -42,6 +43,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class AquariusInMemoryDatasource extends AbstractAquariusH2Datasource implements H2InMemory {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final String DIALECT = "Proxy Aquarius (in-memory)";

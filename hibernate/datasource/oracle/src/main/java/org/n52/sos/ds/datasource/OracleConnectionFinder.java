@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -44,6 +45,7 @@ import oracle.jdbc.OracleConnection;
  *
  */
 public class OracleConnectionFinder implements ConnectionFinder {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public static Connection getRawConnection(Connection con) {
@@ -62,12 +64,11 @@ public class OracleConnectionFinder implements ConnectionFinder {
             }
         }
 
-        if (conn instanceof OracleConnection) {
-            return (OracleConnection) conn;
+        if (conn instanceof OracleConnection connection) {
+            return connection;
         }
 
-        if (conn instanceof C3P0ProxyConnection) {
-            C3P0ProxyConnection cpCon = (C3P0ProxyConnection) conn;
+        if (conn instanceof C3P0ProxyConnection cpCon) {
             Connection unwrappedCon = null;
             try {
                 Method rawConnectionMethod =
@@ -77,13 +78,12 @@ public class OracleConnectionFinder implements ConnectionFinder {
             } catch (Throwable ex) {
                 throw new RuntimeException(ex.getMessage());
             }
-            if (unwrappedCon != null && unwrappedCon instanceof OracleConnection) {
-                return (OracleConnection) unwrappedCon;
+            if (unwrappedCon != null && unwrappedCon instanceof OracleConnection connection1) {
+                return connection1;
             }
         }
 
-        if (conn instanceof ProxyConnection) {
-            ProxyConnection cpCon = (ProxyConnection) conn;
+        if (conn instanceof ProxyConnection cpCon) {
             Connection unwrappedCon = null;
             try {
                 unwrappedCon = cpCon.unwrap(ProxyConnection.class);
@@ -94,8 +94,8 @@ public class OracleConnectionFinder implements ConnectionFinder {
             } catch (Throwable ex) {
                 throw new RuntimeException(ex.getMessage());
             }
-            if (unwrappedCon != null && unwrappedCon instanceof OracleConnection) {
-                return (OracleConnection) unwrappedCon;
+            if (unwrappedCon != null && unwrappedCon instanceof OracleConnection connection2) {
+                return connection2;
             }
         }
         throw new RuntimeException("Couldn't get Oracle Connection in OracleConnectionFinder");

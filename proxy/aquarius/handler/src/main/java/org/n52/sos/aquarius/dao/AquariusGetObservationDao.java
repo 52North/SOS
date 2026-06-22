@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -275,8 +275,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     private String getProcedureDescriptionFormat(String responseFormat) {
         Encoder<Object, Object> encoder =
                 encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder != null && encoder instanceof ObservationEncoder) {
-            return ((ObservationEncoder) encoder).getProcedureEncodingNamspace();
+        if (encoder != null && encoder instanceof ObservationEncoder observationEncoder) {
+            return observationEncoder.getProcedureEncodingNamspace();
         }
         return null;
     }

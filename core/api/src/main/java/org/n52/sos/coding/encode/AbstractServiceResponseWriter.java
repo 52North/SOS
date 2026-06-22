@@ -136,8 +136,8 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     }
 
     private MediaType getEncodedContentType(OwsServiceResponse asr) {
-        if (asr instanceof ResponseFormat) {
-            return getEncodedContentType((ResponseFormat) asr);
+        if (asr instanceof ResponseFormat format) {
+            return getEncodedContentType(format);
         }
         return getContentType();
     }

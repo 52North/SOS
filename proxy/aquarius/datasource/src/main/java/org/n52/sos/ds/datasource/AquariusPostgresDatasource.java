@@ -27,8 +27,11 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
+
 public class AquariusPostgresDatasource extends AbstractAquariusPostgresDatasource {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final String DIALECT = "Proxy Aquarius (Postgres)";

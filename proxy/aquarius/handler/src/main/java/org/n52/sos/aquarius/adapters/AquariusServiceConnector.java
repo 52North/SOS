@@ -27,7 +27,7 @@
  */
 package org.n52.sos.aquarius.adapters;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.sensorweb.server.helgoland.adapters.connector.AbstractConnector;
 import org.n52.sensorweb.server.helgoland.adapters.connector.AbstractServiceConstellation;

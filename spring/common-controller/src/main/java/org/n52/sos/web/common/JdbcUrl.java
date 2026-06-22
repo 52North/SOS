@@ -32,8 +32,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.core5.http.NameValuePair;
 
 /**
  * @since 4.0.0

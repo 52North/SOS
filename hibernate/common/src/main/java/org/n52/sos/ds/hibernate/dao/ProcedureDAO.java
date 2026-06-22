@@ -140,44 +140,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         LOGGER.trace("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
-
-    /**
-     * Get map keyed by undeleted procedure identifiers with collections of
-     * parent procedures (if supported) as values
-     *
-     * @param session
-     *            the session
-     * @return Map keyed by procedure identifier with values of parent procedure
-     *         identifier collections
-     */
-    public Map<String, Collection<String>> getProcedureIdentifiers(final Session session) {
-        Criteria criteria = getDefaultCriteria(session);
-        ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.property(ProcedureEntity.IDENTIFIER));
-        criteria.createAlias(ProcedureEntity.PROPERTY_PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
-        projectionList.add(Projections.property("pp." + ProcedureEntity.IDENTIFIER));
-        criteria.setProjection(projectionList);
-        // return as List<Object[]> even if there's only one column for
-        // consistency
-        criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
-
-        LOGGER.trace("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = criteria.list();
-        Map<String, Collection<String>> map = Maps.newHashMap();
-        for (Object[] result : results) {
-            String procedureIdentifier = (String) result[0];
-            String parentProcedureIdentifier = null;
-            parentProcedureIdentifier = (String) result[1];
-            if (parentProcedureIdentifier == null) {
-                map.put(procedureIdentifier, null);
-            } else {
-                CollectionHelper.addToCollectionMap(procedureIdentifier, parentProcedureIdentifier, map);
-            }
-        }
-        return map;
-    }
-
     /**
      * Get ProcedureEntity object for procedure identifier
      *
@@ -202,33 +164,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
         return procedure;
 
-    }
-    //
-    // private ProcedureEntity
-    // getProcedureWithLatestValidProcedureDescription(String
-    // identifier, Session session) {
-    // Criteria criteria = getDefaultCriteria(session);
-    // criteria.add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
-    // criteria.createCriteria(TProcedureEntity.VALID_PROCEDURE_TIME).add(
-    // Restrictions.isNull(ValidProcedureTime.END_TIME));
-    // LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE,
-    // HibernateHelper.getSqlString(criteria));
-    // return (ProcedureEntity) criteria.uniqueResult();
-    // }
-
-    /**
-     * Get ProcedureEntity object for procedure identifier
-     *
-     * @param identifier
-     *            ProcedureEntity identifier
-     * @param session
-     *            Hibernate session
-     * @return ProcedureEntity object
-     */
-    public ProcedureEntity getProcedureForIdentifier(final String identifier, Time time, final Session session) {
-        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
-        LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
-        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     /**
@@ -344,26 +279,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     /**
-     * Get ProcedureEntity objects for procedure identifiers
-     *
-     * @param identifiers
-     *            ProcedureEntity identifiers
-     * @param session
-     *            Hibernate session
-     * @return ProcedureEntity objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<ProcedureEntity> getProceduresForIdentifiers(final Collection<String> identifiers,
-            final Session session) {
-        if (identifiers == null || identifiers.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(ProcedureEntity.IDENTIFIER, identifiers));
-        LOGGER.trace("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
-
-    /**
      * Get procedure identifiers for all FOIs
      *
      * @param session
@@ -440,60 +355,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         return results;
     }
 
-    /**
-     * Get procedure identifiers for FOI
-     *
-     * @param session
-     *            Hibernate session
-     * @param feature
-     *            FOI object
-     *
-     * @return Related procedure identifiers
-     * @throws CodedException
-     *             If an error occurs
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getProceduresForAbstractFeatureEntity(final Session session,
-            final AbstractFeatureEntity feature) throws OwsExceptionReport {
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST, session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
-            namedQuery.setParameter(FEATURE, feature.getIdentifier());
-            LOGGER.trace("QUERY getProceduresForAbstractFeatureEntity(feature) with NamedQuery: {}",
-                    SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
-            return namedQuery.list();
-        } else {
-            Criteria c = null;
-            c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
-                    getDetachedCriteriaProceduresForAbstractFeatureEntityFromSeries(feature, session)));
-            c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
-            LOGGER.trace("QUERY getProceduresForAbstractFeatureEntity(feature): {}", HibernateHelper.getSqlString(c));
-            return c.list();
-        }
-    }
-
-    /**
-     * Get procedure identifiers for offering identifier
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return ProcedureEntity identifiers
-     * @throws CodedException
-     *             If an error occurs
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getProcedureIdentifiersForOffering(final String offeringIdentifier, final Session session)
-            throws OwsExceptionReport {
-        Criteria c = getDefaultCriteria(session);
-        c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
-                getDetachedCriteriaProceduresForOfferingFromObservationConstellation(offeringIdentifier, session)));
-        c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
-        LOGGER.trace("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
-                HibernateHelper.getSqlString(c));
-        return c.list();
-    }
 
     private Criteria getDefaultCriteria(Session session) {
         Criteria c = session.createCriteria(ProcedureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -504,34 +365,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             LOGGER.error("Error while creating defaut criteria!");
         }
         return c;
-    }
-
-    private Criteria getDefaultProcedureCriteriaIncludeDeleted(Session session) {
-        return session.createCriteria(ProcedureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
-
-    /**
-     * Get procedure identifiers for observable property identifier
-     *
-     * @param observablePropertyIdentifier
-     *            Observable property identifier
-     * @param session
-     *            Hibernate session
-     * @return ProcedureEntity identifiers
-     * @throws CodedException
-     *             If an error occurs
-     */
-    @SuppressWarnings("unchecked")
-    public Collection<String> getProcedureIdentifiersForObservableProperty(final String observablePropertyIdentifier,
-            final Session session) throws OwsExceptionReport {
-        Criteria c = getDefaultCriteria(session);
-        c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
-        c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
-                getDetachedCriteriaProceduresForObservablePropertyFromObservationConstellation(
-                        observablePropertyIdentifier, session)));
-        LOGGER.trace("QUERY getProcedureIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
-                HibernateHelper.getSqlString(c));
-        return c.list();
     }
 
     public boolean isProcedureTimeExtremaNamedQuerySupported(Session session) {
@@ -966,16 +799,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
         }
         return procedureFormatMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ProcedureEntity> getPublishedProcedure(Session session) throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
-            Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyNotIn(ProcedureEntity.PROPERTY_ID, getDetachedCriteriaSeries(session)));
-            return c.list();
-        }
-        return getProcedureObjects(session);
     }
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {

@@ -27,7 +27,7 @@
  */
 package org.n52.sos.web.common.auth;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;

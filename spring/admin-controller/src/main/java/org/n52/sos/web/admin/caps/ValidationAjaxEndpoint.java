@@ -91,9 +91,9 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
         while (iter.hasNext()) {
             XmlError error = iter.next();
             boolean shouldPass = false;
-            if (error instanceof XmlValidationError) {
+            if (error instanceof XmlValidationError validationError) {
                 for (LaxValidationCase lvc : LaxValidationCase.values()) {
-                    if (lvc.shouldPass((XmlValidationError) error)) {
+                    if (lvc.shouldPass(validationError)) {
                         shouldPass = true;
                         LOGGER.debug("Lax validation case found for XML validation error: {}", error);
                         break;

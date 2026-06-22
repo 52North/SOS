@@ -94,8 +94,8 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (response instanceof AbstractObservationResponse) {
-            return checkGetObservationResponse((AbstractObservationResponse) response);
+        if (response instanceof AbstractObservationResponse observationResponse) {
+            return checkGetObservationResponse(observationResponse);
         }
         return super.modifyResponse(request, response);
     }

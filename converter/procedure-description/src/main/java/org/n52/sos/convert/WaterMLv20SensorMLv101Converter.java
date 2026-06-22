@@ -87,23 +87,22 @@ public class WaterMLv20SensorMLv101Converter
     public AbstractFeature convert(AbstractFeature objectToConvert)
             throws ConverterException {
         if (objectToConvert.getDefaultElementEncoding().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
-                && objectToConvert instanceof ObservationProcess) {
-            return convertWML2ObservationProcessToSensorML101((ObservationProcess) objectToConvert);
+                && objectToConvert instanceof ObservationProcess process) {
+            return convertWML2ObservationProcessToSensorML101(process);
         } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
                 || objectToConvert.getDefaultElementEncoding()
                         .equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                && objectToConvert instanceof AbstractSensorML) {
-            return convertSensorML101ToWML2ObservationProcess((AbstractSensorML) objectToConvert);
-        } else if (objectToConvert instanceof SosProcedureDescription) {
-            return convert(((SosProcedureDescription) objectToConvert).getProcedureDescription());
+                && objectToConvert instanceof AbstractSensorML mL) {
+            return convertSensorML101ToWML2ObservationProcess(mL);
+        } else if (objectToConvert instanceof SosProcedureDescription description) {
+            return convert(description.getProcedureDescription());
         }
         return null;
     }
 
     private ObservationProcess convertSensorML101ToWML2ObservationProcess(final AbstractSensorML abstractSensorML) {
         ObservationProcess observationProcess = null;
-        if (abstractSensorML instanceof SensorML) {
-            final SensorML sensorML = (SensorML) abstractSensorML;
+        if (abstractSensorML instanceof SensorML sensorML) {
             if (sensorML.isWrapper()) {
                 for (AbstractProcess member : sensorML.getMembers()) {
                     observationProcess = new ObservationProcess(member.getIdentifierCodeWithAuthority());

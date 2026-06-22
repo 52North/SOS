@@ -72,10 +72,10 @@ public class WaterMLv20SeriesMetadataModifier
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (isWaterMLResponse(response) && response instanceof AbstractObservationResponse) {
+        if (isWaterMLResponse(response) && response instanceof AbstractObservationResponse observationResponse) {
             List<OmObservation> observations = new LinkedList<OmObservation>();
-            while (((AbstractObservationResponse) response).getObservationCollection().hasNext()) {
-                OmObservation o = ((AbstractObservationResponse) response).getObservationCollection().next();
+            while (observationResponse.getObservationCollection().hasNext()) {
+                OmObservation o = observationResponse.getObservationCollection().next();
                 observations.add(o);
                 if (!o.isSetValue()) {
                     continue;
@@ -87,15 +87,15 @@ public class WaterMLv20SeriesMetadataModifier
                     o.getValue().setMetadata(o.getObservationConstellation().getMetadata());
                 }
             }
-            return ((AbstractObservationResponse) response)
+            return observationResponse
                     .setObservationCollection(ObservationStream.of(observations));
         }
         return response;
     }
 
     private boolean isWaterMLResponse(OwsServiceResponse response) {
-        return response instanceof ResponseFormat && ((ResponseFormat) response).isSetResponseFormat()
-                && ((ResponseFormat) response).getResponseFormat().equals(WaterMLConstants.NS_WML_20);
+        return response instanceof ResponseFormat rf && rf.isSetResponseFormat()
+                && rf.getResponseFormat().equals(WaterMLConstants.NS_WML_20);
     }
 
 }

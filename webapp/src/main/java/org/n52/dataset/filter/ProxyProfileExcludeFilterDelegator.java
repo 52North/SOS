@@ -47,10 +47,10 @@ public class ProxyProfileExcludeFilterDelegator implements TypeFilter, Environme
     public void setEnvironment(Environment environment) {
         if (environment != null) {
             LOG.trace("EnvironmentAware environment: ", environment.getClass().getName());
-            if (environment instanceof ConfigurableEnvironment) {
+            if (environment instanceof ConfigurableEnvironment configurableEnvironment) {
                 LOG.trace("EnvironmentAware profiles: ",
-                        String.join(",", ((ConfigurableEnvironment) environment).getActiveProfiles()));
-                for (String profile : ((ConfigurableEnvironment) environment).getActiveProfiles()) {
+                        String.join(",", configurableEnvironment.getActiveProfiles()));
+                for (String profile : configurableEnvironment.getActiveProfiles()) {
                     if (profile.equalsIgnoreCase(PROXY)) {
                         setIsProxy();
                     }

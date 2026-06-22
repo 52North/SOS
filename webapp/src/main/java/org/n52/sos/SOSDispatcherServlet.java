@@ -27,7 +27,9 @@
  */
 package org.n52.sos;
 
-import javax.servlet.ServletContext;
+import java.io.Serial;
+
+import jakarta.servlet.ServletContext;
 
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.context.ContextSwitcher;
@@ -52,6 +54,7 @@ public class SOSDispatcherServlet extends DispatcherServlet implements ContextSw
     public static final String COMMON_CONFIG_LOCATION_PARAM = "commonConfigLocation";
     public static final String SETTINGS_CONFIG_LOCATION_PARAM = "settingsConfigLocation";
     private static final Logger LOG = LoggerFactory.getLogger(SOSDispatcherServlet.class);
+    @Serial
     private static final long serialVersionUID = -5390564503165988702L;
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     private boolean configured;
@@ -128,8 +131,8 @@ public class SOSDispatcherServlet extends DispatcherServlet implements ContextSw
         super.onRefresh(context);
         try {
             Object targetBean = context.getBean(CONTEXT_SWITCHER_BEAN_NAME);
-            if (targetBean instanceof HotSwappableTargetSource) {
-                ((HotSwappableTargetSource) targetBean).swap(this);
+            if (targetBean instanceof HotSwappableTargetSource source) {
+                source.swap(this);
             }
         } catch (NoSuchBeanDefinitionException e) {
             // ignore

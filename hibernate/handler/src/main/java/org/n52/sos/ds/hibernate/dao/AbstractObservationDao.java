@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
@@ -272,10 +272,9 @@ public abstract class AbstractObservationDao extends AbstractDaoImpl {
      */
     @SuppressWarnings("rawtypes")
     public void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
-        if (resultFilter instanceof ComparisonFilter) {
-            c.add(getCriterionForComparisonFilter((ComparisonFilter) resultFilter));
-        } else if (resultFilter instanceof BinaryLogicFilter) {
-            BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) resultFilter;
+        if (resultFilter instanceof ComparisonFilter filter) {
+            c.add(getCriterionForComparisonFilter(filter));
+        } else if (resultFilter instanceof BinaryLogicFilter binaryLogicFilter) {
             Junction junction;
             if (null == binaryLogicFilter.getOperator()) {
                 throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);

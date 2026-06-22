@@ -328,8 +328,8 @@ public abstract class DatasetFactory {
                 return text();
             } else if (o instanceof ComplexDataEntity) {
                 return complex();
-            } else if (o instanceof ProfileDataEntity) {
-                Optional<DataEntity<?>> value = ((ProfileDataEntity) o).getValue().stream().findFirst();
+            } else if (o instanceof ProfileDataEntity entity1) {
+                Optional<DataEntity<?>> value = entity1.getValue().stream().findFirst();
                 if (value.isPresent()) {
                     if (value.get() instanceof QuantityDataEntity) {
                         return quantityProfile();
@@ -340,8 +340,8 @@ public abstract class DatasetFactory {
                     }
                 }
                 return profile();
-            } else if (o instanceof TrajectoryDataEntity) {
-                Optional<DataEntity<?>> value = ((TrajectoryDataEntity) o).getValue().stream().findFirst();
+            } else if (o instanceof TrajectoryDataEntity entity) {
+                Optional<DataEntity<?>> value = entity.getValue().stream().findFirst();
                 if (value.isPresent()) {
                     if (value.get() instanceof QuantityDataEntity) {
                         return quantityTrajectory();

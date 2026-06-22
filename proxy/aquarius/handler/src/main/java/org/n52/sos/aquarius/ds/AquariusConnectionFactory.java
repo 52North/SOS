@@ -30,7 +30,7 @@ package org.n52.sos.aquarius.ds;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;

@@ -35,6 +35,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.xml.namespace.NamespaceContext;
 
@@ -313,7 +314,7 @@ public abstract class AbstractObservationTest extends AbstractCacheInitializatio
     }
 
     protected static double randomInRange(double min, double max, int decimalPlaces){
-        double unroundedValue = min + Math.random() * (max - min);
+        double unroundedValue = min + ThreadLocalRandom.current().nextDouble() * (max - min);
         double co = Math.pow(10, decimalPlaces);
         return Math.round(unroundedValue * co) / co;
     }

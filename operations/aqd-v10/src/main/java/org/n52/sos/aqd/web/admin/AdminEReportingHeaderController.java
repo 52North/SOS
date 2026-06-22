@@ -29,7 +29,7 @@ package org.n52.sos.aqd.web.admin;
 
 import java.util.Iterator;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.janmayen.Json;
 import org.n52.shetland.aqd.EReportObligationRepository;

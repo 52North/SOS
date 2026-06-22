@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.sos.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 
@@ -36,6 +38,7 @@ import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
  * @since 1.0.0
  */
 public class InvalidObservationParameterException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = -4544751541004584729L;
 
     public InvalidObservationParameterException(String value) {

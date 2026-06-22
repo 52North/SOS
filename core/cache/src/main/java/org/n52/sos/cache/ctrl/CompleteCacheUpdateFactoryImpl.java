@@ -27,7 +27,7 @@
  */
 package org.n52.sos.cache.ctrl;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;

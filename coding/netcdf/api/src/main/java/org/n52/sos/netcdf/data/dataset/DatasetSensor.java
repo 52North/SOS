@@ -59,8 +59,7 @@ public abstract class DatasetSensor implements Comparable<DatasetSensor> {
         if (this == anObject) {
             return true;
         }
-        if (anObject instanceof DatasetSensor) {
-            DatasetSensor anotherAbstractAsset = (DatasetSensor) anObject;
+        if (anObject instanceof DatasetSensor anotherAbstractAsset) {
             if (getSensorIdentifier().equals(anotherAbstractAsset.getSensorIdentifier())) {
                 return true;
             }

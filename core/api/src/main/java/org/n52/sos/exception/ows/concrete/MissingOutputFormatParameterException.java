@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 
@@ -35,6 +37,7 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
  *
  */
 public class MissingOutputFormatParameterException extends MissingParameterValueException {
+    @Serial
     private static final long serialVersionUID = 690794876954213194L;
 
     public MissingOutputFormatParameterException() {

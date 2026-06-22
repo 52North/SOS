@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -83,12 +83,11 @@ public abstract class AbstractResultHandlingHandler extends AbstractSosOperation
      */
     protected SweDataRecord setRecordFrom(final SweAbstractDataComponent resultStructure) throws OwsExceptionReport {
         SweDataRecord record = null;
-        if (resultStructure instanceof SweDataArray
+        if (resultStructure instanceof SweDataArray array
                 && ((SweDataArray) resultStructure).getElementType() instanceof SweDataRecord) {
-            final SweDataArray array = (SweDataArray) resultStructure;
             record = (SweDataRecord) array.getElementType();
-        } else if (resultStructure instanceof SweDataRecord) {
-            record = (SweDataRecord) resultStructure;
+        } else if (resultStructure instanceof SweDataRecord dataRecord) {
+            record = dataRecord;
         } else {
             throw new NoApplicableCodeException().withMessage("Unsupported ResultStructure!");
         }

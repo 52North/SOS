@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
@@ -44,7 +43,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -95,9 +94,9 @@ public class SosStaticCapabilitiesProvider implements StaticCapabilitiesProvider
 
     private Path buildPath() {
         if (configLocationProvider != null && configLocationProvider.get() != null) {
-            return Paths.get(configLocationProvider.get(), WEB_INF_PATH, CONFIG_PATH);
+            return Path.of(configLocationProvider.get(), WEB_INF_PATH, CONFIG_PATH);
         }
-        return Paths.get(WEB_INF_PATH, CONFIG_PATH);
+        return Path.of(WEB_INF_PATH, CONFIG_PATH);
     }
 
     private Path buildPath(String fileName) {

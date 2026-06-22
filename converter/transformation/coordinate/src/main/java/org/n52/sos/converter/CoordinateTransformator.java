@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -247,16 +247,16 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         checkRequestIfCrsIsSetAndSupported(request);
-        if (request instanceof GetFeatureOfInterestRequest) {
-            return modifyGetFeatureOfInterestRequest((GetFeatureOfInterestRequest) request);
-        } else if (request instanceof GetObservationRequest) {
-            return modifyGetObservationRequest((GetObservationRequest) request);
-        } else if (request instanceof GetResultRequest) {
-            return modifyGetResultRequest((GetResultRequest) request);
-        } else if (request instanceof InsertObservationRequest) {
-            return modifyInsertObservationRequest((InsertObservationRequest) request);
-        } else if (request instanceof InsertResultTemplateRequest) {
-            return modifyInsertResultTemplateRequest((InsertResultTemplateRequest) request);
+        if (request instanceof GetFeatureOfInterestRequest interestRequest) {
+            return modifyGetFeatureOfInterestRequest(interestRequest);
+        } else if (request instanceof GetObservationRequest observationRequest1) {
+            return modifyGetObservationRequest(observationRequest1);
+        } else if (request instanceof GetResultRequest resultRequest) {
+            return modifyGetResultRequest(resultRequest);
+        } else if (request instanceof InsertObservationRequest observationRequest) {
+            return modifyInsertObservationRequest(observationRequest);
+        } else if (request instanceof InsertResultTemplateRequest templateRequest) {
+            return modifyInsertResultTemplateRequest(templateRequest);
         }
         return request;
     }
@@ -264,18 +264,18 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (request instanceof GetFeatureOfInterestRequest && response instanceof GetFeatureOfInterestResponse) {
-            return modifyGetFeatureOfInterestResponse((GetFeatureOfInterestRequest) request,
-                    (GetFeatureOfInterestResponse) response);
-        } else if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
-            return modifyGetObservationResponse((GetObservationRequest) request, (GetObservationResponse) response);
-        } else if (request instanceof GetObservationByIdRequest && response instanceof GetObservationByIdResponse) {
-            return modifyGetObservationByIdResponse((GetObservationByIdRequest) request,
-                    (GetObservationByIdResponse) response);
-        } else if (request instanceof GetCapabilitiesRequest && response instanceof GetCapabilitiesResponse) {
-            return modifyGetCapabilitiesResponse((GetCapabilitiesRequest) request, (GetCapabilitiesResponse) response);
-        } else if (request instanceof DescribeSensorRequest && response instanceof DescribeSensorResponse) {
-            return modifyDescribeSensorResponse((DescribeSensorRequest) request, (DescribeSensorResponse) response);
+        if (request instanceof GetFeatureOfInterestRequest interestRequest && response instanceof GetFeatureOfInterestResponse interestResponse) {
+            return modifyGetFeatureOfInterestResponse(interestRequest,
+                    interestResponse);
+        } else if (request instanceof GetObservationRequest observationRequest && response instanceof GetObservationResponse observationResponse) {
+            return modifyGetObservationResponse(observationRequest, observationResponse);
+        } else if (request instanceof GetObservationByIdRequest idRequest && response instanceof GetObservationByIdResponse idResponse) {
+            return modifyGetObservationByIdResponse(idRequest,
+                    idResponse);
+        } else if (request instanceof GetCapabilitiesRequest capabilitiesRequest && response instanceof GetCapabilitiesResponse capabilitiesResponse) {
+            return modifyGetCapabilitiesResponse(capabilitiesRequest, capabilitiesResponse);
+        } else if (request instanceof DescribeSensorRequest sensorRequest && response instanceof DescribeSensorResponse sensorResponse) {
+            return modifyDescribeSensorResponse(sensorRequest, sensorResponse);
         }
         return response;
     }
@@ -490,10 +490,10 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If the transformation fails
      */
     private void checkAbstractSensorML(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
-        if (abstractSensorML instanceof SensorML) {
+        if (abstractSensorML instanceof SensorML mL) {
             checkCapabilitiesForObservedAreaAndTransform(abstractSensorML, targetCrs);
-            if (((SensorML) abstractSensorML).isSetMembers()) {
-                for (AbstractProcess member : ((SensorML) abstractSensorML).getMembers()) {
+            if (mL.isSetMembers()) {
+                for (AbstractProcess member : mL.getMembers()) {
                     checkCapabilitiesForObservedAreaAndTransform(member, targetCrs);
                     checkAbstractProcess(member, targetCrs);
                 }
@@ -514,22 +514,20 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If the transformation fails
      */
     private void checkAbstractProcess(AbstractSensorML abstractSensorML, int targetCrs) throws OwsExceptionReport {
-        if (abstractSensorML instanceof AbstractComponent) {
-            AbstractComponent abstractComponent = (AbstractComponent) abstractSensorML;
+        if (abstractSensorML instanceof AbstractComponent abstractComponent) {
             if (abstractComponent.isSetPosition()) {
                 transformPosition(abstractComponent.getPosition(), targetCrs);
             } else if (abstractComponent.isSetLocation()) {
                 transformLocation(abstractComponent.getLocation(), targetCrs);
             }
-            if (abstractComponent instanceof System && ((System) abstractComponent).isSetComponents()) {
-                for (SmlComponent component : ((System) abstractComponent).getComponents()) {
+            if (abstractComponent instanceof System system && system.isSetComponents()) {
+                for (SmlComponent component : system.getComponents()) {
                     if (component.isSetProcess()) {
                         checkAbstractSensorML(component.getProcess(), targetCrs);
                     }
                 }
             }
-        } else if (abstractSensorML instanceof AbstractPhysicalProcess) {
-            AbstractPhysicalProcess process = (AbstractPhysicalProcess) abstractSensorML;
+        } else if (abstractSensorML instanceof AbstractPhysicalProcess process) {
             if (process.isSetPosition()) {
                 transformPosition(process.getPosition(), targetCrs);
             }
@@ -792,8 +790,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
         if (crsExtension.isPresent()) {
             return getCrs(crsExtension.get());
-        } else if (request instanceof SrsNameRequest && ((SrsNameRequest) request).isSetSrsName()) {
-            return getCrs(((SrsNameRequest) request).getSrsName());
+        } else if (request instanceof SrsNameRequest nameRequest && nameRequest.isSetSrsName()) {
+            return getCrs(nameRequest.getSrsName());
         }
         return NOT_SET_EPSG;
     }
@@ -833,14 +831,14 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If an error occurs
      */
     private int getCrs(Object value) throws OwsExceptionReport {
-        if (value instanceof SweCount) {
-            return ((SweCount) value).getValue();
-        } else if (value instanceof Integer) {
-            return (Integer) value;
-        } else if (value instanceof SweText) {
-            return getCrsFromString(((SweText) value).getValue());
-        } else if (value instanceof String) {
-            return getCrsFromString((String) value);
+        if (value instanceof SweCount count) {
+            return count.getValue();
+        } else if (value instanceof Integer integer) {
+            return integer;
+        } else if (value instanceof SweText text) {
+            return getCrsFromString(text.getValue());
+        } else if (value instanceof String string) {
+            return getCrsFromString(string);
         }
         return NOT_SET_EPSG;
     }
@@ -1015,16 +1013,15 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private void processAbstractFeature(AbstractFeature feature, int targetCRS, int target3DCRS)
             throws OwsExceptionReport {
         if (feature != null) {
-            if (feature instanceof FeatureCollection) {
-                FeatureCollection featureCollection = (FeatureCollection) feature;
+            if (feature instanceof FeatureCollection featureCollection) {
                 for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-                    if (abstractFeature instanceof AbstractSamplingFeature) {
-                        checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) abstractFeature, targetCRS,
+                    if (abstractFeature instanceof AbstractSamplingFeature samplingFeature) {
+                        checkResponseGeometryOfSamplingFeature(samplingFeature, targetCRS,
                                 target3DCRS);
                     }
                 }
-            } else if (feature instanceof AbstractSamplingFeature) {
-                checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) feature, targetCRS, target3DCRS);
+            } else if (feature instanceof AbstractSamplingFeature samplingFeature1) {
+                checkResponseGeometryOfSamplingFeature(samplingFeature1, targetCRS, target3DCRS);
             }
         }
     }

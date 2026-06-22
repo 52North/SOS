@@ -57,22 +57,22 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 public class ParameterSweAbstractDataComponentCreator {
 
     public SweAbstractDataComponent visit(ParameterEntity parameter) throws OwsExceptionReport {
-        if (parameter instanceof QuantityParameterEntity) {
-            return visit((QuantityParameterEntity) parameter);
-        } else if (parameter instanceof CountParameterEntity) {
-            return visit((CountParameterEntity) parameter);
-        } else if (parameter instanceof BooleanParameterEntity) {
-            return visit((BooleanParameterEntity) parameter);
-        } else if (parameter instanceof CategoryParameterEntity) {
-            return visit((CategoryParameterEntity) parameter);
-        } else if (parameter instanceof TextParameterEntity) {
-            return visit((TextParameterEntity) parameter);
-        } else if (parameter instanceof XmlParameterEntity) {
-            return visit((XmlParameterEntity) parameter);
-        } else if (parameter instanceof JsonParameterEntity) {
-            return visit((JsonParameterEntity) parameter);
-        } else if (parameter instanceof ComplexParameterEntity) {
-            return visit((ComplexParameterEntity) parameter);
+        if (parameter instanceof QuantityParameterEntity entity7) {
+            return visit(entity7);
+        } else if (parameter instanceof CountParameterEntity entity6) {
+            return visit(entity6);
+        } else if (parameter instanceof BooleanParameterEntity entity5) {
+            return visit(entity5);
+        } else if (parameter instanceof CategoryParameterEntity entity4) {
+            return visit(entity4);
+        } else if (parameter instanceof TextParameterEntity entity3) {
+            return visit(entity3);
+        } else if (parameter instanceof XmlParameterEntity entity2) {
+            return visit(entity2);
+        } else if (parameter instanceof JsonParameterEntity entity1) {
+            return visit(entity1);
+        } else if (parameter instanceof ComplexParameterEntity entity) {
+            return visit(entity);
         }
         return null;
     }
@@ -98,8 +98,7 @@ public class ParameterSweAbstractDataComponentCreator {
     public SweDataRecord visit(ComplexParameterEntity<Set<?>> p) throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
         for (Object o : p.getValue()) {
-            if (o instanceof ParameterEntity) {
-                ParameterEntity param = (ParameterEntity) o;
+            if (o instanceof ParameterEntity param) {
                 String fieldName = getFieldName(param);
                 record.addField(new SweField(fieldName, this.visit(param)));
                 if (p.isSetDescription()) {
@@ -141,10 +140,9 @@ public class ParameterSweAbstractDataComponentCreator {
     protected <T extends SweAbstractDataComponent> T setCommonValues(T component, ValuedParameter<?> parameter)
             throws CodedException {
         if (parameter != null) {
-            if (parameter instanceof HasUnit && ((HasUnit) parameter).isSetUnit()
-                    && component instanceof SweAbstractUomType) {
-                SweAbstractUomType<?> uomType = (SweAbstractUomType<?>) component;
-                uomType.setUom(((HasUnit) parameter).getUnit()
+            if (parameter instanceof HasUnit unit && unit.isSetUnit()
+                    && component instanceof SweAbstractUomType<?> uomType) {
+                uomType.setUom(unit.getUnit()
                         .getUnit());
             }
         }

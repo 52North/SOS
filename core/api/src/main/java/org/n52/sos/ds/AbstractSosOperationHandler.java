@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -283,8 +283,7 @@ public abstract class AbstractSosOperationHandler
             String version) {
         Set<String> responseFormats = Sets.newHashSet();
         for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
-            if (e instanceof ObservationEncoder) {
-                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+            if (e instanceof ObservationEncoder<?, ?> oe) {
                 Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes =
                         oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObservationTypes != null
@@ -292,8 +291,8 @@ public abstract class AbstractSosOperationHandler
                     for (final Entry<String, Set<SupportedType>> entry : supportedResponseFormatObservationTypes
                             .entrySet()) {
                         for (SupportedType st : supportedResponseFormatObservationTypes.get(entry.getKey())) {
-                            if (st instanceof ObservationType
-                                    && observationType.equals(((ObservationType) st).getValue())) {
+                            if (st instanceof ObservationType type
+                                    && observationType.equals(type.getValue())) {
                                 responseFormats.add(entry.getKey());
                             }
                         }

@@ -27,7 +27,7 @@
  */
 package org.n52.series.db.da.sos;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;

@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -59,6 +60,7 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
 public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasicType<Date>
         implements VersionType<Date>, LiteralType<Date> {
 
+    @Serial
     private static final long serialVersionUID = 6234953333051964645L;
 
     /**

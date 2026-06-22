@@ -338,8 +338,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
 
     default void delete(DataEntity<?> observation, Session session) {
         if (observation != null) {
-            if (observation instanceof CompositeDataEntity) {
-                for (DataEntity<?> o : ((CompositeDataEntity) observation).getValue()) {
+            if (observation instanceof CompositeDataEntity entity) {
+                for (DataEntity<?> o : entity.getValue()) {
                     delete(o, session);
                 }
             }

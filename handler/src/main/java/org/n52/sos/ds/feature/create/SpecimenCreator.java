@@ -58,8 +58,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<SpecimenEnt
     @Override
     public AbstractFeature create(SpecimenEntity f) throws OwsExceptionReport {
         AbstractFeature absFeat = createFeature(f);
-        if (absFeat instanceof SfSpecimen) {
-            SfSpecimen specimen = (SfSpecimen) absFeat;
+        if (absFeat instanceof SfSpecimen specimen) {
             specimen.setMaterialClass(new ReferenceType(f.getMaterialClass()));
             specimen.setSamplingTime(getSamplingTime(f));
             if (f.isSetSamplingMethod()) {

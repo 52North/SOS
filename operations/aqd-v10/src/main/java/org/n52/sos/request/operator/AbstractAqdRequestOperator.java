@@ -29,7 +29,7 @@ package org.n52.sos.request.operator;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.request.handler.OperationHandler;

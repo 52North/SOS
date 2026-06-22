@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.util.procedure;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
@@ -231,7 +231,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
     @VisibleForTesting
     boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat procedure,
             String requestedFormat, String descriptionFormat) throws OwsExceptionReport {
-        if (procedure instanceof HasXml && descriptionFormat != null && ((HasXml) procedure).isSetXml()
+        if (procedure instanceof HasXml xml && descriptionFormat != null && xml.isSetXml()
                 || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat)
                     || existConverter(descriptionFormat, requestedFormat)) {
@@ -249,8 +249,8 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
     }
 
     private boolean checkForDescriptionFile(HasProcedureDescriptionFormat procedure) {
-        if (procedure instanceof ProcedureEntity) {
-            return ((ProcedureEntity) procedure).isSetDescription();
+        if (procedure instanceof ProcedureEntity entity) {
+            return entity.isSetDescription();
         }
         return false;
     }
@@ -360,8 +360,8 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
                     getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 AbstractFeature convert = converter.convert(description);
-                if (convert instanceof SosProcedureDescription) {
-                    return (SosProcedureDescription<?>) convert;
+                if (convert instanceof SosProcedureDescription<?> procedureDescription) {
+                    return procedureDescription;
                 } else {
                     return new SosProcedureDescription<AbstractFeature>(convert).add(description);
                 }

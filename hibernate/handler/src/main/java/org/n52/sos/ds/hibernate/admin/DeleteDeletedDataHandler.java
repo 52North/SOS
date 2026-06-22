@@ -29,7 +29,7 @@ package org.n52.sos.ds.hibernate.admin;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
@@ -122,8 +122,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     private OwsServiceResponse changeOmParameterValues(
             OwsServiceResponse response) {
-        if (response instanceof AbstractObservationResponse) {
-            AbstractObservationResponse observationResponse = (AbstractObservationResponse) response;
+        if (response instanceof AbstractObservationResponse observationResponse) {
             observationResponse.setObservationCollection(observationResponse.getObservationCollection().modify(o -> {
                 checkOmParameterForEReporting(o.getParameter());
             }));
@@ -322,8 +321,8 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature.getIdentifier()));
-        if (abstractFeature instanceof AbstractSamplingFeature
-                && ((AbstractSamplingFeature) abstractFeature).isSetXml()) {
+        if (abstractFeature instanceof AbstractSamplingFeature feature
+                && feature.isSetXml()) {
             abstractFeature.setXml(null);
         }
     }

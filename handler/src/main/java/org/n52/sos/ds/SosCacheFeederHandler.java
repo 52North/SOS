@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.joda.time.Period;

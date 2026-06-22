@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang3.tuple.MutablePair;

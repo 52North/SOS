@@ -27,7 +27,7 @@
  */
 package org.n52.sos.web.admin;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

@@ -50,7 +50,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.n52.iceland.cache.ContentCacheController;
@@ -116,9 +116,9 @@ public class SosContentCacheControllerImpl extends AbstractSchedulingContentCach
         if (optionalCache.isPresent()) {
             setCache(optionalCache.get());
             if (getCache() instanceof AbstractStaticSosContentCache
-                    && this.cacheFactory instanceof ContentCacheFactoryImpl) {
+                    && this.cacheFactory instanceof ContentCacheFactoryImpl impl) {
                 ((AbstractStaticSosContentCache) getCache()).setSupportedTypeRepository(
-                        ((ContentCacheFactoryImpl) this.cacheFactory).getSupportedTypeRepository());
+                        impl.getSupportedTypeRepository());
             }
         } else {
             // cache file doesn't exist, try to load cache from datasource

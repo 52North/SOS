@@ -137,10 +137,10 @@ public class RelatedFeatureDAO {
             final RelatedFeatureEntity relFeat = new RelatedFeatureEntity();
             String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
-            if (feature instanceof AbstractSamplingFeature) {
+            if (feature instanceof AbstractSamplingFeature samplingFeature) {
                 identifier =
-                        daoFactory.getFeatureQueryHandler().insertFeature((AbstractSamplingFeature) feature, session);
-                url = ((AbstractSamplingFeature) feature).getUrl();
+                        daoFactory.getFeatureQueryHandler().insertFeature(samplingFeature, session);
+                url = samplingFeature.getUrl();
             }
             relFeat.setFeature(daoFactory.getFeatureOfInterestDAO().getOrInsert(identifier, url, session));
             relFeat.setRole(role);

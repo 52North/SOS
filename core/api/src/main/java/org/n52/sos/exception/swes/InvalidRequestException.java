@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.swes;
 
+import java.io.Serial;
+
 import org.n52.janmayen.http.HTTPStatus;
 
 import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
@@ -39,6 +41,7 @@ import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
  * @since 4.0.0
  */
 public class InvalidRequestException extends CodedSwesException {
+    @Serial
     private static final long serialVersionUID = 716704289288231167L;
 
     public InvalidRequestException() {

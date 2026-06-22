@@ -60,9 +60,7 @@ public class HibernateProcedureDescriptionGeneratorKey
 
     @Override
     public boolean equals(Object paramObject) {
-        if (paramObject instanceof HibernateProcedureDescriptionGeneratorKey) {
-            HibernateProcedureDescriptionGeneratorKey toCheck
-                    = (HibernateProcedureDescriptionGeneratorKey) paramObject;
+        if (paramObject instanceof HibernateProcedureDescriptionGeneratorKey toCheck) {
             return Objects.equals(getDescriptionFormat(), toCheck.getDescriptionFormat());
         }
         return false;

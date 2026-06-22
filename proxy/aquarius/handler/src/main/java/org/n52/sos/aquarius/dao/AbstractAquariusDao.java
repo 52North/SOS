@@ -29,7 +29,7 @@ package org.n52.sos.aquarius.dao;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.faroe.annotation.Setting;
@@ -80,7 +80,7 @@ public abstract class AbstractAquariusDao implements DefaultDao {
     }
 
     protected AquariusConnector getAquariusConnector(Object connection) throws ConnectionProviderException {
-        return connection != null && connection instanceof AquariusConnector ? (AquariusConnector) connection
+        return connection != null && connection instanceof AquariusConnector ac ? ac
                 : getAquariusConnector();
     }
 

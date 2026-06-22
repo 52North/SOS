@@ -942,8 +942,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                             .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
             LOGGER.trace("QUERY getGlobalTemporalBoundingBox(): {}", HibernateHelper.getSqlString(criteria));
             Object temporalBoundingBox = criteria.uniqueResult();
-            if (temporalBoundingBox instanceof Object[]) {
-                Object[] record = (Object[]) temporalBoundingBox;
+            if (temporalBoundingBox instanceof Object[] record) {
                 TimePeriod bBox =
                         createTimePeriod((Timestamp) record[0], (Timestamp) record[1], (Timestamp) record[2]);
                 return bBox;
@@ -1120,8 +1119,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void addPhenomenonTimeToObservation(DataEntity<?> observation, Time phenomenonTime)
             throws OwsExceptionReport {
-        if (phenomenonTime instanceof TimeInstant) {
-            TimeInstant time = (TimeInstant) phenomenonTime;
+        if (phenomenonTime instanceof TimeInstant time) {
             if (time.isSetValue()) {
                 observation.setSamplingTimeStart(time.getValue().toDate());
                 observation.setSamplingTimeEnd(time.getValue().toDate());
@@ -1132,8 +1130,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 throw new MissingParameterValueException("gml:TimeInstant/gml:timePosition");
             }
-        } else if (phenomenonTime instanceof TimePeriod) {
-            TimePeriod time = (TimePeriod) phenomenonTime;
+        } else if (phenomenonTime instanceof TimePeriod time) {
             if (time.isSetStart()) {
                 observation.setSamplingTimeStart(time.getStart().toDate());
             } else if (time.isSetStartIndeterminateValue()) {
@@ -1174,12 +1171,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             if (resultTime.isSetValue()) {
                 observation.setResultTime(resultTime.getValue().toDate());
             } else if (resultTime.isSetGmlId() && resultTime.getGmlId().contains(Sos2Constants.EN_PHENOMENON_TIME)
-                    && phenomenonTime instanceof TimeInstant) {
-                if (((TimeInstant) phenomenonTime).isSetValue()) {
-                    observation.setResultTime(((TimeInstant) phenomenonTime).getValue().toDate());
-                } else if (((TimeInstant) phenomenonTime).isSetIndeterminateValue()) {
+                    && phenomenonTime instanceof TimeInstant instant) {
+                if (instant.isSetValue()) {
+                    observation.setResultTime(instant.getValue().toDate());
+                } else if (instant.isSetIndeterminateValue()) {
                     observation.setResultTime(getDateForTimeIndeterminateValue(
-                            ((TimeInstant) phenomenonTime).getIndeterminateValue(), INETERMINATE_POSITION_XPATH));
+                            instant.getIndeterminateValue(), INETERMINATE_POSITION_XPATH));
                 } else {
                     throw new NoApplicableCodeException().withMessage(ERROR_ADDING_RESULT_TIME_LOG);
                 }
@@ -1189,8 +1186,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 throw new NoApplicableCodeException().withMessage(ERROR_ADDING_RESULT_TIME_LOG);
             }
-        } else if (phenomenonTime instanceof TimeInstant) {
-            observation.setResultTime(((TimeInstant) phenomenonTime).getValue().toDate());
+        } else if (phenomenonTime instanceof TimeInstant instant1) {
+            observation.setResultTime(instant1.getValue().toDate());
         } else {
             throw new NoApplicableCodeException().withMessage(ERROR_ADDING_RESULT_TIME_LOG);
         }

@@ -67,13 +67,13 @@ public abstract class AbstractInspireOmpr30SensorMLConverter
             List<AbstractSmlDocumentation> documentations) {
         List<DocumentCitation> documentationCitations = Lists.newArrayList();
         for (AbstractSmlDocumentation documentation : documentations) {
-            if (documentation instanceof SmlDocumentationList) {
-                for (SmlDocumentationListMember member : ((SmlDocumentationList) documentation).getMember()) {
+            if (documentation instanceof SmlDocumentationList list) {
+                for (SmlDocumentationListMember member : list.getMember()) {
                     documentationCitations.add(convertDocumentationCitationToDocumentation(member.getDocumentation()));
                 }
-            } else if (documentation instanceof SmlDocumentation) {
+            } else if (documentation instanceof SmlDocumentation smlDocumentation) {
                 documentationCitations
-                        .add(convertDocumentationCitationToDocumentation((SmlDocumentation) documentation));
+                        .add(convertDocumentationCitationToDocumentation(smlDocumentation));
             }
         }
         return documentationCitations;
@@ -233,8 +233,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter
     protected List<RelatedParty> convertContactsToResponsibleParties(List<SmlContact> contacts) {
         List<RelatedParty> relatedParties = Lists.newArrayList();
         for (SmlContact contact : contacts) {
-            if (contact instanceof SmlResponsibleParty) {
-                SmlResponsibleParty smlResponsibleParty = (SmlResponsibleParty) contact;
+            if (contact instanceof SmlResponsibleParty smlResponsibleParty) {
                 RelatedParty relatedParty = new RelatedParty();
                 if (smlResponsibleParty.isSetIndividualName()) {
                     relatedParty.setIndividualName(getPTFreeText(smlResponsibleParty.getIndividualName()));

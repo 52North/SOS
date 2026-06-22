@@ -365,17 +365,17 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
             throws DecodingException {
         try {
             Filter<?> filter = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
-            if (filter instanceof BinaryLogicFilter) {
-                for (Filter<?> f : ((BinaryLogicFilter) filter).getFilterPredicates()) {
-                    if (f instanceof SpatialFilter) {
-                        request.addExtension(new SosSpatialFilter((SpatialFilter) f));
+            if (filter instanceof BinaryLogicFilter logicFilter) {
+                for (Filter<?> f : logicFilter.getFilterPredicates()) {
+                    if (f instanceof SpatialFilter spatialFilter) {
+                        request.addExtension(new SosSpatialFilter(spatialFilter));
                     } else {
                         request.addExtension(new ResultFilter(f));
                     }
                 }
             } else {
-                if (filter instanceof SpatialFilter) {
-                    request.addExtension(new SosSpatialFilter((SpatialFilter) filter));
+                if (filter instanceof SpatialFilter spatialFilter1) {
+                    request.addExtension(new SosSpatialFilter(spatialFilter1));
                 } else if (filter instanceof ComparisonFilter) {
                     request.addExtension(new ResultFilter(filter));
                 } else {
@@ -400,12 +400,11 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     }
 
     private Filter<?> convertFilter(Filter<?> filter) throws DecodingException, OwsExceptionReport {
-        if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter) {
-            return convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter);
-        } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
-            return convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter);
-        } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
-            BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) filter;
+        if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter comparisonFilter) {
+            return convertComparisonFilter(comparisonFilter);
+        } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter spatialFilter) {
+            return convertSpatialFilter(spatialFilter);
+        } else if (filter instanceof BinaryLogicFilter binaryLogicFilter) {
             Set<Filter<?>> checkForBetweenComparisonFilter =
                     checkForBetweenComparisonFilter(binaryLogicFilter.getFilterPredicates());
             if (checkForBetweenComparisonFilter.size() == 1
@@ -500,12 +499,11 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         Set<Filter<?>> prepared = new LinkedHashSet<>();
         ComparisonFilter ge = null;
         for (Filter<?> filter : set) {
-            if (filter instanceof ComparisonFilter) {
+            if (filter instanceof ComparisonFilter le) {
                 if (filter.getOperator().equals(FilterConstants.ComparisonOperator.PropertyIsGreaterThanOrEqualTo)) {
-                    ge = (ComparisonFilter) filter;
+                    ge = le;
                 } else if (filter.getOperator().equals(FilterConstants.ComparisonOperator.PropertyIsLessThanOrEqualTo)
                         && ge != null) {
-                    ComparisonFilter le = (ComparisonFilter) filter;
                     prepared.add(new ComparisonFilter(FilterConstants.ComparisonOperator.PropertyIsBetween,
                             ge.getValueReference(), ge.getValue(), le.getValue()));
                     ge = null;

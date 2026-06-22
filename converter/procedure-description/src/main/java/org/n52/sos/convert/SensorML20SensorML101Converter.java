@@ -100,14 +100,14 @@ public class SensorML20SensorML101Converter
 
     @Override
     public AbstractFeature convert(AbstractFeature objectToConvert) throws ConverterException {
-        if (objectToConvert instanceof AbstractSensorML) {
-            return convert((AbstractSensorML) objectToConvert);
-        } else if (objectToConvert instanceof SosProcedureDescription
+        if (objectToConvert instanceof AbstractSensorML mL) {
+            return convert(mL);
+        } else if (objectToConvert instanceof SosProcedureDescription description
                 && ((SosProcedureDescription) objectToConvert).getProcedureDescription() instanceof AbstractSensorML) {
             AbstractSensorML convert =
-                    convert((AbstractSensorML) ((SosProcedureDescription) objectToConvert).getProcedureDescription());
+                    convert((AbstractSensorML) description.getProcedureDescription());
             SosProcedureDescription sosProcedureDescription = new SosProcedureDescription(convert);
-            sosProcedureDescription.add((SosProcedureDescription) objectToConvert);
+            sosProcedureDescription.add(description);
             sosProcedureDescription.setDescriptionFormat(convert.getDefaultElementEncoding());
             return sosProcedureDescription;
         }
@@ -131,14 +131,14 @@ public class SensorML20SensorML101Converter
 
     private AbstractSensorML convertSensorML20ToSensorML101(AbstractSensorML objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof PhysicalSystem) {
-            return toSystem((PhysicalSystem) objectToConvert);
-        } else if (objectToConvert instanceof PhysicalComponent) {
-            return toComponent((PhysicalComponent) objectToConvert);
-        } else if (objectToConvert instanceof SimpleProcess) {
-            return toProcessModel((SimpleProcess) objectToConvert);
-        } else if (objectToConvert instanceof AggregateProcess) {
-            return toProcessChain((AggregateProcess) objectToConvert);
+        if (objectToConvert instanceof PhysicalSystem system) {
+            return toSystem(system);
+        } else if (objectToConvert instanceof PhysicalComponent component) {
+            return toComponent(component);
+        } else if (objectToConvert instanceof SimpleProcess process1) {
+            return toProcessModel(process1);
+        } else if (objectToConvert instanceof AggregateProcess process) {
+            return toProcessChain(process);
         }
         throw new ConverterException(
                 String.format(NOT_SUPPORTED_FORMAT, objectToConvert.getClass().getName()));
@@ -183,9 +183,9 @@ public class SensorML20SensorML101Converter
 
     private AbstractSensorML convertSensorML101ToSensorML20(AbstractSensorML objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof SensorML) {
-            if (((SensorML) objectToConvert).isSetMembers()) {
-                return convertSml101AbstractProcess(((SensorML) objectToConvert).getMembers().iterator().next());
+        if (objectToConvert instanceof SensorML mL) {
+            if (mL.isSetMembers()) {
+                return convertSml101AbstractProcess(mL.getMembers().iterator().next());
             }
         } else {
             return convertSml101AbstractProcess(objectToConvert);
@@ -196,14 +196,14 @@ public class SensorML20SensorML101Converter
 
     private AbstractSensorML convertSml101AbstractProcess(AbstractSensorML objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof System) {
-            return toPhysicalSystem((System) objectToConvert);
-        } else if (objectToConvert instanceof Component) {
-            return toPhysicalComponent((Component) objectToConvert);
-        } else if (objectToConvert instanceof ProcessModel) {
-            return toSimpleProcess((ProcessModel) objectToConvert);
-        } else if (objectToConvert instanceof ProcessChain) {
-            return toAggregateProcess((ProcessChain) objectToConvert);
+        if (objectToConvert instanceof System system) {
+            return toPhysicalSystem(system);
+        } else if (objectToConvert instanceof Component component) {
+            return toPhysicalComponent(component);
+        } else if (objectToConvert instanceof ProcessModel model) {
+            return toSimpleProcess(model);
+        } else if (objectToConvert instanceof ProcessChain chain) {
+            return toAggregateProcess(chain);
         }
         throw new ConverterException(
                 String.format(NOT_SUPPORTED_TYPE, objectToConvert.getClass().getName()));

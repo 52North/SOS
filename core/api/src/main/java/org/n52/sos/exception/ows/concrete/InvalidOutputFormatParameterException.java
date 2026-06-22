@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.sos.Sos1Constants.DescribeSensorParams;
 
@@ -35,6 +37,7 @@ import org.n52.shetland.ogc.sos.Sos1Constants.DescribeSensorParams;
  *
  */
 public class InvalidOutputFormatParameterException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = 21928020999418921L;
 
     public InvalidOutputFormatParameterException(String value) {

@@ -254,12 +254,12 @@ public class EReportingHelper {
     }
 
     private void addTimes(List<String> value, Time time) {
-        if (time instanceof TimeInstant) {
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
-        } else if (time instanceof TimePeriod) {
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getStart()));
-            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getEnd()));
+        if (time instanceof TimeInstant instant) {
+            value.add(DateTimeHelper.formatDateTime2IsoString(instant.getValue()));
+            value.add(DateTimeHelper.formatDateTime2IsoString(instant.getValue()));
+        } else if (time instanceof TimePeriod period) {
+            value.add(DateTimeHelper.formatDateTime2IsoString(period.getStart()));
+            value.add(DateTimeHelper.formatDateTime2IsoString(period.getEnd()));
         } else {
             value.add("");
             value.add("");

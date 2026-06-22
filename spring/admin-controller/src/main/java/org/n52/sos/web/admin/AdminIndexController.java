@@ -30,7 +30,7 @@ package org.n52.sos.web.admin;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.json.JsonConfigurationDao;
@@ -65,8 +65,7 @@ public class AdminIndexController extends AbstractController {
     public ModelAndView get() {
         boolean warn = false;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof AdministratorUserPrinciple) {
-            AdministratorUserPrinciple administratorUserPrinciple = (AdministratorUserPrinciple) principal;
+        if (principal instanceof AdministratorUserPrinciple administratorUserPrinciple) {
             if (administratorUserPrinciple.isDefaultAdmin()) {
                 warn = true;
             }

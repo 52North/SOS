@@ -27,12 +27,15 @@
  */
 package org.n52.sos.exception;
 
+import java.io.Serial;
+
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class NoSuchExtensionException extends NoSuchIdentifierException {
 
+    @Serial
     private static final long serialVersionUID = -5022283079955685072L;
 
     public NoSuchExtensionException(String identifier) {

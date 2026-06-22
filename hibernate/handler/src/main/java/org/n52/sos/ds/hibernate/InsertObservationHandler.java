@@ -33,8 +33,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -272,8 +272,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
-        if (pe instanceof ConstraintViolationException) {
-            handleConstraintViolationException((ConstraintViolationException) pe, pe, status);
+        if (pe instanceof ConstraintViolationException exception) {
+            handleConstraintViolationException(exception, pe, status);
         } else if (pe.getCause() instanceof ConstraintViolationException) {
             handleConstraintViolationException((ConstraintViolationException) pe.getCause(), pe, status);
         } else {

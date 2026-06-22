@@ -27,7 +27,7 @@
  */
 package org.n52.sos.web.common;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.n52.iceland.util.AbstractEnumPropertiesFileHandler;
 

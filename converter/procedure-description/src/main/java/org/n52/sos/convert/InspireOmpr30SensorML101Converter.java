@@ -87,8 +87,7 @@ public class InspireOmpr30SensorML101Converter
     @Override
     public AbstractFeature convert(AbstractFeature objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof SosProcedureDescription<?>) {
-            SosProcedureDescription<?> o = (SosProcedureDescription<?>) objectToConvert;
+        if (objectToConvert instanceof SosProcedureDescription<?> o) {
             if (InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL.equals(o.getDescriptionFormat())
                     || InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE.equals(o.getDescriptionFormat())) {
                 return convertInspireOmpr30ToSensorML101(o);

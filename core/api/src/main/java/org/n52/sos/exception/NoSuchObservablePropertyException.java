@@ -27,12 +27,15 @@
  */
 package org.n52.sos.exception;
 
+import java.io.Serial;
+
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class NoSuchObservablePropertyException extends NoSuchIdentifierException {
 
+    @Serial
     private static final long serialVersionUID = -8140046013207830590L;
 
     public NoSuchObservablePropertyException(String identifier) {

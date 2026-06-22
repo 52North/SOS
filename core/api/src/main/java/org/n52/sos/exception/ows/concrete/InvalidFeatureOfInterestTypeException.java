@@ -28,7 +28,10 @@
 package org.n52.sos.exception.ows.concrete;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+
+import java.io.Serial;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -36,6 +39,7 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
  * @since 4.0.0
  */
 public class InvalidFeatureOfInterestTypeException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = 4225597475733453751L;
 
     public InvalidFeatureOfInterestTypeException(String value) {

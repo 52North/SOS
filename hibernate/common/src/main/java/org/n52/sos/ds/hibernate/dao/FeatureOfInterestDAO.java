@@ -363,8 +363,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         if (feature != null) {
             return feature;
         }
-        if (featureOfInterest instanceof AbstractSamplingFeature) {
-            AbstractSamplingFeature sf = (AbstractSamplingFeature) featureOfInterest;
+        if (featureOfInterest instanceof AbstractSamplingFeature sf) {
             String featureIdentifier = getFeatureQueryHandler().insertFeature(sf, session);
             return getFeature(featureIdentifier, session);
         } else {
@@ -516,30 +515,29 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 boolean add) throws OwsExceptionReport {
             if (add) {
                 dao.addIdentifierNameDescription(abstractFeature, feature, session);
-                if (abstractFeature instanceof FeatureWithGeometry) {
-                    if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
+                if (abstractFeature instanceof FeatureWithGeometry geometry) {
+                    if (geometry.isSetGeometry()) {
                         feature.setGeometry(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
-                                ((FeatureWithGeometry) abstractFeature).getGeometry()));
+                                geometry.getGeometry()));
                     }
                 }
                 if (abstractFeature.isSetXml()) {
                     feature.setXml(abstractFeature.getXml());
                 }
-                if (abstractFeature instanceof FeatureWithFeatureType
-                        && ((FeatureWithFeatureType) abstractFeature).isSetFeatureType()) {
+                if (abstractFeature instanceof FeatureWithFeatureType type
+                        && type.isSetFeatureType()) {
                     feature.setFeatureType(new FormatDAO().getOrInsertFormatEntity(
-                            ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
+                            type.getFeatureType(), session));
                 }
-                if (abstractFeature instanceof AbstractSamplingFeature) {
-                    AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) abstractFeature;
+                if (abstractFeature instanceof AbstractSamplingFeature samplingFeature) {
                     if (samplingFeature.isSetSampledFeatures()) {
                         Set<AbstractFeatureEntity> parents =
                                 Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
                         for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
                             if (!OGCConstants.UNKNOWN
                                     .equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
-                                if (sampledFeature instanceof AbstractSamplingFeature) {
-                                    parents.add(dao.insertFeature((AbstractSamplingFeature) sampledFeature, session));
+                                if (sampledFeature instanceof AbstractSamplingFeature abstractSamplingFeature) {
+                                    parents.add(dao.insertFeature(abstractSamplingFeature, session));
                                 } else {
                                     parents.add(dao.insertFeature(
                                             new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()),
@@ -550,11 +548,11 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                         feature.setParents(parents);
                     }
                 }
-                if (abstractFeature instanceof AbstractSamplingFeature
-                        && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
+                if (abstractFeature instanceof AbstractSamplingFeature samplingFeature1
+                        && samplingFeature1.isSetParameter()) {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
                     new ParameterCreator().createParameter(
-                            ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, feature, session);
+                            samplingFeature1.getParameters(), unitCache, feature, session);
                 }
                 session.saveOrUpdate(feature);
                 session.flush();

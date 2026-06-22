@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -34,6 +35,7 @@ public class QualifierKey implements Serializable {
 
     public static final String BELOW = "below";
     public static final String ABOVE = "above";
+    @Serial
     private static final long serialVersionUID = 1671220620564807413L;
     private final String value;
 
@@ -53,8 +55,7 @@ public class QualifierKey implements Serializable {
         if (!(obj instanceof QualifierKey || obj instanceof String)) {
             return false;
         }
-        if (obj instanceof String) {
-            String that = (String) obj;
+        if (obj instanceof String that) {
             return Objects.equals(this.getValue(), that);
         }
         QualifierKey that = (QualifierKey) obj;

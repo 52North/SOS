@@ -39,6 +39,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.1.0</version>
+    </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
             <artifactId>db-model-types</artifactId>
@@ -54,9 +59,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <scope>provided</scope>
+      <version>6.1.7.Final</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

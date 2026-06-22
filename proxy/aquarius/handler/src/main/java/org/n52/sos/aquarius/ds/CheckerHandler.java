@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import com.aquaticinformatics.aquarius.sdk.timeseries.servicemodels.Publish.Time
 
 public class CheckerHandler implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private Set<IntervalCheckerAndApplyer> checkers = new LinkedHashSet<>();
 

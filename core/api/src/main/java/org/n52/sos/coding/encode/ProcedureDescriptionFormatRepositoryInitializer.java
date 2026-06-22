@@ -27,7 +27,7 @@
  */
 package org.n52.sos.coding.encode;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.lifecycle.Constructable;

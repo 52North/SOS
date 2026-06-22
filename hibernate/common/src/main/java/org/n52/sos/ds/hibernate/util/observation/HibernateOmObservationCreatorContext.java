@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.binding.BindingRepository;

@@ -30,7 +30,7 @@ package org.n52.sos.web.install;
 import java.io.File;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

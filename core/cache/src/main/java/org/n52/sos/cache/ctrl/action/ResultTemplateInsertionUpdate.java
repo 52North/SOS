@@ -94,8 +94,8 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
                     featureOfInterest.getFirstName().getValue());
             cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
             cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
-            if (featureOfInterest instanceof SamplingFeature && ((SamplingFeature) featureOfInterest).isSetGeometry()) {
-                Geometry geometry = ((SamplingFeature) featureOfInterest).getGeometry();
+            if (featureOfInterest instanceof SamplingFeature feature && feature.isSetGeometry()) {
+                Geometry geometry = feature.getGeometry();
                 cache.updateGlobalEnvelope(geometry.getEnvelopeInternal());
                 for (String offering : request.getObservationTemplate().getOfferings()) {
                     cache.updateEnvelopeForOffering(offering, geometry.getEnvelopeInternal());
@@ -104,8 +104,7 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         }
 
         AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();
-        if (observableProperty instanceof OmCompositePhenomenon) {
-            OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
+        if (observableProperty instanceof OmCompositePhenomenon parent) {
             cache.addCompositePhenomenon(parent.getIdentifier());
             cache.addCompositePhenomenonForProcedure(request.getObservationTemplate().getProcedureIdentifier(),
                     parent.getIdentifier());

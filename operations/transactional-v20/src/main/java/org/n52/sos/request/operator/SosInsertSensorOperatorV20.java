@@ -242,8 +242,8 @@ public class SosInsertSensorOperatorV20 extends
             if (request.getProcedureDescription().getProcedureDescription() instanceof AbstractSensorML) {
                 AbstractSensorML abstractSensorML =
                         (AbstractSensorML) request.getProcedureDescription().getProcedureDescription();
-                if (abstractSensorML instanceof SensorML && ((SensorML) abstractSensorML).isWrapper()) {
-                    for (AbstractProcess abstractProcess : ((SensorML) abstractSensorML).getMembers()) {
+                if (abstractSensorML instanceof SensorML mL && mL.isWrapper()) {
+                    for (AbstractProcess abstractProcess : mL.getMembers()) {
                         checkCapabilities(request.getProcedureDescription(), abstractProcess);
                         checkForMobileAndInsitu(request.getProcedureDescription(), abstractProcess);
                     }
@@ -252,17 +252,16 @@ public class SosInsertSensorOperatorV20 extends
                     checkForMobileAndInsitu(request.getProcedureDescription(), abstractSensorML);
                 }
 
-                if (abstractSensorML instanceof AbstractProcessV20) {
-                    AbstractProcessV20 abstractProcessV20 = (AbstractProcessV20) abstractSensorML;
+                if (abstractSensorML instanceof AbstractProcessV20 abstractProcessV20) {
                     if (abstractProcessV20.isSetTypeOf()) {
                         request.getProcedureDescription().setTypeOf(abstractProcessV20.getTypeOf());
                     }
-                    if (abstractProcessV20 instanceof AbstractPhysicalProcess
-                            && ((AbstractPhysicalProcess) abstractProcessV20).isSetAttachedTo()) {
+                    if (abstractProcessV20 instanceof AbstractPhysicalProcess process
+                            && process.isSetAttachedTo()) {
                         procedureDescription
-                                .setParentProcedure(((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo());
+                                .setParentProcedure(process.getAttachedTo());
                         Set<String> offeringsForProcedure = getCache().getOfferingsForProcedure(
-                                ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo().getHref());
+                                process.getAttachedTo().getHref());
                         Map<String, Boolean> containedOfferings = new LinkedHashMap<>();
 //                        for (String string : offeringsForProcedure) {
 //                            containedOfferings.put(string, false);

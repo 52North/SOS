@@ -27,7 +27,7 @@
  */
 package org.n52.sos.web.admin;
 
-import javax.servlet.UnavailableException;
+import jakarta.servlet.UnavailableException;
 
 import org.n52.iceland.exception.JSONException;
 import org.n52.janmayen.Json;

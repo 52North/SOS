@@ -141,8 +141,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 // // String offeringID =
                 // // hoc.getOffering().getIdentifier();
                 // // String mimeType = SosConstants.PARAMETER_NOT_SET;
-                if (hObservation instanceof TrajectoryDataEntity) {
-                    for (DataEntity<?> observation : ((TrajectoryDataEntity) hObservation).getValue()) {
+                if (hObservation instanceof TrajectoryDataEntity entity) {
+                    for (DataEntity<?> observation : entity.getValue()) {
                         observationCollection.add(createObservation(observation));
                     }
                 } else {
@@ -216,8 +216,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
-        if (phen instanceof OmObservableProperty) {
-            final OmObservableProperty obsProp = (OmObservableProperty) phen;
+        if (phen instanceof OmObservableProperty obsProp) {
             if (obsProp.getUnit() == null && unit != null) {
                 obsProp.setUnit(unit);
             }

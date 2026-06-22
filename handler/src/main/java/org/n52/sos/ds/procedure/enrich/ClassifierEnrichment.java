@@ -72,7 +72,7 @@ public class ClassifierEnrichment
     private void addClassifier(AbstractSensorML description, String name, String definition, String value) {
         if (!Strings.isNullOrEmpty(value)) {
             Predicate<SmlClassifier> p = SmlClassifierPredicates.name(name);
-            if (!description.findClassifier(p).isPresent()) {
+            if (description.findClassifier(p).isEmpty()) {
                 SmlClassifier classifier = new SmlClassifier(name, definition, null, value);
                 description.addClassification(classifier);
             }

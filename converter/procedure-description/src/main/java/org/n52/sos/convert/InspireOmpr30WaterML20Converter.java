@@ -79,8 +79,7 @@ public class InspireOmpr30WaterML20Converter
     @Override
     public SosProcedureDescription convert(AbstractFeature objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof SosProcedureDescription<?>) {
-            SosProcedureDescription<?> o = (SosProcedureDescription<?>) objectToConvert;
+        if (objectToConvert instanceof SosProcedureDescription<?> o) {
             if (o.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)) {
                 return convertWML2ObservationProcessToInspireProcess(o);
             } else if (o.getDescriptionFormat().equals(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL)

@@ -30,7 +30,7 @@ package org.n52.sos.ds.procedure;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
@@ -230,8 +230,8 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
                     ctx.getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 AbstractFeature convert = converter.convert(description);
-                if (convert instanceof SosProcedureDescription) {
-                    return (SosProcedureDescription<?>) convert;
+                if (convert instanceof SosProcedureDescription<?> procedureDescription) {
+                    return procedureDescription;
                 } else {
                     return new SosProcedureDescription<AbstractFeature>(convert).add(description);
                 }

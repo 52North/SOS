@@ -40,8 +40,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 public class ObservationQualityVisitorCreator {
 
     public SweQuality visit(QualityEntity q) {
-        if (q instanceof QuantityQualityEntity) {
-            return visit((QuantityQualityEntity) q);
+        if (q instanceof QuantityQualityEntity entity1) {
+            return visit(entity1);
 //        } else if (q instanceof BlobDataEntity) {
 //            return visit((BlobDataEntity) q);
 //        } else if (q instanceof BooleanDataEntity) {
@@ -54,8 +54,8 @@ public class ObservationQualityVisitorCreator {
 //            return visit((CountDataEntity) q);
 //        } else if (q instanceof GeometryDataEntity) {
 //            return visit((GeometryDataEntity) q);
-        } else if (q instanceof TextQualityEntity) {
-            return visit((TextQualityEntity) q);
+        } else if (q instanceof TextQualityEntity entity) {
+            return visit(entity);
 //        } else if (q instanceof DataArrayDataEntity) {
 //            return visit((DataArrayDataEntity) q);
 //        } else if (q instanceof ProfileDataEntity) {

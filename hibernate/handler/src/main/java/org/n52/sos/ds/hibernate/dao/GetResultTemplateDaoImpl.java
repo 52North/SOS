@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;

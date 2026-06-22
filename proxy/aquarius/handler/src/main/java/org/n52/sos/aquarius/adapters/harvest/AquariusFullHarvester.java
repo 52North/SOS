@@ -29,7 +29,7 @@ package org.n52.sos.aquarius.adapters.harvest;
 
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvester;
 import org.n52.sensorweb.server.helgoland.adapters.harvest.FullHarvesterResponse;
@@ -50,9 +50,9 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester implements 
 
     @Override
     public HarvesterResponse process(HarvestContext context) {
-        if (context instanceof AquariusHarvesterContext) {
+        if (context instanceof AquariusHarvesterContext harvesterContext) {
             try {
-                AquariusConnector connector = ((AquariusHarvesterContext) context).getConnector();
+                AquariusConnector connector = harvesterContext.getConnector();
                 clearMaps();
                 checkGradesAndQualifier(connector);
                 getParameterList(connector);

@@ -32,10 +32,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
@@ -168,7 +168,7 @@ public class AdminSettingsController extends AbstractController {
                 getUserService().createAdmin(newUsername, newPassword);
                 HttpSession session = req.getSession(false);
                 if (session != null) {
-                    session.invalidate();
+                    req.logout();
                 }
                 SecurityContextHolder.clearContext();
             } else {

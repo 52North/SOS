@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
@@ -155,13 +155,12 @@ public class SplitMergeObservations
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request)
             throws OwsExceptionReport {
-        if (request instanceof InsertObservationRequest) {
-            splitObservations((InsertObservationRequest) request);
-        } else if (request instanceof AbstractObservationRequest) {
-            checkGetObservationRequest((AbstractObservationRequest) request);
+        if (request instanceof InsertObservationRequest observationRequest1) {
+            splitObservations(observationRequest1);
+        } else if (request instanceof AbstractObservationRequest observationRequest) {
+            checkGetObservationRequest(observationRequest);
         }
-        if (request instanceof AbstractObservationRequest) {
-            AbstractObservationRequest req = (AbstractObservationRequest) request;
+        if (request instanceof AbstractObservationRequest req) {
             if (req.isSetResponseFormat()) {
                 if (checkForDuplicity && (OmConstants.NS_OM_2.equals(req.getResponseFormat())
                         || OmConstants.NS_OM.equals(req.getResponseFormat())
@@ -240,8 +239,8 @@ public class SplitMergeObservations
                         // value
                         // or nilReason is "template"
                         if ((!observation.isSetResultTime() || observation.isTemplateResultTime())
-                                && phenomenonTime instanceof TimeInstant) {
-                            newObservation.setResultTime((TimeInstant) phenomenonTime);
+                                && phenomenonTime instanceof TimeInstant instant) {
+                            newObservation.setResultTime(instant);
                         } else {
                             newObservation.setResultTime(observation.getResultTime());
                         }
@@ -338,8 +337,8 @@ public class SplitMergeObservations
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (request instanceof AbstractObservationRequest && response instanceof AbstractObservationResponse) {
-            return mergeObservations((AbstractObservationRequest) request, (AbstractObservationResponse) response);
+        if (request instanceof AbstractObservationRequest observationRequest && response instanceof AbstractObservationResponse observationResponse) {
+            return mergeObservations(observationRequest, observationResponse);
         }
         return response;
     }

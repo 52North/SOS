@@ -751,8 +751,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         assertThat(resp.values().size(), is(1));
 
         for (AbstractFeature foi : resp.values()) {
-            if (foi instanceof AbstractSamplingFeature) {
-                AbstractSamplingFeature asf = (AbstractSamplingFeature) foi;
+            if (foi instanceof AbstractSamplingFeature asf) {
                 assertThat(asf.isSetParameter(), is(true));
                 assertThat(asf.getParameters().size(), is(5));
                 for (NamedValue<?> namedValue : asf.getParameters()) {

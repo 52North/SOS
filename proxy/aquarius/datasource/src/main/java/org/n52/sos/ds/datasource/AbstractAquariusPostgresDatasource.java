@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.n52.faroe.SettingDefinition;
 
 public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgresProxyDatasource
         implements AquariusDatasource {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String usernameDefault;

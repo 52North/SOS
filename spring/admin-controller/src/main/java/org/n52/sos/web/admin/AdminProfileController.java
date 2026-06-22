@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.service.profile.Profile;

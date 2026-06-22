@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -473,8 +473,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                         procedure.put(index, swefield.getElement().getDefinition());
                     } else {
                         observedProperties.put(index, swefield.getElement().getDefinition());
-                        if (sweAbstractSimpleType instanceof SweAbstractUomType<?>) {
-                            units.put(index, ((SweAbstractUomType<?>) sweAbstractSimpleType).getUom());
+                        if (sweAbstractSimpleType instanceof SweAbstractUomType<?> type) {
+                            units.put(index, type.getUom());
                         }
                     }
                 } else if (swefield.getElement() instanceof SweDataRecord) {
@@ -550,8 +550,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
      * @return Single value array
      */
     private String[] getSingleValues(final String block, final SweAbstractEncoding encoding) {
-        if (encoding instanceof SweTextEncoding) {
-            final SweTextEncoding textEncoding = (SweTextEncoding) encoding;
+        if (encoding instanceof SweTextEncoding textEncoding) {
             return separateValues(block, textEncoding.getTokenSeparator());
         }
         return null;
@@ -567,8 +566,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
      * @return Block value array
      */
     private String[] getBlockValues(final String resultValues, final SweAbstractEncoding encoding) {
-        if (encoding instanceof SweTextEncoding) {
-            final SweTextEncoding textEncoding = (SweTextEncoding) encoding;
+        if (encoding instanceof SweTextEncoding textEncoding) {
             final String[] blockValues = separateValues(resultValues, textEncoding.getBlockSeparator());
             return checkForCountValue(blockValues, textEncoding.getTokenSeparator());
         }

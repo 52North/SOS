@@ -323,8 +323,8 @@ public interface WriteableTimeCache extends TemporalCache, CacheConstants {
      * @return the period describing the abstract time
      */
     static TimePeriod toTimePeriod(Time time) {
-        if (time instanceof TimeInstant) {
-            DateTime instant = ((TimeInstant) time).getValue();
+        if (time instanceof TimeInstant timeInstant) {
+            DateTime instant = timeInstant.getValue();
             return new TimePeriod(instant, instant);
         } else {
             return (TimePeriod) time;

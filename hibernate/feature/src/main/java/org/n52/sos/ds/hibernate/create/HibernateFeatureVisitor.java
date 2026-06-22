@@ -58,12 +58,12 @@ public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> 
     }
 
     public AbstractFeature visit(FeatureEntity f) throws OwsExceptionReport {
-        if (f instanceof SpecimenEntity) {
-            return visit((SpecimenEntity) f);
-        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
-            return visit((EnvironmentalMonitoringFacilityEntity) f);
-        } else if (f instanceof MonitoringPointEntity) {
-            return visit((MonitoringPointEntity) f);
+        if (f instanceof SpecimenEntity entity2) {
+            return visit(entity2);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity entity1) {
+            return visit(entity1);
+        } else if (f instanceof MonitoringPointEntity entity) {
+            return visit(entity);
         }
         return checkGeometry(new FeatureOfInterestCreator(context).create(f), f);
     }
@@ -83,7 +83,7 @@ public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> 
     }
 
     private AbstractFeature checkGeometry(AbstractFeature feature, AbstractFeatureEntity f) throws OwsExceptionReport {
-        if (feature instanceof AbstractSamplingFeature && !((AbstractSamplingFeature) feature).isSetGeometry()
+        if (feature instanceof AbstractSamplingFeature samplingFeature && !samplingFeature.isSetGeometry()
                 && !f.isSetGeometry() && !f.isSetUrl() && getContext().getSession() != null) {
             if (getContext().createFeatureGeometryFromSamplingGeometries()) {
                 int srid = getContext().getGeometryHandler().getStorageEPSG();
@@ -116,7 +116,7 @@ public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> 
                                     .createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                         }
                         geom.setSRID(srid);
-                        ((AbstractSamplingFeature) feature).setGeometry(geom);
+                        samplingFeature.setGeometry(geom);
                     }
                 }
             }

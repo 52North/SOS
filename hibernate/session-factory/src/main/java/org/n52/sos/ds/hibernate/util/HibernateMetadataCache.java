@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.hibernate.Session;
 

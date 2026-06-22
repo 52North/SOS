@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 
 /**
@@ -35,6 +37,7 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
  * @since 4.0.0
  */
 public class DuplicateIdentifierException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = -5966745700953811127L;
 
     public DuplicateIdentifierException(String name, String value) {

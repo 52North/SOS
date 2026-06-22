@@ -38,14 +38,14 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 public interface GeometryVisitor {
 
     default Geometry visit(AbstractFeatureEntity<?> f) throws OwsExceptionReport {
-        if (f instanceof SpecimenEntity) {
-            return visit((SpecimenEntity) f);
-        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
-            return visit((EnvironmentalMonitoringFacilityEntity) f);
-        } else if (f instanceof MonitoringPointEntity) {
-            return visit((MonitoringPointEntity) f);
-        } else if (f instanceof FeatureEntity) {
-            return visit((FeatureEntity) f);
+        if (f instanceof SpecimenEntity entity3) {
+            return visit(entity3);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity entity2) {
+            return visit(entity2);
+        } else if (f instanceof MonitoringPointEntity entity1) {
+            return visit(entity1);
+        } else if (f instanceof FeatureEntity entity) {
+            return visit(entity);
         }
         return null;
     }

@@ -66,10 +66,9 @@ public class FeatureUtil {
     public static Set<Point> getPoints(Geometry geom) {
         Set<Point> points = new HashSet<Point>();
         if (geom != null) {
-            if (geom instanceof Point) {
-                points.add((Point) geom);
-            } else if (geom instanceof LineString) {
-                LineString lineString = (LineString) geom;
+            if (geom instanceof Point point1) {
+                points.add(point1);
+            } else if (geom instanceof LineString lineString) {
                 for (int i = 0; i < lineString.getNumPoints(); i++) {
                     Point point = lineString.getPointN(i);
                     point.setSRID(lineString.getSRID());

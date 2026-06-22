@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;

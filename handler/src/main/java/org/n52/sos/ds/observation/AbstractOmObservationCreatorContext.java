@@ -29,7 +29,7 @@ package org.n52.sos.ds.observation;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;

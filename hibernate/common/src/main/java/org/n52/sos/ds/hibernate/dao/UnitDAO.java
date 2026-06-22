@@ -54,12 +54,6 @@ public class UnitDAO {
 
     private static final String QUERY_UNIT_TEMPLATE = "QUERY getUnit(): {}";
 
-    public List<UnitEntity> getUnits(Session session) {
-        Criteria criteria = session.createCriteria(UnitEntity.class);
-        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
-
     /**
      * Get unit object for unit
      *

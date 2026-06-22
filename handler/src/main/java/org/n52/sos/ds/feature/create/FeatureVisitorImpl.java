@@ -45,12 +45,12 @@ public class FeatureVisitorImpl
     }
 
     public AbstractFeature visit(FeatureEntity f) throws OwsExceptionReport {
-        if (f instanceof SpecimenEntity) {
-            return visit((SpecimenEntity) f);
-        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
-            return visit((EnvironmentalMonitoringFacilityEntity) f);
-        } else if (f instanceof MonitoringPointEntity) {
-            return visit((MonitoringPointEntity) f);
+        if (f instanceof SpecimenEntity entity2) {
+            return visit(entity2);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity entity1) {
+            return visit(entity1);
+        } else if (f instanceof MonitoringPointEntity entity) {
+            return visit(entity);
         }
         return new FeatureOfInterestCreator(context).create(f);
     }

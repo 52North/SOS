@@ -27,6 +27,7 @@
  */
 package org.n52.sos.web.common.auth;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
 
@@ -38,6 +39,7 @@ import org.n52.iceland.config.AdministratorUser;
  * @since 4.0.0
  */
 public class AdministratorUserPrinciple implements Principal, Serializable {
+    @Serial
     private static final long serialVersionUID = 8178359938656526381L;
     private final String username;
     private final boolean defaultAdmin;

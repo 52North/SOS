@@ -44,8 +44,7 @@ public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<Mon
     public AbstractFeature create(MonitoringPointEntity f)
             throws OwsExceptionReport {
         AbstractFeature absFeat = createFeature(f);
-        if (absFeat instanceof WmlMonitoringPoint) {
-            WmlMonitoringPoint mp = (WmlMonitoringPoint) absFeat;
+        if (absFeat instanceof WmlMonitoringPoint mp) {
             addMonitoringFeatureData(mp, f);
         }
         return absFeat;

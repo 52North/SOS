@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -44,6 +45,7 @@ import com.google.common.base.Strings;
 @JsonPropertyOrder({ "GradeCode", "StartTime", "EndTime" })
 public class Grade extends IntervalCheckerAndApplyer implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1327261619367370030L;
 
     @JsonProperty("GradeCode")

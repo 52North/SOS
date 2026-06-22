@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;

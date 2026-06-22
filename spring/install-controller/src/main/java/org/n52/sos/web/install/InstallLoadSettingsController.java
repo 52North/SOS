@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,9 +115,9 @@ public class InstallLoadSettingsController extends AbstractInstallController {
                 logWarn(key);
                 continue;
             }
-            if (def instanceof MultilingualStringSettingDefinition) {
+            if (def instanceof MultilingualStringSettingDefinition definition) {
                 c.setSetting(def, settingsManager.getSettingFactory()
-                        .newMultiLingualStringSettingValue((MultilingualStringSettingDefinition) def, value));
+                        .newMultiLingualStringSettingValue(definition, value));
             } else {
                 c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }

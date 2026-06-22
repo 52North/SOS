@@ -36,7 +36,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -270,10 +270,10 @@ public class SampleDataInserter implements Sos2Constants {
             OwsExceptionReport, XmlException, DecodingException {
         insertSensorRequests = Lists.newArrayList();
         sampleDataFolder =
-                Paths.get(getUri(new File(new URI(this.getClass().getResource("/sample-data/").toString()).getPath())))
+                Path.of(getUri(new File(new URI(this.getClass().getResource("/sample-data/").toString()).getPath())))
                         .toFile();
         for (File sensorDescriptionFile : getFilesBySuffix(SENSOR_XML_FILE_ENDING)) {
-            String description = new String(Files.readAllBytes(Paths.get(getUri(sensorDescriptionFile))), UTF_8);
+            String description = new String(Files.readAllBytes(Path.of(getUri(sensorDescriptionFile))), UTF_8);
             final String procedureId = sensorDescriptionFile.getName().replace(SENSOR_XML_FILE_ENDING, "");
             XmlObject xml = XmlObject.Factory.parse(description);
             PhysicalSystem physicalSystem =
@@ -389,7 +389,7 @@ public class SampleDataInserter implements Sos2Constants {
                 if ((InsertFeatureOfInterestResponse) insertFeatureOperator
                         .receiveRequest((InsertFeatureOfInterestRequest) new InsertFeatureOfInterestRequest()
                                 .addFeatureMember(decodeXmlObject(
-                                        new String(Files.readAllBytes(Paths.get(getUri(featureFile))), UTF_8)))
+                                        new String(Files.readAllBytes(Path.of(getUri(featureFile))), UTF_8)))
                                 .setRequestContext(requestContext).setService(SOS)
                                 .setVersion(SERVICEVERSION)) == null) {
                     exceptions
@@ -426,7 +426,7 @@ public class SampleDataInserter implements Sos2Constants {
                 return;
             }
             try {
-                String xmlString = new String(Files.readAllBytes(Paths.get(getUri(observationFile))), UTF_8);
+                String xmlString = new String(Files.readAllBytes(Path.of(getUri(observationFile))), UTF_8);
                 xmlString = xmlString.replaceAll("2016-05", CURRENT_YEAR_AND_MONTH);
                 LOG.trace(xmlString);
                 final String procedureId = observationFile.getName().replace(OBS_XML_FILE_ENDING, "");

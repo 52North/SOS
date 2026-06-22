@@ -336,20 +336,20 @@ public class ResultTemplateDAO {
                     SosResultEncoding storedObservationEncoding =
                             createSosResultEncoding(storedResultTemplate.getObservationEncoding());
 
-                    if (request instanceof InternalInsertResultTemplateRequest) {
-                        ((InternalInsertResultTemplateRequest) request).getObservationStructure()
+                    if (request instanceof InternalInsertResultTemplateRequest templateRequest) {
+                        templateRequest.getObservationStructure()
                                 .clearXml();
-                        ((InternalInsertResultTemplateRequest) request).getObservationEncoding()
+                        templateRequest.getObservationEncoding()
                                 .clearXml();
                         if (storedObservationStructure != null && !storedObservationStructure
-                                .equals(((InternalInsertResultTemplateRequest) request).getObservationStructure())) {
+                                .equals(templateRequest.getObservationStructure())) {
                             throw new InvalidParameterValueException()
                                     .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
                                     .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
                                             offering);
                         }
                         if (storedObservationEncoding != null && !storedObservationEncoding
-                                .equals(((InternalInsertResultTemplateRequest) request).getObservationEncoding())) {
+                                .equals(templateRequest.getObservationEncoding())) {
                             throw new InvalidParameterValueException()
                                     .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
                                     .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
@@ -373,11 +373,11 @@ public class ResultTemplateDAO {
                 }
                 if (request.getIdentifier() != null && request.getIdentifier()
                         .isSetValue()) {
-                    if (!resultTemplates.isEmpty() && request instanceof InternalInsertResultTemplateRequest
+                    if (!resultTemplates.isEmpty() && request instanceof InternalInsertResultTemplateRequest templateRequest1
                             && request.getIdentifier()
                                     .getValue()
                                     .startsWith("OBS_")) {
-                        updateTemplates(resultTemplates, (InternalInsertResultTemplateRequest) request, session);
+                        updateTemplates(resultTemplates, templateRequest1, session);
                         return resultTemplates.iterator()
                                 .next();
                     }
@@ -475,8 +475,8 @@ public class ResultTemplateDAO {
                         .get()));
             }
         }
-        if (request instanceof InternalInsertResultTemplateRequest) {
-            setObservationStructureEncoding(resultTemplate, (InternalInsertResultTemplateRequest) request);
+        if (request instanceof InternalInsertResultTemplateRequest templateRequest) {
+            setObservationStructureEncoding(resultTemplate, templateRequest);
         }
 
         session.save(resultTemplate);

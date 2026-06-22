@@ -27,6 +27,8 @@
  */
 package org.n52.sos.web.common.auth;
 
+import java.io.Serial;
+
 import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -36,6 +38,7 @@ import org.springframework.security.core.GrantedAuthority;
  * @since 4.0.0
  */
 class AdministratorAuthority implements GrantedAuthority {
+    @Serial
     private static final long serialVersionUID = 5103351149817795492L;
 
     @Override

@@ -160,22 +160,22 @@ public class ParameterVisitor {
     }
 
     public NamedValue<?> visit(ParameterEntity parameter) throws OwsExceptionReport {
-        if (parameter instanceof QuantityParameterEntity) {
-            return visit((QuantityParameterEntity) parameter);
-        } else if (parameter instanceof CountParameterEntity) {
-            return visit((CountParameterEntity) parameter);
-        } else if (parameter instanceof BooleanParameterEntity) {
-            return visit((BooleanParameterEntity) parameter);
-        } else if (parameter instanceof CategoryParameterEntity) {
-            return visit((CategoryParameterEntity) parameter);
-        } else if (parameter instanceof XmlParameterEntity) {
-            return visit((XmlParameterEntity) parameter);
-        } else if (parameter instanceof JsonParameterEntity) {
-            return visit((JsonParameterEntity) parameter);
-        } else if (parameter instanceof ComplexParameterEntity) {
-            return visit((ComplexParameterEntity) parameter);
-        } else if (parameter instanceof TemporalParameterEntity) {
-            return visit((TemporalParameterEntity) parameter);
+        if (parameter instanceof QuantityParameterEntity entity7) {
+            return visit(entity7);
+        } else if (parameter instanceof CountParameterEntity entity6) {
+            return visit(entity6);
+        } else if (parameter instanceof BooleanParameterEntity entity5) {
+            return visit(entity5);
+        } else if (parameter instanceof CategoryParameterEntity entity4) {
+            return visit(entity4);
+        } else if (parameter instanceof XmlParameterEntity entity3) {
+            return visit(entity3);
+        } else if (parameter instanceof JsonParameterEntity entity2) {
+            return visit(entity2);
+        } else if (parameter instanceof ComplexParameterEntity entity1) {
+            return visit(entity1);
+        } else if (parameter instanceof TemporalParameterEntity entity) {
+            return visit(entity);
         }
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, parameter);
@@ -187,8 +187,8 @@ public class ParameterVisitor {
 
     private void addDescription(Value<?> value, ValuedParameter p) {
         if (p.isSetDescription()
-                && value instanceof SweAbstractDataComponent) {
-            ((SweAbstractDataComponent) value).setDescription(((ParameterEntity) p).getDescription());
+                && value instanceof SweAbstractDataComponent component) {
+            component.setDescription(((ParameterEntity) p).getDescription());
         }
     }
 

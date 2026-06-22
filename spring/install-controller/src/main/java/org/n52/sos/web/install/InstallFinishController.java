@@ -30,10 +30,10 @@ package org.n52.sos.web.install;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -84,7 +84,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             throws InstallationRedirectError, InstallationSettingsError {
         HttpSession session = checkPrevious(req);
         process(getParameters(req), getSettings(session));
-        session.invalidate();
+        req.logout();
         return redirect(ControllerConstants.Paths.GET_INVOLVED + "?install=finished");
     }
 

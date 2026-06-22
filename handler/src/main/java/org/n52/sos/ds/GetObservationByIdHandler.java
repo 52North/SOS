@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

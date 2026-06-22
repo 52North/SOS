@@ -27,7 +27,7 @@
  */
 package org.n52.sos.config.json;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.shetland.aqd.ReportObligation;

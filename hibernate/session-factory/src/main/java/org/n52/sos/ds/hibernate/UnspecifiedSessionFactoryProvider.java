@@ -29,7 +29,7 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.Properties;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
@@ -132,8 +132,7 @@ public abstract class UnspecifiedSessionFactoryProvider
     @Override
     public void returnConnection(Object connection) {
         try {
-            if (connection instanceof Session) {
-                Session session = (Session) connection;
+            if (connection instanceof Session session) {
                 if (session.isOpen()) {
                     if (session.getTransaction().isActive()) {
                         session.getTransaction().commit();

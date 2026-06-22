@@ -28,7 +28,10 @@
 package org.n52.sos.exception.ows.concrete;
 
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+
 import org.n52.shetland.ogc.filter.FilterConstants;
+
+import java.io.Serial;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -36,6 +39,7 @@ import org.n52.shetland.ogc.filter.FilterConstants;
  * @since 4.0.0
  */
 public class InvalidValueReferenceException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = 4751250325590494752L;
 
     public InvalidValueReferenceException(String value) {

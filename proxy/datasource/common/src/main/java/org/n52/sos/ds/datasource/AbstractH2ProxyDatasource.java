@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,6 +35,7 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource implements ProxyDatasource {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final String GEODB_INNIT_CONNECTION_CUSTOMIZER = "org.n52.c3p0.GeoDBInitConnectionCustomizer";

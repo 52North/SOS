@@ -27,11 +27,14 @@
  */
 package org.n52.sos.exception;
 
+import java.io.Serial;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class AlreadyUsedIdentifierException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = -1617668542868383863L;
     private String identifier;
 

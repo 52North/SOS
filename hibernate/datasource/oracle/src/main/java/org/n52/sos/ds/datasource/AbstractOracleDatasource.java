@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -91,6 +92,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     protected static final String SCHEMA_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
+    @Serial
     private static final long serialVersionUID = -5154331781405709114L;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);

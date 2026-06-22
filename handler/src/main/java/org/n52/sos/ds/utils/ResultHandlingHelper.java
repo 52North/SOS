@@ -174,16 +174,16 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             }
             for (final DataEntity<?> obs : observations) {
                 DataEntity<?> observation = unproxy(obs, session);
-                if (observation instanceof ProfileDataEntity) {
-                    TreeSet<DataEntity<?>> val = new TreeSet<>(((ProfileDataEntity) observation).getValue());
+                if (observation instanceof ProfileDataEntity entity1) {
+                    TreeSet<DataEntity<?>> val = new TreeSet<>(entity1.getValue());
                     builder.append(createResultValuesFromObservations(val,
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
-                            ((ProfileDataEntity) observation).getDataset()
+                            entity1.getDataset()
                                     .getVerticalMetadata(),
                             session));
                     builder.append(blockSeparator);
-                } else if (observation instanceof TrajectoryDataEntity) {
-                    TreeSet<DataEntity<?>> val = new TreeSet<>(((TrajectoryDataEntity) observation).getValue());
+                } else if (observation instanceof TrajectoryDataEntity entity) {
+                    TreeSet<DataEntity<?>> val = new TreeSet<>(entity.getValue());
                     builder.append(createResultValuesFromObservations(val,
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false, null,
                             session));
@@ -264,8 +264,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
      * @return Token separator
      */
     public String getTokenSeparator(final SweAbstractEncoding encoding) {
-        if (encoding instanceof SweTextEncoding) {
-            return ((SweTextEncoding) encoding).getTokenSeparator();
+        if (encoding instanceof SweTextEncoding textEncoding) {
+            return textEncoding.getTokenSeparator();
         }
         return null;
     }
@@ -278,8 +278,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
      * @return Block separator
      */
     public String getBlockSeparator(final SweAbstractEncoding encoding) {
-        if (encoding instanceof SweTextEncoding) {
-            return ((SweTextEncoding) encoding).getBlockSeparator();
+        if (encoding instanceof SweTextEncoding textEncoding) {
+            return textEncoding.getBlockSeparator();
         }
         return null;
     }
@@ -292,12 +292,10 @@ public class ResultHandlingHelper implements HibernateUnproxy {
      * @return Position of the result time element or -1 if it is not contained
      */
     public int hasResultTime(final SweAbstractDataComponent sweDataElement) {
-        if (sweDataElement instanceof SweDataArray
+        if (sweDataElement instanceof SweDataArray dataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
-            final SweDataArray dataArray = (SweDataArray) sweDataElement;
             return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), OmConstants.RESULT_TIME);
-        } else if (sweDataElement instanceof SweDataRecord) {
-            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+        } else if (sweDataElement instanceof SweDataRecord dataRecord) {
             return checkFields(dataRecord.getFields(), OmConstants.RESULT_TIME);
         }
         return -1;
@@ -313,12 +311,10 @@ public class ResultHandlingHelper implements HibernateUnproxy {
      *         contained
      */
     public int hasPhenomenonTime(final SweAbstractDataComponent sweDataElement) {
-        if (sweDataElement instanceof SweDataArray
+        if (sweDataElement instanceof SweDataArray dataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
-            final SweDataArray dataArray = (SweDataArray) sweDataElement;
             return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), OmConstants.PHENOMENON_TIME);
-        } else if (sweDataElement instanceof SweDataRecord) {
-            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+        } else if (sweDataElement instanceof SweDataRecord dataRecord) {
             return checkFields(dataRecord.getFields(), OmConstants.PHENOMENON_TIME);
         }
         return -1;
@@ -380,13 +376,11 @@ public class ResultHandlingHelper implements HibernateUnproxy {
 
     private Map<Integer, String> getValueOrderMap(final SweAbstractDataComponent sweDataElement) {
         final Map<Integer, String> valueOrder = new HashMap<>(0);
-        if (sweDataElement instanceof SweDataArray
+        if (sweDataElement instanceof SweDataArray dataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
-            final SweDataArray dataArray = (SweDataArray) sweDataElement;
             addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder,
                     new IncDecInteger());
-        } else if (sweDataElement instanceof SweDataRecord) {
-            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+        } else if (sweDataElement instanceof SweDataRecord dataRecord) {
             addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder, new IncDecInteger());
         }
         return new TreeMap<>(valueOrder);
@@ -396,19 +390,18 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             IncDecInteger tokenIndex) {
         for (SweField sweField : fields) {
             final SweAbstractDataComponent element = sweField.getElement();
-            if (element instanceof SweAbstractSimpleType) {
-                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
+            if (element instanceof SweAbstractSimpleType<?> simpleType) {
                 if (simpleType.isSetDefinition()) {
                     addValueToValueOrderMap(valueOrder, tokenIndex, simpleType.getDefinition());
                 }
                 tokenIndex.increment();
-            } else if (element instanceof SweDataRecord) {
+            } else if (element instanceof SweDataRecord record) {
                 if (element.isSetDefinition() && element.getDefinition()
                         .contains(OmConstants.PARAMETER)) {
                     addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
                     tokenIndex.increment();
                 } else {
-                    addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
+                    addOrderAndDefinitionToMap(record.getFields(), valueOrder, tokenIndex);
                 }
             } else if (element instanceof SweVector || element instanceof SweDataArray) {
                 if (element.isSetDefinition()) {
@@ -443,32 +436,31 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         final String observedProperty = observation.getDataset()
                 .getObservableProperty()
                 .getIdentifier();
-        if (observation instanceof ComplexDataEntity) {
-            for (DataEntity<?> contentObservation : ((ComplexDataEntity) observation).getValue()) {
+        if (observation instanceof ComplexDataEntity entity7) {
+            for (DataEntity<?> contentObservation : entity7.getValue()) {
                 String value = getValueAsStringForObservedProperty(contentObservation, definition);
                 if (!Strings.isNullOrEmpty(value)) {
                     return value;
                 }
             }
         } else if (observedProperty.equals(definition) && observation.hasValue()) {
-            if (observation instanceof QuantityDataEntity) {
-                return String.valueOf(((QuantityDataEntity) observation).getValue());
-            } else if (observation instanceof BooleanDataEntity) {
-                return String.valueOf(((BooleanDataEntity) observation).getValue());
-            } else if (observation instanceof CategoryDataEntity) {
-                return String.valueOf(((CategoryDataEntity) observation).getValue());
-            } else if (observation instanceof CountDataEntity) {
-                return String.valueOf(((CountDataEntity) observation).getValue());
-            } else if (observation instanceof TextDataEntity) {
-                return String.valueOf(((TextDataEntity) observation).getValue());
-            } else if (observation instanceof GeometryDataEntity) {
+            if (observation instanceof QuantityDataEntity entity6) {
+                return String.valueOf(entity6.getValue());
+            } else if (observation instanceof BooleanDataEntity entity5) {
+                return String.valueOf(entity5.getValue());
+            } else if (observation instanceof CategoryDataEntity entity4) {
+                return String.valueOf(entity4.getValue());
+            } else if (observation instanceof CountDataEntity entity3) {
+                return String.valueOf(entity3.getValue());
+            } else if (observation instanceof TextDataEntity entity2) {
+                return String.valueOf(entity2.getValue());
+            } else if (observation instanceof GeometryDataEntity entity1) {
                 final WKTWriter writer = new WKTWriter();
-                return writer.write(((GeometryDataEntity) observation).getValue()
+                return writer.write(entity1.getValue()
                         .getGeometry());
-            } else if (observation instanceof BlobDataEntity) {
-                return String.valueOf(((BlobDataEntity) observation).getValue());
-            } else if (observation instanceof DataArrayDataEntity) {
-                DataArrayDataEntity o = (DataArrayDataEntity) observation;
+            } else if (observation instanceof BlobDataEntity entity) {
+                return String.valueOf(entity.getValue());
+            } else if (observation instanceof DataArrayDataEntity o) {
                 return o.isSetStringValue() ? o.getStringValue() : "";
             }
         }
@@ -525,15 +517,13 @@ public class ResultHandlingHelper implements HibernateUnproxy {
     }
 
     private SweVector getVector(SweAbstractDataComponent sweAbstractDataComponent) throws CodedException {
-        if (sweAbstractDataComponent instanceof SweDataArray
+        if (sweAbstractDataComponent instanceof SweDataArray dataArray
                 && ((SweDataArray) sweAbstractDataComponent).getElementType() instanceof SweDataRecord) {
-            final SweDataArray dataArray = (SweDataArray) sweAbstractDataComponent;
             return getVector(((SweDataRecord) dataArray.getElementType()).getFields());
-        } else if (sweAbstractDataComponent instanceof SweDataRecord) {
-            final SweDataRecord dataRecord = (SweDataRecord) sweAbstractDataComponent;
+        } else if (sweAbstractDataComponent instanceof SweDataRecord dataRecord) {
             return getVector(dataRecord.getFields());
-        } else if (sweAbstractDataComponent instanceof SweVector) {
-            return (SweVector) sweAbstractDataComponent;
+        } else if (sweAbstractDataComponent instanceof SweVector vector) {
+            return vector;
         }
         return null;
     }
@@ -550,12 +540,11 @@ public class ResultHandlingHelper implements HibernateUnproxy {
     private String getParameters(DataEntity<?> observation, String tokenSeparator,
             SweAbstractDataComponent resultStructure, VerticalMetadataEntity vertical) {
         SweDataRecord record = null;
-        if (resultStructure instanceof SweDataArray
+        if (resultStructure instanceof SweDataArray dataArray
                 && ((SweDataArray) resultStructure).getElementType() instanceof SweDataRecord) {
-            final SweDataArray dataArray = (SweDataArray) resultStructure;
             record = (SweDataRecord) dataArray.getElementType();
-        } else if (resultStructure instanceof SweDataRecord) {
-            record = (SweDataRecord) resultStructure;
+        } else if (resultStructure instanceof SweDataRecord dataRecord) {
+            record = dataRecord;
         } else {
             return "";
         }

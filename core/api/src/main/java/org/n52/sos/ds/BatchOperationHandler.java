@@ -30,7 +30,7 @@ package org.n52.sos.ds;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceOrVersionException;
@@ -93,8 +93,7 @@ public class BatchOperationHandler extends AbstractSosOperationHandler {
     protected ServiceOperator getServiceOperator(OwsServiceRequest request) throws OwsExceptionReport {
         String service = request.getService();
         String version = request.getVersion();
-        if (request instanceof GetCapabilitiesRequest) {
-            GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) request;
+        if (request instanceof GetCapabilitiesRequest gcr) {
             if (gcr.isSetAcceptVersions()) {
                 return gcr.getAcceptVersions().stream().map(v -> new OwsServiceKey(service, v))
                         .map(getServiceOperatorRepository()::getServiceOperator).filter(Objects::nonNull).findFirst()

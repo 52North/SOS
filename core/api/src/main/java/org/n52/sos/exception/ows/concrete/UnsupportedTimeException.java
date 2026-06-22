@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
@@ -36,6 +38,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  */
 public class UnsupportedTimeException extends NoApplicableCodeException {
 
+    @Serial
     private static final long serialVersionUID = -6897786883586612395L;
 
     public UnsupportedTimeException(Time time) {

@@ -27,6 +27,8 @@
  */
 package org.n52.sos.web.install;
 
+import java.io.Serial;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -38,6 +40,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class InstallationSettingsError extends Exception {
+    @Serial
     private static final long serialVersionUID = -7245722915117312457L;
 
     private final InstallationConfiguration settings;

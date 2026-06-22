@@ -29,7 +29,7 @@ package org.n52.sos.web.admin;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -58,7 +58,7 @@ public class AdminDeleteDeletedDataController extends AbstractAdminController {
 
     private AbstractDeleteDeletedDataHandler getHandler()
             throws NoImplementationFoundException {
-        if (!handler.isPresent()) {
+        if (handler.isEmpty()) {
             throw new NoImplementationFoundException(DeleteDeletedObservationDAO.class);
         }
         return this.handler.get();

@@ -133,10 +133,10 @@ public final class QueryHelper {
      */
     public static Criterion getValidTimeCriterion(Time validTime)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        if (validTime instanceof TimeInstant) {
-            return SosTemporalRestrictions.filter(getFiltersForTimeInstant((TimeInstant) validTime));
-        } else if (validTime instanceof TimePeriod) {
-            return SosTemporalRestrictions.filter(getFiltersForTimePeriod((TimePeriod) validTime));
+        if (validTime instanceof TimeInstant instant) {
+            return SosTemporalRestrictions.filter(getFiltersForTimeInstant(instant));
+        } else if (validTime instanceof TimePeriod period) {
+            return SosTemporalRestrictions.filter(getFiltersForTimePeriod(period));
         } else {
             return null;
         }

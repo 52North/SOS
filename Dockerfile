@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8-alpine AS BCRYPT_BUILD
+FROM eclipse-temurin:17-alpine AS BCRYPT_BUILD
 
 WORKDIR /usr/src/app
 COPY docker/bcrypt/BCrypt.java /usr/src/app

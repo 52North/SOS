@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -58,6 +59,7 @@ public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date
 
     public static final UtcTimestampType INSTANCE = new UtcTimestampType();
 
+    @Serial
     private static final long serialVersionUID = 1425445989380765998L;
 
     public UtcTimestampType() {

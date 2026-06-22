@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.swes;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
 
@@ -37,6 +39,7 @@ import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
  */
 public abstract class CodedSwesException extends CodedException {
 
+    @Serial
     private static final long serialVersionUID = -2434236733084335054L;
 
     public CodedSwesException(SwesExceptionCode code) {

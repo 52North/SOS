@@ -197,8 +197,7 @@ public abstract class DeleteObservationCacheFeederDAO
      *             if the FeatureQueryHandler fails
      */
     protected void updateSpatialBoundingBoxes(AbstractFeature featureOfInterest) throws OwsExceptionReport {
-        if (featureOfInterest instanceof AbstractSamplingFeature) {
-            final AbstractSamplingFeature ssf = (AbstractSamplingFeature) featureOfInterest;
+        if (featureOfInterest instanceof AbstractSamplingFeature ssf) {
             if (ssf.getGeometry() != null) {
                 if (!globalSpatialBoundingBoxUpdated && getCache().getGlobalEnvelope() != null && isCritical(
                         ssf.getGeometry().getEnvelopeInternal(), getCache().getGlobalEnvelope().getEnvelope())) {
@@ -219,8 +218,7 @@ public abstract class DeleteObservationCacheFeederDAO
                     }
                 }
             }
-        } else if (featureOfInterest instanceof FeatureCollection) {
-            final FeatureCollection sfc = (FeatureCollection) featureOfInterest;
+        } else if (featureOfInterest instanceof FeatureCollection sfc) {
             for (AbstractFeature saf : sfc.getMembers().values()) {
                 updateSpatialBoundingBoxes(saf);
             }

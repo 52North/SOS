@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 
@@ -36,6 +38,7 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
  * @since 4.0.0
  */
 public class InvalidObservationTypeForOfferingException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = -1598937401956045205L;
 
     public InvalidObservationTypeForOfferingException(String observationType, String offering) {

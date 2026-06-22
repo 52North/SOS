@@ -249,13 +249,13 @@ public class ResultFilterRestrictions {
 
     public static Criterion getResultFilterExpression(Filter<?> resultFilter, ResultFilterClasses resultFilterClasses,
             String subqueryColumn, String column, SubQueryIdentifier identifier) throws CodedException {
-        if (resultFilter instanceof ComparisonFilter) {
-            return getResultFilterExpression((ComparisonFilter) resultFilter,
+        if (resultFilter instanceof ComparisonFilter filter) {
+            return getResultFilterExpression(filter,
                     resultFilterClasses, subqueryColumn, column, identifier);
         }
-        if (resultFilter instanceof BinaryLogicFilter) {
+        if (resultFilter instanceof BinaryLogicFilter logicFilter) {
             Junction junction = null;
-            switch (((BinaryLogicFilter) resultFilter).getOperator()) {
+            switch (logicFilter.getOperator()) {
                 case And:
                     junction = Restrictions.conjunction();
                     break;
@@ -264,9 +264,9 @@ public class ResultFilterRestrictions {
                     break;
                 default:
                     throw new NoApplicableCodeException().withMessage("BinaryLogicalOpserator '%s' is not supported!",
-                        ((BinaryLogicFilter) resultFilter).getOperator().name());
+                        logicFilter.getOperator().name());
             }
-            for (Filter<?> filter : ((BinaryLogicFilter) resultFilter).getFilterPredicates()) {
+            for (Filter<?> filter : logicFilter.getFilterPredicates()) {
                 junction.add(
                         getResultFilterExpression(filter, resultFilterClasses, subqueryColumn, column, identifier));
             }

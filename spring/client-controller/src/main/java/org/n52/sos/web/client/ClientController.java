@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.HTTPException;
@@ -172,8 +172,7 @@ public class ClientController
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof AvailableOperation) {
-                AvailableOperation other = (AvailableOperation) obj;
+            if (obj instanceof AvailableOperation other) {
                 return Objects.equals(getMethod(), other.getMethod())
                         && Objects.equals(getService(), other.getService())
                         && Objects.equals(getVersion(), other.getVersion())

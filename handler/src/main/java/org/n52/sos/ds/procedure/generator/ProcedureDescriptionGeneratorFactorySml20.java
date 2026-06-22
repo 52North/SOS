@@ -30,7 +30,7 @@ package org.n52.sos.ds.procedure.generator;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.SettingsService;
 import org.n52.faroe.annotation.Setting;

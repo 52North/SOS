@@ -313,8 +313,8 @@ public interface NetCDFUtil {
 
         AbstractPhenomenon absPhen = obsConst.getObservableProperty();
         Map<String, OmObservableProperty> phenomenaMap = new HashMap<>();
-        if (absPhen instanceof OmCompositePhenomenon) {
-            for (OmObservableProperty phen : ((OmCompositePhenomenon) absPhen).getPhenomenonComponents()) {
+        if (absPhen instanceof OmCompositePhenomenon phenomenon) {
+            for (OmObservableProperty phen : phenomenon.getPhenomenonComponents()) {
                 // TODO should the unit be set like this? seems sketchy
                 if (phen.getUnit() == null && sosObs.getValue() != null && sosObs.getValue().getValue() != null
                         && sosObs.getValue().getValue().getUnit() != null) {
@@ -507,16 +507,14 @@ public interface NetCDFUtil {
 
     default SubSensor createSubSensor(String sensor, Geometry geom) {
         SubSensor subSensor = null;
-        if (geom instanceof Point) {
-            Point point = (Point) geom;
+        if (geom instanceof Point point) {
             // profile height
             if (!Double.isNaN(point.getCoordinate().getZ())) {
                 subSensor = new PointProfileSubSensor(point.getCoordinate().getZ());
             } else {
                 subSensor = new PointProfileSubSensor(0.0);
             }
-        } else if (geom instanceof LineString) {
-            LineString lineString = (LineString) geom;
+        } else if (geom instanceof LineString lineString) {
             // profile bin
             if (lineString.getNumPoints() == 2) {
                 Point topPoint = lineString.getPointN(0);

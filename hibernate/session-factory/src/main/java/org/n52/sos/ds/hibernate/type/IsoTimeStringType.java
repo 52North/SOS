@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.io.Serial;
 import java.util.Date;
 
 import org.hibernate.dialect.Dialect;
@@ -39,6 +40,7 @@ public class IsoTimeStringType extends AbstractSingleColumnStandardBasicType<Dat
 
     public static final IsoTimeStringType INSTANCE = new IsoTimeStringType();
 
+    @Serial
     private static final long serialVersionUID = 1578546594599136420L;
 
     private String name = "iso_string";

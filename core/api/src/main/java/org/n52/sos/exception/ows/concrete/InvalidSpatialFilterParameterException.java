@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 
@@ -37,6 +39,7 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
  */
 public class InvalidSpatialFilterParameterException extends InvalidParameterValueException {
 
+    @Serial
     private static final long serialVersionUID = -991549440806152633L;
 
     public InvalidSpatialFilterParameterException(String value) {

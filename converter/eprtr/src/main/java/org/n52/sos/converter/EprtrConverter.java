@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.faroe.annotation.Setting;
@@ -178,15 +178,15 @@ public class EprtrConverter implements RequestResponseModifier {
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (response instanceof GetObservationResponse) {
+        if (response instanceof GetObservationResponse observationResponse) {
             if (mergeForEprtr()) {
-                return mergeObservations((GetObservationResponse) response);
+                return mergeObservations(observationResponse);
             } else {
-                return checkGetObservationFeatures((GetObservationResponse) response);
+                return checkGetObservationFeatures(observationResponse);
             }
         }
-        if (response instanceof GetFeatureOfInterestResponse && mergeForEprtr()) {
-            return checkFeatures((GetFeatureOfInterestResponse) response);
+        if (response instanceof GetFeatureOfInterestResponse interestResponse && mergeForEprtr()) {
+            return checkFeatures(interestResponse);
         }
         return response;
     }
@@ -249,8 +249,8 @@ public class EprtrConverter implements RequestResponseModifier {
 
     private OwsServiceResponse checkFeatures(GetFeatureOfInterestResponse response) {
         AbstractFeature abstractFeature = response.getAbstractFeature();
-        if (abstractFeature instanceof FeatureCollection) {
-            for (AbstractFeature feature : ((FeatureCollection) abstractFeature).getMembers().values()) {
+        if (abstractFeature instanceof FeatureCollection collection) {
+            for (AbstractFeature feature : collection.getMembers().values()) {
                 checkFeature(feature);
             }
         } else {
@@ -260,8 +260,7 @@ public class EprtrConverter implements RequestResponseModifier {
     }
 
     private void checkFeature(AbstractFeature abstractFeature) {
-        if (abstractFeature instanceof AbstractSamplingFeature) {
-            AbstractSamplingFeature asf = (AbstractSamplingFeature) abstractFeature;
+        if (abstractFeature instanceof AbstractSamplingFeature asf) {
             if (asf.isSetParameter() && isPrtr(asf.getParameters())
                     && !containsConfidentialIndicator(asf.getParameters())) {
                 NamedValue<Boolean> confidentialIndicator = new NamedValue<>();
@@ -524,8 +523,8 @@ public class EprtrConverter implements RequestResponseModifier {
     }
 
     private String getYear(Time phenomenonTime) {
-        if (phenomenonTime instanceof TimePeriod) {
-            return Integer.toString(((TimePeriod) phenomenonTime).getEnd().getYear());
+        if (phenomenonTime instanceof TimePeriod period) {
+            return Integer.toString(period.getEnd().getYear());
         }
         return Integer.toString(((TimeInstant) phenomenonTime).getValue().getYear());
     }
@@ -550,11 +549,11 @@ public class EprtrConverter implements RequestResponseModifier {
     private String getWasteHandlerPartyParameter(ParameterHolder parameterHolder, String name)
             throws OwsExceptionReport {
         Object parameterObject = getParameterObject(parameterHolder, name);
-        if (parameterObject != null && parameterObject instanceof XmlObject) {
+        if (parameterObject != null && parameterObject instanceof XmlObject object) {
             try {
-                Object xml = decodeXmlObject((XmlObject) parameterObject);
-                if (xml instanceof SweDataRecord) {
-                    List<String> values = getValuesFromRecord((SweDataRecord) xml);
+                Object xml = decodeXmlObject(object);
+                if (xml instanceof SweDataRecord record) {
+                    List<String> values = getValuesFromRecord(record);
                     if (!values.isEmpty()) {
                         return Joiner.on(",").join(values);
                     }

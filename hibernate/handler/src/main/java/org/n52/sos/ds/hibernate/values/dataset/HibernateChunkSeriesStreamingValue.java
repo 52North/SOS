@@ -175,8 +175,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                     || ObservationType.trajectory.equals(dataset.getObservationType())) {
                 List<DataEntity<?>> list = new LinkedList<>();
                 for (DataEntity<?> dataEntity : resutltValues) {
-                    if (dataEntity instanceof TrajectoryDataEntity) {
-                        list.addAll(((TrajectoryDataEntity) dataEntity).getValue());
+                    if (dataEntity instanceof TrajectoryDataEntity entity) {
+                        list.addAll(entity.getValue());
                     } else {
                         list.add(dataEntity);
                     }

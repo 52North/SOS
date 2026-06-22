@@ -59,8 +59,8 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         if (isSetLocale() && getProcedure().hasTranslations()) {
             for (Locale locale : LocaleHelper.getEquivalents(getLocale())) {
                 I18nEntity entity = getProcedure().getTranslation(LocaleHelper.encode(locale));
-                if (entity != null && entity instanceof I18nProcedureEntity) {
-                    this.i18nEntity = (I18nProcedureEntity) entity;
+                if (entity != null && entity instanceof I18nProcedureEntity procedureEntity) {
+                    this.i18nEntity = procedureEntity;
                     break;
                 }
             }
@@ -71,21 +71,21 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
     private void enrichUniqueId(AbstractSensorML description) {
         if (procedureSettings().isEnrichWithDiscoveryInformation()
-                && !description.findIdentification(uniqueIdPredicate()).isPresent()) {
+                && description.findIdentification(uniqueIdPredicate()).isEmpty()) {
             description.addIdentifier(createUniqueId());
         }
     }
 
     private void enrichShortName(AbstractSensorML description) {
         Optional<SmlIdentifier> shortName = description.findIdentification(shortNamePredicate());
-        if (!shortName.isPresent()) {
+        if (shortName.isEmpty()) {
             description.addIdentifier(createShortName());
         }
     }
 
     private void enrichLongName(AbstractSensorML description) {
         Optional<SmlIdentifier> longName = description.findIdentification(longNamePredicate());
-        if (!longName.isPresent()) {
+        if (longName.isEmpty()) {
             description.addIdentifier(createLongName());
         }
     }

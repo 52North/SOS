@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.bjornoya.schedule.DefaultJobConfiguration;
 import org.n52.bjornoya.schedule.JobConfiguration;

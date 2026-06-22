@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -1146,10 +1146,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
                 throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER);
             }
             Filter<?> filter = ((ResultFilter) extension.get()).getValue();
-            if (filter instanceof BinaryLogicFilter) {
-                checkBinaryLogicFilter((BinaryLogicFilter) filter);
-            } else if (filter instanceof ComparisonFilter) {
-                checkFilter((ComparisonFilter) filter);
+            if (filter instanceof BinaryLogicFilter logicFilter) {
+                checkBinaryLogicFilter(logicFilter);
+            } else if (filter instanceof ComparisonFilter comparisonFilter) {
+                checkFilter(comparisonFilter);
             } else {
                 throw new OptionNotSupportedException().withMessage(NOT_SUPPORTED_FILTER,
                         ResultFilterConstants.RESULT_FILTER, filter);
@@ -1159,10 +1159,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
 
     private void checkBinaryLogicFilter(BinaryLogicFilter filter) throws CodedException {
         for (Filter<?> f : filter.getFilterPredicates()) {
-            if (f instanceof BinaryLogicFilter) {
-                checkBinaryLogicFilter((BinaryLogicFilter) f);
-            } else if (f instanceof ComparisonFilter) {
-                checkFilter((ComparisonFilter) f);
+            if (f instanceof BinaryLogicFilter logicFilter) {
+                checkBinaryLogicFilter(logicFilter);
+            } else if (f instanceof ComparisonFilter comparisonFilter) {
+                checkFilter(comparisonFilter);
             } else {
                 throw new OptionNotSupportedException().withMessage(NOT_SUPPORTED_FILTER,
                         ResultFilterConstants.RESULT_FILTER, f);

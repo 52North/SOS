@@ -27,7 +27,7 @@
  */
 package org.n52.sos.web.admin.caps;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlException;
 import org.n52.faroe.ConfigurationError;

@@ -31,7 +31,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.config.AdminUserService;

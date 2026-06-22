@@ -27,11 +27,14 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.apache.xmlbeans.XmlException;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 public class XmlEncodeException extends NoApplicableCodeException {
+    @Serial
     private static final long serialVersionUID = -3574545413710594013L;
 
     public XmlEncodeException(final String name, final String xml, final XmlException e) {

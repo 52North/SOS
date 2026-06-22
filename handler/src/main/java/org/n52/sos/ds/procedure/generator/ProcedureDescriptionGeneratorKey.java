@@ -52,9 +52,7 @@ public class ProcedureDescriptionGeneratorKey implements Comparable<ProcedureDes
 
     @Override
     public boolean equals(Object paramObject) {
-        if (paramObject instanceof ProcedureDescriptionGeneratorKey) {
-            ProcedureDescriptionGeneratorKey toCheck
-                    = (ProcedureDescriptionGeneratorKey) paramObject;
+        if (paramObject instanceof ProcedureDescriptionGeneratorKey toCheck) {
             return Objects.equals(getDescriptionFormat(), toCheck.getDescriptionFormat());
         }
         return false;

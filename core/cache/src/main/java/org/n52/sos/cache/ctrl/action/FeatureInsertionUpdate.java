@@ -55,8 +55,8 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
     public void execute() {
         List<AbstractSamplingFeature> samplingFeatures = new ArrayList<AbstractSamplingFeature>();
         for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
-            if (abstractFeature instanceof AbstractSamplingFeature) {
-                samplingFeatures.add((AbstractSamplingFeature) abstractFeature);
+            if (abstractFeature instanceof AbstractSamplingFeature feature) {
+                samplingFeatures.add(feature);
             }
             getCache().addFeatureOfInterest(abstractFeature.getIdentifier());
             getCache().addPublishedFeatureOfInterest(abstractFeature.getIdentifier());

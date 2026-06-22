@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.shetland.ogc.ows.extension.Extension;
@@ -164,10 +164,10 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
             throw new NoDecoderForKeyException(key);
         }
         Object obj = decoder.decode(xml);
-        if (obj instanceof Extension) {
-            return (Extension<?>) obj;
-        } else if (obj instanceof SweAbstractDataComponent) {
-            return new SwesExtension<>().setValue((SweAbstractDataComponent) obj);
+        if (obj instanceof Extension<?> extension) {
+            return extension;
+        } else if (obj instanceof SweAbstractDataComponent component) {
+            return new SwesExtension<>().setValue(component);
         } else {
             return new SwesExtension<>().setValue(new SweText().setValue(value));
         }

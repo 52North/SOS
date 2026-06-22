@@ -33,6 +33,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
@@ -85,7 +86,7 @@ public abstract class AbstractObservationEncodingsTest extends AbstractObservati
         for (int i = 0; i < 20; i++) {
             observations.add(createObservation(OmConstants.OBS_TYPE_MEASUREMENT, PROCEDURE, OFFERING,
                     createObservableProperty(OBSERVABLE_PROPERTY), createFeature(FEATURE_OF_INTEREST, createRandomPoint4326()),
-                    new DateTime(DateTimeZone.UTC).minusHours(i), new QuantityValue(Math.random() * 10 + 50, UNIT)));
+                    new DateTime(DateTimeZone.UTC).minusHours(i), new QuantityValue(ThreadLocalRandom.current().nextDouble() * 10 + 50, UNIT)));
         }
 
         assertThat(pox().entity(createInsertObservationRequest(observations, OFFERING).xmlText(getXmlOptions())).response().asXmlObject(),

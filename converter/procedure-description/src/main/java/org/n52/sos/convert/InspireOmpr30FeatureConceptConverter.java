@@ -70,8 +70,8 @@ public class InspireOmpr30FeatureConceptConverter
     @Override
     public AbstractFeature convert(AbstractFeature objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof SosProcedureDescription<?>) {
-            return ((SosProcedureDescription<?>) objectToConvert)
+        if (objectToConvert instanceof SosProcedureDescription<?> description) {
+            return description
                     .setDescriptionFormat(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL);
         }
         return objectToConvert;

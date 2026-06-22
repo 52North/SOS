@@ -27,6 +27,8 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
+
 /**
  * Oracle datasource
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -35,6 +37,7 @@ package org.n52.sos.ds.datasource;
  */
 public class OracleDatasource extends AbstractOracleDatasource {
 
+    @Serial
     private static final long serialVersionUID = 6854073212077431981L;
     private static final String DIALECT_NAME = "Oracle Spatial";
 

@@ -29,7 +29,7 @@ package org.n52.sos.ds.hibernate.admin;
 
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;

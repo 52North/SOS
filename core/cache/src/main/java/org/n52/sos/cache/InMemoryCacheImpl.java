@@ -27,6 +27,7 @@
  */
 package org.n52.sos.cache;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +66,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
         implements SosWritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheImpl.class);
 
+    @Serial
     private static final long serialVersionUID = 3630601584420744019L;
 
     private final Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();

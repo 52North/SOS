@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -229,8 +229,8 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
     private String getProcedureDescriptionFormat(String responseFormat) {
         Encoder<Object, Object> encoder =
                 encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder != null && encoder instanceof ObservationEncoder) {
-            return ((ObservationEncoder<?, ?>) encoder).getProcedureEncodingNamspace();
+        if (encoder != null && encoder instanceof ObservationEncoder<?, ?> observationEncoder) {
+            return observationEncoder.getProcedureEncodingNamspace();
         }
         return null;
     }

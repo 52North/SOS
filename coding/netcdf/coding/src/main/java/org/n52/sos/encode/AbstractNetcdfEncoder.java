@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -233,8 +233,7 @@ public abstract class AbstractNetcdfEncoder
     @Override
     public BinaryAttachmentResponse encode(Object objectToEncode, EncodingContext additionalValues)
             throws EncodingException {
-        if (objectToEncode instanceof AbstractObservationResponse) {
-            AbstractObservationResponse aor = (AbstractObservationResponse) objectToEncode;
+        if (objectToEncode instanceof AbstractObservationResponse aor) {
             Version version = getVersion(aor);
             return encodeGetObsResponse(aor.getObservationCollection(), version);
         }
@@ -521,8 +520,8 @@ public abstract class AbstractNetcdfEncoder
                             index.setDim(obsPropDimCounter++, sensorDataset.getSubSensors().indexOf(subSensor));
                         }
                     }
-                    if (array instanceof ArrayFloat) {
-                        ((ArrayFloat) array).set(index, ((Number) valObj).floatValue());
+                    if (array instanceof ArrayFloat float1) {
+                        float1.set(index, ((Number) valObj).floatValue());
                     } else {
                         ((ArrayDouble) array).set(index, ((Number) valObj).doubleValue());
                     }
@@ -676,8 +675,7 @@ public abstract class AbstractNetcdfEncoder
             throws EncodingException {
         // FIXME when trajectories are implemented, bbox should be calculated in
         // AbstractSensorDataset during construction
-        if (sensorDataset instanceof StaticLocationDataset) {
-            StaticLocationDataset LocationDataset = (StaticLocationDataset) sensorDataset;
+        if (sensorDataset instanceof StaticLocationDataset LocationDataset) {
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MIN, LocationDataset.getLat()));
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MAX, LocationDataset.getLat()));
             writer.addGroupAttribute(null,
@@ -744,12 +742,12 @@ public abstract class AbstractNetcdfEncoder
         int indexCounter = 0;
         Double consistentBinHeight = null;
         for (SubSensor subSensor : sensorDataset.getSubSensors()) {
-            if (subSensor instanceof ProfileSubSensor) {
+            if (subSensor instanceof ProfileSubSensor sensor1) {
                 index.setDim(0, indexCounter++);
-                heightDephtArray.setDouble(index, checkValue(v, ((ProfileSubSensor) subSensor).getHeight()));
+                heightDephtArray.setDouble(index, checkValue(v, sensor1.getHeight()));
                 // check for consistent bin size
-                if (subSensor instanceof BinProfileSubSensor) {
-                    double binHeight = checkValue(v, ((BinProfileSubSensor) subSensor).getBinHeight());
+                if (subSensor instanceof BinProfileSubSensor sensor) {
+                    double binHeight = checkValue(v, sensor.getBinHeight());
                     if (consistentBinHeight == null) {
                         consistentBinHeight = binHeight;
                     } else if (consistentBinHeight != getNetcdfHelper().getFillValue()
@@ -780,8 +778,7 @@ public abstract class AbstractNetcdfEncoder
     }
 
     protected Array getLatitudeArray(AbstractSensorDataset sensorDataset) throws EncodingException {
-        if (sensorDataset instanceof StaticLocationDataset) {
-            StaticLocationDataset locationDataset = (StaticLocationDataset) sensorDataset;
+        if (sensorDataset instanceof StaticLocationDataset locationDataset) {
             if (locationDataset.getLat() != null) {
                 Array array = getArray();
                 initArrayWithFillValue(array, getNetcdfHelper().getFillValue());
@@ -797,8 +794,7 @@ public abstract class AbstractNetcdfEncoder
     }
 
     protected Array getLongitudeArray(AbstractSensorDataset sensorDataset) throws EncodingException {
-        if (sensorDataset instanceof StaticLocationDataset) {
-            StaticLocationDataset locationDataset = (StaticLocationDataset) sensorDataset;
+        if (sensorDataset instanceof StaticLocationDataset locationDataset) {
             if (locationDataset.getLat() != null) {
                 Array array = getArray();
                 initArrayWithFillValue(array, getNetcdfHelper().getFillValue());
@@ -853,8 +849,8 @@ public abstract class AbstractNetcdfEncoder
     private double getGeospatialVerticalMin(AbstractSensorDataset dataset) {
         if (dataset.isSetSubSensors()) {
             SubSensor subSensor = dataset.getSubSensors().get(dataset.getSubSensors().size() - 1);
-            if (subSensor instanceof ProfileSubSensor) {
-                return ((ProfileSubSensor) subSensor).getHeight();
+            if (subSensor instanceof ProfileSubSensor sensor) {
+                return sensor.getHeight();
             }
         }
         return 0;
@@ -863,8 +859,8 @@ public abstract class AbstractNetcdfEncoder
     private double getGeospatialVerticalMax(AbstractSensorDataset dataset) {
         if (dataset.isSetSubSensors()) {
             SubSensor subSensor = dataset.getSubSensors().get(0);
-            if (subSensor instanceof ProfileSubSensor) {
-                return ((ProfileSubSensor) subSensor).getHeight();
+            if (subSensor instanceof ProfileSubSensor sensor) {
+                return sensor.getHeight();
             }
         }
         return 0;
@@ -1062,15 +1058,14 @@ public abstract class AbstractNetcdfEncoder
             return getProcedureDescription(procedure, queryProcedureDescription(procedure));
         }
         AbstractSensorML abstractSensor = null;
-        if (procedureDescription instanceof SosProcedureDescription
-                && ((SosProcedureDescription) procedureDescription).getProcedureDescription() != null
+        if (procedureDescription instanceof SosProcedureDescription description
+                && description.getProcedureDescription() != null
                 && ((SosProcedureDescription) procedureDescription)
                         .getProcedureDescription() instanceof AbstractSensorML) {
             abstractSensor =
-                    (AbstractSensorML) ((SosProcedureDescription) procedureDescription).getProcedureDescription();
+                    (AbstractSensorML) description.getProcedureDescription();
             // check for SensorML to get members
-            if (abstractSensor instanceof SensorML) {
-                SensorML sml = (SensorML) abstractSensor;
+            if (abstractSensor instanceof SensorML sml) {
                 if (sml.isWrapper()) {
                     abstractSensor = (AbstractSensorML) sml.getMembers().get(0);
                 }
@@ -1117,8 +1112,8 @@ public abstract class AbstractNetcdfEncoder
         OperationHandler operationHandler =
                 (this.operationHandlerRepository).getOperationHandler(SosConstants.SOS,
                         SosConstants.Operations.DescribeSensor.toString());
-        if (operationHandler != null && operationHandler instanceof AbstractDescribeSensorHandler) {
-            return (AbstractDescribeSensorHandler) operationHandler;
+        if (operationHandler != null && operationHandler instanceof AbstractDescribeSensorHandler handler) {
+            return handler;
         }
         throw new NoApplicableCodeException().withMessage("Could not get DescribeSensor handler");
     }
@@ -1227,8 +1222,8 @@ public abstract class AbstractNetcdfEncoder
 
     protected SmlResponsibleParty getResponsibleParty(AbstractSensorML sml, String contactRole) {
         SmlContact contact = sml.getContact(contactRole);
-        if (contact != null && contact instanceof SmlResponsibleParty) {
-            return (SmlResponsibleParty) contact;
+        if (contact != null && contact instanceof SmlResponsibleParty party) {
+            return party;
         }
         return null;
     }

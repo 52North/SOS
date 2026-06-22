@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -484,8 +484,8 @@ public class ObservationHelper implements Constructable {
             Time valuePhenTime = createPhenomenonTime(o);
             if (obsPhenTime != null) {
                 TimePeriod timePeriod;
-                if (obsPhenTime instanceof TimePeriod) {
-                    timePeriod = (TimePeriod) obsPhenTime;
+                if (obsPhenTime instanceof TimePeriod period) {
+                    timePeriod = period;
                 } else {
                     timePeriod = new TimePeriod();
                     timePeriod.extendToContain(obsPhenTime);

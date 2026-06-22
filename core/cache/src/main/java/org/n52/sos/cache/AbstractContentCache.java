@@ -29,6 +29,7 @@ package org.n52.sos.cache;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.google.common.collect.Maps;
  * @author Christian Autermann
  */
 public abstract class AbstractContentCache implements ContentCache {
+    @Serial
     private static final long serialVersionUID = -5233383843446821643L;
 
     protected AbstractContentCache() {

@@ -222,9 +222,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
     protected String getOrderColumn(AbstractObservationRequest request) {
-        if (request instanceof GetObservationRequest) {
-            if (((GetObservationRequest) request).isSetTemporalFilter()) {
-                TemporalFilter filter = ((GetObservationRequest) request).getTemporalFilters().iterator().next();
+        if (request instanceof GetObservationRequest observationRequest) {
+            if (observationRequest.isSetTemporalFilter()) {
+                TemporalFilter filter = observationRequest.getTemporalFilters().iterator().next();
                 if (filter.getValueReference().contains(DataEntity.PROPERTY_RESULT_TIME)) {
                     return DataEntity.PROPERTY_RESULT_TIME;
                 }

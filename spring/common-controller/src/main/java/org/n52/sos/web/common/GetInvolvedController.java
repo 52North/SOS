@@ -30,7 +30,7 @@ package org.n52.sos.web.common;
 import java.io.Serializable;
 import java.net.URI;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

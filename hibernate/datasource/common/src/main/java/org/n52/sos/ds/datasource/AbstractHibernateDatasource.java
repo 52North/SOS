@@ -145,9 +145,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
 
     private static final String SETTING_NOT_FOUND_TEMPLATE =
-            "Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'. "
-                    + "If this produces no error, please add the following setting to "
-                    + "your datasource properties: '{}={}'\n\n";
+            """
+            Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'. \
+            If this produces no error, please add the following setting to \
+            your datasource properties: '{}={}'
+            
+            """;
 
     private static final String TMP_FILE_ENDING = ".tmp";
 

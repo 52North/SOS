@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -228,8 +228,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                                         boolean inserted = false;
                                         for (AbstractFeature feature : request.getProcedureDescription()
                                                 .getFeaturesOfInterestMap().values()) {
-                                            if (feature instanceof FeatureWithGeometry
-                                                    && ((FeatureWithGeometry) feature).isSetGeometry()) {
+                                            if (feature instanceof FeatureWithGeometry geometry
+                                                    && geometry.isSetGeometry()) {
                                                 ctx.setFeatureOfInterest(getDaoFactory().getFeatureOfInterestDAO()
                                                         .checkOrInsert(feature, session));
                                                 inserted = true;
@@ -447,8 +447,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
      *            the procedure description to check for
      */
     private void checkForMobileInsituFlags(ObservationContext ctx, AbstractFeature procedureDescription) {
-        if (procedureDescription instanceof AbstractSensorML) {
-            AbstractSensorML sml = (AbstractSensorML) procedureDescription;
+        if (procedureDescription instanceof AbstractSensorML sml) {
             if (sml.isSetMobile()) {
                 ctx.setMobile(sml.getMobile());
             }

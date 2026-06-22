@@ -38,8 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

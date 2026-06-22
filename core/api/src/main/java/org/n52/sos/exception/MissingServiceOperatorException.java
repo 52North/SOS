@@ -27,12 +27,15 @@
  */
 package org.n52.sos.exception;
 
+import java.io.Serial;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.4.0
  */
 public class MissingServiceOperatorException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 404000L;
 
     public MissingServiceOperatorException() {

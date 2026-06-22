@@ -29,7 +29,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

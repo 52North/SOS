@@ -123,20 +123,20 @@ public class ExtensionFesFilterCriteriaAdder {
     }
 
     private Criterion getFilter(Filter<?> filter) throws CodedException {
-        if (filter instanceof BinaryLogicFilter) {
+        if (filter instanceof BinaryLogicFilter logicFilter) {
             Map<NameValue, Set<String>> map =
-                    mergeNamesValues((BinaryLogicFilter) filter, Maps.<NameValue, Set<String>> newHashMap(), 0);
+                    mergeNamesValues(logicFilter, Maps.<NameValue, Set<String>> newHashMap(), 0);
             checkMap(map);
             return Subqueries.propertyIn(DataEntity.PROPERTY_ID, getDetachedCriteria(getClassFor(null, null), map));
             // current implementation, maybe change in the future
             // return getBinaryLogicFilterCriterion((BinaryLogicFilter) filter);
-        } else if (filter instanceof ComparisonFilter) {
-            if (isParameterName((ComparisonFilter) filter) || isParameterValue((ComparisonFilter) filter)) {
+        } else if (filter instanceof ComparisonFilter comparisonFilter) {
+            if (isParameterName(comparisonFilter) || isParameterValue(comparisonFilter)) {
                 Map<NameValue, Set<String>> map = Maps.<NameValue, Set<String>> newHashMap();
-                if (isParameterName((ComparisonFilter) filter)) {
-                    addValue(NameValue.NAME, (ComparisonFilter) filter, map);
-                } else if (isParameterValue((ComparisonFilter) filter)) {
-                    addValue(NameValue.VALUE, (ComparisonFilter) filter, map);
+                if (isParameterName(comparisonFilter)) {
+                    addValue(NameValue.NAME, comparisonFilter, map);
+                } else if (isParameterValue(comparisonFilter)) {
+                    addValue(NameValue.VALUE, comparisonFilter, map);
                 }
                 checkMap(map);
                 return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
@@ -186,10 +186,10 @@ public class ExtensionFesFilterCriteriaAdder {
         if (level == 0) {
             if (BinaryLogicOperator.And.equals(filter.getOperator())) {
                 for (Filter<?> filterPredicate : filter.getFilterPredicates()) {
-                    if (filterPredicate instanceof BinaryLogicFilter) {
-                        mergeNamesValues((BinaryLogicFilter) filterPredicate, map, level + 1);
-                    } else if (filterPredicate instanceof ComparisonFilter) {
-                        checkForNameValue((ComparisonFilter) filterPredicate, map);
+                    if (filterPredicate instanceof BinaryLogicFilter logicFilter) {
+                        mergeNamesValues(logicFilter, map, level + 1);
+                    } else if (filterPredicate instanceof ComparisonFilter comparisonFilter) {
+                        checkForNameValue(comparisonFilter, map);
                     } else {
                         throw new NoApplicableCodeException().withMessage(
                                 FILTER_NOT_SUPPORTED_LOG,
@@ -203,8 +203,8 @@ public class ExtensionFesFilterCriteriaAdder {
         } else if (level == 1) {
             if (BinaryLogicOperator.And.equals(filter.getOperator())) {
                 for (Filter<?> filterPredicate : filter.getFilterPredicates()) {
-                    if (filterPredicate instanceof ComparisonFilter) {
-                        checkForNameValue((ComparisonFilter) filterPredicate, map);
+                    if (filterPredicate instanceof ComparisonFilter comparisonFilter1) {
+                        checkForNameValue(comparisonFilter1, map);
                     } else {
                         throw new NoApplicableCodeException().withMessage(
                                 "Currently only comparison filters are supported at binary logical filter level 1!");

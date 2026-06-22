@@ -29,7 +29,7 @@ package org.n52.sos.inspire;
 
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.shetland.inspire.InspireSupportedCRS;

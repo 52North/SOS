@@ -67,10 +67,9 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (response instanceof GetObservationResponse) {
+        if (response instanceof GetObservationResponse observationResponse) {
             ObservationMergeIndicator indicator =
                     ObservationMergeIndicator.sameObservationConstellation().withoutObservationType();
-            GetObservationResponse observationResponse = (GetObservationResponse) response;
             observationResponse.setMergeObservations(true);
             observationResponse
                     .setObservationCollection(observationResponse.getObservationCollection().merge(indicator));

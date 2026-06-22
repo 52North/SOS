@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -37,6 +39,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  */
 public class UnsupportedOperatorException extends NoApplicableCodeException {
 
+    @Serial
     private static final long serialVersionUID = -2227898353603492442L;
 
     private static final String MESSAGE_TEMPLATE = "The requested operator '%s' is not supported by this server!";

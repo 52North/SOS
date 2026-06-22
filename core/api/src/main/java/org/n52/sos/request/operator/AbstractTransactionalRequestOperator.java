@@ -28,7 +28,7 @@
 package org.n52.sos.request.operator;
 
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.request.handler.OperationHandler;

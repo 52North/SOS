@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.component.AbstractComponentRepository;

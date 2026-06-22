@@ -27,12 +27,15 @@
  */
 package org.n52.sos.exception;
 
+import java.io.Serial;
+
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class NoSuchOfferingException extends NoSuchIdentifierException {
 
+    @Serial
     private static final long serialVersionUID = -8631854165748464638L;
 
     public NoSuchOfferingException(String identifier) {

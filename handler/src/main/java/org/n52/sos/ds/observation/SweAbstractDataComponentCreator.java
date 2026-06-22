@@ -79,28 +79,28 @@ public class SweAbstractDataComponentCreator
     }
 
     public SweAbstractDataComponent visit(DataEntity o) throws OwsExceptionReport {
-        if (o instanceof QuantityDataEntity) {
-            return visit((QuantityDataEntity) o);
-        } else if (o instanceof BlobDataEntity) {
-            return visit((BlobDataEntity) o);
-        } else if (o instanceof BooleanDataEntity) {
-            return visit((BooleanDataEntity) o);
-        } else if (o instanceof CategoryDataEntity) {
-            return visit((CategoryDataEntity) o);
-        } else if (o instanceof ComplexDataEntity) {
-            return visit((ComplexDataEntity) o);
-        } else if (o instanceof CountDataEntity) {
-            return visit((CountDataEntity) o);
-        } else if (o instanceof GeometryDataEntity) {
-            return visit((GeometryDataEntity) o);
-        } else if (o instanceof TextDataEntity) {
-            return visit((TextDataEntity) o);
-        } else if (o instanceof DataArrayDataEntity) {
-            return visit((DataArrayDataEntity) o);
-        } else if (o instanceof ProfileDataEntity) {
-            return visit((ProfileDataEntity) o);
-        } else if (o instanceof ReferencedDataEntity) {
-            return visit((ReferencedDataEntity) o);
+        if (o instanceof QuantityDataEntity entity10) {
+            return visit(entity10);
+        } else if (o instanceof BlobDataEntity entity9) {
+            return visit(entity9);
+        } else if (o instanceof BooleanDataEntity entity8) {
+            return visit(entity8);
+        } else if (o instanceof CategoryDataEntity entity7) {
+            return visit(entity7);
+        } else if (o instanceof ComplexDataEntity entity6) {
+            return visit(entity6);
+        } else if (o instanceof CountDataEntity entity5) {
+            return visit(entity5);
+        } else if (o instanceof GeometryDataEntity entity4) {
+            return visit(entity4);
+        } else if (o instanceof TextDataEntity entity3) {
+            return visit(entity3);
+        } else if (o instanceof DataArrayDataEntity entity2) {
+            return visit(entity2);
+        } else if (o instanceof ProfileDataEntity entity1) {
+            return visit(entity1);
+        } else if (o instanceof ReferencedDataEntity entity) {
+            return visit(entity);
         }
         return null;
     }
@@ -232,8 +232,7 @@ public class SweAbstractDataComponentCreator
             }
 
             if (valuedObservation.getDataset().isSetUnit() &&
-                component instanceof SweAbstractUomType) {
-                SweAbstractUomType<?> uomType = (SweAbstractUomType<?>) component;
+                component instanceof SweAbstractUomType<?> uomType) {
                 uomType.setUom(valuedObservation.getDataset().getUnit().getUnit());
             }
         }

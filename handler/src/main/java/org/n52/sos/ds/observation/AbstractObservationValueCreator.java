@@ -102,9 +102,9 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     @SuppressWarnings("rawtypes")
     protected void addDefinitionFromObservableProperty(DataEntity o, SweAbstractSimpleType v) {
-        if (o instanceof HasObservablePropertyGetter) {
-            if (((HasObservablePropertyGetter) o).getObservableProperty() != null) {
-                v.setDefinition(((HasObservablePropertyGetter) o).getObservableProperty().getIdentifier());
+        if (o instanceof HasObservablePropertyGetter getter) {
+            if (getter.getObservableProperty() != null) {
+                v.setDefinition(getter.getObservableProperty().getIdentifier());
             }
         }
     }
@@ -116,30 +116,30 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
 
     @Override
     public Value<?> visit(DataEntity o) throws OwsExceptionReport {
-        if (o instanceof QuantityDataEntity) {
-            return visit((QuantityDataEntity) o);
-        } else if (o instanceof BlobDataEntity) {
-            return visit((BlobDataEntity) o);
-        } else if (o instanceof BooleanDataEntity) {
-            return visit((BooleanDataEntity) o);
-        } else if (o instanceof CategoryDataEntity) {
-            return visit((CategoryDataEntity) o);
-        } else if (o instanceof ComplexDataEntity) {
-            return visit((ComplexDataEntity) o);
-        } else if (o instanceof CountDataEntity) {
-            return visit((CountDataEntity) o);
-        } else if (o instanceof GeometryDataEntity) {
-            return visit((GeometryDataEntity) o);
-        } else if (o instanceof TextDataEntity) {
-            return visit((TextDataEntity) o);
-        } else if (o instanceof DataArrayDataEntity) {
-            return visit((DataArrayDataEntity) o);
-        } else if (o instanceof ProfileDataEntity) {
-            return visit((ProfileDataEntity) o);
-        } else if (o instanceof TrajectoryDataEntity) {
-            return visit((TrajectoryDataEntity) o);
-        } else if (o instanceof ReferencedDataEntity) {
-            return visit((ReferencedDataEntity) o);
+        if (o instanceof QuantityDataEntity entity11) {
+            return visit(entity11);
+        } else if (o instanceof BlobDataEntity entity10) {
+            return visit(entity10);
+        } else if (o instanceof BooleanDataEntity entity9) {
+            return visit(entity9);
+        } else if (o instanceof CategoryDataEntity entity8) {
+            return visit(entity8);
+        } else if (o instanceof ComplexDataEntity entity7) {
+            return visit(entity7);
+        } else if (o instanceof CountDataEntity entity6) {
+            return visit(entity6);
+        } else if (o instanceof GeometryDataEntity entity5) {
+            return visit(entity5);
+        } else if (o instanceof TextDataEntity entity4) {
+            return visit(entity4);
+        } else if (o instanceof DataArrayDataEntity entity3) {
+            return visit(entity3);
+        } else if (o instanceof ProfileDataEntity entity2) {
+            return visit(entity2);
+        } else if (o instanceof TrajectoryDataEntity entity1) {
+            return visit(entity1);
+        } else if (o instanceof ReferencedDataEntity entity) {
+            return visit(entity);
         }
         return null;
     }
@@ -211,16 +211,16 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public void checkDetectionLimit(Value<?> value, OmObservation observation, String responseFormat) {
-        if (!checkResponseFormat(responseFormat) && value != null && value instanceof SweAbstractSimpleType
-                && ((SweAbstractSimpleType<?>) value).isSetQuality()) {
-            observation.addParameter(createDetectionLimitNamedValue(((SweAbstractSimpleType<?>) value).getQuality()));
+        if (!checkResponseFormat(responseFormat) && value != null && value instanceof SweAbstractSimpleType<?> type
+                && type.isSetQuality()) {
+            observation.addParameter(createDetectionLimitNamedValue(type.getQuality()));
         }
     }
 
     private void checkDetectionLimit(Value<?> value, DataEntity<?> o) {
-        if (value instanceof SweAbstractSimpleType && o.hasDetectionLimit()) {
-            ((SweAbstractSimpleType<?>) value).setQuality(createDetectionLimitQuality(
-                    ((SweAbstractSimpleType<?>) value).getQuality(), o.getDetectionLimit(), value));
+        if (value instanceof SweAbstractSimpleType<?> type && o.hasDetectionLimit()) {
+            type.setQuality(createDetectionLimitQuality(
+                    type.getQuality(), o.getDetectionLimit(), value));
         }
     }
 
@@ -234,9 +234,9 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         Optional<SweQuality> qual = quality.getQuality().stream().filter(q -> q instanceof SweQuantity).findFirst();
         if (qual.isPresent()) {
             SweQuality sweQuality = qual.get();
-            if (sweQuality instanceof SweQuantity) {
-                namedValue.setValue(new QuantityValue(((SweQuantity) sweQuality).getValue(),
-                        ((SweQuantity) sweQuality).getUomObject()));
+            if (sweQuality instanceof SweQuantity quantity) {
+                namedValue.setValue(new QuantityValue(quantity.getValue(),
+                        quantity.getUomObject()));
             }
         } else {
             return null;

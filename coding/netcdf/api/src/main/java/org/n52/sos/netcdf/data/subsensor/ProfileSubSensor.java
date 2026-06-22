@@ -44,8 +44,7 @@ public abstract class ProfileSubSensor extends SubSensor implements IndexedSubSe
             throw new NullPointerException();
         }
 
-        if (o instanceof ProfileSubSensor) {
-            ProfileSubSensor p = (ProfileSubSensor) o;
+        if (o instanceof ProfileSubSensor p) {
             return Double.compare(p.getHeight(), getHeight());
         } else {
             return super.compareTo(o);

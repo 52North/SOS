@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.io.Serial;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,10 +42,10 @@ import org.hibernate.TypeMismatchException;
 import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.ValueExtractor;
 import org.hibernate.type.descriptor.WrapperOptions;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
+import org.hibernate.type.descriptor.java.JavaType;
 import org.hibernate.type.descriptor.sql.BasicBinder;
 import org.hibernate.type.descriptor.sql.BasicExtractor;
-import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
+import org.hibernate.type.descriptor.sql.SqlType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -56,8 +57,9 @@ import org.n52.shetland.util.DateTimeParseException;
 
 import com.google.common.base.Strings;
 
-public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
+public class IsoTimeStringTypeDescriptor implements SqlType {
 
+    @Serial
     private static final long serialVersionUID = -6841667236080304205L;
 
     private DateTimeZone timeZone = DateTimeZone.UTC;
@@ -105,7 +107,7 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
     }
 
     @Override
-    public <X> ValueBinder<X> getBinder(final JavaTypeDescriptor<X> javaTypeDescriptor) {
+    public <X> ValueBinder<X> getBinder(final JavaType<X> javaTypeDescriptor) {
         return new BasicBinder<X>(javaTypeDescriptor, this) {
             @Override
             protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
@@ -124,7 +126,7 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
     }
 
     @Override
-    public <X> ValueExtractor<X> getExtractor(final JavaTypeDescriptor<X> javaTypeDescriptor) {
+    public <X> ValueExtractor<X> getExtractor(final JavaType<X> javaTypeDescriptor) {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {

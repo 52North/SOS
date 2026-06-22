@@ -29,7 +29,7 @@ package org.n52.sos.config;
 
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.ActivationService;

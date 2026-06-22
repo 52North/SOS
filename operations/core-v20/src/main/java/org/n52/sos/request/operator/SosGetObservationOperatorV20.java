@@ -329,8 +329,7 @@ public class SosGetObservationOperatorV20 extends
             String version) {
         Set<String> responseFormats = Sets.newHashSet();
         for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
-            if (e instanceof ObservationEncoder) {
-                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+            if (e instanceof ObservationEncoder<?, ?> oe) {
                 Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes =
                         oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObservationTypes != null
@@ -338,8 +337,8 @@ public class SosGetObservationOperatorV20 extends
                     for (final Entry<String, Set<SupportedType>> entry : supportedResponseFormatObservationTypes
                             .entrySet()) {
                         for (SupportedType st : entry.getValue()) {
-                            if (st instanceof ObservationType
-                                    && observationType.equals(((ObservationType) st).getValue())) {
+                            if (st instanceof ObservationType type
+                                    && observationType.equals(type.getValue())) {
                                 responseFormats.add(entry.getKey());
                             }
                         }

@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
@@ -38,6 +40,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  * @since 4.0.0
  */
 public class MethodNotSupportedException extends NoApplicableCodeException {
+    @Serial
     private static final long serialVersionUID = 5636725554502040487L;
 
     public MethodNotSupportedException(final String binding, final String method) {

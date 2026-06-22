@@ -286,8 +286,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             session.refresh(obsProp);
             existing.put(obsProp.getIdentifier(), obsProp);
         }
-        if (sosObsProp instanceof OmCompositePhenomenon) {
-            insertNonExisting(((OmCompositePhenomenon) sosObsProp).getPhenomenonComponents(), existing, session);
+        if (sosObsProp instanceof OmCompositePhenomenon phenomenon) {
+            insertNonExisting(phenomenon.getPhenomenonComponents(), existing, session);
         }
     }
 
@@ -301,8 +301,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         List<String> identifiers = new ArrayList<>(observableProperty.size());
         for (AbstractPhenomenon sosObservableProperty : observableProperty) {
             identifiers.add(sosObservableProperty.getIdentifier());
-            if (sosObservableProperty instanceof OmCompositePhenomenon) {
-                OmCompositePhenomenon parent = (OmCompositePhenomenon) sosObservableProperty;
+            if (sosObservableProperty instanceof OmCompositePhenomenon parent) {
                 for (OmObservableProperty child : parent.getPhenomenonComponents()) {
                     identifiers.add(child.getIdentifier());
                 }
@@ -314,8 +313,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     protected void insertHierachy(List<? extends AbstractPhenomenon> observableProperty,
             Map<String, PhenomenonEntity> existing, Session session) {
         for (AbstractPhenomenon sosObsProp : observableProperty) {
-            if (sosObsProp instanceof OmCompositePhenomenon) {
-                insertHierachy((OmCompositePhenomenon) sosObsProp, existing, session);
+            if (sosObsProp instanceof OmCompositePhenomenon phenomenon) {
+                insertHierachy(phenomenon, existing, session);
             }
         }
     }

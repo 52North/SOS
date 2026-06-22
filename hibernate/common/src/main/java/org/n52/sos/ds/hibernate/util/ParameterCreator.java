@@ -122,11 +122,9 @@ public class ParameterCreator {
     private <
             T extends DataEntity<?>> void checkParameter(DescribableEntity entity, ParameterEntity<?> parameter,
                     Set<ParameterEntity<?>> newParams) {
-        if (parameter instanceof ComplexParameterEntity && parameter.getValue() != null) {
-            ComplexParameterEntity<?> complex = (ComplexParameterEntity<?>) parameter;
+        if (parameter instanceof ComplexParameterEntity<?> complex && parameter.getValue() != null) {
             for (Object v : (Set<?>) complex.getValue()) {
-                if (v instanceof ParameterEntity) {
-                    ParameterEntity<?> child = (ParameterEntity<?>) v;
+                if (v instanceof ParameterEntity<?> child) {
                     checkParameter(entity, child, newParams);
                     child.setParent((ParameterEntity<?>) complex);
                 }
@@ -377,8 +375,8 @@ public class ParameterCreator {
 
         private ParameterEntity<?> setUnitAndPersist(ParameterEntity<?> param, Value<?> value)
                 throws OwsExceptionReport {
-            if (param instanceof HasUnit) {
-                ((HasUnit) param).setUnit(getUnit(value));
+            if (param instanceof HasUnit unit) {
+                unit.setUnit(getUnit(value));
             }
             return persist(param);
         }
@@ -390,10 +388,10 @@ public class ParameterCreator {
 
 
         private ParameterEntity<?> persist(ParameterEntity<?> parameter) throws OwsExceptionReport {
-            if (parameter instanceof ObservationParameterEntity && entity instanceof DataEntity) {
-                ((ObservationParameterEntity) parameter).setObservation((DataEntity) entity);
-            } else if (parameter instanceof FeatureParameterEntity && entity instanceof AbstractFeatureEntity) {
-                ((FeatureParameterEntity) parameter).setFeature((AbstractFeatureEntity) entity);
+            if (parameter instanceof ObservationParameterEntity parameterEntity1 && entity instanceof DataEntity dataEntity) {
+                parameterEntity1.setObservation(dataEntity);
+            } else if (parameter instanceof FeatureParameterEntity parameterEntity && entity instanceof AbstractFeatureEntity featureEntity) {
+                parameterEntity.setFeature(featureEntity);
             } else {
                 throw new NoApplicableCodeException().withMessage("Unable to insert parameter!");
             }

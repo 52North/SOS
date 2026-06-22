@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.io.Serial;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,7 +39,7 @@ import java.util.TimeZone;
 import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.ValueExtractor;
 import org.hibernate.type.descriptor.WrapperOptions;
-import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
+import org.hibernate.type.descriptor.java.JavaType;
 import org.hibernate.type.descriptor.sql.BasicBinder;
 import org.hibernate.type.descriptor.sql.BasicExtractor;
 import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
@@ -54,11 +55,12 @@ import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
 public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
     public static final UtcTimestampTypeDescriptor INSTANCE = new UtcTimestampTypeDescriptor();
 
+    @Serial
     private static final long serialVersionUID = -7983231403900402497L;
 
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
-    public <X> ValueBinder<X> getBinder(final JavaTypeDescriptor<X> javaTypeDescriptor) {
+    public <X> ValueBinder<X> getBinder(final JavaType<X> javaTypeDescriptor) {
         return new BasicBinder<X>(javaTypeDescriptor, this) {
             @Override
             protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
@@ -76,7 +78,7 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
         };
     }
 
-    public <X> ValueExtractor<X> getExtractor(final JavaTypeDescriptor<X> javaTypeDescriptor) {
+    public <X> ValueExtractor<X> getExtractor(final JavaType<X> javaTypeDescriptor) {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {

@@ -29,7 +29,7 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;

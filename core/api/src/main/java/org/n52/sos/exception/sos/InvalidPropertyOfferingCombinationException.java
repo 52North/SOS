@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.sos;
 
+import java.io.Serial;
+
 import org.n52.janmayen.http.HTTPStatus;
 
 import org.n52.shetland.ogc.sos.exception.CodedSosException;
@@ -40,6 +42,7 @@ import org.n52.shetland.ogc.sos.exception.SosExceptionCode;
  * @since 4.0.0
  */
 public class InvalidPropertyOfferingCombinationException extends CodedSosException {
+    @Serial
     private static final long serialVersionUID = 7758576540177872103L;
 
     public InvalidPropertyOfferingCombinationException() {

@@ -30,8 +30,8 @@ package org.n52.sos.web.admin;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.sos.web.common.ControllerConstants;

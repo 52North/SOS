@@ -1,0 +1,70 @@
+#
+# OpenRewrite recipe configuration for the 52°North SOS upgrade to
+# Spring Framework 6 / Spring Security 6 and the Jakarta EE (javax -> jakarta)
+# namespace migration, including the Java 17 baseline that Spring 6 requires
+# and the matching Hibernate 6 migration.
+#
+# This file is consumed by the 'rewrite' Maven profile (see pom.xml):
+#
+#   mvn -Prewrite rewrite:dryRun   # preview as target/rewrite/rewrite.patch
+#   mvn -Prewrite rewrite:run      # apply changes in place
+#
+# Recipes are grouped so the migration can be run as a whole or step by step:
+# point the profile's <activeRecipes> at one of the sub-recipes below
+# (e.g. org.n52.sos.MigrateToJakarta) to run a single phase in isolation.
+#
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.n52.sos.MigrateToSpring6AndJakarta
+displayName: Migrate SOS to Spring 6 and Jakarta EE
+description: >-
+  Full migration of the 52°North SOS code base to Spring Framework 6,
+  Spring Security 6, Jakarta EE (javax -> jakarta) and Hibernate 6, on a
+  Java 17 baseline. Also applies JUnit 5 best practices to the test code.
+recipeList:
+  # 1. Java 17 baseline (Spring 6 requires Java 17). Bumps the source/target
+  #    level and applies the relevant language migrations.
+  - org.openrewrite.java.migrate.UpgradeToJava17
+
+  # 2. Jakarta EE namespace migration (javax.* -> jakarta.*) across servlet,
+  #    persistence, validation, annotation, xml.bind, etc.
+  - org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta
+
+  # 3. Spring Framework 6 (transitively migrates Spring's own javax usages,
+  #    deprecated API replacements and configuration changes).
+  - org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0
+
+  # 4. Spring Security 6 (this project uses spring-security heavily).
+  - org.openrewrite.java.spring.security6.UpgradeSpringSecurity_6_0
+
+  # 5. Hibernate 6.1 (moves to jakarta.persistence and the new Hibernate APIs).
+  - org.n52.sos.MigrateToHibernate
+
+  # 6. JUnit 5 best practices for the test sources.
+  #- org.openrewrite.java.testing.junit5.JUnit5BestPractices
+
+---
+#
+# Hibernate migration broken out so it can be run / reviewed on its own.
+# Hibernate 6.1.x is the conservative landing target that pairs with
+# Spring Framework 6.0; bump to MigrateToHibernate62+ later if desired.
+#
+type: specs.openrewrite.org/v1beta/recipe
+name: org.n52.sos.MigrateToHibernate
+displayName: Migrate SOS to Hibernate 6.1
+description: Migrate the Hibernate 5.6 usage in SOS to Hibernate 6.1.x.
+recipeList:
+  - org.openrewrite.hibernate.MigrateToHibernate61
+
+---
+#
+# Jakarta-only phase (no Spring), useful for migrating the non-Spring modules
+# (core, coding, hibernate, ...) first and reviewing them in isolation.
+#
+type: specs.openrewrite.org/v1beta/recipe
+name: org.n52.sos.MigrateToJakarta
+displayName: Migrate SOS to Jakarta EE
+description: Migrate javax.* APIs in SOS to their jakarta.* equivalents.
+recipeList:
+  - org.openrewrite.java.migrate.UpgradeToJava17
+  - org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta

@@ -31,7 +31,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
@@ -95,8 +95,7 @@ public class WSDLFactory implements Producer<String> {
                 builder.setSoapEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
-                    if (op instanceof WSDLAwareRequestOperator) {
-                        final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
+                    if (op instanceof WSDLAwareRequestOperator wop) {
                         if (wop.getSosOperationDefinition() != null) {
                             if (isHttpPostSupported(binding, wop)) {
                                 builder.addSoapOperation(wop.getSosOperationDefinition());
@@ -113,8 +112,7 @@ public class WSDLFactory implements Producer<String> {
                 builder.setPoxEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
-                    if (op instanceof WSDLAwareRequestOperator) {
-                        final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
+                    if (op instanceof WSDLAwareRequestOperator wop) {
                         if (wop.getSosOperationDefinition() != null) {
                             if (isHttpPostSupported(binding, wop)) {
                                 builder.addPoxOperation(wop.getSosOperationDefinition());
@@ -131,8 +129,7 @@ public class WSDLFactory implements Producer<String> {
                 builder.setKvpEndpoint(URI.create(serviceUrl + "?"));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
-                    if (op instanceof WSDLAwareRequestOperator) {
-                        final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
+                    if (op instanceof WSDLAwareRequestOperator wop) {
                         if (wop.getSosOperationDefinition() != null) {
                             if (isHttpGetSupported(binding, wop)) {
                                 builder.addKvpOperation(wop.getSosOperationDefinition());

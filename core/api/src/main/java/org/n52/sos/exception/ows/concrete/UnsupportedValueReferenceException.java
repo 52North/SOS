@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
@@ -35,6 +37,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  */
 public class UnsupportedValueReferenceException extends NoApplicableCodeException {
 
+    @Serial
     private static final long serialVersionUID = 4590439296184613618L;
 
     public UnsupportedValueReferenceException(String ref) {

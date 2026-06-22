@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.swes;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
 
 /**
@@ -35,6 +37,7 @@ import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
  * @since 4.0.0
  */
 public class RequestExtensionNotSupportedException extends CodedSwesException {
+    @Serial
     private static final long serialVersionUID = -8667723076809166063L;
 
     public RequestExtensionNotSupportedException() {

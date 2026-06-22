@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
@@ -94,8 +94,7 @@ public class ProcedureDescriptionFormatRepository
         this.keys.clear();
         Set<OwsServiceKey> serviceOperatorKeyTypes = this.serviceOperatorRepository.getServiceOperatorKeys();
         for (Encoder<?, ?> encoder : this.encoderRepository.getEncoders()) {
-            if (encoder instanceof ProcedureEncoder) {
-                ProcedureEncoder<?, ?> procedureEncoder = (ProcedureEncoder<?, ?>) encoder;
+            if (encoder instanceof ProcedureEncoder<?, ?> procedureEncoder) {
                 for (OwsServiceKey sokt : serviceOperatorKeyTypes) {
                     Set<String> formats = procedureEncoder.getSupportedProcedureDescriptionFormats(sokt.getService(),
                             sokt.getVersion());

@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
@@ -314,10 +314,10 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     private int getRequestedCrs(OwsServiceRequest request) {
         int targetSrid =
                 request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue).map(value -> {
-                    if (value instanceof SweCount) {
-                        return ((SweCount) value).getValue();
-                    } else if (value instanceof Integer) {
-                        return (Integer) value;
+                    if (value instanceof SweCount count) {
+                        return count.getValue();
+                    } else if (value instanceof Integer integer) {
+                        return integer;
                     } else {
                         return null;
                     }

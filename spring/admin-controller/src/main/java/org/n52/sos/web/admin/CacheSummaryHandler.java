@@ -31,8 +31,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.sos.cache.SosContentCache;
@@ -99,8 +99,8 @@ public final class CacheSummaryHandler {
     private String nullSafeToString(Object obj) {
         if (obj == null) {
             return "null";
-        } else if (obj instanceof Collection) {
-            return Integer.toString(((Collection<?>) obj).size());
+        } else if (obj instanceof Collection<?> collection) {
+            return Integer.toString(collection.size());
         } else {
             return obj.toString();
         }

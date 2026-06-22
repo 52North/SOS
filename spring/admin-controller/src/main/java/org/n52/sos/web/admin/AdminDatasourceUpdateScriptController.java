@@ -29,7 +29,7 @@ package org.n52.sos.web.admin;
 
 import java.sql.SQLException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
@@ -60,9 +60,9 @@ public class AdminDatasourceUpdateScriptController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getChangeScript() throws ConnectionProviderException, SQLException {
-        if (connectionProvider instanceof UpdateableConnectionProvider
-                && ((UpdateableConnectionProvider) connectionProvider).supportsUpdateScript()) {
-            String updateScript = ((UpdateableConnectionProvider) connectionProvider).getUpdateScript();
+        if (connectionProvider instanceof UpdateableConnectionProvider provider
+                && provider.supportsUpdateScript()) {
+            String updateScript = provider.getUpdateScript();
             if (updateScript.isEmpty()) {
                 return "The database is current with the data model. No updates necessary.";
             } else {

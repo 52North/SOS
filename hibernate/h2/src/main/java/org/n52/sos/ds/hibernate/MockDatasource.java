@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.n52.iceland.ds.DatasourceCallback;
 
 public class MockDatasource implements Datasource {
 
+    @Serial
     private static final long serialVersionUID = -7798123898348967576L;
 
     @Override

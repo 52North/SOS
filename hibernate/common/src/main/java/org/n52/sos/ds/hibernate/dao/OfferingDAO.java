@@ -460,8 +460,7 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
             if (!temporalBoundingBoxes.isEmpty()) {
                 final HashMap<String, TimePeriod> temporalBBoxMap = new HashMap<>(temporalBoundingBoxes.size());
                 for (final Object recordObj : temporalBoundingBoxes) {
-                    if (recordObj instanceof Object[]) {
-                        final Object[] record = (Object[]) recordObj;
+                    if (recordObj instanceof Object[] record) {
                         final TimePeriod value =
                                 createTimePeriod((Timestamp) record[0], (Timestamp) record[1], (Timestamp) record[2]);
                         temporalBBoxMap.put((String) record[3], value);

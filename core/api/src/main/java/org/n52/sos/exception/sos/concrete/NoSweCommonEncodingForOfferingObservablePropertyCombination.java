@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.sos.concrete;
 
+import java.io.Serial;
+
 import org.n52.sos.exception.sos.InvalidPropertyOfferingCombinationException;
 
 /**
@@ -36,6 +38,7 @@ import org.n52.sos.exception.sos.InvalidPropertyOfferingCombinationException;
  */
 public class NoSweCommonEncodingForOfferingObservablePropertyCombination extends
         InvalidPropertyOfferingCombinationException {
+    @Serial
     private static final long serialVersionUID = 6023259175582467602L;
 
     public NoSweCommonEncodingForOfferingObservablePropertyCombination(String offering, String observableProperty) {

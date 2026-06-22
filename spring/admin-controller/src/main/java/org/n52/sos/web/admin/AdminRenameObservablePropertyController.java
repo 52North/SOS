@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -93,7 +93,7 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         if (cache.hasObservableProperty(newName)) {
             throw new AlreadyUsedIdentifierException(newName);
         }
-        if (!this.dao.isPresent()) {
+        if (this.dao.isEmpty()) {
             throw new NoImplementationFoundException(RenameDAO.class);
         }
         this.dao.get().renameObservableProperty(oldName, newName);

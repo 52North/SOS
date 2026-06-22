@@ -27,7 +27,7 @@
  */
 package org.n52.sos.service;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.n52.iceland.service.ImplementationVersionHeaderAdder;
 

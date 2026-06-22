@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

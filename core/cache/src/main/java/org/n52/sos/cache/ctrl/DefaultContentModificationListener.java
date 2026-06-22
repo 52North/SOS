@@ -30,7 +30,7 @@ package org.n52.sos.cache.ctrl;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
@@ -115,24 +115,24 @@ public class DefaultContentModificationListener
     }
 
     private ContentCacheUpdate createUpdate(Event event) {
-        if (event instanceof SensorInsertion) {
-            return createUpdate((SensorInsertion) event);
-        } else if (event instanceof ObservationInsertion) {
-            return createUpdate((ObservationInsertion) event);
-        } else if (event instanceof ResultTemplateInsertion) {
-            return createUpdate((ResultTemplateInsertion) event);
-        } else if (event instanceof SensorDeletion) {
-            return createUpdate((SensorDeletion) event);
-        } else if (event instanceof ResultInsertion) {
-            return createUpdate((ResultInsertion) event);
-        } else if (event instanceof FeatureInsertion) {
-            return createUpdate((FeatureInsertion) event);
-        } else if (event instanceof ResultTemplatesDeletion) {
-            return createUpdate((ResultTemplatesDeletion) event);
-        } else if (event instanceof UpdateCache) {
-            return createUpdate((UpdateCache) event);
-        } else if (event instanceof DeleteObservationEvent) {
-            return createUpdate((DeleteObservationEvent) event);
+        if (event instanceof SensorInsertion insertion4) {
+            return createUpdate(insertion4);
+        } else if (event instanceof ObservationInsertion insertion3) {
+            return createUpdate(insertion3);
+        } else if (event instanceof ResultTemplateInsertion insertion2) {
+            return createUpdate(insertion2);
+        } else if (event instanceof SensorDeletion deletion1) {
+            return createUpdate(deletion1);
+        } else if (event instanceof ResultInsertion insertion1) {
+            return createUpdate(insertion1);
+        } else if (event instanceof FeatureInsertion insertion) {
+            return createUpdate(insertion);
+        } else if (event instanceof ResultTemplatesDeletion deletion) {
+            return createUpdate(deletion);
+        } else if (event instanceof UpdateCache cache) {
+            return createUpdate(cache);
+        } else if (event instanceof DeleteObservationEvent observationEvent) {
+            return createUpdate(observationEvent);
         } else {
             throw new AssertionError();
         }

@@ -38,7 +38,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
@@ -182,18 +182,18 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
-        if (request instanceof GetObservationRequest) {
-            return changeGetObservationRequestParameterValues((GetObservationRequest) request);
-        } else if (request instanceof GetFeatureOfInterestRequest) {
-            return changeGetFeatureOfInterestRequestParameterValues((GetFeatureOfInterestRequest) request);
-        } else if (request instanceof DescribeSensorRequest) {
-            return changeDescribeSensorRequestParameterValues((DescribeSensorRequest) request);
-        } else if (request instanceof GetDataAvailabilityRequest) {
-            return changeGetDataAvailabilityRequestParameterValues((GetDataAvailabilityRequest) request);
-        } else if (request instanceof GetResultTemplateRequest) {
-            return changeGetResultTemplateRequestParameterValues((GetResultTemplateRequest) request);
-        } else if (request instanceof GetResultRequest) {
-            return changeGetResultRequestParameterValues((GetResultRequest) request);
+        if (request instanceof GetObservationRequest observationRequest) {
+            return changeGetObservationRequestParameterValues(observationRequest);
+        } else if (request instanceof GetFeatureOfInterestRequest interestRequest) {
+            return changeGetFeatureOfInterestRequestParameterValues(interestRequest);
+        } else if (request instanceof DescribeSensorRequest sensorRequest) {
+            return changeDescribeSensorRequestParameterValues(sensorRequest);
+        } else if (request instanceof GetDataAvailabilityRequest availabilityRequest) {
+            return changeGetDataAvailabilityRequestParameterValues(availabilityRequest);
+        } else if (request instanceof GetResultTemplateRequest templateRequest) {
+            return changeGetResultTemplateRequestParameterValues(templateRequest);
+        } else if (request instanceof GetResultRequest resultRequest) {
+            return changeGetResultRequestParameterValues(resultRequest);
         }
         return request;
     }
@@ -277,18 +277,18 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (checkForFlag(request, response)) {
-            if (response instanceof GetCapabilitiesResponse) {
-                return changeGetCapabilitiesResponseIdentifier((GetCapabilitiesResponse) response);
-            } else if (response instanceof AbstractObservationResponse) {
-                return changeAbstractObservationResponseIdentifier((AbstractObservationResponse) response);
-            } else if (response instanceof GetFeatureOfInterestResponse) {
-                return changeGetFeatureOfInterestResponseIdentifier((GetFeatureOfInterestResponse) response);
-            } else if (response instanceof DescribeSensorResponse) {
-                return changeDescribeSensorResponseIdentifier((DescribeSensorResponse) response);
-            } else if (response instanceof GetDataAvailabilityResponse) {
-                return changeGetDataAvailabilityResponseIdentifier((GetDataAvailabilityResponse) response);
-            } else if (response instanceof GetResultTemplateResponse) {
-                return changeGetResultTemplateResponseIdentifier((GetResultTemplateResponse) response);
+            if (response instanceof GetCapabilitiesResponse capabilitiesResponse) {
+                return changeGetCapabilitiesResponseIdentifier(capabilitiesResponse);
+            } else if (response instanceof AbstractObservationResponse observationResponse) {
+                return changeAbstractObservationResponseIdentifier(observationResponse);
+            } else if (response instanceof GetFeatureOfInterestResponse interestResponse) {
+                return changeGetFeatureOfInterestResponseIdentifier(interestResponse);
+            } else if (response instanceof DescribeSensorResponse sensorResponse) {
+                return changeDescribeSensorResponseIdentifier(sensorResponse);
+            } else if (response instanceof GetDataAvailabilityResponse availabilityResponse) {
+                return changeGetDataAvailabilityResponseIdentifier(availabilityResponse);
+            } else if (response instanceof GetResultTemplateResponse templateResponse) {
+                return changeGetResultTemplateResponseIdentifier(templateResponse);
             }
         }
         return response;
@@ -378,13 +378,12 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             throws OwsExceptionReport {
         SweAbstractDataComponent resultStructure = response.getResultStructure().get().orElse(null);
         SweDataRecord dataRecord = null;
-        if (resultStructure instanceof SweDataArray) {
-            SweDataArray dataArray = (SweDataArray) resultStructure;
+        if (resultStructure instanceof SweDataArray dataArray) {
             if (dataArray.getElementType() instanceof SweDataRecord) {
                 dataRecord = (SweDataRecord) dataArray.getElementType();
             }
-        } else if (resultStructure instanceof SweDataRecord) {
-            dataRecord = (SweDataRecord) resultStructure;
+        } else if (resultStructure instanceof SweDataRecord record) {
+            dataRecord = record;
         }
         if (dataRecord != null && dataRecord.isSetFields()) {
             for (SweField field : dataRecord.getFields()) {
@@ -405,8 +404,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     private void checkAndChangeProcedure(AbstractFeature abstractFeature) {
-        if (abstractFeature instanceof SosProcedureDescription) {
-            SosProcedureDescription<?> procedure = (SosProcedureDescription) abstractFeature;
+        if (abstractFeature instanceof SosProcedureDescription<?> procedure) {
             checkAndChangeProcedureIdentifier(procedure);
             if (procedure.isSetFeaturesOfInterest()) {
                 procedure.setFeaturesOfInterest(checkFeatureOfInterestIdentifier(procedure.getFeaturesOfInterest()));
@@ -432,11 +430,11 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
                 if (abstractSensorML.isSetKeywords()) {
                     abstractSensorML.setKeywords(checkKeywords(abstractSensorML.getKeywords()));
                 }
-                if (abstractSensorML instanceof SensorML) {
-                    checkSensorML((SensorML) abstractSensorML);
+                if (abstractSensorML instanceof SensorML mL) {
+                    checkSensorML(mL);
 
-                } else if (abstractSensorML instanceof AbstractProcess) {
-                    checkAbstractProcess((AbstractProcess) abstractSensorML);
+                } else if (abstractSensorML instanceof AbstractProcess process) {
+                    checkAbstractProcess(process);
                 }
             }
             if (procedure.isSetChildProcedures()) {
@@ -472,8 +470,8 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     private void checkProcessMethod(AbstractProcess procedure) {
-        if (procedure instanceof ProcessModel && ((ProcessModel) procedure).isSetMethod()) {
-            ProcessMethod method = ((ProcessModel) procedure).getMethod();
+        if (procedure instanceof ProcessModel model && model.isSetMethod()) {
+            ProcessMethod method = model.getMethod();
             if (method.isSetRulesDefinition() && method.getRulesDefinition().isSetDescription()) {
                 String[] split = method.getRulesDefinition().getDescription().split("'");
                 if (split.length == 5) {

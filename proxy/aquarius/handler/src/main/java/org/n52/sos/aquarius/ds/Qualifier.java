@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.ds;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -44,6 +45,7 @@ import com.google.common.base.Strings;
 @JsonPropertyOrder({ "Identifier", "DateApplied", "User", "StartTime", "EndTime" })
 public class Qualifier extends IntervalCheckerAndApplyer implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8429449365231482643L;
 
     @JsonProperty("Identifier")

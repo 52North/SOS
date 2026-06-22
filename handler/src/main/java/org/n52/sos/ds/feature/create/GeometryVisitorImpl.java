@@ -45,10 +45,10 @@ public class GeometryVisitorImpl
     }
 
     public Geometry visit(FeatureEntity f) throws OwsExceptionReport {
-        if (f instanceof SpecimenEntity) {
-            return visit((SpecimenEntity) f);
-        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
-            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        if (f instanceof SpecimenEntity entity1) {
+            return visit(entity1);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity entity) {
+            return visit(entity);
         }
         return new FeatureOfInterestCreator(context).createGeometry(f);
     }

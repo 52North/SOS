@@ -29,7 +29,7 @@ package org.n52.sos.proxy.harvest;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.n52.iceland.cache.ctrl.StaticCapabilitiesProvider;

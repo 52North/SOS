@@ -27,12 +27,15 @@
  */
 package org.n52.sos.exception.sos;
 
+import java.io.Serial;
+
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
 
 public class InvalidSosServiceParameterException extends InvalidServiceParameterException {
 
+    @Serial
     private static final long serialVersionUID = 3160084437440473955L;
 
     public InvalidSosServiceParameterException(String value) {

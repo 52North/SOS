@@ -891,12 +891,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             dataset.setLastValueAt(observation.getSamplingTimeEnd());
             dataset.setLastObservation(observation);
         }
-        if (observation instanceof QuantityDataEntity) {
+        if (observation instanceof QuantityDataEntity entity) {
             if (minChanged) {
-                dataset.setFirstQuantityValue(((QuantityDataEntity) observation).getValue());
+                dataset.setFirstQuantityValue(entity.getValue());
             }
             if (maxChanged) {
-                dataset.setLastQuantityValue(((QuantityDataEntity) observation).getValue());
+                dataset.setLastQuantityValue(entity.getValue());
             }
         }
         if (!dataset.isSetResultTimeStart() || dataset.isSetResultTimeStart()
@@ -991,8 +991,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(dataset, session);
             if (firstDataEntity != null) {
                 dataset.setFirstValueAt(firstDataEntity.getSamplingTimeStart());
-                if (firstDataEntity instanceof QuantityDataEntity) {
-                    dataset.setFirstQuantityValue(((QuantityDataEntity) firstDataEntity).getValue());
+                if (firstDataEntity instanceof QuantityDataEntity entity) {
+                    dataset.setFirstQuantityValue(entity.getValue());
                 }
                 dataset.setFirstObservation(firstDataEntity);
             } else {
@@ -1007,8 +1007,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             DataEntity<?> latestDataEntity = seriesObservationDAO.getLastObservationFor(dataset, session);
             if (latestDataEntity != null) {
                 dataset.setLastValueAt(latestDataEntity.getSamplingTimeEnd());
-                if (latestDataEntity instanceof QuantityDataEntity) {
-                    dataset.setLastQuantityValue(((QuantityDataEntity) latestDataEntity).getValue());
+                if (latestDataEntity instanceof QuantityDataEntity entity1) {
+                    dataset.setLastQuantityValue(entity1.getValue());
                 }
                 dataset.setLastObservation(latestDataEntity);
             } else {
@@ -1049,8 +1049,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     private void updateStaAfterObservationDeletion(AbstractDatasetEntity dataset, Session session) {
-        if (dataset instanceof DatasetAggregationEntity) {
-            DatasetAggregationEntity aggregation = (DatasetAggregationEntity) dataset;
+        if (dataset instanceof DatasetAggregationEntity aggregation) {
             Set<Date> samplingTimeStart = new LinkedHashSet<>();
             Set<Date> samplingTimeEnd = new LinkedHashSet<>();
             Set<Date> resultTimeStart = new LinkedHashSet<>();

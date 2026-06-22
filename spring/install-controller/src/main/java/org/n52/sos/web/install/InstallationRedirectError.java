@@ -27,12 +27,15 @@
  */
 package org.n52.sos.web.install;
 
+import java.io.Serial;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class InstallationRedirectError extends Exception {
+    @Serial
     private static final long serialVersionUID = -3268501649427618242L;
 
     private String path;

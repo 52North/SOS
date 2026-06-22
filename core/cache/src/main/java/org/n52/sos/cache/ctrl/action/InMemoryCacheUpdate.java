@@ -71,10 +71,10 @@ public abstract class InMemoryCacheUpdate extends SosContentCacheUpdate {
     }
 
     private Stream<AbstractSamplingFeature> asStream(AbstractFeature f) {
-        if (f instanceof AbstractSamplingFeature) {
-            return Stream.of((AbstractSamplingFeature) f);
-        } else if (f instanceof FeatureCollection) {
-            return asStream((FeatureCollection) f);
+        if (f instanceof AbstractSamplingFeature feature) {
+            return Stream.of(feature);
+        } else if (f instanceof FeatureCollection collection) {
+            return asStream(collection);
         } else {
             String errorMessage =
                     String.format("Feature Type \"%s\" not supported.", f != null ? f.getClass().getName() : "null");

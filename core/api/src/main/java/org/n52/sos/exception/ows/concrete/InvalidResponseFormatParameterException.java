@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
+import java.io.Serial;
+
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.sos.SosConstants;
 
@@ -36,6 +38,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
  * @since 4.0.0
  */
 public class InvalidResponseFormatParameterException extends InvalidParameterValueException {
+    @Serial
     private static final long serialVersionUID = 1740331674439130975L;
 
     public InvalidResponseFormatParameterException(String value) {

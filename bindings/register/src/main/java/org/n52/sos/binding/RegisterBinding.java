@@ -38,9 +38,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.n52.iceland.binding.AbstractXmlBinding;
 import org.n52.iceland.binding.BindingKey;
@@ -148,10 +148,10 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
         Object object = decode(req);
         if (object != null) {
             SosProcedureDescription<?> procDesc = null;
-            if (object instanceof SosProcedureDescription<?>) {
-                procDesc = (SosProcedureDescription<?>) object;
-            } else if (object instanceof AbstractFeature) {
-                procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
+            if (object instanceof SosProcedureDescription<?> description) {
+                procDesc = description;
+            } else if (object instanceof AbstractFeature feature) {
+                procDesc = new SosProcedureDescription<AbstractFeature>(feature);
             } else {
                 throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
                         object.getClass().getName());
@@ -305,12 +305,12 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
 
     private List<String> getObservablePropertyFromAbstractSensorML(AbstractSensorML absSensorML) {
         Set<String> obsProps = Sets.newHashSet();
-        if (absSensorML instanceof AbstractProcess && ((AbstractProcess) absSensorML).isSetOutputs()) {
-            for (SmlIo smlIo : ((AbstractProcess) absSensorML).getOutputs()) {
+        if (absSensorML instanceof AbstractProcess process && process.isSetOutputs()) {
+            for (SmlIo smlIo : process.getOutputs()) {
                 if (smlIo.isSetValue()) {
                     SweAbstractDataComponent abstractDataComponent = smlIo.getIoValue();
-                    if (abstractDataComponent instanceof SweAbstractDataRecord) {
-                        for (SweField field : ((SweAbstractDataRecord) abstractDataComponent).getFields()) {
+                    if (abstractDataComponent instanceof SweAbstractDataRecord record) {
+                        for (SweField field : record.getFields()) {
                             String identifier = getObservablePropertyIdentifierFrom(field.getElement());
                             if (!Strings.isNullOrEmpty(identifier)) {
                                 obsProps.add(identifier);
@@ -332,8 +332,8 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
                     obsProps.add(smlIo.getIoName());
                 }
             }
-        } else if (absSensorML instanceof SensorML && ((SensorML) absSensorML).isWrapper()) {
-            for (AbstractProcess abstractProcess : ((SensorML) absSensorML).getMembers()) {
+        } else if (absSensorML instanceof SensorML mL && mL.isWrapper()) {
+            for (AbstractProcess abstractProcess : mL.getMembers()) {
                 obsProps.addAll(getObservablePropertyFromAbstractSensorML(abstractProcess));
             }
         }

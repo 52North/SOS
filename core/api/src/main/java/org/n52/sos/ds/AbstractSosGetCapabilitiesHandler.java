@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.namespace.QName;
 
 import org.n52.iceland.binding.Binding;
@@ -222,7 +222,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
             }
         }
         if (getCache().getLastUpdateTime() != null && response.getCapabilities() != null
-                && !response.getCapabilities().getUpdateSequence().isPresent()) {
+                && response.getCapabilities().getUpdateSequence().isEmpty()) {
             response.getCapabilities()
                     .setUpdateSequence(DateTimeHelper.formatDateTime2IsoString(getCache().getLastUpdateTime()));
         }
@@ -684,8 +684,8 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
             Map<String, MergableExtension> map = new HashMap<>(providers.size());
             providers.stream().filter(Objects::nonNull).map(OwsCapabilitiesExtensionProvider::getExtension)
                     .forEachOrdered(extension -> {
-                        if (extension instanceof MergableExtension) {
-                            map.merge(extension.getSectionName(), (MergableExtension) extension,
+                        if (extension instanceof MergableExtension mergableExtension) {
+                            map.merge(extension.getSectionName(), mergableExtension,
                                     Functions.mergeLeft(MergableExtension::merge));
                         } else {
                             extensions.add(extension);

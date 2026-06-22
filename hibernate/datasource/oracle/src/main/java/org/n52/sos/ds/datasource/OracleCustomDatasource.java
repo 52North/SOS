@@ -27,6 +27,8 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
+
 /**
  * Oracle datasource for custom mapping
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -35,6 +37,7 @@ package org.n52.sos.ds.datasource;
  */
 public class OracleCustomDatasource extends OracleCoreDatasource {
 
+    @Serial
     private static final long serialVersionUID = -7359398930412826037L;
     private static final String DIALECT_NAME = "Oracle Spatial Custom";
 

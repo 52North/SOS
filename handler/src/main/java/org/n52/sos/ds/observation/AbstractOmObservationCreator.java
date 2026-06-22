@@ -312,8 +312,8 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
     protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi) throws OwsExceptionReport {
         final AbstractFeature feature = new FeatureVisitorImpl(getFeatureVisitorContext()).visit(foi);
         if (!getActiveProfile().isEncodeFeatureOfInterestInObservations()
-                && feature instanceof AbstractSamplingFeature) {
-            ((AbstractSamplingFeature) feature).setEncode(false);
+                && feature instanceof AbstractSamplingFeature samplingFeature) {
+            samplingFeature.setEncode(false);
         }
         return feature;
     }

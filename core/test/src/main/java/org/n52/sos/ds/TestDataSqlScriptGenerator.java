@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -109,7 +108,7 @@ public final class TestDataSqlScriptGenerator {
         if (args.length > 3) {
             fileName = args[3];
         }
-        Path file = Paths.get(fileName);
+        Path file = Path.of(fileName);
 
         try (BufferedWriter bw = Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
             LOGGER.debug("Writing results to file '{}'", file.toAbsolutePath().toString());

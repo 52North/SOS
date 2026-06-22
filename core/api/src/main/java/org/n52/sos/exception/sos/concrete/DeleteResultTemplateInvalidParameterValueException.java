@@ -27,6 +27,8 @@
  */
 package org.n52.sos.exception.sos.concrete;
 
+import java.io.Serial;
+
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.CodedOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
@@ -39,6 +41,7 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
  */
 public class DeleteResultTemplateInvalidParameterValueException extends CodedOwsException {
 
+    @Serial
     private static final long serialVersionUID = -5697374281501971502L;
 
     public DeleteResultTemplateInvalidParameterValueException(

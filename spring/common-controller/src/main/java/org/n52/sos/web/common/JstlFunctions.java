@@ -28,11 +28,11 @@
 package org.n52.sos.web.common;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.janmayen.Json;
@@ -140,7 +140,7 @@ public final class JstlFunctions {
      */
     public static boolean fileExists(ServletContext ctx, String path) {
         return ctx.getRealPath(path) != null ? new File(ctx.getRealPath(path)).exists()
-                : Paths.get(ctx.getRealPath("/"), path).toFile().exists();
+                : Path.of(ctx.getRealPath("/"), path).toFile().exists();
     }
 
     public static String mapToJson(Map<?, ?> map) {

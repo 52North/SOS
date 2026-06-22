@@ -91,8 +91,7 @@ public class ProcedureDescriptionFormatKey {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ProcedureDescriptionFormatKey) {
-            ProcedureDescriptionFormatKey o = (ProcedureDescriptionFormatKey) obj;
+        if (obj instanceof ProcedureDescriptionFormatKey o) {
             return Objects.equal(getServiceOperatorKey(), o.getServiceOperatorKey())
                     && Objects.equal(getProcedureDescriptionFormat(), o.getProcedureDescriptionFormat());
         }

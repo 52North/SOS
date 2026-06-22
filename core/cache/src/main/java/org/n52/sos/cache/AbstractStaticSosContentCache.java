@@ -27,6 +27,7 @@
  */
 package org.n52.sos.cache;
 
+import java.io.Serial;
 import java.util.Set;
 
 import org.n52.iceland.coding.SupportedTypeRepository;
@@ -38,6 +39,7 @@ import org.n52.iceland.coding.SupportedTypeRepository;
  * @since 4.0.0
  */
 public abstract class AbstractStaticSosContentCache extends AbstractContentCache implements SosContentCache {
+    @Serial
     private static final long serialVersionUID = -3494345412582194615L;
 
     private transient SupportedTypeRepository supportedTypeRepository;

@@ -156,9 +156,9 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         if (this.crsAuthority instanceof DeferredAuthorityFactory) {
             DeferredAuthorityFactory.exit();
         }
-        if (this.crsAuthority instanceof AbstractAuthorityFactory) {
+        if (this.crsAuthority instanceof AbstractAuthorityFactory factory) {
             try {
-                ((AbstractAuthorityFactory) this.crsAuthority).dispose();
+                factory.dispose();
             } catch (FactoryException fe) {
                 LOGGER.error("Error while GeometryHandler clean up", fe);
             }

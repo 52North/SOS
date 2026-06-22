@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -233,8 +233,7 @@ public class SosDescribeSensorOperatorV20 extends
                             }
                             if (procedureDescription.isSetFeaturesOfInterest()
                                     || procedureDescription.isSetFeaturesOfInterestMap()) {
-                                if (abstractProcess instanceof AbstractProcessV20) {
-                                    AbstractProcessV20 abstractProcessV20 = (AbstractProcessV20) abstractProcess;
+                                if (abstractProcess instanceof AbstractProcessV20 abstractProcessV20) {
                                     SmlFeatureOfInterest smlFeatureOfInterest;
                                     if (!abstractProcessV20.isSetSmlFeatureOfInterest()) {
                                         smlFeatureOfInterest = new SmlFeatureOfInterest();
@@ -255,12 +254,12 @@ public class SosDescribeSensorOperatorV20 extends
                                 }
                             }
                         }
-                        if (procedureDescription.isSetChildProcedures() && abstractProcess instanceof HasComponents) {
+                        if (procedureDescription.isSetChildProcedures() && abstractProcess instanceof HasComponents components) {
                             List<SmlComponent> smlComponents = Lists.newArrayList();
                             smlComponents.addAll(
                                     createComponentsForChildProcedures(procedureDescription.getChildProcedures()));
                             abstractProcess.getOutputs().addAll(getOutputsFromChilds(smlComponents));
-                            ((HasComponents) abstractProcess).addComponents(smlComponents);
+                            components.addComponents(smlComponents);
                         }
                     } else if (procedureDescription.getProcedureDescription() instanceof SensorML) {
                         for (AbstractProcess abstractProcess : ((SensorML) procedureDescription

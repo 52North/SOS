@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -127,7 +127,7 @@ public class HibernatePredefinedInsertionHandler
     }
 
     private void checkExceptionAndThrow(HibernateException pe) throws CodedException {
-        if (pe instanceof SQLGrammarException && ((SQLGrammarException) pe).getSQLState().equals("42501")) {
+        if (pe instanceof SQLGrammarException exception && exception.getSQLState().equals("42501")) {
             throw new NoApplicableCodeException()
                     .withMessage("The user does not have the privileges to write data into the database!");
         }

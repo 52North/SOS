@@ -209,8 +209,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     @Override
     protected ObservationContext fillObservationContext(ObservationContext ctx, OmObservation omObservation,
             Session session) {
-        if (ctx instanceof EReportingObservationContext) {
-            EReportingObservationContext ectx = (EReportingObservationContext) ctx;
+        if (ctx instanceof EReportingObservationContext ectx) {
             AqdSamplingPoint samplingPoint = null;
             if (omObservation.isSetParameter()) {
                 samplingPoint = new AqdSamplingPoint();
@@ -272,11 +271,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
         if (observation.isSetParameter()) {
             for (NamedValue<?> namedValue : observation.getParameter()) {
                 Value<?> value = namedValue.getValue();
-                if (value instanceof ReferenceValue) {
-                    return ((ReferenceValue) value).getValue()
+                if (value instanceof ReferenceValue referenceValue) {
+                    return referenceValue.getValue()
                             .getHref();
-                } else if (value instanceof HrefAttributeValue) {
-                    return ((HrefAttributeValue) value).getValue()
+                } else if (value instanceof HrefAttributeValue attributeValue) {
+                    return attributeValue.getValue()
                             .getHref();
                 }
             }
@@ -286,14 +285,14 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     private AqdSamplingPoint addSamplingPointParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
             Value<?> value) {
-        if (value instanceof ReferenceValue) {
-            ReferenceType referenceType = ((ReferenceValue) value).getValue();
+        if (value instanceof ReferenceValue referenceValue) {
+            ReferenceType referenceType = referenceValue.getValue();
             samplingPoint.setIdentifier(referenceType.getHref());
             if (referenceType.isSetTitle()) {
                 samplingPoint.setName(new CodeType(referenceType.getTitle()));
             }
-        } else if (value instanceof HrefAttributeValue) {
-            W3CHrefAttribute hrefAttribute = ((HrefAttributeValue) value).getValue();
+        } else if (value instanceof HrefAttributeValue attributeValue) {
+            W3CHrefAttribute hrefAttribute = attributeValue.getValue();
             samplingPoint.setIdentifier(hrefAttribute.getHref());
         }
         return samplingPoint;
@@ -301,11 +300,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     private AqdSamplingPoint addAssessmentTypeParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,
             Value<?> value) {
-        if (value instanceof ReferenceValue) {
-            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((ReferenceValue) value).getValue()
+        if (value instanceof ReferenceValue referenceValue) {
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(referenceValue.getValue()
                     .getHref()));
-        } else if (value instanceof HrefAttributeValue) {
-            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(((HrefAttributeValue) value).getValue()
+        } else if (value instanceof HrefAttributeValue attributeValue) {
+            samplingPoint.setAssessmentType(AssessmentType.fromConceptURI(attributeValue.getValue()
                     .getHref()));
         }
         return samplingPoint;

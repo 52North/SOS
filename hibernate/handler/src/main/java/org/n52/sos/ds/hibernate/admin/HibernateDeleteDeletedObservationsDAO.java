@@ -27,7 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.admin;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -70,13 +70,10 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
         try {
             session = sessionHolder.getSession();
             transaction = getTransaction(session);
-            ScrollableIterable<DataEntity<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session));
-            try {
+            try (ScrollableIterable<DataEntity<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session))) {
                 for (DataEntity<?> o : sr) {
                     session.delete(o);
                 }
-            } finally {
-                sr.close();
             }
 
             session.flush();

@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.slf4j.Logger;

@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.naming.ConfigurationException;
 
 import org.n52.faroe.Validation;
@@ -102,18 +102,18 @@ public class UVFRequestModifier
     public OwsServiceRequest modifyRequest(OwsServiceRequest request)
             throws OwsExceptionReport {
         // check for response format to avoid incomprehensible exception
-        if (request instanceof AbstractObservationRequest
-                && ((AbstractObservationRequest) request).isSetResponseFormat()) {
-            checkResponseFormat(((AbstractObservationRequest) request).getResponseFormat(), request.getService(),
+        if (request instanceof AbstractObservationRequest observationRequest
+                && observationRequest.isSetResponseFormat()) {
+            checkResponseFormat(observationRequest.getResponseFormat(), request.getService(),
                     request.getVersion());
         }
         if (request.getRequestContext().getAcceptType().isPresent()
                 && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF)
-                || request instanceof ResponseFormat && ((ResponseFormat) request).isSetResponseFormat()
-                        && ((ResponseFormat) request).getResponseFormat()
+                || request instanceof ResponseFormat format && format.isSetResponseFormat()
+                        && format.getResponseFormat()
                                 .contains(UVFConstants.CONTENT_TYPE_UVF.getSubtype())
                         && UVFConstants.CONTENT_TYPE_UVF
-                                .isCompatible(MediaType.parse(((ResponseFormat) request).getResponseFormat()))) {
+                                .isCompatible(MediaType.parse(format.getResponseFormat()))) {
             if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs)
                     && request.getExtension(OWSConstants.AdditionalRequestParams.crs).isPresent()
                     && request.getExtension(OWSConstants.AdditionalRequestParams.crs).get()

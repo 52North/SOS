@@ -29,8 +29,8 @@ package org.n52.sos.web.common;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletContext;
 
 import org.springframework.stereotype.Controller;
 

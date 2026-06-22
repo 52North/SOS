@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ds.ConnectionProviderException;

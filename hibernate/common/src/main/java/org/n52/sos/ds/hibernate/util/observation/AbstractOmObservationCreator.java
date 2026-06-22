@@ -370,8 +370,8 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
 //            feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
 //        }
         if (!getActiveProfile().isEncodeFeatureOfInterestInObservations()
-                && feature instanceof AbstractSamplingFeature) {
-            ((AbstractSamplingFeature) feature).setEncode(false);
+                && feature instanceof AbstractSamplingFeature samplingFeature) {
+            samplingFeature.setEncode(false);
         }
         return feature;
     }

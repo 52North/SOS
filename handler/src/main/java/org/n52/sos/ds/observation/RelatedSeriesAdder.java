@@ -166,12 +166,12 @@ public class RelatedSeriesAdder {
             throws DateTimeFormatException, UnsupportedEncodingException {
         Time phenomenonTime = new PhenomenonTimeCreator(hSeries).create();
         final StringBuilder time = new StringBuilder("om:phenomenonTime").append(",");
-        if (phenomenonTime instanceof TimeInstant) {
-            time.append(DateTimeHelper.formatDateTime2String(((TimeInstant) phenomenonTime).getTimePosition()));
-        } else if (phenomenonTime instanceof TimePeriod) {
-            time.append(DateTimeHelper.formatDateTime2String(((TimePeriod) phenomenonTime).getStartTimePosition()));
+        if (phenomenonTime instanceof TimeInstant instant) {
+            time.append(DateTimeHelper.formatDateTime2String(instant.getTimePosition()));
+        } else if (phenomenonTime instanceof TimePeriod period) {
+            time.append(DateTimeHelper.formatDateTime2String(period.getStartTimePosition()));
             time.append("/");
-            time.append(DateTimeHelper.formatDateTime2String(((TimePeriod) phenomenonTime).getEndTimePosition()));
+            time.append(DateTimeHelper.formatDateTime2String(period.getEndTimePosition()));
         } else {
             return "";
         }

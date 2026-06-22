@@ -82,8 +82,8 @@ public class BoundingBoxEnrichment
             final int i = dataRecord.getFieldIndexByIdentifier(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX);
             if (i >= 0) {
                 final SweAbstractDataComponent e = dataRecord.getFields().get(i).getElement();
-                if (e instanceof SweEnvelope) {
-                    sosEnv.expandToInclude(((SweEnvelope) e).toReferencedEnvelope());
+                if (e instanceof SweEnvelope envelope) {
+                    sosEnv.expandToInclude(envelope.toReferencedEnvelope());
                 }
             }
         }

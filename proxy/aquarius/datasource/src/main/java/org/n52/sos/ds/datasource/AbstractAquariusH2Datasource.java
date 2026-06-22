@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +39,7 @@ import com.google.common.collect.Sets;
 
 public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDatasource implements AquariusDatasource {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String usernameDefault;

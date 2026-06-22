@@ -54,19 +54,20 @@
             <artifactId>sos-hibernate-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <scope>provided</scope>
+      <version>6.0.2.Final</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

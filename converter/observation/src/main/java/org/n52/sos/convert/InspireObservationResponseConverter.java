@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -143,8 +143,7 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
 
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
-        if (request instanceof AbstractObservationRequest) {
-            AbstractObservationRequest req = (AbstractObservationRequest) request;
+        if (request instanceof AbstractObservationRequest req) {
             if (req.isSetResponseFormat() && InspireOMSOConstants.NS_OMSO_30.equals(req.getResponseFormat())) {
                 if (req.isSetResultModel()) {
                     checkRequestedResultType(req.getResultModel());
@@ -157,8 +156,7 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (response instanceof AbstractObservationResponse) {
-            AbstractObservationResponse resp = (AbstractObservationResponse) response;
+        if (response instanceof AbstractObservationResponse resp) {
             if (InspireOMSOConstants.NS_OMSO_30.equals(resp.getResponseFormat())
                     && resp.getObservationCollection().hasNext()) {
                 checkData(request, resp);
@@ -397,9 +395,9 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
      * @return Observation type for {@link OmObservation}
      */
     private String checkForObservationTypeForStreaming(OmObservation observation, OwsServiceRequest request) {
-        if (request instanceof AbstractObservationRequest
-                && ((AbstractObservationRequest) request).isSetResultModel()) {
-            String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
+        if (request instanceof AbstractObservationRequest observationRequest
+                && observationRequest.isSetResultModel()) {
+            String requestedObservationType = observationRequest.getResultModel();
             if (checkForObservationType(observation, requestedObservationType)) {
                 if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(requestedObservationType)) {
                     return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
@@ -486,9 +484,9 @@ public class InspireObservationResponseConverter extends AbstractRequestResponse
      *         observationType is valid for offering of {@link OmObservation}
      */
     private boolean checkRequestedObservationTypeForOffering(OmObservation observation, OwsServiceRequest request) {
-        if (request instanceof AbstractObservationRequest
-                && ((AbstractObservationRequest) request).isSetResultModel()) {
-            String observationType = ((AbstractObservationRequest) request).getResultModel();
+        if (request instanceof AbstractObservationRequest observationRequest
+                && observationRequest.isSetResultModel()) {
+            String observationType = observationRequest.getResultModel();
             return checkForObservationType(observation, observationType);
         }
         return true;

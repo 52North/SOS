@@ -30,9 +30,9 @@ package org.n52.sos.web.wsdl;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;

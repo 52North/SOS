@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
@@ -316,8 +316,8 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
 
     private String getProcedureDescriptionFormat(String responseFormat) {
         Encoder<XmlObject, OmObservation> encoder = getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
-        if (encoder != null && encoder instanceof ObservationEncoder) {
-            return ((ObservationEncoder) encoder).getProcedureEncodingNamspace();
+        if (encoder != null && encoder instanceof ObservationEncoder observationEncoder) {
+            return observationEncoder.getProcedureEncodingNamspace();
         }
         return null;
     }

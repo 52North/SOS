@@ -30,36 +30,31 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import java.util.Collections;
 import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.RelatedDatasetEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RelatedSeriesDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.class);
 
     public List<RelatedDatasetEntity> getRelatedSeries(DatasetEntity series, Session session) {
         return getRelatedSeries(series.getId(), session);
     }
 
-    @SuppressWarnings("unchecked")
     private List<RelatedDatasetEntity> getRelatedSeries(long series, Session session) {
         if (HibernateHelper.isEntitySupported(RelatedDatasetEntity.class)) {
-            Criteria c = getDefaultCriteria(session);
-            c.add(Restrictions.eq(RelatedDatasetEntity.PROPERTY_ITEM, series));
-            LOGGER.trace("QUERY getRelatedSeries(): {}", HibernateHelper.getSqlString(c));
-            return c.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<RelatedDatasetEntity> query = cb.createQuery(RelatedDatasetEntity.class);
+            Root<RelatedDatasetEntity> root = query.from(RelatedDatasetEntity.class);
+            query.where(cb.equal(root.get(RelatedDatasetEntity.PROPERTY_ITEM), series));
+            return session.createQuery(query)
+                    .list();
         }
         return Collections.EMPTY_LIST;
-    }
-
-    private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(RelatedDatasetEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
 }

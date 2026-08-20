@@ -32,15 +32,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FormatEntity;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for procedure description format
@@ -50,14 +47,14 @@ import org.slf4j.LoggerFactory;
  */
 public class FormatDAO {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FormatDAO.class);
-
-    @SuppressWarnings("unchecked")
     public List<String> getFormatEntity(Session session) {
-        Criteria c = session.createCriteria(FormatEntity.class);
-        c.setProjection(Projections.distinct(Projections.property(FormatEntity.FORMAT)));
-        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<FormatEntity> root = query.from(FormatEntity.class);
+        query.select(root.get(FormatEntity.FORMAT))
+                .distinct(true);
+        return session.createQuery(query)
+                .list();
     }
 
     /**
@@ -71,31 +68,12 @@ public class FormatDAO {
      */
     public FormatEntity getFormatEntityObject(String format,
             Session session) {
-        Criteria criteria =
-                session.createCriteria(FormatEntity.class).add(
-                        Restrictions.eq(FormatEntity.FORMAT,
-                                format));
-        LOGGER.trace("QUERY getFormatEntityObject(format): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (FormatEntity) criteria.uniqueResult();
-    }
-
-    /**
-     * Get observation type objects for observation types
-     *
-     * @param observationTypes
-     *            Observation types
-     * @param session
-     *            Hibernate session
-     * @return Observation type objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<FormatEntity> getFormatEntityObjects(List<String> observationTypes, Session session) {
-        Criteria criteria =
-                session.createCriteria(FormatEntity.class).add(
-                        Restrictions.in(FormatEntity.FORMAT, observationTypes));
-        LOGGER.trace("QUERY getFormatEntityObjects(observationTypes): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<FormatEntity> query = cb.createQuery(FormatEntity.class);
+        Root<FormatEntity> root = query.from(FormatEntity.class);
+        query.where(cb.equal(root.get(FormatEntity.FORMAT), format));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
     /**
@@ -114,7 +92,7 @@ public class FormatDAO {
         if (hFormatEntity == null) {
             hFormatEntity = new FormatEntity();
             hFormatEntity.setFormat(format);
-            session.save(hFormatEntity);
+            session.persist(hFormatEntity);
             session.flush();
         }
         return hFormatEntity;
@@ -135,27 +113,5 @@ public class FormatDAO {
             obsTypes.add(getOrInsertFormatEntity(observationType, session));
         }
         return obsTypes;
-    }
-
-    /**
-     * Get featureOfInterest type objects for featureOfInterest identifiers
-     *
-     * @param featureOfInterestIdentifiers
-     *            FeatureOfInterest identifiers
-     * @param session
-     *            Hibernate session
-     * @return FeatureOfInterest type objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getFeatureOfInterestTypesForFeatureOfInterest(
-            final Collection<String> featureOfInterestIdentifiers, final Session session) {
-        Criteria criteria =
-                session.createCriteria(AbstractFeatureEntity.class).add(
-                        Restrictions.in(AbstractFeatureEntity.IDENTIFIER, featureOfInterestIdentifiers));
-        criteria.createCriteria(AbstractFeatureEntity.PROPERTY_FEATURE_TYPE).setProjection(
-                Projections.distinct(Projections.property(FormatEntity.FORMAT)));
-        LOGGER.trace("QUERY getFeatureOfInterestTypesForFeatureOfInterest(featureOfInterestIdentifiers): {}",
-                HibernateHelper.getSqlString(criteria));
-        return criteria.list();
     }
 }

@@ -34,10 +34,8 @@ import java.util.Set;
 
 import jakarta.inject.Inject;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
@@ -52,7 +50,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.dataset.HibernateChunkSeriesStreamingValue;
@@ -176,14 +173,10 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
      * @throws CodedException
      *             If an error occurs during querying the database
      */
-    @SuppressWarnings("unchecked")
     private List<DataEntity<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
-        Criteria c = daoFactory.getObservationDAO().getObservationClassCriteriaForResultModel(request.getResultModel(),
-                session);
-        c.add(Restrictions.in(DataEntity.IDENTIFIER, request.getObservationIdentifier()));
-        LOGGER.trace("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
-        return c.list();
+        return daoFactory.getObservationDAO().getObservationsForResultModel(request.getResultModel(),
+                request.getObservationIdentifier(), session);
     }
 
     /**

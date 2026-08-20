@@ -30,9 +30,9 @@
 
     <bean id="sessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
         depends-on="sessionFactoryProvider">
-        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
     <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />

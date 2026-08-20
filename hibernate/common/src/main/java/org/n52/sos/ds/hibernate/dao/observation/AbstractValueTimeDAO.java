@@ -28,16 +28,17 @@
 package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 
 /**
- * Abstract valut time data access object
+ * Abstract value time data access object
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
@@ -50,9 +51,9 @@ public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
     }
 
     public abstract ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series,
-            Criterion temporalFilter, Session session) throws OwsExceptionReport;
+            List<TemporalFilter> temporalFilters, Session session) throws OwsExceptionReport;
 
     public abstract ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series,
-            Criterion temporalFilter, Session session) throws OwsExceptionReport;
+            List<TemporalFilter> temporalFilters, Session session) throws OwsExceptionReport;
 
 }

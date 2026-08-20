@@ -27,19 +27,21 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
@@ -58,14 +60,11 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -74,8 +73,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @Configurable
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 
@@ -110,18 +107,6 @@ public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n
 
     private Map<String, NamedValue<?>> queryMetadata(DataAvailability dataAvailability, Session session) {
         Map<String, NamedValue<?>> map = new HashMap<>();
-        // if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
-        // List<SeriesMetadata> metadataList = new
-        // SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
-        // if (CollectionHelper.isNotEmpty(metadataList)) {
-        // for (SeriesMetadata seriesMetadata : metadataList) {
-        // map.put(seriesMetadata.getDomain(), new NamedValue<>(new
-        // ReferenceType(seriesMetadata.getIdentifier()),
-        // new ReferenceValue(new
-        // ReferenceType(seriesMetadata.getValue()))));
-        // }
-        // }
-        // }
         return map;
     }
 
@@ -150,37 +135,41 @@ public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n
         return getResultTimes(dataAvailability, request);
     }
 
+    @SuppressWarnings("rawtypes")
     private List<TimeInstant> queryResultTime(DataAvailability dataAvailability, GetDataAvailabilityRequest request,
             Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Criteria c = getDefaultObservationInfoCriteria(session);
-        Criteria datasetCriteria = c.createCriteria(DataEntity.PROPERTY_DATASET);
-        datasetCriteria.createCriteria(DatasetEntity.PROPERTY_FEATURE)
-                .add(Restrictions.eq(DatasetEntity.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
-        datasetCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, dataAvailability.getProcedure().getHref()));
-        datasetCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Date> query = cb.createQuery(Date.class);
+        Root<DataEntity> root = query.from(DataEntity.class);
+        Join<DataEntity, DatasetEntity> dataset = root.join(DataEntity.PROPERTY_DATASET);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(DataEntity.PROPERTY_DELETED), false));
+        predicates.add(cb.equal(dataset.join(DatasetEntity.PROPERTY_FEATURE).get(DatasetEntity.IDENTIFIER),
+                dataAvailability.getFeatureOfInterest().getHref()));
+        predicates.add(cb.equal(dataset.join(DatasetEntity.PROPERTY_PROCEDURE).get(ProcedureEntity.IDENTIFIER),
+                dataAvailability.getProcedure().getHref()));
+        predicates.add(cb.equal(dataset.join(DatasetEntity.PROPERTY_PHENOMENON).get(PhenomenonEntity.IDENTIFIER),
+                dataAvailability.getObservedProperty().getHref()));
         if (request.isSetOfferings()) {
-            c.createCriteria(DatasetEntity.PROPERTY_OFFERING)
-                    .add(Restrictions.in(OfferingEntity.IDENTIFIER, request.getOfferings()));
+            predicates.add(dataset.join(DatasetEntity.PROPERTY_OFFERING).get(OfferingEntity.IDENTIFIER)
+                    .in(request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
-            c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
+            predicates.add(SosTemporalRestrictions.filter(cb, root, getPhenomenonTimeFilter(request.getExtensions())));
         }
-        c.setProjection(Projections.distinct(Projections.property(DataEntity.PROPERTY_RESULT_TIME)));
-        c.addOrder(Order.asc(DataEntity.PROPERTY_RESULT_TIME));
-        LOGGER.trace("QUERY getResultTimesFromObservation(): {}", HibernateHelper.getSqlString(c));
+
+        query.select(root.<Date>get(DataEntity.PROPERTY_RESULT_TIME))
+                .distinct(true)
+                .where(predicates.toArray(new Predicate[0]))
+                .orderBy(cb.asc(root.get(DataEntity.PROPERTY_RESULT_TIME)));
+
         List<TimeInstant> resultTimes = Lists.newArrayList();
-        for (Date date : (List<Date>) c.list()) {
+        for (Date date : session.createQuery(query).list()) {
             resultTimes.add(new TimeInstant(date));
         }
         return resultTimes;
-    }
-
-    private Criteria getDefaultObservationInfoCriteria(Session session) {
-        return session.createCriteria(DataEntity.class).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**

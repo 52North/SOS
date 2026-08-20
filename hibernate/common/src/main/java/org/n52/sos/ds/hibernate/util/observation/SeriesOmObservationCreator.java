@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.series.db.beans.DatasetEntity;
@@ -47,7 +46,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.observation.AdditionalObservationCreator;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
@@ -184,25 +182,6 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
 
     private String queryUnit() {
-        String property = dataset.getObservableProperty().getIdentifier();
-        String procedure = dataset.getProcedure().getIdentifier();
-
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
-                getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, property);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, procedure);
-            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}", property, procedure,
-                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
-                getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, property);
-            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", property,
-                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
-        }
         return null;
     }
 

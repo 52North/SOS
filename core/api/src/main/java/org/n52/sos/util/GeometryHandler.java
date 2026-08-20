@@ -35,12 +35,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geolatte.geom.crs.CrsRegistry;
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CRSAuthorityFactory;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
+import org.geotools.util.WeakCollectionCleaner;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -51,9 +58,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
-import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
@@ -64,12 +69,6 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
 import org.n52.svalbard.CodingSettings;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,8 +112,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     private int defaultResponse3DEPSG;
 
     private final Set<String> supportedCRS = Sets.newHashSet();
-
-    private boolean spatialDatasource;
 
     private String authority;
 
@@ -170,7 +167,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
          * se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor is
          * defined in the web.xml
          */
-        // WeakCollectionCleaner.DEFAULT.exit();
+        WeakCollectionCleaner.DEFAULT.exit();
     }
 
     /**
@@ -415,27 +412,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Set flag if the used datasource is a spatial datasource (provides spatial
-     * functions).
-     *
-     * @param spatialDatasource
-     *            Flag if spatial datasource
-     */
-    @Setting(FeatureQuerySettingsProvider.SPATIAL_DATASOURCE)
-    public void setSpatialDatasource(boolean spatialDatasource) {
-        this.spatialDatasource = spatialDatasource;
-    }
-
-    /**
-     * Is datasource a spatial datasource.
-     *
-     * @return Spatial datasource or not
-     */
-    public boolean isSpatialDatasource() {
-        return spatialDatasource;
-    }
-
-    /**
      * Check if the EPSG code is northing first.
      *
      * @param epsgCode
@@ -532,28 +508,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
             return false;
         }
         return isNorthingFirstEpsgCode(geom.getSRID()) != isNorthingFirstEpsgCode(targetSRID);
-    }
-
-    /**
-     * Get filter geometry for BBOX spatial filter and non spatial datasource.
-     *
-     * @param filter
-     *            SpatialFilter
-     *
-     * @return SpatialFilter geometry
-     *
-     * @throws OwsExceptionReport
-     *             If SpatialFilter is not supported
-     */
-    public Geometry getFilterForNonSpatialDatasource(SpatialFilter filter) throws OwsExceptionReport {
-        switch (filter.getOperator()) {
-            case BBOX:
-                return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
-            default:
-                throw new InvalidParameterValueException("spatialFilter", filter.getOperator().name());
-            // Sos2Constants.GetObservationParams.spatialFilter =
-            // "spatialFilter"
-        }
     }
 
     /**

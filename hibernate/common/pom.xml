@@ -82,7 +82,6 @@
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
-      <version>10.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -113,7 +112,6 @@
     <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.1.0</version>
     </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -125,7 +123,7 @@
             <artifactId>stax-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-h2</artifactId>
@@ -156,11 +154,6 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <scope>provided</scope>
-      <version>6.0.2.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-spatial</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.common</groupId>
@@ -198,6 +191,15 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <ignoredUnusedDeclaredDependencies>
+                        <ignoredUnusedDeclaredDependency>jakarta.persistence:jakarta.persistence-api</ignoredUnusedDeclaredDependency>
+                    </ignoredUnusedDeclaredDependencies>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

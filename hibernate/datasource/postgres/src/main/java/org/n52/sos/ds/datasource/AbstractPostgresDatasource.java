@@ -40,18 +40,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.boot.Metadata;
+import org.hibernate.boot.model.relational.Database;
 import org.hibernate.boot.model.relational.SqlStringGenerationContext;
 import org.hibernate.boot.model.relational.internal.SqlStringGenerationContextImpl;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.mapping.Table;
 import org.n52.faroe.ConfigurationError;
-import org.n52.hibernate.spatial.dialect.postgis.TimestampWithTimeZonePostgisPG95Dialect;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -61,7 +61,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
-    protected static final String POSTGRES_DIALECT_CLASS = TimestampWithTimeZonePostgisPG95Dialect.class.getName();
+    protected static final String POSTGRES_DIALECT_CLASS = PostgreSQLDialect.class.getName();
 
     protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:postgresql://([^:]+):([0-9]+)/(.*)$");
 
@@ -112,7 +112,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     @Override
     protected Dialect createDialect() {
-        return new TimestampWithTimeZonePostgisPG95Dialect();
+        return new PostgreSQLDialect();
     }
 
     @Override
@@ -219,8 +219,9 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             Metadata metadata = getMetadata(conn, settings);
-            SqlStringGenerationContext sqlStringGenerationContext =
-                    SqlStringGenerationContextImpl.forBackwardsCompatibility(createDialect(), null, schema);
+            Database database = metadata.getDatabase();
+            SqlStringGenerationContext sqlStringGenerationContext = SqlStringGenerationContextImpl
+                    .fromExplicit(database.getJdbcEnvironment(), database, null, schema);
             Iterator<Table> tables = metadata.collectTableMappings().iterator();
             List<String> names = new LinkedList<String>();
             while (tables.hasNext()) {
@@ -254,17 +255,6 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
-    }
-
-    @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        List<String> checkedSchema = Lists.newLinkedList();
-        for (String string : dropSchema) {
-            if (!string.startsWith("alter")) {
-                checkedSchema.add(string);
-            }
-        }
-        return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
 
     @Override

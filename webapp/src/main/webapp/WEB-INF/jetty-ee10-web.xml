@@ -1,0 +1,7 @@
+<Configure class="org.eclipse.jetty.ee10.servlet.ServletContextHandler">
+    <Get name="sessionHandler">
+        <Set name="sameSite">
+            <Get class="org.eclipse.jetty.http.HttpCookie$SameSite" name="STRICT"/>
+        </Set>
+    </Get>
+</Configure>

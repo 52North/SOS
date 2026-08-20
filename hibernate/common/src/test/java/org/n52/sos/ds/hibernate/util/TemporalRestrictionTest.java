@@ -31,12 +31,14 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -50,7 +52,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -68,11 +69,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase
         try {
             session = getSession();
             transaction = getTransaction(session);
-            Criteria criteria = session.createCriteria(getObservationClass());
-            try (ScrollableIterable<DataEntity<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
-                for (DataEntity<?> o : iterable) {
-                    session.delete(o);
-                }
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<? extends DataEntity> query = cb.createQuery(getObservationClass());
+            query.from(getObservationClass());
+            for (DataEntity o : session.createQuery(query).getResultList()) {
+                session.delete(o);
             }
             session.flush();
             transaction.commit();
@@ -111,16 +112,16 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase
         return new HibernateObservationBuilder(session, daoFactory);
     }
 
-    @SuppressWarnings("unchecked")
     private Set<Identifier> filter(TemporalFilter tf, Session session)
             throws OwsExceptionReport {
-        Criterion c = SosTemporalRestrictions.filter(tf);
-        if (c == null) {
-            throw new UnsupportedTimeException(tf.getTime());
-        }
-        List<String> list =
-                session.createCriteria(getObservationClass()).add(c)
-                        .setProjection(Projections.distinct(Projections.property(DataEntity.IDENTIFIER))).list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<? extends DataEntity> root = query.from(getObservationClass());
+        Predicate p = SosTemporalRestrictions.filter(cb, root, tf);
+        query.select(root.get(DataEntity.IDENTIFIER))
+                .distinct(true)
+                .where(p);
+        List<String> list = session.createQuery(query).getResultList();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
             if (id.contains("/")) {

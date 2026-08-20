@@ -29,6 +29,7 @@ package org.n52.sos.web.install;
 
 import java.util.Map;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -61,8 +62,8 @@ public abstract class AbstractProcessingInstallationController extends AbstractI
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView post(HttpServletRequest req,
                              HttpServletResponse resp)
-            throws InstallationSettingsError,
-                   InstallationRedirectError {
+        throws InstallationSettingsError,
+        InstallationRedirectError, ServletException {
         HttpSession session = checkPrevious(req);
         InstallationConfiguration c = getSettings(session);
         process(getParameters(req), c);

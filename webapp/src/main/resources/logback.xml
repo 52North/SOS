@@ -49,10 +49,12 @@
         </encoder>
     </appender>
 
-    <logger name="org.n52" level="${config.logger.level.main.n52}" />
+    <logger name="org.n52" level="DEBUG" />
     <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
     <logger name="org.hibernate.SQL" level="${config.logger.level.main.sql}" />
     <logger name="org.hibernate.type.descriptor.sql" level="ERROR" />
+    <logger name="org.hibernate.orm.connections.pooling" level="DEBUG" />
+    <logger name="org.hibernate.orm.deprecation" level="DEBUG" />
 
     <root level="${config.logger.level.main.global}">
         <appender-ref ref="FILE" />

@@ -27,9 +27,7 @@
  */
 package org.n52.sos.ds.datasource;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,29 +41,35 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.model.relational.SqlStringGenerationContext;
-import org.hibernate.boot.model.relational.internal.SqlStringGenerationContextImpl;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.SchemaToolingSettings;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
-import org.hibernate.tool.hbm2ddl.SchemaUpdate;
-import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.hibernate.tool.schema.SourceType;
 import org.hibernate.tool.schema.TargetType;
+import org.hibernate.tool.schema.internal.ExceptionHandlerHaltImpl;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
+import org.hibernate.tool.schema.spi.ContributableMatcher;
+import org.hibernate.tool.schema.spi.ExceptionHandler;
+import org.hibernate.tool.schema.spi.ExecutionOptions;
+import org.hibernate.tool.schema.spi.SchemaManagementTool;
+import org.hibernate.tool.schema.spi.ScriptSourceInput;
+import org.hibernate.tool.schema.spi.ScriptTargetOutput;
+import org.hibernate.tool.schema.spi.SourceDescriptor;
+import org.hibernate.tool.schema.spi.TargetDescriptor;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
@@ -76,6 +80,7 @@ import org.n52.hibernate.type.SmallBooleanType;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
+import org.n52.sos.ds.hibernate.util.EntityScanner;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
 import org.slf4j.Logger;
@@ -119,8 +124,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String FEATURE_CONCEPT_DESCRIPTION = "Select the feature concept this SOS should use";
 
-    protected static final String FEATURE_CONCEPT_KEY = "sos.feature.concept";
-
     protected static final String FEATURE_CONCEPT_DEFAULT_VALUE = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
@@ -149,7 +152,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'. \
             If this produces no error, please add the following setting to \
             your datasource properties: '{}={}'
-            
+
             """;
 
     private static final String TMP_FILE_ENDING = ".tmp";
@@ -284,10 +287,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
-        // config.configure("/hibernate.cfg.xml");
-        for (File path : getMappingPaths(settings)) {
-            config.addDirectory(path);
-        }
+        EntityScanner.applyTo(config, HibernateDatasourceConstants.ENTITY_PACKAGE);
+        addMappingOverlays(config, settings);
         Properties properties = new Properties();
         if (isSetSchema(settings)) {
             properties.put(HibernateConstants.DEFAULT_SCHEMA, settings.get(HibernateConstants.DEFAULT_SCHEMA));
@@ -295,164 +296,88 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         properties.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
         properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, toURL(settings));
         config.addProperties(properties);
-        config.registerTypeOverride(SmallBooleanType.INSTANCE);
+        config.registerTypeOverride(new SmallBooleanType());
         return config;
     }
 
-    protected Set<File> getMappingPaths(Map<String, Object> settings) {
-        Set<String> resources = new HashSet<>();
-        resources.addAll(getDatabaseConceptMappingDirectory(settings));
-        resources.addAll(getDatabaseExtensionMappingDirectory(settings));
-        String parameterMappingDirectory = getParameterMappingDirectory(settings);
-        if (!Strings.isNullOrEmpty(parameterMappingDirectory)) {
-            resources.add(parameterMappingDirectory);
+    /**
+     * Every entity in {@link HibernateDatasourceConstants#ENTITY_PACKAGE} is mapped unconditionally; only
+     * the two db-model orm.xml overlays remain concept-gated.
+     *
+     * @param config
+     *            Configuration to add the applicable overlays to
+     * @param settings
+     *            Datasource settings
+     */
+    protected void addMappingOverlays(Configuration config, Map<String, Object> settings) {
+        if (getDatabaseConcept(settings) == DatabaseConcept.PROXY) {
+            config.addResource(HibernateDatasourceConstants.HIBERNATE_ORM_PROFILE_PROXY);
         }
-        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
-        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            resources.add(featureConceptMappingDirectory);
+        if (getFeatureConcept(settings) == FeatureConcept.EXTENDED_FEATURE_CONCEPT) {
+            config.addResource(HibernateDatasourceConstants.HIBERNATE_ORM_FEATURE_MONITORING_POINT);
         }
-        return resources.stream().map(r -> resource(r)).collect(Collectors.toSet());
     }
 
-    protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
+    protected void addMappingOverlays(MetadataSources sources, Map<String, Object> settings) {
+        if (getDatabaseConcept(settings) == DatabaseConcept.PROXY) {
+            sources.addResource(HibernateDatasourceConstants.HIBERNATE_ORM_PROFILE_PROXY);
+        }
+        if (getFeatureConcept(settings) == FeatureConcept.EXTENDED_FEATURE_CONCEPT) {
+            sources.addResource(HibernateDatasourceConstants.HIBERNATE_ORM_FEATURE_MONITORING_POINT);
+        }
+    }
+
+    protected FeatureConcept getFeatureConcept(Map<String, Object> settings) {
         String concept = (String) settings.get(this.featureConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
-            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
-                concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
-            }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE, featureConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept, featureConceptDefinition.getKey(),
-                    concept);
         }
-        switch (FeatureConcept.valueOf(concept)) {
-            case EXTENDED_FEATURE_CONCEPT:
-                return HIBERNATE_MAPPING_FEATURE_PATH;
-            default:
-                return null;
-        }
+        return FeatureConcept.valueOf(concept);
     }
 
-    protected String getParameterMappingDirectory(Map<String, Object> settings) {
-        switch (getDatabaseConcept(settings)) {
-            case EREPORTING:
-            case PROXY:
-            case TRANSACTIONAL:
-                return HIBERNATE_MAPPING_PARAMETER_PATH;
-            default:
-                return "";
-        }
-    }
-
-    protected Set<String> getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
-        HashSet<String> mappings = Sets.newHashSet();
-        switch (getDatabaseConcept(settings)) {
-            case SIMPLE:
-                mappings.add(HIBERNATE_MAPPING_SIMPLE_CORE_PATH);
-                break;
-            case EREPORTING:
-                mappings.add(HIBERNATE_MAPPING_EREPORTING_CORE_PATH);
-                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
-                break;
-            case TRANSACTIONAL:
-                mappings.add(HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH);
-                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
-                break;
-            case PROXY:
-                mappings.add(HIBERNATE_MAPPING_PROXY_CORE_PATH);
-                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
-                break;
-            default:
-                mappings.add(HIBERNATE_MAPPING_SIMPLE_CORE_PATH);
-                break;
-        }
-        return mappings;
-    }
-
-    private DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
+    /**
+     * Determines the {@link DatabaseConcept}, preferring the explicit setting and falling back to
+     * substring-matching the legacy {@code HIBERNATE_DIRECTORY} value for installations that have not been
+     * upgraded to explicit concept/extension settings yet.
+     *
+     * @param settings
+     *            Datasource settings
+     * @return the database concept
+     */
+    protected DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
         String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
-            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            String hibernateDirectories =
+                    Strings.nullToEmpty((String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
             concept = DatabaseConcept.SIMPLE.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
+            if (hibernateDirectories.contains("/ereporting")) {
                 concept = DatabaseConcept.EREPORTING.name();
-            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
+            } else if (hibernateDirectories.contains("/transactional")) {
                 concept = DatabaseConcept.TRANSACTIONAL.name();
-            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
+            } else if (hibernateDirectories.contains("/proxy")) {
                 concept = DatabaseConcept.PROXY.name();
             }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE, databaseConceptDefinition.getKey(),
+            LOG.warn(SETTING_NOT_FOUND_TEMPLATE, databaseConceptDefinition.getKey(),
                     HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept, databaseConceptDefinition.getKey(),
                     concept);
         }
         return DatabaseConcept.valueOf(concept);
     }
 
-    private String getDatabaseConceptBasePath(Map<String, Object> settings) {
-        return getDatabaseConceptBasePath(getDatabaseConcept(settings));
-    }
-
-    private String getDatabaseConceptBasePath(DatabaseConcept conept) {
-        switch (conept) {
-            case SIMPLE:
-                return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
-            case EREPORTING:
-                return HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH;
-            case TRANSACTIONAL:
-                return HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH;
-            case PROXY:
-                return HIBERNATE_MAPPING_PROXY_CONCEPT_PATH;
-            default:
-                return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
-        }
-    }
-
-    protected Set<String> getDatabaseExtensionMappingDirectory(Map<String, Object> settings) {
-        String basePath = getDatabaseConceptBasePath(settings);
-        HashSet<String> mappings = Sets.newHashSet();
-        switch (getDatabaseExtension(settings)) {
-            case DATASOURCE:
-                mappings.add(basePath + HIBERNATE_MAPPING_DATASET_PATH);
-                break;
-            case SAMPLING:
-                mappings.add(basePath + HIBERNATE_MAPPING_SAMPLING_PATH);
-                break;
-            default:
-                mappings.add(basePath + HIBERNATE_MAPPING_DATASET_PATH);
-                break;
-        }
-        return mappings;
-    }
-
-    private DatabaseExtension getDatabaseExtension(Map<String, Object> settings) {
+    protected DatabaseExtension getDatabaseExtension(Map<String, Object> settings) {
         String extension = (String) settings.get(this.databaseExtensionDefinition.getKey());
         if (extension == null || extension.isEmpty()) {
-            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            String hibernateDirectories =
+                    Strings.nullToEmpty((String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
             extension = DatabaseExtension.DATASOURCE.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_SAMPLING_PATH)) {
+            if (hibernateDirectories.contains("/sampling")) {
                 extension = DatabaseExtension.SAMPLING.name();
             }
-            LOG.error(SETTING_NOT_FOUND_TEMPLATE, databaseExtensionDefinition.getKey(),
+            LOG.warn(SETTING_NOT_FOUND_TEMPLATE, databaseExtensionDefinition.getKey(),
                     HibernateDatasourceConstants.HIBERNATE_DIRECTORY, extension, databaseExtensionDefinition.getKey(),
                     extension);
         }
         return DatabaseExtension.valueOf(extension);
-    }
-
-    /**
-     * Get File from resource String
-     *
-     * @param resource
-     *            Resource String
-     * @return File from resource String
-     */
-    protected File resource(String resource) {
-        try {
-            return new File(AbstractHibernateDatasource.class.getResource(resource).toURI());
-        } catch (URISyntaxException ex) {
-            throw new ConfigurationError(ex);
-        }
     }
 
     @Override
@@ -461,10 +386,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             Metadata m = getMetadata(settings);
             createTempFile = Files.createTempFile("create", TMP_FILE_ENDING);
-            SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
-                    .setOutputFile(createTempFile.toString());
-            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, m);
+            registry.getService(SchemaManagementTool.class)
+                    .getSchemaCreator(settings)
+                    .doCreation(m, executionOptions(settings), ContributableMatcher.ALL, metadataSource(),
+                            scriptTarget(createTempFile));
             List<String> readAllLines = Files.readAllLines(createTempFile);
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
@@ -494,10 +419,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             Metadata m = getMetadata(settings);
             dropTempFile = Files.createTempFile("drop", TMP_FILE_ENDING);
-            SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
-                    .setOutputFile(dropTempFile.toString());
-            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, m);
+            registry.getService(SchemaManagementTool.class)
+                    .getSchemaDropper(settings)
+                    .doDrop(m, executionOptions(settings), ContributableMatcher.ALL, metadataSource(),
+                            scriptTarget(dropTempFile));
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
         } catch (IOException ex) {
@@ -518,10 +443,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Path createTempFile = null;
         try {
             createTempFile = Files.createTempFile("update", TMP_FILE_ENDING);
-            SchemaUpdate schemaUpdate = new SchemaUpdate();
-            schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true)
-                    .setOutputFile(createTempFile.toString());
-            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), getMetadata(settings));
+            Metadata m = getMetadata(settings);
+            registry.getService(SchemaManagementTool.class)
+                    .getSchemaMigrator(settings)
+                    .doMigration(m, executionOptions(settings), ContributableMatcher.ALL,
+                            scriptTarget(createTempFile));
             Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
         } catch (IOException ex) {
@@ -540,10 +466,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     @Override
     public void validateSchema(Map<String, Object> settings) {
         try {
-            SchemaValidator schemaValidator = new SchemaValidator();
             getServiceRegistry(settings);
             metadata = null;
-            schemaValidator.validate(getMetadata(settings), registry);
+            Metadata m = getMetadata(settings);
+            registry.getService(SchemaManagementTool.class)
+                    .getSchemaValidator(settings)
+                    .doValidation(m, executionOptions(settings), ContributableMatcher.ALL);
         } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
         }
@@ -562,12 +490,68 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metadata == null) {
             getServiceRegistry(settings);
             MetadataSources sources = new MetadataSources(registry);
-            for (File dir : getMappingPaths(settings)) {
-                sources.addDirectory(dir);
-            }
+            EntityScanner.applyTo(sources, HibernateDatasourceConstants.ENTITY_PACKAGE);
+            addMappingOverlays(sources, settings);
             metadata = sources.getMetadataBuilder().build();
         }
         return metadata;
+    }
+
+    /**
+     * Execution options for the schema tooling, replacing the {@code setDelimiter(";").setHaltOnError(true)} calls of
+     * the removed {@code hbm2ddl} tools. Formatting stays off, which is Hibernate's default for script output.
+     *
+     * @param settings
+     *            Datasource settings the service registry was built from
+     * @return Execution options for schema creation, dropping, migration and validation
+     */
+    private ExecutionOptions executionOptions(Map<String, Object> settings) {
+        Map<String, Object> configurationValues = new HashMap<>(settings);
+        configurationValues.put(SchemaToolingSettings.HBM2DDL_DELIMITER, ";");
+        return new ExecutionOptions() {
+            @Override
+            public Map<String, Object> getConfigurationValues() {
+                return configurationValues;
+            }
+
+            @Override
+            public boolean shouldManageNamespaces() {
+                return false;
+            }
+
+            @Override
+            public ExceptionHandler getExceptionHandler() {
+                return ExceptionHandlerHaltImpl.INSTANCE;
+            }
+        };
+    }
+
+    private static SourceDescriptor metadataSource() {
+        return new SourceDescriptor() {
+            @Override
+            public SourceType getSourceType() {
+                return SourceType.METADATA;
+            }
+
+            @Override
+            public ScriptSourceInput getScriptSourceInput() {
+                return null;
+            }
+        };
+    }
+
+    private static TargetDescriptor scriptTarget(Path file) {
+        return new TargetDescriptor() {
+            @Override
+            public EnumSet<TargetType> getTargetTypes() {
+                return EnumSet.of(TargetType.SCRIPT);
+            }
+
+            @Override
+            public ScriptTargetOutput getScriptTargetOutput() {
+                return new ScriptTargetOutputToFile(file.toFile(), StandardCharsets.UTF_8.name());
+            }
+        };
     }
 
     protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
@@ -744,18 +728,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public void checkPostCreation(Properties properties) {
-        metadata = null;
-        if (registry != null) {
-            StandardServiceRegistryBuilder.destroy(registry);
-            registry = null;
-        }
-        // if (checkIfExtensionDirectoryExists()) {
-        // StringBuilder builder =
-        // new
-        // StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-        // properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY,
-        // builder.toString());
-        // }
+        checkPostCreation();
     }
 
     public void checkPostCreation() {
@@ -765,21 +738,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             registry = null;
         }
     }
-
-    // private boolean checkIfExtensionDirectoryExists() {
-    // URL dirUrl =
-    // Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
-    // if (dirUrl != null) {
-    // try {
-    // return new File(URLDecoder.decode(dirUrl.getPath(),
-    // Charset.defaultCharset().toString())).exists();
-    // } catch (UnsupportedEncodingException e) {
-    // throw new ConfigurationError("Unable to encode directory URL " + dirUrl +
-    // "!");
-    // }
-    // }
-    // return false;
-    // }
 
     protected Set<SettingDefinition<?>> filter(Set<SettingDefinition<?>> definitions, Set<String> keysToExclude) {
         Iterator<SettingDefinition<?>> iterator = definitions.iterator();
@@ -801,45 +759,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             dialect = createDialect();
         }
         return dialect;
-    }
-
-    /**
-     * Add mapping files directories to properties
-     *
-     * @param settings
-     *            Datasource settings
-     * @param p
-     *            Datasource properties
-     */
-    protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
-        StringBuilder builder = new StringBuilder();
-        for (String path : getDatabaseConceptMappingDirectory(settings)) {
-            if (builder.length() != 0) {
-                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
-            }
-            builder.append(path);
-        }
-        for (String path : getDatabaseExtensionMappingDirectory(settings)) {
-            if (builder.length() != 0) {
-                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
-            }
-            builder.append(path);
-        }
-        String parameterMappingDirectory = getParameterMappingDirectory(settings);
-        if (!Strings.isNullOrEmpty(parameterMappingDirectory)) {
-            if (builder.length() != 0) {
-                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
-            }
-            builder.append(parameterMappingDirectory);
-        }
-        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
-        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            if (builder.length() != 0) {
-                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
-            }
-            builder.append(featureConceptMappingDirectory);
-        }
-        p.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, builder.toString());
     }
 
     protected ChoiceSettingDefinition getFeatureConceptDefinition() {
@@ -891,32 +810,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             return !Strings.isNullOrEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
         }
         return false;
-    }
-
-    protected String getSchema(Map<String, Object> settings) {
-        if (isSetSchema(settings)) {
-            return (String) settings.get(HibernateConstants.DEFAULT_SCHEMA) + ".";
-        }
-        return "";
-    }
-
-    /**
-     * Check if the datasource is series metadata
-     *
-     * @return <code>true</code>, if it is a seriesMetadataDatasource
-     */
-    public boolean isSeriesMetadataDatasource() {
-        return seriesMetadataDatasource;
-    }
-
-    /**
-     * Set series metadata datasource flag
-     *
-     * @param seriesMetadataDatasource
-     *            the seriesMetadataDatasource flag to set
-     */
-    public void setSeriesMetadataDatasource(boolean seriesMetadataDatasource) {
-        this.seriesMetadataDatasource = seriesMetadataDatasource;
     }
 
     /**
@@ -979,47 +872,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
-    }
-
-    /**
-     * Check if drop schema contains alter table ... drop constraint ... . Due to dynamic generation some
-     * constraints are generated and differ.
-     *
-     * @param dropSchema
-     *            Schema to check
-     * @return Checked schema
-     */
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return checkScriptForGeneratedAndDuplicatedEntries(dropSchema);
-    }
-
-    /**
-     * Create quoted string with schema.table
-     *
-     * @param settings
-     *            Datasource settings
-     * @param conn
-     *            SQL connection
-     * @return {@link List} with table names
-     * @throws SQLException
-     *             If an error occurs while checking catalog/schema
-     */
-    protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn)
-            throws SQLException {
-        String catalog = checkCatalog(conn);
-        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
-        Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
-        SqlStringGenerationContext sqlStringGenerationContext =
-                SqlStringGenerationContextImpl.forBackwardsCompatibility(createDialect(), null, schema);
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                // TODO check if this works
-                names.add(table.getQualifiedName(sqlStringGenerationContext));
-            }
-        }
-        return names;
     }
 
     @Override

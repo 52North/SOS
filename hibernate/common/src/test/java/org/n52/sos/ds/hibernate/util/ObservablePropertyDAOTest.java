@@ -33,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -66,9 +69,10 @@ public class ObservablePropertyDAOTest extends HibernateTestCase implements Tran
         Transaction transaction = null;
         try {
             transaction = getTransaction(session);
-            ScrollableIterable<PhenomenonEntity> iter =
-                    ScrollableIterable.fromCriteria(session.createCriteria(PhenomenonEntity.class));
-            for (PhenomenonEntity observableProperty : iter) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<PhenomenonEntity> query = cb.createQuery(PhenomenonEntity.class);
+            query.from(PhenomenonEntity.class);
+            for (PhenomenonEntity observableProperty : session.createQuery(query).getResultList()) {
                 session.delete(observableProperty);
             }
             session.flush();
@@ -159,9 +163,11 @@ public class ObservablePropertyDAOTest extends HibernateTestCase implements Tran
         return asMap(savedObservableProperties);
     }
 
-    @SuppressWarnings("unchecked")
     protected Map<String, PhenomenonEntity> load(Session session) {
-        return asMap(session.createCriteria(PhenomenonEntity.class).list());
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<PhenomenonEntity> query = cb.createQuery(PhenomenonEntity.class);
+        query.from(PhenomenonEntity.class);
+        return asMap(session.createQuery(query).list());
     }
 
     protected Map<String, PhenomenonEntity> asMap(Collection<PhenomenonEntity> collection) {

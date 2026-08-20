@@ -31,9 +31,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CategoryEntity;
@@ -108,7 +110,7 @@ public class HibernateObservationBuilder {
         observation.setValidTimeStart(validTimeStart);
         observation.setValidTimeEnd(validTimeEnd);
         observation.setIdentifierCodespace(getCodespace());
-        session.save(observation);
+        session.persist(observation);
         session.flush();
         return observation;
     }
@@ -166,9 +168,31 @@ public class HibernateObservationBuilder {
         return Lists.newArrayList(getOffering1(), getOffering2());
     }
 
+    /**
+     * Look up the single entity of the given class whose property equals the given value.
+     *
+     * @param <T>
+     *            Entity type
+     * @param clazz
+     *            Entity class to query
+     * @param property
+     *            Property to match on
+     * @param value
+     *            Value the property has to equal
+     *
+     * @return The matching entity, or <code>null</code> if there is none
+     */
+    private <T> T getUnique(Class<T> clazz, String property, Object value) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<T> query = cb.createQuery(clazz);
+        Root<T> root = query.from(clazz);
+        query.where(cb.equal(root.get(property), value));
+        return session.createQuery(query).uniqueResult();
+    }
+
     protected FeatureEntity getFeatureOfInterest() {
-        FeatureEntity featureOfInterest = (FeatureEntity) session.createCriteria(FeatureEntity.class)
-                .add(Restrictions.eq(FeatureEntity.IDENTIFIER, FEATURE_OF_INTEREST)).uniqueResult();
+        FeatureEntity featureOfInterest =
+                getUnique(FeatureEntity.class, FeatureEntity.IDENTIFIER, FEATURE_OF_INTEREST);
         if (featureOfInterest == null) {
             featureOfInterest = new FeatureEntity();
             featureOfInterest.setIdentifierCodespace(getCodespace());
@@ -178,7 +202,7 @@ public class HibernateObservationBuilder {
             featureOfInterest.setParents(null);
             featureOfInterest.setIdentifier(FEATURE_OF_INTEREST);
             featureOfInterest.setName(FEATURE_OF_INTEREST);
-            session.save(featureOfInterest);
+            session.persist(featureOfInterest);
             session.flush();
             return featureOfInterest;
         }
@@ -188,61 +212,55 @@ public class HibernateObservationBuilder {
     protected PlatformEntity getPlatform(boolean eReporting) {
         if (eReporting) {
             PlatformEntity platform =
-                    (PlatformEntity) session.createCriteria(PlatformEntity.class)
-                            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                            .add(Restrictions.eq(PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT))
-                            .uniqueResult();
+                    getUnique(PlatformEntity.class, PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT);
             if (platform == null) {
                 platform = new PlatformEntity();
                 platform.setIdentifier(EREPORTING_SAMPLING_POINT);
                 platform.setAssessmentType(getEReportingAssessmentType());
-                session.save(platform);
+                session.persist(platform);
                 session.flush();
                 session.refresh(platform);
             }
             return platform;
         }
-        PlatformEntity platform = (PlatformEntity) session.createCriteria(PlatformEntity.class)
-                .add(Restrictions.eq(PlatformEntity.IDENTIFIER, PLATFORM)).uniqueResult();
+        PlatformEntity platform = getUnique(PlatformEntity.class, PlatformEntity.IDENTIFIER, PLATFORM);
         if (platform == null) {
             platform = new PlatformEntity();
             platform.setIdentifier(PLATFORM);
             platform.setName(PLATFORM);
-            session.save(platform);
+            session.persist(platform);
             session.flush();
         }
         return platform;
     }
 
     protected PhenomenonEntity getObservableProperty() {
-        PhenomenonEntity observableProperty = (PhenomenonEntity) session.createCriteria(PhenomenonEntity.class)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, OBSERVABLE_PROPERTY)).uniqueResult();
+        PhenomenonEntity observableProperty =
+                getUnique(PhenomenonEntity.class, PhenomenonEntity.IDENTIFIER, OBSERVABLE_PROPERTY);
         if (observableProperty == null) {
             observableProperty = new PhenomenonEntity();
             observableProperty.setDescription(OBSERVABLE_PROPERTY);
             observableProperty.setIdentifier(OBSERVABLE_PROPERTY);
-            session.save(observableProperty);
+            session.persist(observableProperty);
             session.flush();
         }
         return observableProperty;
     }
 
     protected CategoryEntity getCategory() {
-        CategoryEntity category = (CategoryEntity) session.createCriteria(CategoryEntity.class)
-                .add(Restrictions.eq(CategoryEntity.IDENTIFIER, CATEGORY)).uniqueResult();
+        CategoryEntity category = getUnique(CategoryEntity.class, CategoryEntity.IDENTIFIER, CATEGORY);
         if (category == null) {
             category = new CategoryEntity();
             category.setDescription(CATEGORY);
             category.setIdentifier(CATEGORY);
-            session.save(category);
+            session.persist(category);
             session.flush();
         }
         return category;
     }
 
     protected OfferingEntity getOffering1() {
-        OfferingEntity offering = (OfferingEntity) session.createCriteria(OfferingEntity.class)
-                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, OFFERING_1)).uniqueResult();
+        OfferingEntity offering = getUnique(OfferingEntity.class, OfferingEntity.IDENTIFIER, OFFERING_1);
         if (offering == null) {
             OfferingEntity tOffering = new OfferingEntity();
             tOffering.setFeatureTypes(Collections.singleton(getFeatureOfInterestType()));
@@ -250,7 +268,7 @@ public class HibernateObservationBuilder {
             tOffering.setName(OFFERING_1);
             tOffering.setObservationTypes(Collections.singleton(getObservationType()));
             tOffering.setRelatedFeatures(null);
-            session.save(tOffering);
+            session.persist(tOffering);
             session.flush();
             return tOffering;
         }
@@ -258,8 +276,7 @@ public class HibernateObservationBuilder {
     }
 
     protected OfferingEntity getOffering2() {
-        OfferingEntity offering = (OfferingEntity) session.createCriteria(OfferingEntity.class)
-                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, OFFERING_2)).uniqueResult();
+        OfferingEntity offering = getUnique(OfferingEntity.class, OfferingEntity.IDENTIFIER, OFFERING_2);
         if (offering == null) {
             OfferingEntity tOffering = new OfferingEntity();
             tOffering.setFeatureTypes(Collections.singleton(getFeatureOfInterestType()));
@@ -267,7 +284,7 @@ public class HibernateObservationBuilder {
             tOffering.setName(OFFERING_2);
             tOffering.setObservationTypes(Collections.singleton(getObservationType()));
             tOffering.setRelatedFeatures(null);
-            session.save(tOffering);
+            session.persist(tOffering);
             session.flush();
             return tOffering;
         }
@@ -275,42 +292,42 @@ public class HibernateObservationBuilder {
     }
 
     protected UnitEntity getUnit() {
-        UnitEntity unit = (UnitEntity) session.createCriteria(UnitEntity.class)
-                .add(Restrictions.eq(UnitEntity.IDENTIFIER, UNIT)).uniqueResult();
+        UnitEntity unit = getUnique(UnitEntity.class, UnitEntity.IDENTIFIER, UNIT);
         if (unit == null) {
             unit = new UnitEntity();
             unit.setUnit(UNIT);
-            session.save(unit);
+            session.persist(unit);
             session.flush();
         }
         return unit;
     }
 
     protected CodespaceEntity getCodespace() {
-        CodespaceEntity codespace = (CodespaceEntity) session.createCriteria(CodespaceEntity.class)
-                .add(Restrictions.eq(CodespaceEntity.PROPERTY_NAME, CODESPACE)).uniqueResult();
+        CodespaceEntity codespace = getUnique(CodespaceEntity.class, CodespaceEntity.PROPERTY_NAME, CODESPACE);
         if (codespace == null) {
             codespace = new CodespaceEntity();
             codespace.setName(CODESPACE);
-            session.save(codespace);
+            session.persist(codespace);
             session.flush();
         }
         return codespace;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected DatasetEntity getSeries(OfferingEntity offering, DataEntity o) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
 
         SeriesObservationFactory observationFactory =
                 (SeriesObservationFactory) observationDAO.getObservationFactory();
 
-        Criteria criteria = session.createCriteria(observationFactory.seriesClass())
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_FEATURE, getFeatureOfInterest()))
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, getObservableProperty()))
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, getProcedure()))
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_OFFERING, offering));
-        DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(observationFactory.seriesClass());
+        Root root = query.from(observationFactory.seriesClass());
+        query.where(cb.equal(root.get(DatasetEntity.PROPERTY_FEATURE), getFeatureOfInterest()),
+                cb.equal(root.get(DatasetEntity.PROPERTY_PHENOMENON), getObservableProperty()),
+                cb.equal(root.get(DatasetEntity.PROPERTY_PROCEDURE), getProcedure()),
+                cb.equal(root.get(DatasetEntity.PROPERTY_OFFERING), offering));
+        DatasetEntity series = (DatasetEntity) session.createQuery(query).uniqueResult();
         if (series == null) {
             series = (DatasetEntity) daoFactory.getSeriesDAO().getDatasetFactory().visit(o);
             series.setObservableProperty(getObservableProperty());
@@ -322,12 +339,12 @@ public class HibernateObservationBuilder {
             series.setDeleted(false);
             series.setPublished(true);
 
-            session.save(series);
+            session.persist(series);
             session.flush();
             session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
-            session.update(series);
+            session.merge(series);
             session.flush();
             session.refresh(series);
         }
@@ -337,15 +354,12 @@ public class HibernateObservationBuilder {
     protected PlatformEntity getEReportingSamplingPoint() {
 
         PlatformEntity platform =
-                (PlatformEntity) session.createCriteria(PlatformEntity.class)
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                        .add(Restrictions.eq(PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT))
-                        .uniqueResult();
+                getUnique(PlatformEntity.class, PlatformEntity.IDENTIFIER, EREPORTING_SAMPLING_POINT);
         if (platform == null) {
             platform = new PlatformEntity();
             platform.setIdentifier(EREPORTING_SAMPLING_POINT);
             platform.setAssessmentType(getEReportingAssessmentType());
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
         }
@@ -354,16 +368,13 @@ public class HibernateObservationBuilder {
     }
 
     public AssessmentTypeEntity getEReportingAssessmentType() {
-        AssessmentTypeEntity assessmentType =
-                (AssessmentTypeEntity) session.createCriteria(AssessmentTypeEntity.class)
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions
-                                .eq(AssessmentTypeEntity.PROPERTY_ASSESSMENT_TYPE, EREPORTING_ASSESSMENT_TYPE))
-                        .uniqueResult();
+        AssessmentTypeEntity assessmentType = getUnique(AssessmentTypeEntity.class,
+                AssessmentTypeEntity.PROPERTY_ASSESSMENT_TYPE, EREPORTING_ASSESSMENT_TYPE);
         if (assessmentType == null) {
             assessmentType = new AssessmentTypeEntity();
             assessmentType.setAssessmentType(EREPORTING_ASSESSMENT_TYPE);
             assessmentType.setUri(EREPORTING_ASSESSMENT_TYPE);
-            session.save(assessmentType);
+            session.persist(assessmentType);
             session.flush();
             session.refresh(assessmentType);
         }
@@ -372,8 +383,7 @@ public class HibernateObservationBuilder {
     }
 
     protected ProcedureEntity getProcedure() {
-        ProcedureEntity procedure = (ProcedureEntity) session.createCriteria(ProcedureEntity.class)
-                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, PROCEDURE)).uniqueResult();
+        ProcedureEntity procedure = getUnique(ProcedureEntity.class, ProcedureEntity.IDENTIFIER, PROCEDURE);
         if (procedure == null) {
             ProcedureEntity tProcedure = new ProcedureEntity();
             tProcedure.setDeleted(false);
@@ -384,6 +394,7 @@ public class HibernateObservationBuilder {
             session.save(tProcedure);
             session.flush();
             tProcedure.setProcedureHistory(Collections.singleton(getValidProcedureTime()));
+            //TODO: .merge() requires procedureHistory to be mutable
             session.update(tProcedure);
             session.flush();
             return tProcedure;
@@ -392,9 +403,8 @@ public class HibernateObservationBuilder {
     }
 
     protected ProcedureHistoryEntity getValidProcedureTime() {
-        ProcedureHistoryEntity validProcedureTime =
-                (ProcedureHistoryEntity) session.createCriteria(ProcedureHistoryEntity.class)
-                        .add(Restrictions.eq(ProcedureHistoryEntity.PROCEDURE, getProcedure())).uniqueResult();
+        ProcedureHistoryEntity validProcedureTime = getUnique(ProcedureHistoryEntity.class,
+                ProcedureHistoryEntity.PROCEDURE, getProcedure());
         if (validProcedureTime == null) {
             validProcedureTime = new ProcedureHistoryEntity();
             validProcedureTime.setXml(XML_TOKEN);
@@ -402,7 +412,7 @@ public class HibernateObservationBuilder {
             validProcedureTime.setStartTime(new Date());
             validProcedureTime.setProcedure(getProcedure());
             validProcedureTime.setFormat(getProcedureDescriptionFormat());
-            session.save(validProcedureTime);
+            session.persist(validProcedureTime);
             session.flush();
         }
         return validProcedureTime;
@@ -421,12 +431,11 @@ public class HibernateObservationBuilder {
     }
 
     protected FormatEntity getFormat(String format) {
-        FormatEntity observationType = (FormatEntity) session.createCriteria(FormatEntity.class)
-                .add(Restrictions.eq(FormatEntity.FORMAT, format)).uniqueResult();
+        FormatEntity observationType = getUnique(FormatEntity.class, FormatEntity.FORMAT, format);
         if (observationType == null) {
             observationType = new FormatEntity();
             observationType.setFormat(format);
-            session.save(observationType);
+            session.persist(observationType);
             session.flush();
             session.refresh(observationType);
         }

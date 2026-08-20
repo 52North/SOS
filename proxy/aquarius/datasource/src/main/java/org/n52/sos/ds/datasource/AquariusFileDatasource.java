@@ -153,7 +153,7 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource impleme
 
     @Override
     public void prepare(Map<String, Object> settings) {
-        initGeoDB(settings);
+        initH2GIS(settings);
     }
 
     @Override

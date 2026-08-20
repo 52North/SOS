@@ -119,16 +119,10 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
-    <dependency>
-      <groupId>jakarta.persistence</groupId>
-      <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.0.0</version>
-    </dependency>
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <scope>provided</scope>
-      <version>9.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -184,8 +178,8 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.opengeo</groupId>
-            <artifactId>geodb</artifactId>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -212,7 +206,6 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>test</scope>
-      <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -27,19 +27,20 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.observation.ObservationTextParameterEntity;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -56,7 +57,7 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Class that creates and adds a {@link Criteria} for om:parameter to the query.
+ * Class that creates a {@link Predicate} for om:parameter to add to the query.
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -84,52 +85,50 @@ public class ExtensionFesFilterCriteriaAdder {
 
     public static final String FILERT_NOT_CONTAIN_VALUES = "The filter does not contain values for '{}' or '{}'!";
 
-    private Criteria c;
+    private final CriteriaBuilder cb;
 
-    private Set<Extension<?>> fesFilterExtensions;
+    private final CriteriaQuery<?> query;
 
-    public ExtensionFesFilterCriteriaAdder(Criteria c, Set<Extension<?>> fesFilterExtensions) {
-        this.c = c;
+    private final Root<DataEntity> root;
+
+    private final Set<Extension<?>> fesFilterExtensions;
+
+    public ExtensionFesFilterCriteriaAdder(CriteriaBuilder cb, CriteriaQuery<?> query, Root<DataEntity> root,
+            Set<Extension<?>> fesFilterExtensions) {
+        this.cb = cb;
+        this.query = query;
+        this.root = root;
         this.fesFilterExtensions = fesFilterExtensions;
     }
 
     /**
-     * Creates and adds the {@link Criteria} to the {@link Criteria} from the
-     * constructor
+     * Creates the {@link Predicate} for the {@code fesFilterExtensions} passed to the constructor
      *
-     * @return Hibernate {@link Criteria}
+     * @return the {@link Predicate}, or {@code null} if none of the extensions yielded a restriction
      * @throws CodedException
      *             If an error occurs or an unsupported filter is queried
      */
-    public Criteria add() throws CodedException {
+    public Predicate add() throws CodedException {
         if (fesFilterExtensions.size() > 1) {
-            Conjunction conj = new Conjunction();
+            List<Predicate> predicates = new LinkedList<>();
             for (Extension<?> swesExtension : fesFilterExtensions) {
-                Criterion filter = getFilter((Filter<?>) swesExtension.getValue());
+                Predicate filter = getFilter((Filter<?>) swesExtension.getValue());
                 if (filter != null) {
-                    conj.add(getFilter((Filter<?>) swesExtension.getValue()));
+                    predicates.add(getFilter((Filter<?>) swesExtension.getValue()));
                 }
             }
-            if (conj.conditions().iterator().hasNext()) {
-                c.add(conj);
-            }
+            return predicates.isEmpty() ? null : cb.and(predicates.toArray(new Predicate[0]));
         } else {
-            Criterion filter = getFilter((Filter<?>) fesFilterExtensions.iterator().next().getValue());
-            if (filter != null) {
-                c.add(filter);
-            }
+            return getFilter((Filter<?>) fesFilterExtensions.iterator().next().getValue());
         }
-        return c;
     }
 
-    private Criterion getFilter(Filter<?> filter) throws CodedException {
+    private Predicate getFilter(Filter<?> filter) throws CodedException {
         if (filter instanceof BinaryLogicFilter logicFilter) {
             Map<NameValue, Set<String>> map =
                     mergeNamesValues(logicFilter, Maps.<NameValue, Set<String>> newHashMap(), 0);
             checkMap(map);
-            return Subqueries.propertyIn(DataEntity.PROPERTY_ID, getDetachedCriteria(getClassFor(null, null), map));
-            // current implementation, maybe change in the future
-            // return getBinaryLogicFilterCriterion((BinaryLogicFilter) filter);
+            return cb.in(root.get(DataEntity.PROPERTY_ID)).value(getSubquery(getClassFor(null, null), map));
         } else if (filter instanceof ComparisonFilter comparisonFilter) {
             if (isParameterName(comparisonFilter) || isParameterValue(comparisonFilter)) {
                 Map<NameValue, Set<String>> map = Maps.<NameValue, Set<String>> newHashMap();
@@ -139,8 +138,7 @@ public class ExtensionFesFilterCriteriaAdder {
                     addValue(NameValue.VALUE, comparisonFilter, map);
                 }
                 checkMap(map);
-                return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
-                        getDetachedCriteria(getClassFor(null, null), map));
+                return cb.in(root.get(DataEntity.PROPERTY_ID)).value(getSubquery(getClassFor(null, null), map));
             }
             throw new NoApplicableCodeException().withMessage(
                     "Currently only the valueReference values '{}' and '{}' "
@@ -152,25 +150,24 @@ public class ExtensionFesFilterCriteriaAdder {
                 filter.getClass().getSimpleName());
     }
 
-    private DetachedCriteria getDetachedCriteria(Class<?> clazz, Map<NameValue, Set<String>> map) {
-        DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
+    private Subquery<Object> getSubquery(Class<?> clazz, Map<NameValue, Set<String>> map) {
+        Subquery<Object> subquery = query.subquery(Object.class);
+        Root<?> subqueryRoot = subquery.from(clazz);
+        List<Predicate> predicates = new LinkedList<>();
         if (map.containsKey(NameValue.NAME)) {
-            detachedCriteria.add(getRestrictionIn(ParameterEntity.NAME, map.get(NameValue.NAME)));
+            predicates.add(subqueryRoot.<String>get(ParameterEntity.NAME).in(map.get(NameValue.NAME)));
         }
         if (map.containsKey(NameValue.VALUE)) {
-            detachedCriteria.add(getRestrictionIn(ParameterEntity.VALUE, map.get(NameValue.VALUE)));
+            predicates.add(subqueryRoot.<String>get(ParameterEntity.VALUE).in(map.get(NameValue.VALUE)));
         }
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(ParameterEntity.PROPERTY_ID)));
-        return detachedCriteria;
+        subquery.where(predicates.toArray(new Predicate[0]));
+        subquery.select(subqueryRoot.<Object>get(DataEntity.PROPERTY_ID)).distinct(true);
+        return subquery;
     }
 
     private Class<?> getClassFor(String value, ComparisonOperator operator) {
         // TODO check for other types
-        return TextParameterEntity.class;
-    }
-
-    private Criterion getRestrictionIn(String name, Set<String> values) {
-        return Restrictions.in(name, values);
+        return ObservationTextParameterEntity.class;
     }
 
     private boolean isParameterName(ComparisonFilter filter) {

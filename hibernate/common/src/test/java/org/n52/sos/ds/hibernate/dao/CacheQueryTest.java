@@ -33,11 +33,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -49,9 +51,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
-import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,40 +127,32 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
 
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private long getFoiForOfferingObservationInfoTime() throws OwsExceptionReport {
         // new way using ObservationInfo class (excludes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        Criteria c = session.createCriteria(getContextualReferencedObservationClass())
-                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        // c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
-        // Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-        // c.createCriteria(DataEntity.OFFERINGS).add(
-        // Restrictions.eq(Offering.IDENTIFIER,
-        // HibernateObservationBuilder.OFFERING_1));
-        c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getContextualReferencedObservationClass());
+        Root root = query.from(getContextualReferencedObservationClass());
+        query.where(cb.equal(root.get(DataEntity.PROPERTY_DELETED), false));
+        session.createQuery(query).list();
         long time = System.currentTimeMillis() - start;
-        LOGGER.debug("QUERY get featureOfInterest identifiers for offering new way: {}",
-                HibernateHelper.getSqlString(c));
         returnSession(session);
         return time;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private long getFoiForOfferingObservationTime() throws OwsExceptionReport {
         // old way using full Observation class (includes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        final Criteria c =
-                session.createCriteria(getObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        // c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
-        // Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-        // c.createCriteria(DataEntity.OFFERINGS).add(
-        // Restrictions.eq(Offering.IDENTIFIER,
-        // HibernateObservationBuilder.OFFERING_1));
-        c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getObservationClass());
+        Root root = query.from(getObservationClass());
+        query.where(cb.equal(root.get(DataEntity.PROPERTY_DELETED), false));
+        session.createQuery(query).list();
         long time = System.currentTimeMillis() - start;
-        LOGGER.debug("QUERY get featureOfInterest identifiers for offering old way: {}",
-                HibernateHelper.getSqlString(c));
         returnSession(session);
         return time;
     }
@@ -226,11 +218,11 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            try (ScrollableIterable<DataEntity<?>> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
-                for (DataEntity<?> o : i) {
-                    session.delete(o);
-                }
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<? extends DataEntity> query = cb.createQuery(getObservationClass());
+            query.from(getObservationClass());
+            for (DataEntity o : session.createQuery(query).getResultList()) {
+                session.remove(o);
             }
             session.flush();
             transaction.commit();

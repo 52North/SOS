@@ -20,8 +20,8 @@
             <artifactId>c3p0</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opengeo</groupId>
-            <artifactId>geodb</artifactId>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis</artifactId>
         </dependency>
     </dependencies>
 </project>

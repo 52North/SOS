@@ -210,10 +210,5 @@ public class AbstractHibernateFullDBDatasourceTest
             return null;
         }
 
-        @Override
-        protected String[] checkDropSchema(String[] dropSchema) {
-            return null;
-        }
-
     }
 }

@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.util.restriction;
 
 import java.util.Date;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
@@ -56,13 +57,8 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
  */
 public class MeetsRestriction implements TemporalRestriction {
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.eq(selfEnd, otherBegin);
+    public Predicate filterPeriodWithPeriod(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherBegin, Date otherEnd) {
+        return cb.equal(selfEnd, otherBegin);
     }
-
-    @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.eq(selfEnd, getStartPlaceHolder(count));
-    }
-
 }

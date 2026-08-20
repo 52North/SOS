@@ -27,13 +27,12 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.CodespaceEntity;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for codespace
@@ -42,8 +41,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class CodespaceDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CodespaceDAO.class);
 
     /**
      * Get codespace object for identifier
@@ -55,10 +52,12 @@ public class CodespaceDAO {
      * @return Codespace object
      */
     public CodespaceEntity getCodespace(final String codespace, final Session session) {
-        Criteria criteria = session.createCriteria(CodespaceEntity.class)
-                .add(Restrictions.eq(CodespaceEntity.PROPERTY_NAME, codespace));
-        LOGGER.trace("QUERY getCodespace(codespace): {}", HibernateHelper.getSqlString(criteria));
-        return (CodespaceEntity) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<CodespaceEntity> query = cb.createQuery(CodespaceEntity.class);
+        Root<CodespaceEntity> root = query.from(CodespaceEntity.class);
+        query.where(cb.equal(root.get(CodespaceEntity.PROPERTY_NAME), codespace));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
     /**
@@ -75,7 +74,7 @@ public class CodespaceDAO {
         if (result == null) {
             result = new CodespaceEntity();
             result.setName(codespace);
-            session.save(result);
+            session.persist(result);
             session.flush();
             session.refresh(result);
         }

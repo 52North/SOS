@@ -27,9 +27,9 @@
     Public License for more details.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 <jsp:include page="./common/header.jsp">
     <jsp:param name="activeMenu" value="documentation" />
 </jsp:include>

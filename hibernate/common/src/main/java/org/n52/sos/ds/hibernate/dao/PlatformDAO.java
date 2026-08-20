@@ -29,9 +29,11 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.UUID;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.PlatformEntity;
@@ -39,12 +41,9 @@ import org.n52.series.db.beans.sta.HistoricalLocationEntity;
 import org.n52.series.db.beans.sta.LocationEntity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformDAO.class);
     private static final String ENCODINGTYPE_GEOJSON = "application/vnd.geo+json";
 
     public PlatformDAO(DaoFactory daoFactory) {
@@ -52,11 +51,12 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
     }
 
     public PlatformEntity getPlatformForIdentifier(String identifier, Session session) {
-        Criteria criteria = session.createCriteria(PlatformEntity.class)
-                .add(Restrictions.eq(PlatformEntity.IDENTIFIER, identifier));
-        LOGGER.trace("QUERY getPlatformForIdentifier(identifier): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (PlatformEntity) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<PlatformEntity> query = cb.createQuery(PlatformEntity.class);
+        Root<PlatformEntity> root = query.from(PlatformEntity.class);
+        query.where(cb.equal(root.get(PlatformEntity.IDENTIFIER), identifier));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
     public PlatformEntity getOrInsertPlatform(String value, Session session) {
@@ -65,7 +65,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
             platform = new PlatformEntity();
             addIdentifier(platform, value, session);
             addName(platform, value, session);
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
         }
@@ -79,7 +79,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
             addIdentifier(platform, sweText.getValue(), session);
             addName(platform, sweText.getName(), session);
             addDescription(platform, sweText.getDescription());
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
         }
@@ -95,7 +95,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
             platform.setName(feature.getName());
             platform.setNameCodespace(feature.getNameCodespace());
             platform.setDescription(feature.getDescription());
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
             processSta(platform, feature, session);
@@ -107,7 +107,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
         PlatformEntity platform = getPlatformForIdentifier(platformEntity.getIdentifier(), session);
         if (platform == null) {
             platform = platformEntity;
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
         }
@@ -121,7 +121,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
             HistoricalLocationEntity historicalLocation = getOrInsertHistoricalLocation(platform, location, session);
             platform.addHistoricalLocation(historicalLocation);
 
-            session.save(platform);
+            session.persist(platform);
             session.flush();
             session.refresh(platform);
         }
@@ -141,7 +141,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
                 getDaoFactory().getFeatureTypeDAO().getOrInsertFormatEntity(ENCODINGTYPE_GEOJSON, session));
         location.setGeometryEntity(feature.getGeometryEntity());
 
-        session.save(location);
+        session.persist(location);
         session.flush();
         session.refresh(location);
         return location;
@@ -154,7 +154,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
         historicalLocation.setThing(platform);
         historicalLocation.setTime(DateTime.now().toDate());
 
-        session.save(historicalLocation);
+        session.persist(historicalLocation);
         session.flush();
         session.refresh(historicalLocation);
 

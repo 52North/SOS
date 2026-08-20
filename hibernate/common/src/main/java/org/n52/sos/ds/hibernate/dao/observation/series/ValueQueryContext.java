@@ -27,9 +27,11 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.List;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -39,7 +41,7 @@ public class ValueQueryContext {
 
     private DatasetEntity dataset;
     private AbstractObservationRequest request;
-    private Criterion temporalFilterCriterion;
+    private List<TemporalFilter> temporalFilters;
     private int chunkSize;
     private int currentRow;
     private Session session;
@@ -66,12 +68,12 @@ public class ValueQueryContext {
         return session;
     }
 
-    public Criterion getTemporalFilterCriterion() {
-        return temporalFilterCriterion;
+    public List<TemporalFilter> getTemporalFilters() {
+        return temporalFilters;
     }
 
-    public ValueQueryContext setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
-        this.temporalFilterCriterion = temporalFilterCriterion;
+    public ValueQueryContext setTemporalFilters(List<TemporalFilter> temporalFilters) {
+        this.temporalFilters = temporalFilters;
         return this;
     }
 

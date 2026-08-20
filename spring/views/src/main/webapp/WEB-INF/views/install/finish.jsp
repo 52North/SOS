@@ -30,7 +30,7 @@
 <jsp:include page="header.jsp">
 	<jsp:param name="step" value="4" />
 </jsp:include>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <jsp:include page="../common/logotitle.jsp">
 	<jsp:param name="title" value="Finishing Installation" />
 	<jsp:param name="leadParagraph" value="All configuration options are set. Click on 'Install' to finish the installation." />

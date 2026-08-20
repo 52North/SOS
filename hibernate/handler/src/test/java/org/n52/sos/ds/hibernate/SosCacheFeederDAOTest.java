@@ -60,7 +60,6 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
         GeometryHandler geometryHandler = new GeometryHandler();
         geometryHandler.setAuthority("EPSG");
         geometryHandler.setStorageEpsg(4326);
-        geometryHandler.setSpatialDatasource(true);
         geometryHandler.init();
         instance.setGeometryHandler(geometryHandler);
     }

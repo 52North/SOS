@@ -27,7 +27,9 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,14 +38,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
@@ -154,25 +157,15 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public S getMetadata(String id, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        List<H> list = criteria.list();
-        return createSosObject(id, list);
+        return createSosObject(id, queryMetadata(Collections.singleton(id), null, session));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<S> getMetadata(Collection<String> id, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
-        List<H> list = criteria.list();
-        return createSosObject(list);
+        return createSosObject(queryMetadata(id, null, session));
     }
 
     @Override
@@ -183,11 +176,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     private S getMetadata(String id, String locale, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
-        List<H> list = criteria.list();
+        List<H> list = queryMetadata(Collections.singleton(id), Collections.singleton(locale), session);
         if (list.isEmpty()) {
             return getMetadata(id, LocaleHelper.getEquivalents(locale), session);
         }
@@ -196,12 +185,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     private S getMetadata(String id, Set<String> locales, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.in(I18nEntity.PROPERTY_LOCALE, locales));
-        List<H> list = criteria.list();
-        return createSosObject(id, list);
+        return createSosObject(id, queryMetadata(Collections.singleton(id), locales, session));
     }
 
     @Override
@@ -212,11 +196,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     private Collection<S> getMetadata(Collection<String> id, String locale, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
-        List<H> list = criteria.list();
+        List<H> list = queryMetadata(id, Collections.singleton(locale), session);
         if (list.isEmpty()) {
             return getMetadata(id, LocaleHelper.getEquivalents(locale), session);
         }
@@ -225,21 +205,46 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     private Collection<S> getMetadata(Collection<String> id, Set<String> locales, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.in(I18nEntity.PROPERTY_LOCALE, locales));
-        List<H> list = criteria.list();
-        return createSosObject(list);
+        return createSosObject(queryMetadata(id, locales, session));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<S> getMetadata(Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        List<H> list = criteria.list();
-        return createSosObject(list);
+        return createSosObject(queryMetadata(null, null, session));
+    }
+
+    /**
+     * Query the i18n entities of this DAO, optionally restricted to the entities with the given identifiers
+     * and/or to the given locales.
+     *
+     * @param ids
+     *            Identifiers of the described entities, or {@code null} to not restrict by entity
+     * @param locales
+     *            Locales to query, or {@code null} to not restrict by locale
+     * @param session
+     *            Hibernate session
+     * @return The matching i18n entities
+     */
+    private List<H> queryMetadata(Collection<String> ids, Collection<String> locales, Session session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<H> query = cb.createQuery(getHibernateEntityClass());
+        Root<H> root = query.from(getHibernateEntityClass());
+        List<Predicate> predicates = new ArrayList<>(2);
+        if (ids != null) {
+            Join<H, ?> entity = root.join(I18nEntity.PROPERTY_ENTITY);
+            predicates.add(entity.get(DescribableEntity.IDENTIFIER)
+                    .in(ids));
+        }
+        if (locales != null) {
+            predicates.add(root.get(I18nEntity.PROPERTY_LOCALE)
+                    .in(locales));
+        }
+        if (!predicates.isEmpty()) {
+            query.where(predicates.toArray(new Predicate[predicates.size()]));
+        }
+        return session.createQuery(query)
+                .list();
     }
 
     @Override
@@ -292,12 +297,15 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<String> getAvailableLocales(Session session)
             throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.setProjection(Projections.distinct(Projections.property(I18nEntity.PROPERTY_LOCALE)));
-        return criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<H> root = query.from(getHibernateEntityClass());
+        query.select(root.get(I18nEntity.PROPERTY_LOCALE))
+                .distinct(true);
+        return session.createQuery(query)
+                .list();
     }
 
     @Override
@@ -332,21 +340,8 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     protected void deleteOldValues(String id, Session session) {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
-                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        ScrollableResults scroll = null;
-        try {
-            scroll = criteria.scroll();
-            while (scroll.next()) {
-                @SuppressWarnings("unchecked")
-                H h18n = (H) scroll.get()[0];
-                session.delete(h18n);
-            }
-        } finally {
-            if (scroll != null) {
-                scroll.close();
-            }
+        for (H h18n : queryMetadata(Collections.singleton(id), null, session)) {
+            session.delete(h18n);
         }
         session.flush();
     }

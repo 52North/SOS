@@ -110,7 +110,6 @@ public class H2FileDatasource extends AbstractH2Datasource implements H2File {
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
-        addMappingFileDirectories(settings, p);
         return p;
     }
 
@@ -172,7 +171,7 @@ public class H2FileDatasource extends AbstractH2Datasource implements H2File {
 
     @Override
     public void prepare(Map<String, Object> settings) {
-        initGeoDB(settings);
+        initH2GIS(settings);
     }
 
     @Override

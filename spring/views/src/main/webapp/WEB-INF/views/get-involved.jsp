@@ -30,7 +30,7 @@
 <%--
     XXX keep in sync with Ann and http://52north.org/about/get-involved/
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
 <jsp:include page="./common/header.jsp">
     <jsp:param name="activeMenu" value="home" />
@@ -40,9 +40,6 @@
 	<jsp:param name="leadParagraph" value="There are various ways to get involved with the 52&deg;North Initiative. What are your interests? (If you want to get involved in open source, but don't know how to start, you might want to read this <a href='http://blog.smartbear.com/software-quality/bid/167051/14-Ways-to-Contribute-to-Open-Source-without-Being-a-Programming-Genius-or-a-Rock-Star'>blog entry</a>.)" />
 </jsp:include>
 <hr/>
-
-<h4>Tell the world!</h4>
-<p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:sensorweb@52north.org" target="_blank">sensorweb@52north.org</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/bin/view/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
 
 <h4>Code development/ bug fixing</h4>
 <p>The best way to get to know a software is to use it! Implement features that you yourself need - new software, code snippets, adaptations, extensions, etc.  Help others solve their problems. Fix bugs and enhance the existing software. There are many ways to get started!</p>
@@ -73,11 +70,6 @@
                 + document.location.host + "<c:url value="/sos" />",
             subject = "I've installed the 52N SOS",
             body = "Check out my installed SOS instance at " + serviceUrl;
-        $(".telltheworld").each(function() {
-            $(this).attr("href", $(this).attr("href") 
-                + "?subject=" + encodeURIComponent(subject) 
-                + "&body=" + encodeURIComponent(body));
-        });
 	if ($.queryParam["install"] === "finished")  {
             window.setTimeout(function() {
                 showMessage(

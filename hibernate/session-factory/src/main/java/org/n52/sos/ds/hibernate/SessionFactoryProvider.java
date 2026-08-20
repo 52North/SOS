@@ -27,16 +27,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Properties;
 
 import org.hibernate.HibernateException;
@@ -49,6 +42,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
+import org.n52.sos.ds.hibernate.util.EntityScanner;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,51 +101,28 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
-            Configuration configuration = new Configuration().configure("/hibernate.cfg.xml");
+            if (properties.containsKey(HIBERNATE_DIRECTORY)) {
+                LOGGER.warn("Datasource property '{}' is no longer used; every @Entity in '{}' is now mapped "
+                        + "unconditionally. Please remove it from your datasource.properties.", HIBERNATE_DIRECTORY,
+                        ENTITY_PACKAGE);
+            }
+            Configuration configuration = new Configuration();
+            configuration.configure("/hibernate.cfg.xml");
             if (properties.containsKey(HibernateConstants.C3P0_MAX_SIZE)) {
                 this.maxConnections = Integer.parseInt(properties.getProperty(HibernateConstants.C3P0_MAX_SIZE, "-1"));
             }
-            if (properties.containsKey(HIBERNATE_RESOURCES)) {
-                List<String> resources = (List<String>) properties.get(HIBERNATE_RESOURCES);
-                for (String resource : resources) {
-                    configuration.addURL(SessionFactoryProvider.class.getResource(resource));
-                }
-                properties.remove(HIBERNATE_RESOURCES);
-            } else if (properties.containsKey(HIBERNATE_DIRECTORY)) {
-                String directories = (String) properties.get(HIBERNATE_DIRECTORY);
-                for (String directory : directories.split(PATH_SEPERATOR)) {
-                    File hibernateDir = new File(directory);
-                    if (!hibernateDir.exists()) {
-                        // try to configure from classpath (relative path)
-                        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                        URL dirUrl = classLoader.getResource(directory);
-                        if (dirUrl != null) {
-                            try {
-                                hibernateDir = new File(
-                                        URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString()));
-                            } catch (UnsupportedEncodingException e) {
-                                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
-                            }
-                        }
-                    }
-                    if (!hibernateDir.exists()) {
-                        throw new ConfigurationError("Hibernate directory " + directory + " doesn't exist!");
-                    }
-                    configuration.addDirectory(hibernateDir);
-                }
-            } else {
-                // keep this as default/fallback
-                configuration
-                        .addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_CORE_PATH).toURI()));
-                configuration
-                        .addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_DATASET_PATH).toURI()));
+            EntityScanner.applyTo(configuration, ENTITY_PACKAGE);
+            if (DatabaseConcept.PROXY.name().equals(properties.getProperty(DATABASE_CONCEPT_KEY))) {
+                configuration.addResource(HIBERNATE_ORM_PROFILE_PROXY);
+            }
+            if (FeatureConcept.EXTENDED_FEATURE_CONCEPT.name().equals(properties.getProperty(FEATURE_CONCEPT_KEY))) {
+                configuration.addResource(HIBERNATE_ORM_FEATURE_MONITORING_POINT);
             }
             return configuration;
-        } catch (HibernateException | URISyntaxException he) {
+        } catch (HibernateException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
             destroy();

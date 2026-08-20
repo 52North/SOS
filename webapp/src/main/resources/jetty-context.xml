@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
 
-<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+<Configure class="org.eclipse.jetty.ee10.webapp.WebAppContext">
 
     <Call name="setAttribute">
-        <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+        <Arg>org.eclipse.jetty.ee10.webapp.WebInfIncludeJarPattern</Arg>
         <Arg>.*/spring-security[^/]*\.jar$|.*/spring-web[^/]*\.jar$|.*/classes/.*</Arg>
     </Call>
 

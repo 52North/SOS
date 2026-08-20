@@ -452,7 +452,6 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     private void initGeometryHandler(GeometryHandler geometryHandler) {
         geometryHandler.setAuthority("EPSG");
         geometryHandler.setStorageEpsg(4326);
-        geometryHandler.setSpatialDatasource(true);
         geometryHandler.init();
     }
 
@@ -775,8 +774,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected OmObservation getObservation(GetObservationResponse getObsResponse)
             throws NoSuchElementException, OwsExceptionReport {
-        OmObservation observation = getObsResponse.getObservationCollection()
-                .next();
+        assertTrue(getObsResponse.getObservationCollection().hasNext());
+        OmObservation observation = getObsResponse.getObservationCollection().next();
         if (observation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue) observation.getValue()).hasNext(), is(true));
             OmObservation omObservation = ((StreamingValue) observation.getValue()).next();

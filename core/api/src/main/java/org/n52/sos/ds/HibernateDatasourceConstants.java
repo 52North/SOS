@@ -41,70 +41,31 @@ public interface HibernateDatasourceConstants {
 
     String OGM_DATASOURCE_DAO_IDENTIFIER = OGM_CONNECTION_PROVIDER_IDENTIFIER;
 
-    String HIBERNATE_MAPPING_PATH = "/hbm";
+    /**
+     * Package scanned for {@code @jakarta.persistence.Entity} classes, replacing the per-concept hbm
+     * directory model. Every entity found here is mapped unconditionally; only the two overlays below
+     * remain concept-gated.
+     */
+    String ENTITY_PACKAGE = "org.n52.series.db.beans";
 
-    // Database concept paths
-    String HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/simple";
+    /**
+     * db-model orm.xml overlay that maps {@code MonitoringPointEntity}, applied only for
+     * {@link FeatureConcept#EXTENDED_FEATURE_CONCEPT}.
+     */
+    String HIBERNATE_ORM_FEATURE_MONITORING_POINT = "/orm/feature/wml-monitoring-point.orm.xml";
 
-    String HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/ereporting";
+    /**
+     * db-model orm.xml overlay that re-maps proxy-profile associations (e.g. {@code DescribableEntity.service}),
+     * applied only for {@link DatabaseConcept#PROXY}.
+     */
+    String HIBERNATE_ORM_PROFILE_PROXY = "/orm/profile-proxy/profile-proxy.orm.xml";
 
-    String HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
-
-    String HIBERNATE_MAPPING_PROXY_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/proxy";
-
-    // Database core paths
-    String HIBERNATE_MAPPING_CORE_PATH = "/core";
-
-    String HIBERNATE_MAPPING_SIMPLE_CORE_PATH = HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
-
-    String HIBERNATE_MAPPING_EREPORTING_CORE_PATH =
-            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
-
-    String HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH =
-            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
-
-    String HIBERNATE_MAPPING_PROXY_CORE_PATH =
-            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
-
-    // Database simple paths
-    String HIBERNATE_MAPPING_DATASET_PATH = "/dataset";
-
-    String HIBERNATE_MAPPING_SIMPLE_DATASET_PATH =
-            HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
-
-    String HIBERNATE_MAPPING_EREPORTING_DATASET_PATH =
-            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
-
-    String HIBERNATE_MAPPING_TRANSACTIONAL_DATASET_PATH =
-            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
-
-    String HIBERNATE_MAPPING_PROXY_DATASET_PATH =
-            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
-
-    // Database sampling extension paths
-    String HIBERNATE_MAPPING_SAMPLING_PATH = "/sampling";
-
-    String HIBERNATE_MAPPING_SIMPLE_SAMPLING_PATH =
-            HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
-
-    String HIBERNATE_MAPPING_EREPORTING_SAMPLING_PATH =
-            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
-
-    String HIBERNATE_MAPPING_TRANSACTIONAL_SAMPLING_PATH =
-            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
-
-    String HIBERNATE_MAPPING_PROXY_SAMPLING_PATH =
-            HIBERNATE_MAPPING_PROXY_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
-
-    String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
-
-    String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
-
-    String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
-
+    /**
+     * Legacy datasource.properties key that used to hold a semicolon-separated hbm directory list. No longer
+     * written; only read as a fallback to derive {@link DatabaseConcept}/{@link DatabaseExtension} from
+     * installations that have not been upgraded yet.
+     */
     String HIBERNATE_DIRECTORY = "HIBERNATE_DIRECTORY";
-
-    String HIBERNATE_ANNOTADED_CLASSES = "HIBERNATE_ANNOTADED_CLASSES";
 
     String PATH_SEPERATOR = ";";
 
@@ -124,6 +85,8 @@ public interface HibernateDatasourceConstants {
     String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
     String DATABASE_EXTENSION_KEY = "sos.database.extension";
+
+    String FEATURE_CONCEPT_KEY = "sos.feature.concept";
 
     String SPRING_PROFILE_KEY = "sos.datasource.spring.profiles";
 

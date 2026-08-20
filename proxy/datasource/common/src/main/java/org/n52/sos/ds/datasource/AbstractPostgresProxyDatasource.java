@@ -74,7 +74,6 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
         if (settings.containsKey(PROXY_PATH_KEY)) {
             p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         }
-        addMappingFileDirectories(settings, p);
         return p;
     }
 

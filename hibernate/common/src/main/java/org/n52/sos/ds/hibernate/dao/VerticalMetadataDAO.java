@@ -27,20 +27,22 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.hibernate.Criteria;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.VerticalMetadataEntity;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class VerticalMetadataDAO {
 
-    private static final Logger LOG = LoggerFactory.getLogger(VerticalMetadataDAO.class);
     private final DaoFactory daoFactory;
 
     public VerticalMetadataDAO(DaoFactory daoFactory) {
@@ -48,38 +50,45 @@ public class VerticalMetadataDAO {
     }
 
     public VerticalMetadataEntity getOrInsertVerticalMetadata(VerticalMetadataEntity entity, Session session) {
-        VerticalMetadataEntity verticalMetadata = getVerticalMetadataFor(entity, session);
-        if (verticalMetadata == null) {
-            session.save(entity);
-            session.flush();
-            session.refresh(entity);
-            return entity;
+        if (!session.contains(entity)) {
+            VerticalMetadataEntity verticalMetadata = getVerticalMetadataFor(entity, session);
+            if (verticalMetadata == null) {
+                session.persist(entity);
+                session.flush();
+                session.refresh(entity);
+                return entity;
+            }
+            return verticalMetadata;
         }
-        return verticalMetadata;
+        return entity;
     }
 
     private VerticalMetadataEntity getVerticalMetadataFor(VerticalMetadataEntity verticalMetadata, Session session) {
-        Criteria criteria = session.createCriteria(VerticalMetadataEntity.class).add(
-                Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_UNIT, verticalMetadata.getVerticalUnit()));
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<VerticalMetadataEntity> query = cb.createQuery(VerticalMetadataEntity.class);
+        Root<VerticalMetadataEntity> root = query.from(VerticalMetadataEntity.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(VerticalMetadataEntity.PROPERTY_VERTICAL_UNIT),
+                verticalMetadata.getVerticalUnit()));
         if (verticalMetadata.isSetOrientation()) {
-            criteria.add(Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_ORIENTATION,
+            predicates.add(cb.equal(root.get(VerticalMetadataEntity.PROPERTY_VERTICAL_ORIENTATION),
                     verticalMetadata.getOrientation()));
         }
         if (verticalMetadata.isSetVerticalOriginName()) {
-            criteria.add(Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_ORIGIN_NAME,
+            predicates.add(cb.equal(root.get(VerticalMetadataEntity.PROPERTY_VERTICAL_ORIGIN_NAME),
                     verticalMetadata.getVerticalOriginName()));
         }
         if (verticalMetadata.isSetVerticalFromName()) {
-            criteria.add(Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_FROM_NAME,
+            predicates.add(cb.equal(root.get(VerticalMetadataEntity.PROPERTY_VERTICAL_FROM_NAME),
                     verticalMetadata.getVerticalFromName()));
         }
         if (verticalMetadata.isSetVerticalToName()) {
-            criteria.add(Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_TO_NAME,
+            predicates.add(cb.equal(root.get(VerticalMetadataEntity.PROPERTY_VERTICAL_TO_NAME),
                     verticalMetadata.getVerticalToName()));
         }
-        LOG.trace("QUERY getCategoryForIdentifier(identifier): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (VerticalMetadataEntity) criteria.uniqueResult();
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
 }

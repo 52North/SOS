@@ -28,6 +28,8 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.cfg.JdbcSettings;
+import org.hibernate.resource.jdbc.spi.PhysicalConnectionHandlingMode;
 
 /**
  * @since 4.0.0
@@ -35,17 +37,17 @@ import org.hibernate.cfg.AvailableSettings;
  */
 public interface HibernateConstants {
 
-    String DIALECT = "hibernate.dialect";
+    String DIALECT = JdbcSettings.DIALECT;
 
-    String DRIVER_CLASS = AvailableSettings.DRIVER;
+    String DRIVER_CLASS = JdbcSettings.JAKARTA_JDBC_DRIVER;
 
     String CONNECTION_PROVIDER_CLASS = AvailableSettings.CONNECTION_PROVIDER;
 
-    String CONNECTION_URL = AvailableSettings.URL;
+    String CONNECTION_URL = JdbcSettings.JAKARTA_JDBC_URL;
 
-    String CONNECTION_USERNAME = AvailableSettings.USER;
+    String CONNECTION_USERNAME = JdbcSettings.JAKARTA_JDBC_USER;
 
-    String CONNECTION_PASSWORD = AvailableSettings.PASS;
+    String CONNECTION_PASSWORD = JdbcSettings.JAKARTA_JDBC_PASSWORD;
 
     String DEFAULT_CATALOG = AvailableSettings.DEFAULT_CATALOG;
 
@@ -55,11 +57,12 @@ public interface HibernateConstants {
 
     String CONNECTION_POOL_SIZE = AvailableSettings.POOL_SIZE;
 
-    String CONNECTION_RELEASE_MODE = AvailableSettings.RELEASE_CONNECTIONS;
+    String CONNECTION_RELEASE_MODE = AvailableSettings.CONNECTION_HANDLING;
 
     String CURRENT_SESSION_CONTEXT = AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS;
 
-    String CONNECTION_RELEASE_MODE_AFTER_TRANSACTION = "after_transaction";
+    PhysicalConnectionHandlingMode CONNECTION_RELEASE_MODE_AFTER_TRANSACTION =
+        PhysicalConnectionHandlingMode.DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION;
 
     String CONNECTION_RELEASE_MODE_AFTER_STATEMENT = "after_statement";
 
@@ -154,18 +157,6 @@ public interface HibernateConstants {
     String C3P0_CONNECTION_CUSTOMIZER_CLASS_NAME = "hibernate.c3p0.connectionCustomizerClassName";
 
     String JDBC_BATCH_SIZE = AvailableSettings.STATEMENT_BATCH_SIZE;
-
-    //FIXME Not a valid property, remove?
-    @Deprecated
-    String CONNECTION_AUTO_RECONNECT = "hibernate.connection.autoReconnect";
-
-    //FIXME Not a valid property, remove?
-    @Deprecated
-    String CONNECTION_AUTO_RECONNECT_FOR_POOLS = "hibernate.connection.autoReconnectForPools";
-
-    //FIXME Not a valid property, remove?
-    @Deprecated
-    String CONNECTION_TEST_ON_BORROW = "hibernate.connection.testOnBorrow";
 
     String MAX_FETCH_DEPTH = AvailableSettings.MAX_FETCH_DEPTH;
 

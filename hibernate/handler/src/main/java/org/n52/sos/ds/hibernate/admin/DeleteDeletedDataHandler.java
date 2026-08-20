@@ -30,12 +30,13 @@ package org.n52.sos.ds.hibernate.admin;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -77,10 +78,12 @@ public class DeleteDeletedDataHandler
         try {
             session = getHibernateSessionHolder().getSession();
             transaction = getTransaction(session);
-            Criteria c = daoFactory.getSeriesDAO().getDefaultAllSeriesCriteria(session)
-                    .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true))
-                    .add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false));
-            List<DatasetEntity> list = c.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> query = cb.createQuery(DatasetEntity.class);
+            Root<DatasetEntity> root = query.from(DatasetEntity.class);
+            query.where(cb.equal(root.get(DatasetEntity.PROPERTY_DELETED), true),
+                    cb.equal(root.get(DatasetEntity.PROPERTY_PUBLISHED), false));
+            List<DatasetEntity> list = session.createQuery(query).list();
             if (list != null && !list.isEmpty()) {
                 for (DatasetEntity dataset : list) {
                     deleteDataset(dataset, session);

@@ -1,9 +1,9 @@
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <session-config>
         <cookie-config>
             <http-only>true</http-only>
             <secure>true</secure>
-            <comment>__SAME_SITE_STRICT__</comment>
         </cookie-config>
     </session-config>
     <display-name>${project.parent.name}; Git-Branch: '${git.branch}'; Git-Commit: '${git.commit.id}' @ ${git.commit.time}; Build time: ${git.build.time}</display-name>
@@ -62,10 +62,6 @@
             classpath*:contexts/configured/*.xml
         </param-value>
     </context-param>
-    <!-- Memory leak preventer listener -->
-    <listener>
-    	<listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventorListener</listener-class>
-    </listener>
     <!-- Spring startup listener -->
     <listener>
         <listener-class>org.n52.sos.SosContextLoaderListener</listener-class>

@@ -80,7 +80,6 @@ public class H2InMemoryDatasource extends AbstractH2Datasource implements H2InMe
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
-        addMappingFileDirectories(settings, p);
         return p;
     }
 

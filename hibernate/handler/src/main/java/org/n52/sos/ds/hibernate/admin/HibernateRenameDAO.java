@@ -28,11 +28,13 @@
 package org.n52.sos.ds.hibernate.admin;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -65,8 +67,12 @@ public class HibernateRenameDAO implements RenameDAO, TransactionHelper {
         try {
             s = sessionHolder.getSession();
             t = getTransaction(s);
-            PhenomenonEntity op = (PhenomenonEntity) s.createCriteria(PhenomenonEntity.class)
-                    .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, oldName)).uniqueResult();
+            CriteriaBuilder cb = s.getCriteriaBuilder();
+            CriteriaQuery<PhenomenonEntity> query = cb.createQuery(PhenomenonEntity.class);
+            Root<PhenomenonEntity> root = query.from(PhenomenonEntity.class);
+            query.where(cb.equal(root.get(PhenomenonEntity.IDENTIFIER), oldName));
+            PhenomenonEntity op = s.createQuery(query)
+                    .uniqueResult();
 
             if (op == null) {
                 throw new NoSuchObservablePropertyException(oldName);

@@ -28,6 +28,7 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.Properties;
+import java.util.TreeMap;
 
 import jakarta.inject.Inject;
 
@@ -39,6 +40,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.service.ServiceRegistry;
 import org.n52.faroe.ConfigurationError;
@@ -168,6 +170,7 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     @Override
     public void init() {
+
         String value = this.databaseSettingsHandler.get(HibernateDatasourceConstants.PROVIDED_JDBC);
         if (driverCleanupListener != null && (value == null || value.equals("true"))) {
             driverCleanupListener.addDriverClass(this.databaseSettingsHandler
@@ -177,13 +180,11 @@ public abstract class UnspecifiedSessionFactoryProvider
     }
 
     private void initialize(Properties properties) throws ConfigurationError {
-
         final DatasourceCallback datasourceCallback = getDatasourceCallback(properties);
         datasourceCallback.onInit(properties);
         try {
-            LOGGER.debug("Instantiating configuration and session factory");
             configuration = getConfiguration(properties);
-            configuration.mergeProperties(properties);
+            configuration.addProperties(properties);
             UnspecifiedSessionFactoryProvider.serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             UnspecifiedSessionFactoryProvider.sessionFactory = configuration.buildSessionFactory(serviceRegistry);

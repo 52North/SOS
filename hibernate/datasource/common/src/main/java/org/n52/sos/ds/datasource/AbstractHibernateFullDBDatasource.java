@@ -139,9 +139,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (settings.containsKey(BATCH_SIZE_KEY)) {
             p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
         }
-        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT, Boolean.TRUE.toString());
-        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT_FOR_POOLS, Boolean.TRUE.toString());
-        p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, Boolean.TRUE.toString());
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
@@ -158,7 +155,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (getSpringProfiles() != null && !getSpringProfiles().isEmpty()) {
             p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
         }
-        addMappingFileDirectories(settings, p);
 
         return p;
     }

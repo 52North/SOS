@@ -127,7 +127,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-opengis</artifactId>
+            <artifactId>gt-api</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -211,6 +211,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

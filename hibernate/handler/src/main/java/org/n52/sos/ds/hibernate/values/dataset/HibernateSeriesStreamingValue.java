@@ -96,7 +96,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         try {
             session = getSession();
             ObservationTimeExtrema timeExtrema = seriesValueTimeDAO.getTimeExtremaForSeries(
-                    (GetObservationRequest) request, series, temporalFilterCriterion, session);
+                    (GetObservationRequest) request, series, temporalFilters, session);
             if (timeExtrema.isSetPhenomenonTimes()) {
                 setPhenomenonTime(
                         GmlHelper.createTime(timeExtrema.getMinPhenomenonTime(), timeExtrema.getMaxPhenomenonTime()));

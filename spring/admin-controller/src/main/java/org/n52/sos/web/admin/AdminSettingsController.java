@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -117,7 +118,7 @@ public class AdminSettingsController extends AbstractController {
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_UPDATE, method = RequestMethod.POST)
     public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
-            throws AuthenticationException, ConfigurationError {
+        throws AuthenticationException, ConfigurationError, ServletException {
         LOG.info("Updating Settings");
         updateAdminUser(request, user);
         updateSettings(request);
@@ -150,7 +151,7 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateAdminUser(HttpServletRequest request, Principal user)
-            throws AuthenticationException, ConfigurationError {
+        throws AuthenticationException, ConfigurationError, ServletException {
         String password = request.getParameter(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER);
         String username = request.getParameter(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER);
         String currentPassword = request.getParameter(ControllerConstants.ADMIN_CURRENT_PASSWORD_REQUEST_PARAMETER);
@@ -158,7 +159,8 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateAdminUser(HttpServletRequest req, String newPassword, String newUsername,
-            String currentPassword, String currentUsername) throws AuthenticationException, ConfigurationError {
+            String currentPassword, String currentUsername)
+        throws AuthenticationException, ConfigurationError, ServletException {
         if (!Strings.isNullOrEmpty(newPassword) || !currentUsername.equals(newUsername)) {
             if (currentPassword == null) {
                 throw new BadCredentialsException("You have to submit your current password.");

@@ -1,10 +1,3 @@
-FROM eclipse-temurin:8-alpine AS BCRYPT_BUILD
-
-WORKDIR /usr/src/app
-COPY docker/bcrypt/BCrypt.java /usr/src/app
-RUN javac -source 1.8 -target 1.8 BCrypt.java \
- && rm BCrypt.java
-
 FROM maven:3-eclipse-temurin-11-alpine AS BUILD
 
 RUN apk add --no-cache git

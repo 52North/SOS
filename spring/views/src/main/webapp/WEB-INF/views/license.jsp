@@ -27,7 +27,7 @@
     Public License for more details.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <jsp:include page="./common/header.jsp">
 	<jsp:param name="activeMenu" value="home" />
 </jsp:include>

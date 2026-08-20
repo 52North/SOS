@@ -37,6 +37,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.jfree.data.general.Dataset;
@@ -50,8 +57,6 @@ import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
-import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
@@ -62,9 +67,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
-import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 import org.n52.sos.ds.utils.HibernateUnproxy;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
@@ -85,8 +88,6 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
 
     String WHERE_PARAMETER = " where ";
 
-    String AND_PARAMETER = " and ";
-
     String ERROR_LOG = "Error while updating deleted observation flag data!";
 
     DaoFactory getDaoFactory();
@@ -102,13 +103,7 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         for (Long s : getSeriesInlcudeChildObs(datasets.stream()
                 .map(DatasetEntity::getId)
                 .collect(Collectors.toSet()), session)) {
-            Query<?> q = session.createQuery(getUpdateQueryString(filters, temporalFilters));
-            q.setParameter(DataEntity.PROPERTY_DELETED, true);
-            q.setParameter(DataEntity.PROPERTY_DATASET, s);
-            if (temporalFilters) {
-                checkForPlaceholder(q, filters);
-            }
-            int executeUpdate = q.executeUpdate();
+            int executeUpdate = markDeleted(session, s, filters, temporalFilters);
             session.flush();
             if (executeUpdate > 0) {
                 modifiedDatasets.add(s);
@@ -169,33 +164,64 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         return datasets instanceof Set ? (Set<Long>) datasets : new LinkedHashSet<>(datasets);
     }
 
+    /**
+     * Sets {@code deleted = true} on every observation of {@code dataset} that
+     * matches {@code filters} (if any).
+     *
+     * @return the number of rows updated
+     */
+    default int markDeleted(Session session, Long dataset, Collection<TemporalFilter> filters,
+            boolean temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        return markDeleted(session,
+                getDaoFactory().getObservationDAO()
+                        .getObservationFactory()
+                        .observationClass(),
+                dataset, filters, temporalFilters);
+    }
+
+    private <T extends DataEntity> int markDeleted(Session session, Class<T> observationClass, Long dataset,
+            Collection<TemporalFilter> filters, boolean temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaUpdate<T> update = cb.createCriteriaUpdate(observationClass);
+        Root<T> root = update.from(observationClass);
+        update.set(DataEntity.PROPERTY_DELETED, true);
+        Predicate predicate = cb.equal(root.get(DataEntity.PROPERTY_DATASET_ID), dataset);
+        if (temporalFilters) {
+            predicate = cb.and(predicate, SosTemporalRestrictions.filter(cb, root, filters));
+        }
+        update.where(predicate);
+        return session.createMutationQuery(update)
+                .executeUpdate();
+    }
+
     default Set<Long> getParents(Collection<Long> modifiedDatasets, Collection<TemporalFilter> filters,
             boolean temporalFilters, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("select distinct ")
-                .append(DataEntity.PROPERTY_ID)
-                .append(FROM_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO()
-                .getObservationFactory()
-                .observationClass()
-                .getSimpleName());
-        builder.append(WHERE_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET_ID)
-                .append(IN_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET);
+        return getParents(session,
+                getDaoFactory().getObservationDAO()
+                        .getObservationFactory()
+                        .observationClass(),
+                modifiedDatasets, filters, temporalFilters);
+    }
+
+    private <T extends DataEntity> Set<Long> getParents(Session session, Class<T> observationClass,
+            Collection<Long> modifiedDatasets, Collection<TemporalFilter> filters, boolean temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<T> root = query.from(observationClass);
+        Predicate predicate = root.get(DataEntity.PROPERTY_DATASET_ID)
+                .in(modifiedDatasets);
         if (temporalFilters) {
-            builder.append(AND_PARAMETER)
-                    .append("(" + SosTemporalRestrictions.filterHql(filters)
-                            .toString())
-                    .append(")");
+            predicate = cb.and(predicate, SosTemporalRestrictions.filter(cb, root, filters));
         }
-        Query<?> q = session.createQuery(builder.toString());
-        q.setParameter(DataEntity.PROPERTY_DATASET, modifiedDatasets);
-        if (temporalFilters) {
-            checkForPlaceholder(q, filters);
-        }
-        List<Long> list = (List<Long>) q.list();
+        query.select(root.get(DataEntity.PROPERTY_ID))
+                .distinct(true)
+                .where(predicate);
+        List<Long> list = session.createQuery(query)
+                .list();
         return list != null ? new LinkedHashSet<>(list) : new LinkedHashSet<>();
     }
 
@@ -212,14 +238,29 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
     default void deleteDeletedObservations(Collection<Long> modifiedDatasets, Collection<TemporalFilter> filters,
             boolean temporalFilters, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Query<?> q = session.createQuery(getDeletQueryString(filters, temporalFilters));
-        q.setParameter(DataEntity.PROPERTY_DATASET, modifiedDatasets);
-        if (temporalFilters) {
-            checkForPlaceholder(q, filters);
-        }
-        int executeUpdate = q.executeUpdate();
+        int executeUpdate = deletePhysically(session,
+                getDaoFactory().getObservationDAO()
+                        .getObservationFactory()
+                        .observationClass(),
+                modifiedDatasets, filters, temporalFilters);
         getLogger().debug("{} observations were physically deleted!", executeUpdate);
         session.flush();
+    }
+
+    private <T extends DataEntity> int deletePhysically(Session session, Class<T> observationClass,
+            Collection<Long> modifiedDatasets, Collection<TemporalFilter> filters, boolean temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaDelete<T> delete = cb.createCriteriaDelete(observationClass);
+        Root<T> root = delete.from(observationClass);
+        Predicate predicate = root.get(DataEntity.PROPERTY_DATASET_ID)
+                .in(modifiedDatasets);
+        if (temporalFilters) {
+            predicate = cb.and(predicate, SosTemporalRestrictions.filter(cb, root, filters));
+        }
+        delete.where(predicate);
+        return session.createMutationQuery(delete)
+                .executeUpdate();
     }
 
     default void deleteDeletedObservations(Session session)
@@ -241,27 +282,6 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         session.flush();
     }
 
-    default String getDeletQueryString(Collection<TemporalFilter> filters, boolean temporalFilters)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        StringBuilder builder = new StringBuilder();
-        builder.append(DELETE_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO()
-                .getObservationFactory()
-                .observationClass()
-                .getSimpleName());
-        builder.append(WHERE_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET_ID)
-                .append(IN_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET);
-        if (temporalFilters) {
-            builder.append(AND_PARAMETER)
-                    .append("(" + SosTemporalRestrictions.filterHql(filters)
-                            .toString())
-                    .append(")");
-        }
-        return builder.toString();
-    }
-
     default String getDeletChildQueryString(Collection<Long> parents)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
@@ -277,36 +297,11 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         return builder.toString();
     }
 
-    default String getUpdateQueryString(Collection<TemporalFilter> filters, boolean temporalFilters)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        StringBuilder builder = new StringBuilder();
-        builder.append("update ");
-        builder.append(getDaoFactory().getObservationDAO()
-                .getObservationFactory()
-                .observationClass()
-                .getSimpleName());
-        builder.append(" set ")
-                .append(DataEntity.PROPERTY_DELETED)
-                .append(EQUAL_PARAMETER)
-                .append(DataEntity.PROPERTY_DELETED);
-        builder.append(WHERE_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET_ID)
-                .append(EQUAL_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET);
-        if (temporalFilters) {
-            builder.append(AND_PARAMETER)
-                    .append("(" + SosTemporalRestrictions.filterHql(filters)
-                            .toString())
-                    .append(")");
-        }
-        return builder.toString();
-    }
-
     default void deleteObservationsByIdentifier(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport, ConverterException {
         Set<String> ids = request.getObservationIdentifiers();
         List<DataEntity<?>> observations = getDaoFactory().getObservationDAO()
-                .getObservationByIdentifiers(ids, session);
+            .getObservationByIdentifiers(ids, session);
         if (CollectionHelper.isNotEmpty(observations)) {
             Set<DatasetEntity> modifiedDatasets = new HashSet<>();
             for (DataEntity<?> observation : observations) {
@@ -370,33 +365,6 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         session.update(dataset);
         session.flush();
 
-    }
-
-    default void checkForPlaceholder(Query<?> q, Collection<TemporalFilter> filters)
-            throws UnsupportedValueReferenceException {
-
-        int count = 1;
-        for (TemporalFilter filter : filters) {
-            if (filter.getTime() instanceof TimePeriod) {
-                TimePeriod tp = (TimePeriod) filter.getTime();
-                if (q.getComment()
-                        .contains(":" + TemporalRestriction.START)) {
-                    q.setParameter(TemporalRestriction.START + count, tp.getStart()
-                            .toDate(), UtcTimestampType.INSTANCE);
-                }
-                if (q.getComment()
-                        .contains(":" + TemporalRestriction.END)) {
-                    q.setParameter(TemporalRestriction.END + count, tp.getEnd()
-                            .toDate(), UtcTimestampType.INSTANCE);
-                }
-            }
-            if (filter.getTime() instanceof TimeInstant) {
-                TimeInstant ti = (TimeInstant) filter.getTime();
-                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue()
-                        .toDate(), UtcTimestampType.INSTANCE);
-            }
-            count++;
-        }
     }
 
     /**

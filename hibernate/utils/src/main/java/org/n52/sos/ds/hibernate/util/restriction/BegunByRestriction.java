@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.util.restriction;
 
 import java.util.Date;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
@@ -56,23 +57,14 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
  */
 public class BegunByRestriction implements TemporalRestriction {
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.and(Restrictions.eq(selfBegin, otherBegin), Restrictions.gt(selfEnd, otherEnd));
+    public Predicate filterPeriodWithPeriod(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherBegin, Date otherEnd) {
+        return cb.and(cb.equal(selfBegin, otherBegin), cb.greaterThan(selfEnd, otherEnd));
     }
 
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.eq(selfBegin, getStartPlaceHolder(count)),
-                Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
-    }
-
-    @Override
-    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-        return Restrictions.eq(selfBegin, otherPosition);
-    }
-
-    @Override
-    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.eq(selfBegin, getInstantPlaceHolder(count));
+    public Predicate filterPeriodWithInstant(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherPosition) {
+        return cb.equal(selfBegin, otherPosition);
     }
 }

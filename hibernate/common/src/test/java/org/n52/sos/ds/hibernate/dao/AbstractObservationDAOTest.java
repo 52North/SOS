@@ -25,24 +25,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.sos.ds.hibernate.dao;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
@@ -51,6 +46,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
+
+import java.util.List;
 
 public class AbstractObservationDAOTest {
 
@@ -174,54 +171,16 @@ public class AbstractObservationDAOTest {
         }
 
         @Override
-        protected DatasetEntity addObservationContextToObservation(ObservationContext ctx, DataEntity<?> observation,
-                Session session) throws CodedException {
+        protected DatasetEntity addObservationContextToObservation(DatasetEntity datasetEntity,
+                                                                   ObservationContext ctx,
+                                                                   DataEntity<?> observation,
+                                                                   Session session) throws CodedException {
             return null;
         }
 
         @Override
-        public Criteria getObservationInfoCriteriaForFeatureOfInterestAndProcedure(String feature, String procedure,
-                Session session) {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationInfoCriteriaForFeatureOfInterestAndOffering(String feature, String offering,
-                Session session) {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session)
-                throws CodedException {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session)
-                throws CodedException {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session)
-                throws CodedException {
-            return null;
-        }
-
-        @Override
-        public Criteria getObservationCriteriaFor(String procedure, String observableProperty,
-                String featureOfInterest, Session session) throws CodedException {
-            return null;
-        }
-
-        @Override
-        public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
+        public DataEntity<?> getExampleObservationFor(String procedure, String observableProperty, Session session)
+            throws CodedException {
             return null;
         }
 
@@ -236,28 +195,7 @@ public class AbstractObservationDAOTest {
         }
 
         @Override
-        public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            return null;
-        }
-
-        @Override
-        public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation,
-                DatasetEntity observationConstellation, Session session) throws CodedException {
-            return null;
-        }
-
-        @Override
         public ObservationFactory getObservationFactory() {
-            return null;
-        }
-
-        @Override
-        public String addProcedureAlias(Criteria criteria) {
-            return null;
-        }
-
-        @Override
-        protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
             return null;
         }
 

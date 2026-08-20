@@ -11,12 +11,9 @@
     <name>52°North SOS - Hibernate Datasources</name>
     <description>52°North Sensor Observation Service Hibernate datasource module</description>
     <modules>
+        <module>common</module>
         <module>postgres</module>
         <module>h2</module>
-        <module>mysql</module>
-        <module>common</module>
-        <module>sqlserver</module>
-        <module>oracle</module>
     </modules>
     <dependencies>
         <dependency>

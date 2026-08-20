@@ -34,12 +34,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.h2gis.functions.factory.H2GISFunctions;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
@@ -49,26 +49,22 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.H2Dialect;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
-import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
+import org.n52.sos.ds.hibernate.util.EntityScanner;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import geodb.GeoDB;
 
 /**
  * @since 4.0.0
@@ -94,8 +90,6 @@ public final class H2Configuration implements ConnectionProvider {
 
     private static final String SET_REFERENTIAL_INTEGRITY_TRUE = "SET REFERENTIAL_INTEGRITY TRUE";
 
-    private static SchemaExport schemaExport;
-
     private static Metadata metadata;
 
     private static SessionFactory sessionFactory;
@@ -106,43 +100,8 @@ public final class H2Configuration implements ConnectionProvider {
         {
             put(HIBERNATE_CONNECTION_URL, H2_CONNECTION_URL);
             put(HIBERNATE_CONNECTION_DRIVER_CLASS, H2_DRIVER);
-            put(HIBERNATE_DIALECT, GeoDBDialect.class.getName());
-            put(SessionFactoryProvider.HIBERNATE_RESOURCES, getResources());
+            put(HIBERNATE_DIALECT, H2Dialect.class.getName());
             put(Datasource.class.getCanonicalName(), MockDatasource.class.getCanonicalName());
-        }
-
-        private List<String> getResources() {
-            List<String> resources = Lists.newLinkedList();
-            // core
-            resources.add("/hbm/transactional/core/CategoryResource.hbm.xml");
-            resources.add("/hbm/transactional/core/CodespaceResource.hbm.xml");
-            resources.add("/hbm/transactional/core/FeatureResource.hbm.xml");
-            resources.add("/hbm/transactional/core/FormatResource.hbm.xml");
-            resources.add("/hbm/transactional/core/LocationResource.hbm.xml");
-            resources.add("/hbm/transactional/core/OfferingResource.hbm.xml");
-            resources.add("/hbm/transactional/core/PhenomenonResource.hbm.xml");
-            resources.add("/hbm/transactional/core/ProcedureHistoryResource.hbm.xml");
-            resources.add("/hbm/transactional/core/ProcedureResource.hbm.xml");
-            resources.add("/hbm/transactional/core/RelatedDataResource.hbm.xml");
-            resources.add("/hbm/transactional/core/RelatedDatasetResource.hbm.xml");
-            resources.add("/hbm/transactional/core/RelatedFeatureResource.hbm.xml");
-            resources.add("/hbm/transactional/core/ResultTemplateResource.hbm.xml");
-            resources.add("/hbm/transactional/core/UnitResource.hbm.xml");
-            resources.add("/hbm/transactional/core/TagResource.hbm.xml");
-            resources.add("/hbm/transactional/core/VerticalMetadataResource.hbm.xml");
-            // dataset
-            resources.add("/hbm/transactional/dataset/PlatformResource.hbm.xml");
-            resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");
-            resources.add("/hbm/transactional/dataset/DatasetResource.hbm.xml");
-            // parameter
-            resources.add("/hbm/parameter/DatasetParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/FeatureParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/LocationParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/ObservationParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/PhenomenonParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/PlatformParameterResource.hbm.xml");
-            resources.add("/hbm/parameter/ProcedureParameterResource.hbm.xml");
-            return resources;
         }
     };
 
@@ -185,7 +144,7 @@ public final class H2Configuration implements ConnectionProvider {
             session.doWork(new Work() {
                 @Override
                 public void execute(Connection connection) throws SQLException {
-                    GeoDB.InitGeoDB(connection);
+                    H2GISFunctions.load(connection);
                 }
             });
             return session;
@@ -217,8 +176,8 @@ public final class H2Configuration implements ConnectionProvider {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                session.createSQLQuery("DROP ALL OBJECTS").executeUpdate();
-                schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
+                session.createNativeQuery("DROP ALL OBJECTS", Integer.class).executeUpdate();
+                sessionFactory.getSchemaManager().exportMappedObjects(false);
                 transaction.commit();
             } catch (final Exception e) {
                 if (transaction != null) {
@@ -238,7 +197,7 @@ public final class H2Configuration implements ConnectionProvider {
             }
             final Collection<Table> tableMappings = metadata.collectTableMappings();
             final List<String> tableNames = new LinkedList<>();
-            GeoDBDialect dialect = new GeoDBDialect();
+            H2Dialect dialect = new H2Dialect();
             for (Table table : tableMappings) {
                 tableNames.add(table.getQuotedName(dialect));
             }
@@ -303,31 +262,25 @@ public final class H2Configuration implements ConnectionProvider {
         try {
             Class.forName(H2_DRIVER);
             try (Connection conn = DriverManager.getConnection(H2_CONNECTION_URL)) {
-                GeoDB.InitGeoDB(conn);
+                H2GISFunctions.load(conn);
                 try (Statement stmt = conn.createStatement()) {
-                    configuration = new Configuration().configure("/hibernate.cfg.xml");
-                    configuration.setProperty(HibernateConstants.CONNECTION_URL, H2_CONNECTION_URL);
-                    configuration.setProperty(HibernateConstants.DIALECT, GeoDBDialect.class.getName());
-                    configuration.addProperties(properties);
-                    @SuppressWarnings("unchecked")
-                    List<String> resources = (List<String>) properties.get(SessionFactoryProvider.HIBERNATE_RESOURCES);
-                    for (String resource : resources) {
-                        configuration.addInputStream(getClass().getResourceAsStream(resource));
-                    }
-                    schemaExport = new SchemaExport();
-                    schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true);
+                    Configuration builder = new Configuration();
+                    builder.configure("/hibernate.cfg.xml");
+                    builder.setProperty(HibernateConstants.CONNECTION_URL, H2_CONNECTION_URL);
+                    builder.setProperty(HibernateConstants.DIALECT, H2Dialect.class.getName());
+                    builder.addProperties(properties);
+                    EntityScanner.applyTo(builder, HibernateDatasourceConstants.ENTITY_PACKAGE);
+                    configuration = builder;
 
-                    sessionFactory = configuration.buildSessionFactory();
+                    sessionFactory = builder.buildSessionFactory();
 
-                    StandardServiceRegistry serviceRegistry = configuration.getStandardServiceRegistryBuilder()
-                            .applySettings(configuration.getProperties()).build();
+                    StandardServiceRegistry serviceRegistry = builder.getStandardServiceRegistryBuilder()
+                            .applySettings(builder.getProperties()).build();
                     MetadataSources metadataSources = new MetadataSources(serviceRegistry);
-                    for (String resource : resources) {
-                        metadataSources.addInputStream(getClass().getResourceAsStream(resource));
-                    }
+                    EntityScanner.applyTo(metadataSources, HibernateDatasourceConstants.ENTITY_PACKAGE);
                     metadata = metadataSources.getMetadataBuilder().build();
 
-                    schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
+                    sessionFactory.getSchemaManager().exportMappedObjects(false);
                 }
             }
         } catch (ClassNotFoundException | SQLException | MappingException ex) {

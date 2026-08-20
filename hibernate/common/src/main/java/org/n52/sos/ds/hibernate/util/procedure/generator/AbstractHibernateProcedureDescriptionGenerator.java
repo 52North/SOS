@@ -36,7 +36,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
@@ -58,10 +57,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -79,8 +75,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractHibernateProcedureDescriptionGenerator
         implements HibernateProcedureDescriptionGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGenerator.class);
-
     private final DaoFactory daoFactory;
 
     private final I18NDAORepository i18NDAORepository;
@@ -248,17 +242,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator
     DataEntity<?> getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
-        final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
-        c.setMaxResults(1);
-        LOGGER.trace("QUERY getExampleObservation(identifier, observableProperty): {}",
-                HibernateHelper.getSqlString(c));
-        final DataEntity<?> example = (DataEntity) c.uniqueResult();
-        if (example == null) {
-            LOGGER.debug(
-                    "Could not receive example observation from database for procedure '{}' observing property '{}'.",
-                    identifier, observableProperty);
-        }
-        return example;
+        return observationDAO.getExampleObservationFor(identifier, observableProperty, session);
     }
 
     @VisibleForTesting

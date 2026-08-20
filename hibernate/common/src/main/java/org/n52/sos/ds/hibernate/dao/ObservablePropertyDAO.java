@@ -28,38 +28,26 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.Describable;
-import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.series.db.beans.i18n.I18nPhenomenonEntity;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
-import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
 
     public ObservablePropertyDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -74,90 +62,12 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      *            Hibernate session
      * @return Observable property objects
      */
-    @SuppressWarnings("unchecked")
     public List<PhenomenonEntity> getObservableProperties(final List<String> identifiers, final Session session) {
-        Criteria criteria = session.createCriteria(PhenomenonEntity.class)
-                .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
-        LOGGER.trace("QUERY getObservableProperties(identifiers): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
-
-    /**
-     * Get observable property identifiers for offering identifier
-     *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param session
-     *            Hibernate session
-     * @return Observable property identifiers
-     * @throws CodedException
-     *             If an error occurs
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getObservablePropertyIdentifiersForOffering(final String offeringIdentifier,
-            final Session session) throws OwsExceptionReport {
-        Criteria c = getDefaultCriteria(session);
-        c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
-                getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(offeringIdentifier, session)));
-        c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
-        LOGGER.trace("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
-                HibernateHelper.getSqlString(c));
-        return c.list();
-    }
-
-    /**
-     * Get observable property identifiers for procedure identifier
-     *
-     * @param procedureIdentifier
-     *            Procedure identifier
-     * @param session
-     *            Hibernate session
-     * @return Observable property identifiers
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getObservablePropertyIdentifiersForProcedure(final String procedureIdentifier,
-            final Session session) {
-        Criteria c = getDefaultCriteria(session);
-        c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
-        c.add(Subqueries.propertyIn(PhenomenonEntity.PROPERTY_ID,
-                getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(procedureIdentifier)));
-        LOGGER.trace("QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier): {}",
-                HibernateHelper.getSqlString(c));
-        return c.list();
-    }
-
-    /**
-     * Get map keyed by observable properties with collections of child
-     * observable properties (if supported) as values
-     *
-     * @param session
-     *            the session
-     * @return Map keyed by observable properties with values of child
-     *         observable properties collections
-     */
-    public Map<PhenomenonEntity, Collection<PhenomenonEntity>> getObservablePropertyHierarchy(final Session session) {
-
-        List<PhenomenonEntity> observablePropertyObjects = getObservablePropertyObjects(session);
-        Map<PhenomenonEntity, Collection<PhenomenonEntity>> map = new HashMap<>(observablePropertyObjects.size());
-        for (PhenomenonEntity op : observablePropertyObjects) {
-            map.put(op, op.getChildren());
-        }
-        return map;
-        // } else {
-        // List<PhenomenonEntity> observablePropertyObjects
-        // = getObservablePropertyObjects(session);
-        // Map<ObservableProperty, Collection<PhenomenonEntity>> map
-        // = new HashMap<>(observablePropertyObjects.size());
-        // Set<PhenomenonEntity> empty = Collections.emptySet();
-        // for (PhenomenonEntity op : observablePropertyObjects) {
-        // map.put(op, empty);
-        // }
-        // return map;
-        // }
-    }
-
-    private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(PhenomenonEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<PhenomenonEntity> query = cb.createQuery(PhenomenonEntity.class);
+        Root<PhenomenonEntity> root = query.from(PhenomenonEntity.class);
+        query.where(root.get(PhenomenonEntity.IDENTIFIER).in(identifiers));
+        return session.createQuery(query).list();
     }
 
     /**
@@ -170,44 +80,11 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      * @return Observable property object
      */
     public PhenomenonEntity getObservablePropertyForIdentifier(final String identifier, final Session session) {
-        Criteria criteria = session.createCriteria(PhenomenonEntity.class)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, identifier));
-        LOGGER.trace("QUERY getObservablePropertyForIdentifier(identifier): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (PhenomenonEntity) criteria.uniqueResult();
-    }
-
-    /**
-     * Get observable properties by identifiers
-     *
-     * @param identifiers
-     *            The observable property identifiers
-     * @param session
-     *            Hibernate session
-     * @return Observable property objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<PhenomenonEntity> getObservablePropertiesForIdentifiers(final Collection<String> identifiers,
-            final Session session) {
-        Criteria criteria = session.createCriteria(PhenomenonEntity.class)
-                .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
-        LOGGER.trace("QUERY getObservablePropertiesForIdentifiers(identifiers): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (List<PhenomenonEntity>) criteria.list();
-    }
-
-    /**
-     * Get all observable property objects
-     *
-     * @param session
-     *            Hibernate session
-     * @return Observable property objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<PhenomenonEntity> getObservablePropertyObjects(final Session session) {
-        Criteria criteria = session.createCriteria(PhenomenonEntity.class);
-        LOGGER.trace("QUERY getObservablePropertyObjects(): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<PhenomenonEntity> query = cb.createQuery(PhenomenonEntity.class);
+        Root<PhenomenonEntity> root = query.from(PhenomenonEntity.class);
+        query.where(cb.equal(root.get(PhenomenonEntity.IDENTIFIER), identifier));
+        return session.createQuery(query).uniqueResult();
     }
 
     /**
@@ -361,83 +238,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             existing.put(obsProp.getIdentifier(), obsProp);
         }
         return existing;
-    }
-
-    /**
-     * Get Hibernate Detached Criteria to get ObservableProperty entities from
-     * DatasetEntity for procedure identifier
-     *
-     * @param procedureIdentifier
-     *            Procedure identifier parameter
-     * @return Hibernate Detached Criteria
-     */
-    private DetachedCriteria getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(
-            String procedureIdentifier) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
-        return detachedCriteria;
-    }
-
-    /**
-     * Get Hibernate Detached Criteria to get ObservableProperty entities from
-     * Series for procedure identifier
-     *
-     * @param procedureIdentifier
-     *            Procedure identifier parameter
-     * @param session
-     *            Hibernate session
-     * @return Hibernate Detached Criteria
-     */
-    private DetachedCriteria getDetachedCriteriaObservablePropertiesForProcedureFromSeries(String procedureIdentifier,
-            Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
-        return detachedCriteria;
-    }
-
-    /**
-     * Get Hibernate Detached Criteria to get ObservableProperty entities from
-     * DatasetEntity for offering identifier
-     *
-     * @param offeringIdentifier
-     *            Offering identifier parameter
-     * @param session
-     *            Hibernate session
-     * @return Hibernate Detached Criteria
-     */
-    private DetachedCriteria getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(
-            String offeringIdentifier, Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
-                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
-        return detachedCriteria;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<PhenomenonEntity> getPublishedObservableProperty(Session session) throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
-            Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyNotIn(PhenomenonEntity.PROPERTY_ID, getDetachedCriteriaSeries(session)));
-            return c.list();
-        }
-        return getObservablePropertyObjects(session);
-    }
-
-    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-        final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true),
-                Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
-        return detachedCriteria;
     }
 
 }

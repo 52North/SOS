@@ -29,6 +29,9 @@ package org.n52.sos.ds.hibernate.util;
 
 import java.util.Map;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -103,11 +106,11 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = getTransaction(session);
-            try (ScrollableIterable<DataEntity<?>> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
-                for (DataEntity<?> o : i) {
-                    session.delete(o);
-                }
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<? extends DataEntity> query = cb.createQuery(getObservationClass());
+            query.from(getObservationClass());
+            for (DataEntity o : session.createQuery(query).getResultList()) {
+                session.delete(o);
             }
             session.flush();
             transaction.commit();
@@ -149,33 +152,6 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         boolean startBeforeEndOrEqual = temporalBBox.getStart().isEqual(temporalBBox.getEnd())
                 || temporalBBox.getStart().isBefore(temporalBBox.getEnd());
         assertThat("start is before end or equal", startBeforeEndOrEqual, is(true));
-    }
-
-    @Test
-    public void getTemporalBoundingBoxForOfferingsWithNullReturnsEmptyList() throws OwsExceptionReport {
-        Map<String, TimePeriod> emptyMap = offeringDAO.getTemporalBoundingBoxesForOfferings(null);
-        assertThat("empty map", is(notNullValue()));
-        assertThat("map is empty", emptyMap.isEmpty(), is(true));
-    }
-
-    @Test
-    public void getTemporalBoundingBoxForOfferingsContainsNoNullElements()
-            throws ConnectionProviderException, OwsExceptionReport {
-        Session session = getSession();
-        try {
-            Map<String, TimePeriod> tempBBoxMap = offeringDAO.getTemporalBoundingBoxesForOfferings(session);
-            assertThat("bbox map is empty", tempBBoxMap.isEmpty(), is(false));
-            for (String offeringId : tempBBoxMap.keySet()) {
-                assertThat("offering id", offeringId, is(not(nullValue())));
-                TimePeriod offeringBBox = tempBBoxMap.get(offeringId);
-                assertThat("offering temp bbox", offeringBBox, is(not(nullValue())));
-                assertThat("offering temporal bbox start", offeringBBox.getStart(), is(not(nullValue())));
-                assertThat("offering temporal bbox end", offeringBBox.getEnd(), is(not(nullValue())));
-                timePeriodStartIsBeforeEndOrEqual(offeringBBox);
-            }
-        } finally {
-            returnSession(session);
-        }
     }
 
 }

@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.util.restriction;
 
 import java.util.Date;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
@@ -56,25 +57,14 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
  */
 public class EndsRestriction implements TemporalRestriction {
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin),
-                                Restrictions.eq(selfEnd, otherEnd));
+    public Predicate filterPeriodWithPeriod(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherBegin, Date otherEnd) {
+        return cb.and(cb.greaterThan(selfBegin, otherBegin), cb.equal(selfEnd, otherEnd));
     }
 
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                                Restrictions.eq(selfEnd, getEndPlaceHolder(count)));
-    }
-
-    @Override
-    public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                                             boolean periodFromReducedPrecisionInstant) {
-        return Restrictions.eq(selfPosition, otherEnd);
-    }
-
-    @Override
-    public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
-        return Restrictions.eq(selfPosition, getEndPlaceHolder(count));
+    public Predicate filterInstantWithPeriod(CriteriaBuilder cb, Path<Date> selfPosition, Date otherBegin,
+            Date otherEnd, boolean periodFromReducedPrecisionInstant) {
+        return cb.equal(selfPosition, otherEnd);
     }
 }

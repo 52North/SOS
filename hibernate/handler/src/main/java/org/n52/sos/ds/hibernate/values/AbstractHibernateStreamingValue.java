@@ -27,16 +27,17 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.StreamingValue;
@@ -47,7 +48,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingQualityDAO;
 import org.n52.sos.ds.observation.EReportingHelper;
 import org.n52.sos.ds.observation.ObservationHelper;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     protected final AbstractObservationRequest request;
 
-    protected Criterion temporalFilterCriterion;
+    protected List<TemporalFilter> temporalFilters;
 
     private final HibernateSessionHolder sessionHolder;
 
@@ -163,14 +163,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     /**
-     * Set the temporal filter {@link Criterion}
+     * Set the requested temporal filters
      *
-     * @param temporalFilterCriterion
-     *            Temporal filter {@link Criterion}
+     * @param temporalFilters
+     *            Requested temporal filters
      */
-    public void setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
-        this.temporalFilterCriterion = temporalFilterCriterion;
-
+    public void setTemporalFilters(List<TemporalFilter> temporalFilters) {
+        this.temporalFilters = temporalFilters;
     }
 
     public DaoFactory getDaoFactory() {
@@ -183,6 +182,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     public void addValueSpecificDataToObservation(DataEntity<?> o, OmObservation observation, Session session,
             Extensions extensions) throws OwsExceptionReport {
+        /*
         if (o.hasEreportingProfile()) {
             if (ReportObligations.hasFlow(extensions)) {
                 ReportObligationType flow = ReportObligations.getFlow(extensions);
@@ -199,6 +199,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 }
             }
         }
+        */
     }
 
 }

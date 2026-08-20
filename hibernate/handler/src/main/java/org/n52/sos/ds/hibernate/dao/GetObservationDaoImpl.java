@@ -40,7 +40,6 @@ import jakarta.inject.Inject;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
@@ -49,6 +48,7 @@ import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -281,7 +281,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
         List<String> features = request.getFeatureIdentifiers();
-        Criterion temporalFilterCriterion = getTemporalFilterCriterion(request);
+        List<TemporalFilter> temporalFilters = getTemporalFilters(request);
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = getMaxNumberOfValuesPerSeries(serieses.size());
@@ -297,7 +297,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
             HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(
                     sessionHolder.getConnectionProvider(), daoFactory, request, series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
-            streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
+            streamingValue.setTemporalFilters(temporalFilters);
             streamingValue.setObservationTemplate(observationTemplate);
             streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
             observationTemplate.setValue(streamingValue);
@@ -305,7 +305,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         }
 
         ObservationTimeExtrema timeExtrema =
-                daoFactory.getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
+                daoFactory.getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilters, session);
         if (timeExtrema.isSetPhenomenonTimes()) {
             response.setGlobalObservationValues(
                     new GlobalObservationResponseValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));

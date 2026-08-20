@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -71,7 +70,6 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.I18nNameDescriptionAdder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ds.observation.AdditionalObservationCreator;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
@@ -94,12 +92,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractOmObservationCreator implements I18nNameDescriptionAdder {
-    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES =
-            "getUnitForObservablePropertyProcedureSeries";
-
-    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES =
-            "getUnitForObservablePropertySeries";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmObservationCreator.class);
 
     private final AbstractObservationRequest request;
@@ -443,23 +435,6 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
     protected String queryUnit(DatasetEntity series) {
         if (series.isSetUnit()) {
             return series.getUnit().getUnit();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
-                getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, series.getObservableProperty().getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, series.getProcedure().getIdentifier());
-            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}",
-                    series.getObservableProperty().getIdentifier(), series.getProcedure().getIdentifier(),
-                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
-                getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, series.getObservableProperty().getIdentifier());
-            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}",
-                    series.getObservableProperty().getIdentifier(), SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
-                    namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
         }
         return null;
     }

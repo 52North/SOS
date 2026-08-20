@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -81,7 +82,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     @Override
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView post(HttpServletRequest req, HttpServletResponse resp)
-            throws InstallationRedirectError, InstallationSettingsError {
+        throws InstallationRedirectError, InstallationSettingsError, ServletException {
         HttpSession session = checkPrevious(req);
         process(getParameters(req), getSettings(session));
         req.logout();

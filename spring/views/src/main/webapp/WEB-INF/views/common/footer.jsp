@@ -27,7 +27,7 @@
     Public License for more details.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 </div>
 </div>
 </div>
@@ -35,20 +35,6 @@
 <div id="footer">
     <div id="f_top">
         <div id="f_navigation">
-            <div class="fn_box">
-                <h3>Communities</h3>
-                <ul class="fn_list">
-                    <li><a target="_blank" href="http://52north.org/communities/sensorweb/">Sensor Web</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/geoprocessing/">Geoprocessing</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/ilwis/">ILWIS</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/earth-observation/">Earth Observation</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/security/">Security &amp; Geo-RM</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/semantics/">Semantics</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/geostatistics/">Geostatistics</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/3d-community">3D Community</a></li>
-                    <li><a target="_blank" href="http://52north.org/communities/metadata-management/">Metadata Management</a></li>
-                </ul>
-            </div>
             <div class="fn_box">
                 <h3>Get Involved</h3>
                 <ul class="fn_list">
@@ -87,7 +73,6 @@
                 return false;
             });
         </script>
-        <small>Tested in Firefox 17.0.1, Google Chrome 23.0.1271.95, Safari 6, Internet Explorer 10</small>
         <br/>
         <small>Copyright &copy;
             <script type="text/javascript">document.write(new Date().getFullYear());</script>

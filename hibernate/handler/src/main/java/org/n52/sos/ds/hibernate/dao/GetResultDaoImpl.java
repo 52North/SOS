@@ -27,23 +27,25 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
@@ -57,22 +59,15 @@ import org.n52.sos.ds.GetResultTemplateHandler;
 import org.n52.sos.ds.dao.GetResultDao;
 import org.n52.sos.ds.dao.GetResultTemplateDao;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.utils.ResultHandlingHelper;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.util.SweHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({ "EI_EXPOSE_REP", "EI_EXPOSE_REP2" })
 public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 
@@ -192,87 +187,59 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
      * @throws OwsExceptionReport
      *             If an error occurs.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<DataEntity<?>> queryObservations(GetResultRequest request, Collection<String> featureIdentifiers,
             Session session) throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(DataEntity.class, session);
-        addSpatialFilteringProfileRestrictions(c, request, session);
-        addParentChildRestriction(c);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(DataEntity.class);
+        Root root = query.from(DataEntity.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(DataEntity.PROPERTY_DELETED), false));
+        Predicate spatialFilter = getSpatialFilteringProfilePredicate(cb, root, request);
+        if (spatialFilter != null) {
+            predicates.add(spatialFilter);
+        }
+        predicates.add(cb.isNull(root.get(DataEntity.PROPERTY_PARENT)));
 
         List<DatasetEntity> series = getDaoFactory().getSeriesDAO().getSeries(request, featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
-                    series.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
+            predicates.add(root.get(DataEntity.PROPERTY_DATASET_ID)
+                               .in(series.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
         }
-
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
-            addTemporalFilter(c, request.getTemporalFilter());
+            predicates.add(SosTemporalRestrictions.filter(cb, root, request.getTemporalFilter()));
         }
 
-        LOGGER.trace("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
-        return c.list();
-
+        query.where(predicates.toArray(new Predicate[0]))
+                .orderBy(cb.asc(root.get(DataEntity.PROPERTY_SAMPLING_TIME_START)));
+        return session.createQuery(query).list();
     }
 
     /**
-     * Add offering identifier restriction to Hibernate Criteria
+     * Get the Spatial Filtering Profile predicate for the request
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param temporalFilter
-     *            Temporal filters to add
-     * @throws UnsupportedTimeException
-     *             If the time is not supported
-     * @throws UnsupportedValueReferenceException
-     *             If the valueReference is not supported
-     * @throws UnsupportedOperatorException
-     *             If the temporal operator is not supported
-     */
-    private void addTemporalFilter(Criteria c, List<TemporalFilter> temporalFilter)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        c.add(SosTemporalRestrictions.filter(temporalFilter));
-    }
-
-    /**
-     * Create Hibernate Criteria for the class and add ascending of phenomenon start time
-     *
-     * @param clazz
-     *            The class for the Criteria
-     * @param session
-     *            Hibernate session
-     * @return Hibernate Criteria for the class and add ascending of phenomenon start time
-     */
-    @SuppressWarnings("rawtypes")
-    private Criteria createCriteriaFor(Class clazz, Session session) {
-        return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
-                .addOrder(Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START));
-    }
-
-    private void addParentChildRestriction(Criteria c) {
-        c.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
-    }
-
-    /**
-     * @param criteria
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the observation query
      * @param request
      *            GetResult request
-     * @param session
-     *            Hibernate session
+     * @return The predicate, or <code>null</code> if the request has no spatial filter
      * @throws OwsExceptionReport
      *             If Spatial Filtering Profile is not supported or an error occurs
      */
-    private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
+    private Predicate getSpatialFilteringProfilePredicate(CriteriaBuilder cb, Root<?> root, GetResultRequest request)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            criteria.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
+            return SpatialRestrictions.filter(cb, root.<Geometry>get(DataEntity.PROPERTY_GEOMETRY_ENTITY),
                     request.getSpatialFilter().getOperator(),
                     getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry().toGeometry())));
+                            request.getSpatialFilter().getGeometry().toGeometry()));
         }
+        return null;
     }
 
     private GetResultTemplateResponse queryResultTemplate(final GetResultRequest request, Session session)

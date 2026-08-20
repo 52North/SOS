@@ -27,8 +27,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
-import org.hibernate.Criteria;
-import org.n52.shetland.ogc.ows.exception.CodedException;
+import java.util.Collections;
+import java.util.List;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
@@ -52,9 +57,9 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
-            throws CodedException {
-        // nothing to add
+    protected List<Predicate> specificPredicates(CriteriaBuilder cb, Path<?> root,
+            GetObservationRequest request) {
+        return Collections.emptyList();
     }
 
     @Override

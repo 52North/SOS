@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.geotools.api.parameter.InvalidParameterCardinalityException;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -56,7 +57,6 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.util.SosHelper;
-import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

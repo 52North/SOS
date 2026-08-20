@@ -30,20 +30,20 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract value data access object class for {@link DataEntity}
@@ -53,10 +53,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesValueDAO.class);
-
-    private static final String QUERY_STREAMING_SERIES_VALUE = "QUERY getStreamingSeriesValuesFor({}): {}";
 
     public AbstractSeriesValueDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -74,76 +70,86 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      * @throws OwsExceptionReport
      *             If an error occurs when querying
      */
-    @SuppressWarnings("unchecked")
     public List<DataEntity<?>> getStreamingSeriesValuesFor(ValueQueryContext ctx) throws OwsExceptionReport {
-        if (ctx.getRequest() instanceof GetObservationRequest
-                && ((GetObservationRequest) ctx.getRequest()).hasResultFilter()) {
-            StringBuilder logArgs = new StringBuilder();
+        if (ctx.getRequest() instanceof GetObservationRequest getObsReq && getObsReq.hasResultFilter()) {
             List<DataEntity<?>> list = new LinkedList<>();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions
                     .getSubQueryIdentifier(getResultFilterClasses())) {
-                Criteria c = getSeriesValueCriteriaFor(ctx, logArgs);
-                addChunkValuesToCriteria(c, ctx.getChunkSize(), ctx.getCurrentRow(), ctx.getRequest(), logArgs);
-                checkAndAddResultFilterCriterion(c, (GetObservationRequest) ctx.getRequest(), identifier,
-                        ctx.getSession(), logArgs);
-                LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(), HibernateHelper.getSqlString(c));
-                list.addAll(c.list());
+                list.addAll(querySeriesValuesFor(ctx, getObsReq, identifier));
             }
             return list;
         } else {
-            StringBuilder logArgs = new StringBuilder();
-            Criteria c = getSeriesValueCriteriaFor(ctx, logArgs);
-            addChunkValuesToCriteria(c, ctx.getChunkSize(), ctx.getCurrentRow(), ctx.getRequest(), logArgs);
-            LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(), HibernateHelper.getSqlString(c));
-            return (List<DataEntity<?>>) c.list();
+            return querySeriesValuesFor(ctx, null, null);
         }
     }
 
     /**
-     * Get {@link Criteria} for parameter
+     * Build and execute the query for parameter, optionally restricted by a result filter sub-query
      *
      * @param ctx
      *            {@link ValueQueryContext}
-     * @param logArgs
-     *            log arguments
-     * @return Resulting {@link Criteria}
+     * @param resultFilterRequest
+     *            {@link GetObservationRequest} to take the result filter from, or {@code null} if none applies
+     * @param identifier
+     *            Result filter sub-query identifier, or {@code null} if none applies
+     * @return Resulting {@link DataEntity}s
      * @throws OwsExceptionReport
      *             If an error occurs when adding Spatial Filtering Profile restrictions
      */
-    private Criteria getSeriesValueCriteriaFor(ValueQueryContext ctx, StringBuilder logArgs)
-            throws OwsExceptionReport {
-        final Criteria c = getDefaultSeriesValueCriteriaFor(ctx, logArgs);
-        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, ctx.getDatasetId()));
-        return c.setReadOnly(true);
-    }
-
-    private Criteria getDefaultSeriesValueCriteriaFor(ValueQueryContext ctx, StringBuilder logArgs)
-            throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(ctx.getSession());
-        c.addOrder(Order.asc(getOrderColumn(ctx.getRequest())));
-        logArgs.append("request, series");
-        if (ctx.getRequest() instanceof GetObservationRequest) {
-            GetObservationRequest getObsReq = (GetObservationRequest) ctx.getRequest();
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, ctx.getSession(), logArgs);
-
-            if (ctx.getTemporalFilterCriterion() != null) {
-                logArgs.append(", filterCriterion");
-                c.add(ctx.getTemporalFilterCriterion());
+    @SuppressWarnings("unchecked")
+    private List<DataEntity<?>> querySeriesValuesFor(ValueQueryContext ctx, GetObservationRequest resultFilterRequest,
+            SubQueryIdentifier identifier) throws OwsExceptionReport {
+        Session session = ctx.getSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<?> query = cb.createQuery(getSeriesValueClass());
+        Root<?> root = query.from(getSeriesValueClass());
+        List<Predicate> predicates = getSeriesValuePredicatesFor(cb, root, ctx);
+        if (resultFilterRequest != null && identifier != null) {
+            Predicate resultFilter =
+                    checkAndAddResultFilterCriterion(cb, query, root, resultFilterRequest, identifier, session);
+            if (resultFilter != null) {
+                predicates.add(resultFilter);
             }
-            addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        return c.setReadOnly(true);
+        fetchDefaultAssociations(root);
+        query.where(predicates.toArray(new Predicate[0]))
+                .orderBy(cb.asc(root.get(getOrderColumn(ctx.getRequest()))));
+        var typedQuery = session.createQuery(query).setReadOnly(true);
+        if (ctx.getChunkSize() > 0) {
+            typedQuery.setMaxResults(ctx.getChunkSize()).setFirstResult(ctx.getCurrentRow());
+        }
+        return (List<DataEntity<?>>) typedQuery.list();
     }
 
     /**
-     * Get default {@link Criteria} for {@link Class}
+     * Build the restricting {@link Predicate}s for the parameter, independent of any result filter
      *
-     * @param session
-     *            Hibernate Session
-     * @return Default {@link Criteria}
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the value query
+     * @param ctx
+     *            {@link ValueQueryContext}
+     * @return Mutable list of predicates
+     * @throws OwsExceptionReport
+     *             If an error occurs when adding Spatial Filtering Profile restrictions
      */
-    protected Criteria getDefaultObservationCriteria(Session session) {
-        return getDefaultCriteria(getSeriesValueClass(), session);
+    private List<Predicate> getSeriesValuePredicatesFor(CriteriaBuilder cb, Path<?> root, ValueQueryContext ctx)
+            throws OwsExceptionReport {
+        List<Predicate> predicates = defaultValuePredicates(cb, root);
+        predicates.add(cb.equal(root.get(DataEntity.PROPERTY_DATASET_ID), ctx.getDatasetId()));
+        if (ctx.getRequest() instanceof GetObservationRequest getObsReq) {
+            Predicate spatialFilter = checkAndAddSpatialFilteringProfileCriterion(cb, root, getObsReq);
+            if (spatialFilter != null) {
+                predicates.add(spatialFilter);
+            }
+            Predicate temporalFilter = temporalFilterPredicate(cb, root, ctx.getTemporalFilters());
+            if (temporalFilter != null) {
+                predicates.add(temporalFilter);
+            }
+            predicates.addAll(specificPredicates(cb, root, getObsReq));
+        }
+        return predicates;
     }
 
 }

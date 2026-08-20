@@ -48,12 +48,12 @@
         </constructor-arg>
     </bean>
 
-    <sec:http pattern="/static/**" security="none" />
-    <sec:http pattern="/install/**" security="none" />
-    <sec:http pattern="/service" security="none" />
-    <sec:http pattern="/api" security="none" />
+    <sec:http pattern="/static/**" security="none" request-matcher="ant"/>
+    <sec:http pattern="/install/**" security="none" request-matcher="ant"/>
+    <sec:http pattern="/service/**" security="none" request-matcher="ant"/>
+    <sec:http pattern="/api/**" security="none" request-matcher="ant"/>
 
-    <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
+    <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true" request-matcher="ant" use-authorization-manager="false">
         <sec:csrf disabled="true" />
         <sec:intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')" />
         <sec:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
@@ -66,7 +66,7 @@
                         authentication-failure-url="/login?error=true"
                         login-processing-url="/login" />
         <sec:logout invalidate-session="true"
-                    delete-cookies="true"
+                    delete-cookies="JSESSIONID"
                     logout-url="/logout"
                     logout-success-url="/index" />
     </sec:http>

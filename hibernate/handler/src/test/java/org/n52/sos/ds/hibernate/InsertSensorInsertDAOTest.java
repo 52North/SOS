@@ -103,6 +103,8 @@ public class InsertSensorInsertDAOTest extends AbstractInsertDAOTest {
         assertThat(getCache().getOfferingsForObservableProperty(OBSPROP2), contains(OFFERING2));
         assertThat(getCache().getOfferingsForObservableProperty(OBSPROP3), contains(OFFERING3));
 
+        // Parent-Child Relations in offerings are only checked once the dataset is fully initialized
+        // (else they are skipped during the cache update) so they are not available here
 //        // check parent offering
 //        assertThat(getCache().getParentOfferings(OBSPROP1, true, false), empty());
 //        assertThat(getCache().getParentOfferings(OBSPROP2, true, false), contains(OFFERING1));

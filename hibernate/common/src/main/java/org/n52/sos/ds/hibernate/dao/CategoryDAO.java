@@ -27,9 +27,11 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
@@ -47,11 +49,12 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
     }
 
     public CategoryEntity getCategoryForIdentifier(String identifier, Session session) {
-        Criteria criteria = session.createCriteria(CategoryEntity.class)
-                .add(Restrictions.eq(CategoryEntity.IDENTIFIER, identifier));
-        LOGGER.trace("QUERY getCategoryForIdentifier(identifier): {}",
-                HibernateHelper.getSqlString(criteria));
-        return (CategoryEntity) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<CategoryEntity> query = cb.createQuery(CategoryEntity.class);
+        Root<CategoryEntity> root = query.from(CategoryEntity.class);
+        query.where(cb.equal(root.get(CategoryEntity.IDENTIFIER), identifier));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
     public CategoryEntity getOrInsertCategory(String value, Session session) {
@@ -65,7 +68,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
             addIdentifier(category, value, session);
             addName(category, name, session);
             addDescription(category, description);
-            session.save(category);
+            session.persist(category);
             session.flush();
             session.refresh(category);
         }
@@ -79,7 +82,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
             addIdentifier(category, sweText.getValue(), session);
             addName(category, sweText.getName(), session);
             addDescription(category, sweText.getDescription());
-            session.save(category);
+            session.persist(category);
             session.flush();
             session.refresh(category);
         }
@@ -93,7 +96,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
             addIdentifier(category, sweCategory.getValue(), session);
             addName(category, sweCategory.getName(), session);
             addDescription(category, sweCategory.getDescription());
-            session.save(category);
+            session.persist(category);
             session.flush();
             session.refresh(category);
         }
@@ -104,7 +107,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
         CategoryEntity category = getCategoryForIdentifier(categoryEntity.getIdentifier(), session);
         if (category == null) {
             category = categoryEntity;
-            session.save(category);
+            session.persist(category);
             session.flush();
             session.refresh(category);
         }
@@ -120,7 +123,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
             category.setName(obsProp.getName());
             category.setNameCodespace(obsProp.getNameCodespace());
             category.setDescription(obsProp.getDescription());
-            session.save(category);
+            session.persist(category);
             session.flush();
             session.refresh(category);
         }

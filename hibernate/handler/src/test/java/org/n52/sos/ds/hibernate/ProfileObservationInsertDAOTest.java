@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -216,11 +217,17 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetResultResponse response = getResultHandler.getResult(request);
         assertThat(response, notNullValue());
         String resultValues = response.getResultValues();
-        assertThat(resultValues, is(
-                "1#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,5.0000000000,2.5000000000#"
-                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,10.0000000000,7.5000000000#"
-                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,15.0000000000,12.5000000000#"
-                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,20.0000000000,17.5000000000"));
+
+        // We order by samplingTimeStart, without any secondary ordering, so order is not guaranteed here
+        String[] parts = resultValues.split("#");
+        assertThat(parts.length, is(5));
+        assertThat(parts[0], is("1"));
+        assertThat(Arrays.asList(parts), containsInAnyOrder(
+            "1",
+            "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,5.0000000000,2.5000000000",
+            "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,10.0000000000,7.5000000000",
+            "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,15.0000000000,12.5000000000",
+            "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,20.0000000000,17.5000000000"));
     }
 
     private OmObservation createDefaultObservation(ProfileValue profileValue)

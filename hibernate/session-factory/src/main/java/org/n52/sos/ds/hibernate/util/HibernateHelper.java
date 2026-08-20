@@ -30,29 +30,7 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.engine.spi.NamedQueryDefinition;
-import org.hibernate.engine.spi.NamedSQLQueryDefinition;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
-import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
-import org.hibernate.hql.spi.QueryTranslatorFactory;
-import org.hibernate.internal.CriteriaImpl;
-import org.hibernate.loader.criteria.CriteriaJoinWalker;
-import org.hibernate.loader.criteria.CriteriaQueryTranslator;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.hibernate.persister.entity.OuterJoinLoadable;
-import org.hibernate.query.Query;
-import org.hibernate.query.spi.NamedQueryRepository;
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Hibernate helper class.
@@ -71,54 +49,6 @@ public final class HibernateHelper {
     }
 
     /**
-     * Get the SQL query string from Criteria.
-     *
-     * @param criteria
-     *            Criteria to get SQL query string from
-     * @return SQL query string from criteria
-     */
-    public static String getSqlString(Criteria criteria) {
-        CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
-        SharedSessionContractImplementor session = criteriaImpl.getSession();
-        SessionFactoryImplementor factory = session.getFactory();
-        CriteriaQueryTranslator translator = new CriteriaQueryTranslator(factory, criteriaImpl,
-                criteriaImpl.getEntityOrClassName(), CriteriaQueryTranslator.ROOT_SQL_ALIAS);
-        MetamodelImplementor metamodel = factory.getMetamodel();
-        String[] implementors = metamodel.getImplementors(criteriaImpl.getEntityOrClassName());
-
-        CriteriaJoinWalker walker =
-                new CriteriaJoinWalker((OuterJoinLoadable) metamodel.entityPersister(implementors[0]), translator,
-                        factory, criteriaImpl, criteriaImpl.getEntityOrClassName(), session.getLoadQueryInfluencers());
-
-        return walker.getSQLString();
-    }
-
-    public static String getSqlString(Criterion criterion, Criteria criteria) {
-        CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
-        SharedSessionContractImplementor session = criteriaImpl.getSession();
-        SessionFactoryImplementor factory = session.getFactory();
-        CriteriaQueryTranslator translator = new CriteriaQueryTranslator(factory, criteriaImpl,
-                criteriaImpl.getEntityOrClassName(), CriteriaQueryTranslator.ROOT_SQL_ALIAS);
-        return criterion.toSqlString(criteria, translator);
-    }
-
-    /**
-     * Get the SQL query string from HQL Query.
-     *
-     * @param query
-     *            HQL query to convert to SQL
-     * @return SQL query string from HQL
-     */
-    public static String getSqlString(Query<?> query, Session session) {
-        final QueryTranslatorFactory ast = new ASTQueryTranslatorFactory();
-        SessionFactory sessionFactory = session.getSessionFactory();
-        final QueryTranslatorImpl qt = (QueryTranslatorImpl) ast.createQueryTranslator("id", query.getQueryString(),
-                Maps.newHashMap(), (SessionFactoryImplementor) sessionFactory, null);
-        qt.compile(null, false);
-        return qt.getSQLString();
-    }
-
-    /**
      * Checks if the specified entity is supported.
      *
      * @param clazz
@@ -130,76 +60,4 @@ public final class HibernateHelper {
     public static boolean isEntitySupported(Class<?> clazz) {
         return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
     }
-
-    /**
-     * Checks if the specified column is supported by this entity.
-     *
-     * @param clazz
-     *            the class
-     * @param column
-     *            the column
-     * @return if the column supported
-     */
-    public static boolean isColumnSupported(Class<?> clazz, String column) {
-        return HibernateMetadataCache.getInstance().isColumnSupported(clazz, column);
-    }
-
-    /**
-     * Checks if the specified named query is supported.
-     *
-     * @param namedQuery
-     *            the named query
-     * @param session
-     *            Hibernate session
-     * @return if the named query supported
-     */
-    public static boolean isNamedQuerySupported(String namedQuery, Session session) {
-        if (session.getSessionFactory() instanceof SessionFactoryImplementor) {
-            NamedQueryRepository namedQueryRepository =
-                    ((SessionFactoryImplementor) session.getSessionFactory()).getNamedQueryRepository();
-            NamedQueryDefinition namedQueryDef = namedQueryRepository.getNamedQueryDefinition(namedQuery);
-            NamedSQLQueryDefinition namedSQLQueryDef = namedQueryRepository.getNamedSQLQueryDefinition(namedQuery);
-            return namedQueryDef != null || namedSQLQueryDef != null;
-        }
-        return false;
-    }
-
-    public static Dialect getDialect(Session session) {
-        return ((SessionFactoryImplementor) session.getSessionFactory()).getServiceRegistry()
-                .getService(JdbcServices.class).getDialect();
-    }
-
-    public static List<List<Long>> getValidSizedLists(Collection<Long> queryIds) {
-        List<Long> queryIdsList = Lists.newArrayList(queryIds);
-        List<List<Long>> lists = Lists.newArrayList();
-        if (queryIds.size() > HibernateConstants.LIMIT_EXPRESSION_DEPTH) {
-            int startIndex = 0;
-            int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
-            while (startIndex < queryIdsList.size() - 1) {
-                if (endIndex > queryIdsList.size()) {
-                    endIndex = queryIdsList.size();
-                }
-                lists.add(queryIdsList.subList(startIndex, endIndex));
-                startIndex = endIndex;
-                endIndex = endIndex + HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
-            }
-        } else {
-            lists.add(queryIdsList);
-        }
-        return lists;
-    }
-
-    /**
-     * Check if the requested function is supported by the requested dialect
-     *
-     * @param dialect
-     *            Dialect to check
-     * @param function
-     *            Function to check
-     * @return <code>true</code>, if function is supported
-     */
-    public static boolean supportsFunction(Dialect dialect, String function) {
-        return dialect.getFunctions().containsKey(function);
-    }
-
 }

@@ -31,7 +31,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.n52.series.db.beans.DatasetAggregationEntity;
@@ -74,16 +77,20 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
 
     default List<DatasetEntity> getDatasetForProcedure(ProcedureEntity procedure, Session session) {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
-        Criteria c = seriesDAO.getDefaultAllSeriesCriteria(session);
-        seriesDAO.addProcedureToCriteria(c, procedure);
-        return c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(DatasetEntity.class);
+        Root<DatasetEntity> root = query.from(DatasetEntity.class);
+        query.where(seriesDAO.procedurePredicate(cb, root, procedure));
+        return session.createQuery(query).list();
     }
 
     default List<DatasetEntity> getDatasetForOffering(OfferingEntity offering, Session session) {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
-        Criteria c = seriesDAO.getDefaultAllSeriesCriteria(session);
-        seriesDAO.addOfferingToCriteria(c, offering);
-        return c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(DatasetEntity.class);
+        Root<DatasetEntity> root = query.from(DatasetEntity.class);
+        query.where(seriesDAO.offeringPredicate(cb, root, offering));
+        return session.createQuery(query).list();
     }
 
     default void deleteProcedure(DatasetEntity dataset, Session session) throws OwsExceptionReport {

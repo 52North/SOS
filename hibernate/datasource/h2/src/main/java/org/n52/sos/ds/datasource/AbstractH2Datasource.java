@@ -38,18 +38,16 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.h2gis.functions.factory.H2GISFunctions;
 import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.H2Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
-import org.n52.hibernate.spatial.dialect.h2geodb.TimestampWithTimeZoneGeoDBDialect;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-
-import geodb.GeoDB;
 
 /**
  * TODO JavaDoc
@@ -61,7 +59,7 @@ import geodb.GeoDB;
 public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     protected static final String H2_DRIVER_CLASS = "org.h2.Driver";
 
-    protected static final String H2_DIALECT_CLASS = TimestampWithTimeZoneGeoDBDialect.class.getName();
+    protected static final String H2_DIALECT_CLASS = H2Dialect.class.getName();
 
     protected static final String DEFAULT_USERNAME = "sa";
 
@@ -72,7 +70,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     @Override
     protected Dialect createDialect() {
-        return new TimestampWithTimeZoneGeoDBDialect();
+        return new H2Dialect();
     }
 
     @Override
@@ -105,11 +103,11 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
             while (tables.hasNext()) {
                 Table table = tables.next();
                 if (table.isPhysicalTable()) {
-                    stmt.execute("truncate table " + table.getQuotedName(new GeoDBDialect()));
+                    stmt.execute("truncate table " + table.getQuotedName(createDialect()));
                 }
             }
             stmt.execute("set referential_integrity true");
-            GeoDB.InitGeoDB(conn);
+            H2GISFunctions.load(conn);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -128,17 +126,17 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         return DatasourceCallback.chain(super.getCallback(), new DatasourceCallback() {
             @Override
             public Properties onInit(Properties props) {
-                initGeoDB(parseDatasourceProperties(props));
+                initH2GIS(parseDatasourceProperties(props));
                 return props;
             }
         });
     }
 
-    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationError {
+    protected void initH2GIS(Map<String, Object> settings) throws ConfigurationError {
         try (Connection cx = openConnection(settings)) {
-            GeoDB.InitGeoDB(cx);
+            H2GISFunctions.load(cx);
         } catch (SQLException ex) {
-            throw new ConfigurationError("Could not init GeoDB", ex);
+            throw new ConfigurationError("Could not init H2GIS", ex);
         }
     }
 

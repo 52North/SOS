@@ -37,35 +37,21 @@ import java.util.stream.Collectors;
 import jakarta.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.HibernateCriterionHelper;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.shetland.ogc.filter.BinaryLogicFilter;
-import org.n52.shetland.ogc.filter.ComparisonFilter;
-import org.n52.shetland.ogc.filter.Filter;
-import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
-import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.om.ObservationStream;
-import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingSettings;
@@ -76,17 +62,11 @@ import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Configurable
 @SuppressFBWarnings({ "EI_EXPOSE_REP2" })
 public abstract class AbstractObservationDao extends AbstractDaoImpl {
-
-    private static final String LOG_BINARY_LOGIC_INVALID = "The requested binary logic filter operator is invalid!";
-
-    private static final String LOG_RESULT_FILTER_NOT_SUPPORTED = "The requested result filter is not supported!";
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDao.class);
 
@@ -260,121 +240,6 @@ public abstract class AbstractObservationDao extends AbstractDaoImpl {
     }
 
     /**
-     * Add a result filter to the Criteria
-     *
-     * @param c
-     *            Hibernate criteria
-     * @param resultFilter
-     *            Result filter to add
-     *
-     * @throws CodedException
-     *             If the requested filter is not supported!
-     */
-    @SuppressWarnings("rawtypes")
-    public void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
-        if (resultFilter instanceof ComparisonFilter filter) {
-            c.add(getCriterionForComparisonFilter(filter));
-        } else if (resultFilter instanceof BinaryLogicFilter binaryLogicFilter) {
-            Junction junction;
-            if (null == binaryLogicFilter.getOperator()) {
-                throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
-            }
-            switch (binaryLogicFilter.getOperator()) {
-                case And:
-                    junction = Restrictions.conjunction();
-                    break;
-                case Or:
-                    junction = Restrictions.disjunction();
-                    break;
-                default:
-                    throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
-            }
-            for (Filter<?> filterPredicate : binaryLogicFilter.getFilterPredicates()) {
-                if (!(filterPredicate instanceof ComparisonFilter)) {
-                    throw new NoApplicableCodeException().withMessage(LOG_RESULT_FILTER_NOT_SUPPORTED);
-                }
-                junction.add(getCriterionForComparisonFilter((ComparisonFilter) filterPredicate));
-            }
-            c.add(junction);
-        } else {
-            throw new NoApplicableCodeException().withMessage(LOG_RESULT_FILTER_NOT_SUPPORTED);
-        }
-    }
-
-    /**
-     * Get the Hibernate Criterion for the requested result filter
-     *
-     * @param resultFilter
-     *            Requested result filter
-     *
-     * @return Hibernate Criterion
-     *
-     * @throws CodedException
-     *             If the requested result filter is not supported
-     */
-    public Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
-        if (FilterConstants.ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
-            checkValueReferenceForResultFilter(resultFilter.getValueReference());
-            if (resultFilter.isSetEscapeString()) {
-                return HibernateCriterionHelper.getLikeExpression(DatasetEntity.DESCRIPTION,
-                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
-            } else {
-                return Restrictions.like(DatasetEntity.DESCRIPTION,
-                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
-            }
-        } else {
-            throw new NoApplicableCodeException().withMessage(
-                    "The requested comparison filter {} is not supported! Only {} is supported!",
-                    resultFilter.getOperator().name(), FilterConstants.ComparisonOperator.PropertyIsLike.name());
-        }
-    }
-
-    /**
-     * Check if the default SQL values for wildcard, single char or escape are used. If not replace the
-     * characters from the result filter with the default values.
-     *
-     * @param resultFilter
-     *            Requested result filter
-     *
-     * @return Modified request string with default character.
-     */
-    public String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
-        String value = resultFilter.getValue();
-        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals("%")) {
-            value = value.replace(resultFilter.getSingleChar(), "_");
-        }
-        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals("_")) {
-            value = value.replace(resultFilter.getWildCard(), "_");
-        }
-        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals("$")) {
-            value = value.replace(resultFilter.getWildCard(), "_");
-        }
-        return value;
-    }
-
-    /**
-     * Check if the requested value reference is supported.
-     *
-     * @param valueReference
-     *            Requested value reference
-     *
-     * @throws CodedException
-     *             If the requested value reference is not supported.
-     */
-    public void checkValueReferenceForResultFilter(String valueReference) throws CodedException {
-        if (Strings.isNullOrEmpty(valueReference)) {
-            throw new NoApplicableCodeException().withMessage(
-                    "The requested valueReference is missing! The valueReference should be %s/%s!",
-                    OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
-        } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION)
-                && !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
-            throw new NoApplicableCodeException().withMessage(
-                    "The requested valueReference is not supported! Currently only %s/%s is supported",
-                    OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
-        }
-    }
-
-    /**
      * Get ObervationConstellation from requested parameters
      *
      * @param session
@@ -392,21 +257,21 @@ public abstract class AbstractObservationDao extends AbstractDaoImpl {
     }
 
     /**
-     * Get Hibernate Criterion from requested temporal filters
+     * Get the requested temporal filters, excluding first/latest indeterminate time filters
      *
      * @param request
      *            GetObservation request
      *
-     * @return Hibernate Criterion from requested temporal filters
+     * @return Requested temporal filters, or {@code null} if none were requested
      *
      * @throws OwsExceptionReport
      *             If a temporal filter is not supported
      */
-    public Criterion getTemporalFilterCriterion(final GetObservationRequest request) throws OwsExceptionReport {
-
+    public List<TemporalFilter> getTemporalFilters(final GetObservationRequest request)
+            throws OwsExceptionReport {
         final List<TemporalFilter> filters = request.getNotFirstLatestTemporalFilter();
         if (request.hasTemporalFilters() && CollectionHelper.isNotEmpty(filters)) {
-            return SosTemporalRestrictions.filter(filters);
+            return filters;
         } else {
             return null;
         }

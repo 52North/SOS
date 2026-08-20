@@ -47,19 +47,12 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -208,9 +201,6 @@ public class DaoFactory {
     }
 
     public AbstractSeriesDAO getSeriesDAO() {
-        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
-            return new EReportingSeriesDAO(this);
-        }
         return new SeriesDAO(this);
     }
 
@@ -231,30 +221,14 @@ public class DaoFactory {
      * @throws OwsExceptionReport If no Hibernate Observation data access is supported
      */
     public AbstractSeriesObservationDAO getObservationDAO() {
-        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
-            return new EReportingObservationDAO(this.verificationFlags, this.validityFlags, this);
-        }
         return new SeriesObservationDAO(this);
     }
 
-    public AbstractObservationTimeDAO getObservationTimeDAO() {
-        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
-            return new EReportingObservationTimeDAO();
-        }
-        return new SeriesObservationTimeDAO();
-    }
-
     public AbstractSeriesValueDAO getValueDAO() {
-        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
-            return new EReportingValueDAO(this.verificationFlags, this.validityFlags, this);
-        }
         return new SeriesValueDAO(this);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {
-        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
-            return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, this);
-        }
         return new SeriesValueTimeDAO(this);
     }
 

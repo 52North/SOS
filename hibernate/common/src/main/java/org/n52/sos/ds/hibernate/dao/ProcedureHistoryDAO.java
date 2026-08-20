@@ -27,14 +27,18 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -42,7 +46,6 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
@@ -128,31 +131,6 @@ public class ProcedureHistoryDAO {
      *            Procedure identifier
      * @param session
      *            Hibernate session
-     * @throws UnsupportedOperatorException If an error occurs
-     * @throws UnsupportedValueReferenceException If an error occurs
-     * @throws UnsupportedTimeException If an error occurs
-     */
-    public void setEndTime(String procedureIdentifier, String procedureDescriptionFormat,
-            Session session)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        ProcedureEntity procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(procedureIdentifier,
-                procedureDescriptionFormat, null, session);
-        Set<ProcedureHistoryEntity> validProcedureTimes = procedure.getProcedureHistory();
-        for (ProcedureHistoryEntity validProcedureTime : validProcedureTimes) {
-            if (validProcedureTime.getEndTime() == null) {
-                validProcedureTime.setEndTime(new DateTime(DateTimeZone.UTC).toDate());
-            }
-        }
-    }
-
-    /**
-     * Set valid end time to valid procedure time object for procedure
-     * identifier
-     *
-     * @param procedureIdentifier
-     *            Procedure identifier
-     * @param session
-     *            Hibernate session
      */
     public void setEndTime(String procedureIdentifier, Session session) {
         ProcedureEntity procedure =
@@ -168,8 +146,8 @@ public class ProcedureHistoryDAO {
      *
      * @param procedure
      *            Requested Procedure
-     * @param procedureDescriptionFormat
-     *            Requested procedureDescriptionFormat
+     * @param possibleProcedureDescriptionFormats
+     *            Requested procedureDescriptionFormats
      * @param validTime
      *            Requested validTime (optional)
      * @param session
@@ -182,50 +160,26 @@ public class ProcedureHistoryDAO {
      * @throws UnsupportedOperatorException
      *             If temporal operator is not supported
      */
-    @SuppressWarnings("unchecked")
-    public List<ProcedureHistoryEntity> get(ProcedureEntity procedure,
-            String procedureDescriptionFormat, Time validTime, Session session)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Criteria criteria = session.createCriteria(ProcedureHistoryEntity.class);
-        criteria.add(Restrictions.eq(ProcedureHistoryEntity.PROCEDURE, procedure));
-        if (procedureDescriptionFormat != null && !procedureDescriptionFormat.isEmpty()) {
-            criteria.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT)
-                    .add(Restrictions.eq(FormatEntity.FORMAT, procedureDescriptionFormat));
-        }
-
-        Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
-        // if validTime == null or validTimeCriterion == null, query latest
-        // valid procedure description
-        if (validTime == null || validTimeCriterion == null) {
-            criteria.add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
-        } else {
-            criteria.add(validTimeCriterion);
-        }
-        LOGGER.trace("QUERY getValidProcedureTimes(procedure,procedureDescriptionFormat, validTime): {}",
-                HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<ProcedureHistoryEntity> get(ProcedureEntity procedure,
             Set<String> possibleProcedureDescriptionFormats, Time validTime, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Criteria criteria = session.createCriteria(ProcedureHistoryEntity.class);
-        criteria.add(Restrictions.eq(ProcedureHistoryEntity.PROCEDURE, procedure));
-        criteria.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT)
-                .add(Restrictions.in(FormatEntity.FORMAT, possibleProcedureDescriptionFormats));
-
-        Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<ProcedureHistoryEntity> query = cb.createQuery(ProcedureHistoryEntity.class);
+        Root<ProcedureHistoryEntity> root = query.from(ProcedureHistoryEntity.class);
+        Join<ProcedureHistoryEntity, FormatEntity> pdf = root.join(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(ProcedureHistoryEntity.PROCEDURE), procedure));
+        predicates.add(pdf.get(FormatEntity.FORMAT).in(possibleProcedureDescriptionFormats));
+        Predicate validTimeCriterion = QueryHelper.getValidTimeCriterion(cb, root, validTime);
         // if validTime == null or validTimeCriterion == null, query latest
         // valid procedure description
         if (validTime == null || validTimeCriterion == null) {
-            criteria.add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
+            predicates.add(cb.isNull(root.get(ProcedureHistoryEntity.END_TIME)));
         } else {
-            criteria.add(validTimeCriterion);
+            predicates.add(validTimeCriterion);
         }
-        LOGGER.trace("QUERY getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, validTime): {}",
-                HibernateHelper.getSqlString(criteria));
-        return criteria.list();
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
 }

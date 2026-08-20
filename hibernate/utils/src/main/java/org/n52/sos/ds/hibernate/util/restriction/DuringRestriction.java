@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.util.restriction;
 
 import java.util.Date;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
@@ -56,36 +57,17 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
  */
 public class DuringRestriction implements TemporalRestriction {
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin), Restrictions.lt(selfEnd, otherEnd));
+    public Predicate filterPeriodWithPeriod(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherBegin, Date otherEnd) {
+        return cb.and(cb.greaterThan(selfBegin, otherBegin), cb.lessThan(selfEnd, otherEnd));
     }
 
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                Restrictions.lt(selfEnd, getEndPlaceHolder(count)));
-    }
-
-    @Override
-    public Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                Restrictions.lt(selfBegin, getEndPlaceHolder(count)));
-    }
-
-    @Override
-    public Criterion filterInstantWithPeriod(String position, String endPosition, Date begin, Date end,
-            boolean periodFromReducedPrecisionInstant) {
-        return periodFromReducedPrecisionInstant
-                ? Restrictions.and(Restrictions.ge(position, begin), Restrictions.le(endPosition, end))
-                : Restrictions.and(Restrictions.gt(position, begin), Restrictions.lt(endPosition, end));
-    }
-
-    @Override
-    public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-            boolean isOtherPeriodFromReducedPrecisionInstant) {
+    public Predicate filterInstantWithPeriod(CriteriaBuilder cb, Path<Date> selfPosition, Date otherBegin,
+            Date otherEnd, boolean isOtherPeriodFromReducedPrecisionInstant) {
         return isOtherPeriodFromReducedPrecisionInstant
-                ? Restrictions.and(Restrictions.ge(selfPosition, otherBegin), Restrictions.le(selfPosition, otherEnd))
-                : Restrictions.and(Restrictions.gt(selfPosition, otherBegin), Restrictions.lt(selfPosition, otherEnd));
+                ? cb.and(cb.greaterThanOrEqualTo(selfPosition, otherBegin),
+                        cb.lessThanOrEqualTo(selfPosition, otherEnd))
+                : cb.and(cb.greaterThan(selfPosition, otherBegin), cb.lessThan(selfPosition, otherEnd));
     }
-
 }

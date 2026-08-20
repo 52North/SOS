@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
@@ -26,12 +27,12 @@
             <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -41,11 +42,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-    <dependency>
-      <groupId>jakarta.persistence</groupId>
-      <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.1.0</version>
-    </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-session-factory</artifactId>
@@ -57,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-             <artifactId>sos-cache</artifactId>
+            <artifactId>sos-cache</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -80,16 +76,12 @@
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opengeo</groupId>
-            <artifactId>geodb</artifactId>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2gis</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-spatial</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

@@ -35,7 +35,6 @@ import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Coordinate;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
@@ -63,7 +62,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -91,20 +89,10 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
 
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
-    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY = "getUnitForObservableProperty";
-
-    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE =
-            "getUnitForObservablePropertyProcedure";
-
-    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING =
-            "getUnitForObservablePropertyProcedureOffering";
-
     protected static final String POSITION_NAME = "sensorPosition";
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGeneratorSml.class);
-
-    private static final String QUERY_LOG_TEMPLATE = "QUERY queryUnit(observationConstellation) with NamedQuery: {}";
 
     private final ProfileHandler profileHandler;
 
@@ -271,36 +259,14 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
     }
 
     private String queryUnit(DatasetEntity oc, Session session) throws OwsExceptionReport {
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING,
-                session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty().getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, oc.getProcedure().getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROPERTY_OFFERING, oc.getOffering().getIdentifier());
-            LOGGER.debug(QUERY_LOG_TEMPLATE, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
-            return (String) namedQuery.uniqueResult();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE,
-                session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty().getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, oc.getProcedure().getIdentifier());
-            LOGGER.debug(QUERY_LOG_TEMPLATE, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
-            return (String) namedQuery.uniqueResult();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY, session)) {
-            Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
-            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty().getIdentifier());
-            LOGGER.debug(QUERY_LOG_TEMPLATE, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
-            return (String) namedQuery.uniqueResult();
-        } else {
-            List<DatasetEntity> series =
-                    getDaoFactory().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()),
-                            Lists.newArrayList(oc.getObservableProperty().getIdentifier()),
-                            Lists.<String> newArrayList(), session);
-            if (series.iterator().hasNext()) {
-                DatasetEntity next = series.iterator().next();
-                if (next.isSetUnit()) {
-                    return next.getUnit().getUnit();
-                }
+        List<DatasetEntity> series =
+                getDaoFactory().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()),
+                        Lists.newArrayList(oc.getObservableProperty().getIdentifier()),
+                        Lists.<String> newArrayList(), session);
+        if (series.iterator().hasNext()) {
+            DatasetEntity next = series.iterator().next();
+            if (next.isSetUnit()) {
+                return next.getUnit().getUnit();
             }
         }
         return null;

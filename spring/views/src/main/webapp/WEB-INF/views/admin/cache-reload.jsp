@@ -27,7 +27,7 @@
     Public License for more details.
 
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <button type="button" id="reloadCapsCache" class="btn">Reload Capabilities Cache</button>
 
 <script type="text/javascript">

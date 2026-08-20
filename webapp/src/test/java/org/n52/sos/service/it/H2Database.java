@@ -27,7 +27,9 @@
  */
 package org.n52.sos.service.it;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -36,7 +38,6 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -69,11 +70,11 @@ public class H2Database extends ExternalResource {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            Criteria criteria = session.createCriteria(FormatEntity.class);
-            try (ScrollableIterable<FormatEntity> i = ScrollableIterable.fromCriteria(criteria)) {
-                for (final FormatEntity o : i) {
-                    session.delete(o);
-                }
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<FormatEntity> query = cb.createQuery(FormatEntity.class);
+            query.from(FormatEntity.class);
+            for (final FormatEntity o : session.createQuery(query).getResultList()) {
+                session.delete(o);
             }
             session.flush();
             transaction.commit();

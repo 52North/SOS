@@ -38,7 +38,7 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final String GEODB_INNIT_CONNECTION_CUSTOMIZER = "org.n52.c3p0.GeoDBInitConnectionCustomizer";
+    private static final String GEODB_INNIT_CONNECTION_CUSTOMIZER = "org.n52.c3p0.H2GISInitConnectionCustomizer";
 
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
@@ -61,7 +61,6 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
         if (settings.containsKey(PROXY_PATH_KEY)) {
             p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         }
-        addMappingFileDirectories(settings, p);
         return p;
     }
 

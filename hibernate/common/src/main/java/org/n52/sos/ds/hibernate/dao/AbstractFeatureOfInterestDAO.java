@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.spatial.criterion.SpatialProjections;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -44,18 +44,11 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO
         implements HibernateSqlQueryConstants {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFeatureOfInterestDAO.class);
-
-    private static final String QUERY_LOG_TEMPLATE = "QUERY getFeatureOfInterestObjects(identifiers): {}";
 
     public AbstractFeatureOfInterestDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -64,44 +57,13 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     public abstract AbstractFeatureEntity insertFeature(AbstractFeature samplingFeature, Session session)
             throws OwsExceptionReport;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public AbstractFeatureEntity getFeature(String identifier, Session session) {
-        Criteria criteria =
-                getDefaultCriteria(session).add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier));
-        LOGGER.trace("QUERY getFeature(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (AbstractFeatureEntity) criteria.uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<String> getFeatureIdentifiers(SpatialFilter filter, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultCriteria(session)
-                .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-        if (filter != null && (filter.getGeometry().getGeometry().isPresent()
-                || filter.getGeometry().getEnvelope().isPresent())) {
-            c.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(),
-                    filter.getGeometry().toGeometry()));
-        }
-        return c.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public Geometry getFeatureExtent(Collection<String> identifiers, Session session) {
-        Geometry geom = null;
-        if (identifiers != null && !identifiers.isEmpty()) {
-            int count = 1;
-            for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
-                Criteria c = getDefaultCriteria(session);
-                addIdentifierRestriction(c, ids);
-                c.setProjection(SpatialProjections.extent(AbstractFeatureEntity.GEOMETRY));
-                LOGGER.trace("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
-                geom = mergeGeometries(geom, c.list());
-            }
-        } else {
-            Criteria c = getDefaultCriteria(session);
-            c.setProjection(SpatialProjections.extent(AbstractFeatureEntity.GEOMETRY));
-            LOGGER.trace("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
-            geom = mergeGeometries(geom, c.list());
-        }
-        return geom;
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+        Root root = query.from(getFeatureEntityClass());
+        query.where(cb.equal(root.get(AbstractFeatureEntity.IDENTIFIER), identifier));
+        return (AbstractFeatureEntity) session.createQuery(query).uniqueResult();
     }
 
     /**
@@ -113,111 +75,109 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
      *            Hibernate session
      * @return FeatureOfInterest objects
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<AbstractFeatureEntity> getFeatureOfInterestObjects(final Collection<String> identifiers,
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
             List<AbstractFeatureEntity> features = new ArrayList<>();
-            int count = 1;
             for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
-                Criteria c = getDefaultCriteria(session);
-                addIdentifierRestriction(c, ids);
-                LOGGER.trace("QUERY getFeatureOfInterestObjects(identifiers)({}): {}", count++,
-                        HibernateHelper.getSqlString(c));
-                features.addAll(c.list());
+                CriteriaBuilder cb = session.getCriteriaBuilder();
+                CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+                Root root = query.from(getFeatureEntityClass());
+                query.where(root.get(AbstractFeatureEntity.IDENTIFIER).in(ids));
+                features.addAll(session.createQuery(query).list());
             }
             return features;
         } else {
-            Criteria c = getDefaultCriteria(session);
-            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-            return c.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+            query.from(getFeatureEntityClass());
+            return session.createQuery(query).list();
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected AbstractFeatureEntity getFeatureOfInterest(final String identifier, final Geometry geometry,
             final Session session) throws OwsExceptionReport {
-        Criteria c = getDefaultCriteria(session);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+        Root root = query.from(getFeatureEntityClass());
         if (!identifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
-            c.add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier));
-            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-            return (AbstractFeatureEntity) c.uniqueResult();
+            query.where(cb.equal(root.get(AbstractFeatureEntity.IDENTIFIER), identifier));
         } else {
-            c.add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY,
+            query.where(SpatialRestrictions.eq(cb, root.get(AbstractFeatureEntity.PROPERTY_GEOMETRY_ENTITY),
                     getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
-            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-            return (AbstractFeatureEntity) c.uniqueResult();
         }
+        return (AbstractFeatureEntity) session.createQuery(query).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<AbstractFeatureEntity> getFeatures(Session session) {
-        return getDefaultCriteria(session).list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+        query.from(getFeatureEntityClass());
+        return session.createQuery(query).list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<AbstractFeatureEntity> getFeatures(Collection<String> identifiers, Collection<SpatialFilter> filters,
             Session session) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(identifiers)) {
             return getFeaturesChunks(identifiers, filters, session);
         } else {
-            final Criteria c = getDefaultCriteria(session);
-            addSpatialFilters(c, filters);
-            LOGGER.trace("QUERY getFeatures(identifiers)): {}", HibernateHelper.getSqlString(c));
-            return c.list();
+            return getFeaturesForFilters(filters, session);
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private List<AbstractFeatureEntity> getFeaturesForFilters(Collection<SpatialFilter> filters, Session session)
+            throws OwsExceptionReport {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+        Root root = query.from(getFeatureEntityClass());
+        Predicate spatial = spatialFilterPredicate(cb, root, filters);
+        if (spatial != null) {
+            query.where(spatial);
+        }
+        return session.createQuery(query).list();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<AbstractFeatureEntity> getFeaturesChunks(Collection<String> identifiers,
             Collection<SpatialFilter> filters, Session session) throws OwsExceptionReport {
         List<AbstractFeatureEntity> features = new ArrayList<>();
-        int count = 1;
         for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
-            Criteria c = getDefaultCriteria(session);
-            addIdentifierRestriction(c, ids);
-            addSpatialFilters(c, filters);
-            LOGGER.trace("QUERY getFeatures(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
-            features.addAll(c.list());
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery query = cb.createQuery(getFeatureEntityClass());
+            Root root = query.from(getFeatureEntityClass());
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(root.get(AbstractFeatureEntity.IDENTIFIER).in(ids));
+            Predicate spatial = spatialFilterPredicate(cb, root, filters);
+            if (spatial != null) {
+                predicates.add(spatial);
+            }
+            query.where(predicates.toArray(new Predicate[0]));
+            features.addAll(session.createQuery(query).list());
         }
         return features;
     }
 
-    private Criteria addIdentifierRestriction(Criteria c, Collection<String> identifiers) {
-        if (CollectionHelper.isNotEmpty(identifiers)) {
-            c.add(Restrictions.in(AbstractFeatureEntity.IDENTIFIER, identifiers));
-        }
-        return c;
-    }
-
-    private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters) throws OwsExceptionReport {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Predicate spatialFilterPredicate(CriteriaBuilder cb, Root root, Collection<SpatialFilter> filters)
+            throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(filters)) {
-            final Disjunction disjunction = Restrictions.disjunction();
+            List<Predicate> disjuncts = new ArrayList<>();
             for (final SpatialFilter filter : filters) {
                 if (filter != null && (filter.getGeometry().getGeometry().isPresent()
                         || filter.getGeometry().getEnvelope().isPresent())) {
-                    disjunction.add(SpatialRestrictions.filter(
-                            AbstractFeatureEntity.PROPERTY_GEOMETRY_ENTITY + "."
-                                    + AbstractFeatureEntity.PROPERTY_GEOMETRY,
-                            filter.getOperator(), filter.getGeometry()
-                                    .toGeometry()));
+                    disjuncts.add(SpatialRestrictions.filter(cb, root.get(AbstractFeatureEntity.PROPERTY_GEOMETRY_ENTITY),
+                            filter.getOperator(), filter.getGeometry().toGeometry()));
                 }
             }
-            c.add(disjunction);
-        }
-    }
-
-    private Geometry mergeGeometries(Geometry geom, List<Object> list) {
-        Geometry g = geom;
-        for (Object extent : list) {
-            if (extent != null) {
-                if (g == null) {
-                    g = (Geometry) extent;
-                } else {
-                    g.union((Geometry) extent);
-                }
+            if (!disjuncts.isEmpty()) {
+                return cb.or(disjuncts.toArray(new Predicate[0]));
             }
         }
-        return g;
+        return null;
     }
 
     public void updateFeatureOfInterest(AbstractFeatureEntity featureOfInterest, AbstractFeature abstractFeature,
@@ -226,8 +186,8 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         session.saveOrUpdate(featureOfInterest);
     }
 
-    protected Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(AbstractFeatureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    protected Class<? extends AbstractFeatureEntity> getFeatureEntityClass() {
+        return AbstractFeatureEntity.class;
     }
 
 }

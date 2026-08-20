@@ -21,10 +21,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb-server.db-model</groupId>
-            <artifactId>db-model-dialects</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
         </dependency>
@@ -58,19 +54,12 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
             <scope>provided</scope>
-      <version>6.0.2.Final</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-    <dependency>
-      <groupId>jakarta.persistence</groupId>
-      <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.1.0</version>
-      <scope>test</scope>
-    </dependency>
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>

@@ -27,8 +27,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 //import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 //import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 //import org.n52.sos.ds.hibernate.entities.PhenomenonEntity;
@@ -220,37 +225,35 @@ public class ObservationContext {
         return getUnit() != null;
     }
 
-    public void addIdentifierRestrictionsToCritera(Criteria c) {
-        addIdentifierRestrictionsToCritera(c, true, true);
-    }
-
-    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeatureAndPlatform,
-            boolean includeCategory) {
+    public List<Predicate> getIdentifierRestrictions(CriteriaBuilder cb, Root<DatasetEntity> root,
+            boolean includeFeatureAndPlatform, boolean includeCategory) {
+        List<Predicate> predicates = new ArrayList<>();
         if (includeFeatureAndPlatform) {
             if (isSetFeatureOfInterest()) {
-                c.add(Restrictions.eqOrIsNull(DatasetEntity.PROPERTY_FEATURE, getFeatureOfInterest()));
-
+                predicates.add(cb.or(cb.equal(root.get(DatasetEntity.PROPERTY_FEATURE), getFeatureOfInterest()),
+                        cb.isNull(root.get(DatasetEntity.PROPERTY_FEATURE))));
             }
             if (isSetPlatform()) {
-                c.add(Restrictions.eq(DatasetEntity.PROPERTY_PLATFORM, getPlatform()));
+                predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_PLATFORM), getPlatform()));
             }
         } else {
-            c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
-            c.add(Restrictions.isNull(DatasetEntity.PROPERTY_PLATFORM));
+            predicates.add(cb.isNull(root.get(DatasetEntity.PROPERTY_FEATURE)));
+            predicates.add(cb.isNull(root.get(DatasetEntity.PROPERTY_PLATFORM)));
         }
         if (isSetPhenomenon()) {
-            c.add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, getPhenomenon()));
+            predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_PHENOMENON), getPhenomenon()));
         }
         if (isSetProcedure()) {
-            c.add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, getProcedure()));
+            predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_PROCEDURE), getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions.eq(DatasetEntity.PROPERTY_OFFERING, getOffering()));
+            predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_OFFERING), getOffering()));
         }
 
         if (includeCategory && isSetCategory()) {
-            c.add(Restrictions.eq(DatasetEntity.PROPERTY_CATEGORY, getCategory()));
+            predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_CATEGORY), getCategory()));
         }
+        return predicates;
     }
 
     public void addValuesToSeries(DatasetEntity contextual) {

@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.util.restriction;
 
 import java.util.Date;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
@@ -57,17 +58,9 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
  */
 public class OverlappedByRestriction implements TemporalRestriction {
     @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin),
-                                Restrictions.lt(selfBegin, otherEnd),
-                                Restrictions.gt(selfEnd, otherEnd));
+    public Predicate filterPeriodWithPeriod(CriteriaBuilder cb, Path<Date> selfBegin, Path<Date> selfEnd,
+            Date otherBegin, Date otherEnd) {
+        return cb.and(cb.greaterThan(selfBegin, otherBegin), cb.lessThan(selfBegin, otherEnd),
+                cb.greaterThan(selfEnd, otherEnd));
     }
-
-    @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                                Restrictions.lt(selfBegin, getEndPlaceHolder(count)),
-                                Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
-    }
-
 }

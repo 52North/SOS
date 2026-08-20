@@ -28,13 +28,17 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -60,9 +64,9 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
-            throws CodedException {
-        // nothing to add
+    protected List<Predicate> specificPredicates(CriteriaBuilder cb, Path<?> root,
+            GetObservationRequest request) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -71,14 +75,14 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series, Criterion temporalFilter,
-            Session session) throws OwsExceptionReport {
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series,
+            List<TemporalFilter> temporalFilters, Session session) throws OwsExceptionReport {
         return new ObservationTimeExtrema();
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter,
-            Session session) throws OwsExceptionReport {
+    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series,
+            List<TemporalFilter> temporalFilters, Session session) throws OwsExceptionReport {
         return new ObservationTimeExtrema();
     }
 

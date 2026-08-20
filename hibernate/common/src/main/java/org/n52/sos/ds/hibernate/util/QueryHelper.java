@@ -37,9 +37,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -117,12 +118,16 @@ public final class QueryHelper {
     }
 
     /**
-     * Get Criterion for DescribeSensor validTime parameter.
+     * Get Predicate for DescribeSensor validTime parameter.
      *
+     * @param cb
+     *            the criteria builder
+     * @param root
+     *            the path holding the property/properties
      * @param validTime
      *            ValidTime parameter value
      *
-     * @return Criterion with temporal filters
+     * @return Predicate with temporal filters
      *
      * @throws UnsupportedTimeException
      *             If the time value is invalid
@@ -131,12 +136,12 @@ public final class QueryHelper {
      * @throws UnsupportedOperatorException
      *             If the temporal operator is not supported
      */
-    public static Criterion getValidTimeCriterion(Time validTime)
+    public static Predicate getValidTimeCriterion(CriteriaBuilder cb, Path<?> root, Time validTime)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         if (validTime instanceof TimeInstant instant) {
-            return SosTemporalRestrictions.filter(getFiltersForTimeInstant(instant));
+            return SosTemporalRestrictions.filter(cb, root, getFiltersForTimeInstant(instant));
         } else if (validTime instanceof TimePeriod period) {
-            return SosTemporalRestrictions.filter(getFiltersForTimePeriod(period));
+            return SosTemporalRestrictions.filter(cb, root, getFiltersForTimePeriod(period));
         } else {
             return null;
         }
@@ -206,37 +211,30 @@ public final class QueryHelper {
     }
 
     /**
-     * Creates a criterion for objects, considers if size is gt 1000 (Oracle
-     * expression limit).
+     * Builds a predicate for objects, splitting into chunks to respect the
+     * Oracle expression limit (1000).
      *
-     * @param propertyName
-     *            Column name.
-     * @param identifiers
-     *            Objects list
-     * @return Criterion.
+     * @param cb           CriteriaBuilder
+     * @param path         property/column.
+     * @param identifiers  identifiers
+     * @return Predicate (OR of IN clauses), or null if identifiers is empty.
      */
-    public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {
-        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
-            List<?> identifiersList = Lists.newArrayList(identifiers);
-            Criterion criterion = null;
-            List<Object> ids = null;
-            for (int i = 0; i < identifiersList.size(); i++) {
-                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
-                    if (criterion == null && i != 0) {
-                        criterion = Restrictions.in(propertyName, ids);
-                    } else if (criterion != null) {
-                        criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
-                    }
-                    ids = Lists.newArrayList();
-                    ids.add(identifiersList.get(i));
-                } else {
-                    ids.add(identifiersList.get(i));
-                }
-            }
-            return criterion;
-        } else {
-            return Restrictions.in(propertyName, identifiers);
+    public static Predicate getPredicateForObjects(CriteriaBuilder cb,
+                                                   Path<?> path,
+                                                   Collection<?> identifiers) {
+        if (identifiers.isEmpty()) {
+            return cb.disjunction();
         }
+
+        List<? extends List<?>> chunks =
+                Lists.partition(Lists.newArrayList(identifiers), LIMIT_EXPRESSION_DEPTH - 1);
+
+        List<Predicate> inClauses = new ArrayList<>(chunks.size());
+        for (List<?> chunk : chunks) {
+            inClauses.add(path.in(chunk));
+        }
+
+        return cb.or(inClauses.toArray(new Predicate[0]));
     }
 
     /**
@@ -248,24 +246,6 @@ public final class QueryHelper {
      * @return The splitted identifiers
      */
     public static List<List<String>> getListsForIdentifiers(Collection<String> identifiers) {
-        List<List<String>> list = new ArrayList<>();
-        List<String> identifiersList = Lists.newArrayList(identifiers);
-        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
-            List<String> ids = null;
-            for (int i = 0; i < identifiersList.size(); i++) {
-                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
-                    if (i != 0) {
-                        list.add(ids);
-                    }
-                    ids = Lists.newArrayList();
-                    ids.add(identifiersList.get(i));
-                } else {
-                    ids.add(identifiersList.get(i));
-                }
-            }
-        } else {
-            list.add(identifiersList);
-        }
-        return list;
+        return Lists.partition(Lists.newArrayList(identifiers), LIMIT_EXPRESSION_DEPTH - 1);
     }
 }

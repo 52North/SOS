@@ -27,13 +27,16 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -55,10 +58,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
-import com.google.common.collect.Maps;
-
 /**
- * Factory methods to create {@link Criterion Criterions} for
+ * Factory methods to create {@link Predicate Predicates} for
  * {@link TemporalFilter TemporalFilters}.
  *
  * @see AfterRestriction
@@ -123,12 +124,16 @@ public final class SosTemporalRestrictions {
     }
 
     /**
-     * Create a new {@code Criterion} using the specified filter.
+     * Create a new {@code Predicate} using the specified filter.
      *
+     * @param cb
+     *            the criteria builder
+     * @param root
+     *            the path holding the property/properties
      * @param filter
      *            the filter
      *
-     * @return the {@code Criterion}
+     * @return the {@code Predicate}
      *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -140,19 +145,23 @@ public final class SosTemporalRestrictions {
      *             if no restriction definition for the {@link TimeOperator} is
      *             found
      */
-    public static Criterion filter(TemporalFilter filter)
+    public static Predicate filter(CriteriaBuilder cb, Path<?> root, TemporalFilter filter)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()),
+        return TemporalRestrictions.filter(cb, root, filter.getOperator(), getFields(filter.getValueReference()),
                 filter.getTime());
     }
 
     /**
-     * Creates a {@link Conjunction} for the specified temporal filters.
+     * Creates a conjunction for the specified temporal filters.
      *
+     * @param cb
+     *            the criteria builder
+     * @param root
+     *            the path holding the property/properties
      * @param temporalFilters
      *            the filters
      *
-     * @return Hibernate temporal filter criterion
+     * @return Predicate for the temporal filters
      *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -164,44 +173,28 @@ public final class SosTemporalRestrictions {
      *             if no restriction definition for the {@link TimeOperator} is
      *             found
      */
-    public static Criterion filter(Iterable<TemporalFilter> temporalFilters)
+    public static Predicate filter(CriteriaBuilder cb, Path<?> root, Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Conjunction conjunction = Restrictions.conjunction();
-        Collection<Disjunction> disjunctions = getDisjunction(temporalFilters);
+        Collection<Predicate> disjunctions = getDisjunction(cb, root, temporalFilters);
         if (disjunctions.size() == 1) {
-            return disjunctions.iterator().next();
+            return disjunctions.iterator()
+                    .next();
         }
-        disjunctions.forEach(conjunction::add);
-        return conjunction;
-    }
-
-    public static Criterion filterHql(TemporalFilter filter, Integer count)
-            throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
-        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()),
-                filter.getTime(), count);
-    }
-
-    public static Criterion filterHql(Iterable<TemporalFilter> temporalFilters)
-            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Conjunction conjunction = Restrictions.conjunction();
-        Collection<Disjunction> disjunctions = getDisjunctionHql(temporalFilters);
-        if (disjunctions.size() == 1) {
-            return disjunctions.iterator().next();
-        }
-        for (Disjunction disjunction : disjunctions) {
-            conjunction.add(disjunction);
-        }
-        return conjunction;
+        return cb.and(disjunctions.toArray(new Predicate[0]));
     }
 
     /**
-     * Creates {@link Disjunction}s for the specified temporal filters with the
-     * same valueReference.
+     * Creates a disjunction for each set of filters with the same
+     * valueReference.
      *
+     * @param cb
+     *            the criteria builder
+     * @param root
+     *            the path holding the property/properties
      * @param temporalFilters
      *            the filters
      *
-     * @return {@link Collection} of {@link Disjunction}
+     * @return {@link Collection} of {@link Predicate}, one per valueReference
      *
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
@@ -213,36 +206,19 @@ public final class SosTemporalRestrictions {
      *             if no restriction definition for the {@link TimeOperator} is
      *             found
      */
-    private static Collection<Disjunction> getDisjunction(Iterable<TemporalFilter> temporalFilters)
+    private static Collection<Predicate> getDisjunction(CriteriaBuilder cb, Path<?> root,
+            Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Map<String, Disjunction> map = Maps.newHashMap();
+        Map<String, List<Predicate>> byValueReference = new HashMap<>();
         for (TemporalFilter temporalFilter : temporalFilters) {
-            if (map.containsKey(temporalFilter.getValueReference())) {
-                map.get(temporalFilter.getValueReference()).add(filter(temporalFilter));
-            } else {
-                Disjunction disjunction = Restrictions.disjunction();
-                disjunction.add(filter(temporalFilter));
-                map.put(temporalFilter.getValueReference(), disjunction);
-            }
+            byValueReference.computeIfAbsent(temporalFilter.getValueReference(), k -> new ArrayList<>())
+                    .add(filter(cb, root, temporalFilter));
         }
-        return map.values();
-    }
-
-    private static Collection<Disjunction> getDisjunctionHql(Iterable<TemporalFilter> temporalFilters)
-            throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
-        Map<String, Disjunction> map = Maps.newHashMap();
-        Integer count = Integer.valueOf(1);
-        for (TemporalFilter temporalFilter : temporalFilters) {
-            if (map.containsKey(temporalFilter.getValueReference())) {
-                map.get(temporalFilter.getValueReference()).add(filterHql(temporalFilter, count));
-            } else {
-                Disjunction disjunction = Restrictions.disjunction();
-                disjunction.add(filterHql(temporalFilter, count));
-                map.put(temporalFilter.getValueReference(), disjunction);
-            }
-            count++;
+        List<Predicate> disjunctions = new ArrayList<>(byValueReference.size());
+        for (List<Predicate> predicates : byValueReference.values()) {
+            disjunctions.add(predicates.size() == 1 ? predicates.get(0) : cb.or(predicates.toArray(new Predicate[0])));
         }
-        return map.values();
+        return disjunctions;
     }
 
     /**

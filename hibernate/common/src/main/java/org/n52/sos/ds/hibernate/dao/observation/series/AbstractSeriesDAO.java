@@ -27,6 +27,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -38,15 +39,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.annotation.Setting;
@@ -68,12 +69,12 @@ import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
@@ -81,7 +82,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.DeleteDataHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -93,7 +93,6 @@ import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,13 +101,6 @@ import com.google.common.base.Strings;
 public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptionDAO implements DeleteDataHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
-
-    private static final String QUERY_SERIES_CRITERIA = "QUERY getSeriesCriteria(request): {}";
-
-    private static final String QUERY_SERIES =
-            "QUERY getSeriesFor(procedure, observableProperty, featureOfInterest): {}";
-
-    private static final String FOI = "foi";
 
     private Boolean deletePhysically;
 
@@ -127,6 +119,16 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     public Class<?> getNotInitializedDatasetClass() {
         return DatasetEntity.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<DatasetEntity> seriesEntityClass() {
+        return (Class<DatasetEntity>) getSeriesClass();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<DatasetEntity> notInitializedDatasetEntityClass() {
+        return (Class<DatasetEntity>) getNotInitializedDatasetClass();
     }
 
     /**
@@ -263,32 +265,33 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     public abstract List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session);
 
-    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(Session session) {
-        return getDefaultSeriesCriteria(session).list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        query.where(defaultSeriesPredicates(cb, root).toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
     public DatasetEntity getSeries(OmObservationConstellation omObsConst, Session session) throws OwsExceptionReport {
-        Criteria criteria =
-                session.createCriteria(getSeriesImpl().getClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        criteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, omObsConst.getProcedureIdentifier()));
-        criteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, omObsConst.getObservablePropertyIdentifier()));
-        criteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
-                .add(Restrictions.in(OfferingEntity.IDENTIFIER, omObsConst.getOfferings()));
-        LOGGER.trace("QUERY getObservationConstellation(omObservationConstellation): {}",
-                HibernateHelper.getSqlString(criteria));
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        Join<DatasetEntity, ProcedureEntity> procedure = root.join(DatasetEntity.PROPERTY_PROCEDURE);
+        Join<DatasetEntity, PhenomenonEntity> phenomenon = root.join(DatasetEntity.PROPERTY_PHENOMENON);
+        Join<DatasetEntity, OfferingEntity> offering = root.join(DatasetEntity.PROPERTY_OFFERING);
+        query.where(cb.equal(procedure.get(ProcedureEntity.IDENTIFIER), omObsConst.getProcedureIdentifier()),
+                cb.equal(phenomenon.get(PhenomenonEntity.IDENTIFIER), omObsConst.getObservablePropertyIdentifier()),
+                offering.get(OfferingEntity.IDENTIFIER).in(omObsConst.getOfferings()));
         if (omObsConst.isSetCategoryParameter()) {
-            List<DatasetEntity> datasets = criteria.list();
+            List<DatasetEntity> datasets = session.createQuery(query).list();
             return datasets.stream()
                     .filter(d -> d.getCategory().getIdentifier()
                             .equals(omObsConst.getCategoryParameter().getValue().getValue()))
                     .findFirst().orElse(datasets.iterator().next());
 
         }
-        criteria.setMaxResults(1);
-        return (DatasetEntity) criteria.uniqueResult();
+        return session.createQuery(query).setMaxResults(1).uniqueResult();
     }
 
     /**
@@ -326,8 +329,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, Session session)
             throws OwsExceptionReport;
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
-            throws OwsExceptionReport;
+    protected abstract Predicate getSpecificRestrictions(CriteriaBuilder cb, Root<DatasetEntity> root,
+            GetObservationRequest request) throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
 
@@ -337,16 +340,16 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return getOrInsert(ctx, null, session);
     }
 
+    @SuppressWarnings("unchecked")
     protected DatasetEntity getOrInsert(ObservationContext ctx, DataEntity<?> observation, Session session)
             throws OwsExceptionReport {
-        Criteria criteria = getDefaultAllSeriesCriteria(session);
-        ctx.addIdentifierRestrictionsToCritera(criteria, true, ctx.isIncludeCategory());
-        // criteria.setMaxResults(1);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = ctx.getIdentifierRestrictions(cb, root, true, ctx.isIncludeCategory());
+        query.where(predicates.toArray(new Predicate[0]));
         // TODO: check for Unit if available!!!
-        LOGGER.trace(
-                "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",
-                HibernateHelper.getSqlString(criteria));
-        List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
+        List<DatasetEntity> datasets = session.createQuery(query).list();
         DatasetEntity dataset = datasets.isEmpty() ? null : checkForCategory(datasets, ctx);
         if (dataset == null || dataset.getDatasetType().equals(DatasetType.not_initialized)) {
             dataset = preCheckDataset(ctx, observation, dataset, session);
@@ -440,11 +443,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Session session) throws OwsExceptionReport {
         DatasetEntity ds = dataset;
         if (ds == null) {
-            Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
-            ctx.addIdentifierRestrictionsToCritera(criteria, false, false);
-            LOGGER.trace("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
-                    HibernateHelper.getSqlString(criteria));
-            List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> query = cb.createQuery(notInitializedDatasetEntityClass());
+            Root<DatasetEntity> root = query.from(notInitializedDatasetEntityClass());
+            List<Predicate> predicates = ctx.getIdentifierRestrictions(cb, root, false, false);
+            query.where(predicates.toArray(new Predicate[0]));
+            List<DatasetEntity> datasets = session.createQuery(query).list();
             ds = datasets.isEmpty() ? null : checkForCategory(datasets, ctx);
         }
         if (ds != null) {
@@ -485,20 +489,19 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         AbstractPhenomenon observableProperty = sosOC.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
-        Criteria c = session.createCriteria(getSeriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
-
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.join(DatasetEntity.PROPERTY_OFFERING).get(OfferingEntity.IDENTIFIER), offering));
+        predicates.add(cb.equal(root.join(DatasetEntity.PROPERTY_PHENOMENON).get(PhenomenonEntity.IDENTIFIER),
+                observablePropertyIdentifier));
         if (sosOC.isSetProcedure()) {
-            c.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                    .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, sosOC.getProcedureIdentifier()));
+            predicates.add(cb.equal(root.join(DatasetEntity.PROPERTY_PROCEDURE).get(ProcedureEntity.IDENTIFIER),
+                    sosOC.getProcedureIdentifier()));
         }
-
-        LOGGER.trace("QUERY checkObservationConstellation(sosObservationConstellation, offering): {}",
-                HibernateHelper.getSqlString(c));
-        List<DatasetEntity> hocs = c.list();
+        query.where(predicates.toArray(new Predicate[0]));
+        List<DatasetEntity> hocs = session.createQuery(query).list();
 
         if (hocs == null || hocs.isEmpty()) {
             throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
@@ -547,15 +550,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return hObsConst;
     }
 
-    private DatasetEntity getSeriesImpl() throws OwsExceptionReport {
-        try {
-            return (DatasetEntity) getSeriesClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating an instance of %s",
-                    getSeriesClass().getCanonicalName());
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public Set<DatasetEntity> getSeriesSet(GetObservationRequest request, Collection<String> features, Session session)
             throws OwsExceptionReport {
@@ -563,306 +557,369 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (request.hasResultFilter()) {
             for (SubQueryIdentifier identifier : ResultFilterRestrictions
                     .getSubQueryIdentifier(getResultFilterClasses())) {
-                final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(),
-                        features, request.getOfferings(), session);
-                addSpecificRestrictions(c, request);
-                checkAndAddResultFilterCriterion(c, request, identifier, session);
-                checkAndAddSpatialFilterCriterion(c, request, session);
-                LOGGER.trace("QUERY getSeries(request, features) and result filter sub query '{}': {}",
-                        identifier.name(), HibernateHelper.getSqlString(c));
-                set.addAll(c.list());
+                CriteriaBuilder cb = session.getCriteriaBuilder();
+                CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+                Root<DatasetEntity> root = query.from(seriesEntityClass());
+                List<Predicate> predicates = seriesPredicatesFor(cb, root, request.getProcedures(),
+                        request.getObservedProperties(), features, request.getOfferings());
+                Predicate specific = getSpecificRestrictions(cb, root, request);
+                if (specific != null) {
+                    predicates.add(specific);
+                }
+                Predicate resultFilter = checkAndAddResultFilterCriterion(cb, query, root, request, identifier,
+                        session);
+                if (resultFilter != null) {
+                    predicates.add(resultFilter);
+                }
+                Predicate spatialFilter = checkAndAddSpatialFilterCriterion(cb, query, root, request, session);
+                if (spatialFilter != null) {
+                    predicates.add(spatialFilter);
+                }
+                query.where(predicates.toArray(new Predicate[0]));
+                set.addAll(session.createQuery(query).list());
             }
         } else {
-            final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features,
-                    request.getOfferings(), session);
-            addSpecificRestrictions(c, request);
-            checkAndAddSpatialFilterCriterion(c, request, session);
-            LOGGER.trace("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
-            set.addAll(c.list());
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+            Root<DatasetEntity> root = query.from(seriesEntityClass());
+            List<Predicate> predicates = seriesPredicatesFor(cb, root, request.getProcedures(),
+                    request.getObservedProperties(), features, request.getOfferings());
+            Predicate specific = getSpecificRestrictions(cb, root, request);
+            if (specific != null) {
+                predicates.add(specific);
+            }
+            Predicate spatialFilter = checkAndAddSpatialFilterCriterion(cb, query, root, request, session);
+            if (spatialFilter != null) {
+                predicates.add(spatialFilter);
+            }
+            query.where(predicates.toArray(new Predicate[0]));
+            set.addAll(session.createQuery(query).list());
         }
         return set;
     }
 
-    @SuppressWarnings("unchecked")
-    protected Set<DatasetEntity> getSeriesCriteria(GetDataAvailabilityRequest request, Session session)
+    protected Set<DatasetEntity> getSeriesByFilter(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         Set<DatasetEntity> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
             for (SubQueryIdentifier identifier : ResultFilterRestrictions
                     .getSubQueryIdentifier(getResultFilterClasses())) {
-                Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
-                        request.getFeaturesOfInterest(), request.getOfferings(), session);
-                checkAndAddResultFilterCriterion(c, request, identifier, session);
-                checkAndAddSpatialFilterCriterion(c, request, session);
-                LOGGER.trace("QUERY getSeriesCriteria(request) and result filter sub query '{}': {}",
-                        identifier.name(), HibernateHelper.getSqlString(c));
-                set.addAll(c.list());
+                CriteriaBuilder cb = session.getCriteriaBuilder();
+                CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+                Root<DatasetEntity> root = query.from(seriesEntityClass());
+                List<Predicate> predicates = seriesPredicatesFor(cb, root, request.getProcedures(),
+                        request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings());
+                Predicate resultFilter = checkAndAddResultFilterCriterion(cb, query, root, request, identifier,
+                        session);
+                if (resultFilter != null) {
+                    predicates.add(resultFilter);
+                }
+                Predicate spatialFilter = checkAndAddSpatialFilterCriterion(cb, query, root, request, session);
+                if (spatialFilter != null) {
+                    predicates.add(spatialFilter);
+                }
+                query.where(predicates.toArray(new Predicate[0]));
+                set.addAll(session.createQuery(query).list());
             }
         } else {
-            Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
-                    request.getFeaturesOfInterest(), request.getOfferings(), session);
-            checkAndAddSpatialFilterCriterion(c, request, session);
-            LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
-            set.addAll(c.list());
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+            Root<DatasetEntity> root = query.from(seriesEntityClass());
+            List<Predicate> predicates = seriesPredicatesFor(cb, root, request.getProcedures(),
+                    request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings());
+            Predicate spatialFilter = checkAndAddSpatialFilterCriterion(cb, query, root, request, session);
+            if (spatialFilter != null) {
+                predicates.add(spatialFilter);
+            }
+            query.where(predicates.toArray(new Predicate[0]));
+            set.addAll(session.createQuery(query).list());
         }
         return set;
     }
 
-    public Criteria getSeriesCriteria(Collection<String> identifiers, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
-        c.add(Restrictions.in(DatasetEntity.IDENTIFIER, identifiers));
-        LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
-        return c;
+    public List<DatasetEntity> getSeriesByFilter(Collection<String> identifiers, Session session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
+        predicates.add(root.get(DatasetEntity.IDENTIFIER).in(identifiers));
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    protected Criteria getSeriesCriteria(GetResultRequest request, Collection<String> features, Session session)
-            throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(request.getObservedProperty(), request.getOffering(), features, session);
-        // checkAndAddResultFilterCriterion(c, request, session);
-        // checkAndAddSpatialFilterCriterion(c, request, session);
-        LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
-        return c;
+    protected List<DatasetEntity> getSeriesByFilter(GetResultRequest request, Collection<String> features,
+            Session session) throws OwsExceptionReport {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates =
+                seriesPredicatesFor(cb, root, request.getObservedProperty(), request.getOffering(), features);
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeriesByFilter(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
-        final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
-        LOGGER.trace("QUERY getSeries(procedures, observableProperteies, features): {}",
-                HibernateHelper.getSqlString(c));
-        return c;
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = seriesPredicatesFor(cb, root, procedures, observedProperties, features);
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeriesByFilter(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
-        final Criteria c = createCriteriaFor(procedures, observedProperties, features, offerings, session);
-        LOGGER.trace("QUERY getSeries(proceedures, observableProperteies, features, offerings): {}",
-                HibernateHelper.getSqlString(c));
-        return c;
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = seriesPredicatesFor(cb, root, procedures, observedProperties, features, offerings);
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    public Criteria getSeriesCriteria(String observedProperty, Collection<String> features, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
+    public List<DatasetEntity> getSeriesByFilter(String observedProperty, Collection<String> features,
+            Session session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
         if (CollectionHelper.isNotEmpty(features)) {
-            addFeatureOfInterestToCriteria(c, features);
+            predicates.add(featurePredicate(cb, root, features));
         }
         if (!Strings.isNullOrEmpty(observedProperty)) {
-            addObservablePropertyToCriteria(c, observedProperty);
+            predicates.add(observablePropertyPredicate(cb, root, observedProperty));
         }
-        return c;
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    public Criteria getSeriesCriteria(String procedure, String observedProperty, String offering,
+    public List<DatasetEntity> getSeriesByFilter(String procedure, String observedProperty, String offering,
             Collection<String> features, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
         if (CollectionHelper.isNotEmpty(features)) {
-            addFeatureOfInterestToCriteria(c, features);
+            predicates.add(featurePredicate(cb, root, features));
         }
         if (!Strings.isNullOrEmpty(observedProperty)) {
-            addObservablePropertyToCriteria(c, observedProperty);
+            predicates.add(observablePropertyPredicate(cb, root, observedProperty));
         }
         if (!Strings.isNullOrEmpty(offering)) {
-            addOfferingToCriteria(c, offering);
+            predicates.add(offeringPredicate(cb, root, offering));
         }
         if (!Strings.isNullOrEmpty(procedure)) {
-            addProcedureToCriteria(c, procedure);
+            predicates.add(procedurePredicate(cb, root, procedure));
         }
-        return c;
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
-    public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, String featureOfInterest,
+    public DatasetEntity getSeriesByFilterFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
-        final Criteria c = createCriteriaFor(procedure, observableProperty, featureOfInterest, session);
-        LOGGER.trace(QUERY_SERIES, HibernateHelper.getSqlString(c));
-        return c;
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = seriesPredicatesFor(cb, root, procedure, observableProperty, featureOfInterest);
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).uniqueResult();
     }
 
-    public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, Session session) {
-        final Criteria c = createCriteriaFor(procedure, observableProperty, session);
-        LOGGER.trace(QUERY_SERIES, HibernateHelper.getSqlString(c));
-        return c;
+    public List<DatasetEntity> getSeriesByFilterFor(String procedure, String observableProperty, Session session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        List<Predicate> predicates = seriesPredicatesFor(cb, root, procedure, observableProperty);
+        query.where(predicates.toArray(new Predicate[0]));
+        return session.createQuery(query).list();
     }
 
     /**
-     * Add featureOfInterest restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to a featureOfInterest identifier
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param feature
-     *            AbstractFeatureEntity identifier to add
+     *            AbstractFeatureEntity identifier to restrict to
+     * @return Predicate
      */
-    public void addFeatureOfInterestToCriteria(Criteria c, String feature) {
-        c.createCriteria(DatasetEntity.PROPERTY_FEATURE, FOI)
-                .add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, feature));
-
+    public Predicate featurePredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, String feature) {
+        Join<DatasetEntity, AbstractFeatureEntity> join = dataset.join(DatasetEntity.PROPERTY_FEATURE);
+        return cb.equal(join.get(AbstractFeatureEntity.IDENTIFIER), feature);
     }
 
     /**
-     * Add featureOfInterest restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to featureOfInterest identifiers
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param feature
-     *            AbstractFeatureEntity to add
-     */
-    public void addFeatureOfInterestToCriteria(Criteria c, AbstractFeatureEntity<?> feature) {
-        c.add(Restrictions.eq(DatasetEntity.PROPERTY_FEATURE, feature));
-
-    }
-
-    /**
-     * Add featuresOfInterest restriction to Hibernate Criteria
-     *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param features
-     *            AbstractFeatureEntity identifiers to add
+     *            AbstractFeatureEntity identifiers to restrict to
+     * @return Predicate
      */
-    public void addFeatureOfInterestToCriteria(Criteria c, Collection<String> features) {
-        c.createCriteria(DatasetEntity.PROPERTY_FEATURE, FOI)
-                .add(Restrictions.in(AbstractFeatureEntity.IDENTIFIER, features));
-
+    public Predicate featurePredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, Collection<String> features) {
+        Join<DatasetEntity, AbstractFeatureEntity> join = dataset.join(DatasetEntity.PROPERTY_FEATURE);
+        return join.get(AbstractFeatureEntity.IDENTIFIER).in(features);
     }
 
     /**
-     * Add observedProperty restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to an observedProperty identifier
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param observedProperty
-     *            ObservableProperty identifier to add
+     *            ObservableProperty identifier to restrict to
+     * @return Predicate
      */
-    public void addObservablePropertyToCriteria(Criteria c, String observedProperty) {
-        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+    public Predicate observablePropertyPredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset,
+            String observedProperty) {
+        Join<DatasetEntity, PhenomenonEntity> join = dataset.join(DatasetEntity.PROPERTY_PHENOMENON);
+        return cb.equal(join.get(PhenomenonEntity.IDENTIFIER), observedProperty);
     }
 
     /**
-     * Add observedProperty restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to observedProperty identifiers
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param observedProperty
-     *            ObservableProperty to add
-     */
-    public void addObservablePropertyToCriteria(Criteria c, PhenomenonEntity observedProperty) {
-        c.add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, observedProperty));
-    }
-
-    /**
-     * Add observedProperties restriction to Hibernate Criteria
-     *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param observedProperties
-     *            ObservableProperty identifiers to add
+     *            ObservableProperty identifiers to restrict to
+     * @return Predicate
      */
-    public void addObservablePropertyToCriteria(Criteria c, Collection<String> observedProperties) {
-        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, observedProperties));
+    public Predicate observablePropertyPredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset,
+            Collection<String> observedProperties) {
+        Join<DatasetEntity, PhenomenonEntity> join = dataset.join(DatasetEntity.PROPERTY_PHENOMENON);
+        return join.get(PhenomenonEntity.IDENTIFIER).in(observedProperties);
     }
 
     /**
-     * Add procedure restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to a procedure identifier
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param procedure
-     *            Procedure identifier to add
+     *            Procedure identifier to restrict to
+     * @return Predicate
      */
-    public void addProcedureToCriteria(Criteria c, String procedure) {
-        c.createCriteria(DatasetEntity.PROPERTY_PROCEDURE).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
+    public Predicate procedurePredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, String procedure) {
+        Join<DatasetEntity, ProcedureEntity> join = dataset.join(DatasetEntity.PROPERTY_PROCEDURE);
+        return cb.equal(join.get(ProcedureEntity.IDENTIFIER), procedure);
     }
 
     /**
-     * Add procedure restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to a procedure
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param procedure
-     *            Procedure to add
+     *            Procedure to restrict to
+     * @return Predicate
      */
-    public void addProcedureToCriteria(Criteria c, ProcedureEntity procedure) {
-        c.add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, procedure));
-
+    public Predicate procedurePredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, ProcedureEntity procedure) {
+        return cb.equal(dataset.get(DatasetEntity.PROPERTY_PROCEDURE), procedure);
     }
 
     /**
-     * Add procedures restriction to Hibernate Criteria
+     * Get a {@link Predicate} restricting the dataset path to procedure identifiers
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param procedures
-     *            Procedure identifiers to add
+     *            Procedure identifiers to restrict to
+     * @return Predicate
      */
-    public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
-        c.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
-                .add(Restrictions.in(ProcedureEntity.IDENTIFIER, procedures));
-
+    public Predicate procedurePredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset,
+            Collection<String> procedures) {
+        Join<DatasetEntity, ProcedureEntity> join = dataset.join(DatasetEntity.PROPERTY_PROCEDURE);
+        return join.get(ProcedureEntity.IDENTIFIER).in(procedures);
     }
 
     /**
-     * Add offering restriction to Hibernate Criteria with LEFT-OUTER-JOIN
+     * Get a {@link Predicate} restricting the dataset path to offering identifiers
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
      * @param offerings
-     *            Offering identifiers to add
-     * @throws OwsExceptionReport
-     *             If an error occurs
+     *            Offering identifiers to restrict to
+     * @return Predicate
      */
-    public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
-
-    }
-
-    public void addOfferingToCriteria(Criteria c, String offering) {
-        c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-    }
-
-    public void addOfferingToCriteria(Criteria c, OfferingEntity offering) {
-        c.add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, offering));
+    public Predicate offeringPredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset,
+            Collection<String> offerings) {
+        Join<DatasetEntity, OfferingEntity> join = dataset.join(DatasetEntity.PROPERTY_OFFERING);
+        return join.get(OfferingEntity.IDENTIFIER).in(offerings);
     }
 
     /**
-     * Get default Hibernate Criteria for querying series, deleted flag == <code>false</code>
+     * Get a {@link Predicate} restricting the dataset path to an offering identifier
      *
-     * @param session
-     *            Hibernate Session
-     *
-     * @return Default criteria
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
+     * @param offering
+     *            Offering identifier to restrict to
+     * @return Predicate
      */
-    public Criteria getDefaultSeriesCriteria(Session session) {
-        Criteria c =
-                session.createCriteria(getSeriesClass()).add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
-                        .add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, true))
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    public Predicate offeringPredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, String offering) {
+        Join<DatasetEntity, OfferingEntity> join = dataset.join(DatasetEntity.PROPERTY_OFFERING);
+        return cb.equal(join.get(OfferingEntity.IDENTIFIER), offering);
+    }
+
+    /**
+     * Get a {@link Predicate} restricting the dataset path to an offering.
+     *
+     * <p>
+     * Note: preserved as ported from the pre-Hibernate-6 code, which compared
+     * {@code DatasetEntity.PROPERTY_PROCEDURE} against the supplied offering instead of
+     * {@code DatasetEntity.PROPERTY_OFFERING} -- looks like a pre-existing copy/paste bug, not fixed here.
+     *
+     * @param cb
+     *            CriteriaBuilder
+     * @param dataset
+     *            Path to the dataset
+     * @param offering
+     *            Offering to restrict to
+     * @return Predicate
+     */
+    public Predicate offeringPredicate(CriteriaBuilder cb, From<?, DatasetEntity> dataset, OfferingEntity offering) {
+        return cb.equal(dataset.get(DatasetEntity.PROPERTY_OFFERING), offering);
+    }
+
+    /**
+     * Get default restrictions for querying series, deleted flag == <code>false</code>
+     *
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the dataset query
+     *
+     * @return Default predicates
+     */
+    public List<Predicate> defaultSeriesPredicates(CriteriaBuilder cb, Root<DatasetEntity> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_DELETED), false));
+        predicates.add(cb.equal(root.get(DatasetEntity.PROPERTY_PUBLISHED), true));
         if (!isIncludeChildObservableProperties()) {
-            c.add(Restrictions.eq(DatasetEntity.HIDDEN_CHILD, false));
+            predicates.add(cb.equal(root.get(DatasetEntity.HIDDEN_CHILD), false));
         }
-        return c;
-    }
-
-    /**
-     * Get default Hibernate Criteria for querying all series
-     *
-     * @param session
-     *            Hibernate Session
-     *
-     * @return Default criteria
-     */
-    public Criteria getDefaultAllSeriesCriteria(Session session) {
-        return session.createCriteria(getSeriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
-
-    public Criteria getDefaultNotDefinedDatasetCriteria(Session session) {
-        return session.createCriteria(getNotInitializedDatasetClass())
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
-
-    @Deprecated
-    public void updateSeriesWithFirstLatestValues(AbstractDatasetEntity dataset, DataEntity<?> observation,
-            Session session) {
-        updateDatasetWithObservation(dataset, observation, session);
+        return predicates;
     }
 
     /**
@@ -946,12 +1003,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *
      * @return Updated Series
      */
-    @SuppressWarnings("unchecked")
     public List<DatasetEntity> updateSeriesSetAsDeletedForProcedureAndGetSeries(String procedure, boolean deleteFlag,
             Session session) {
-        Criteria criteria = getDefaultAllSeriesCriteria(session);
-        addProcedureToCriteria(criteria, procedure);
-        List<DatasetEntity> datasets = criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        query.where(procedurePredicate(cb, root, procedure));
+        List<DatasetEntity> datasets = session.createQuery(query).list();
         for (DatasetEntity dataset : datasets) {
             dataset.setDeleted(deleteFlag);
             dataset.setPublished(!deleteFlag);
@@ -1074,181 +1132,185 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
     }
 
-    public TimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
-        Criteria c = getDefaultSeriesCriteria(session);
-        addProcedureToCriteria(c, procedure);
-        ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT));
-        projectionList.add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT));
-        c.setProjection(projectionList);
-        LOGGER.trace("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
-        Object[] result = (Object[]) c.uniqueResult();
-
-        TimeExtrema pte = new TimeExtrema();
-        if (result != null) {
-            pte.setMinPhenomenonTime(DateTimeHelper.makeDateTime(result[0]));
-            pte.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(result[1]));
-        }
-        return pte;
-    }
-
     /**
-     * Create series query criteria for parameter
+     * Build the default series predicates plus procedure/observedProperty/feature restrictions for the supplied
+     * collections
      *
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the dataset query
      * @param procedures
      *            Procedures to get series for
      * @param observedProperties
      *            ObservedProperties to get series for
      * @param features
      *            AbstractFeatureEntity to get series for
-     * @param session
-     *            Hibernate session
      *
-     * @return Criteria to query series
+     * @return Predicates to query series
      */
-    private Criteria createCriteriaFor(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
+    private List<Predicate> seriesPredicatesFor(CriteriaBuilder cb, Root<DatasetEntity> root,
+            Collection<String> procedures, Collection<String> observedProperties, Collection<String> features) {
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
         if (CollectionHelper.isNotEmpty(features)) {
-            addFeatureOfInterestToCriteria(c, features);
+            predicates.add(featurePredicate(cb, root, features));
         }
         if (CollectionHelper.isNotEmpty(observedProperties)) {
-            addObservablePropertyToCriteria(c, observedProperties);
+            predicates.add(observablePropertyPredicate(cb, root, observedProperties));
         }
         if (CollectionHelper.isNotEmpty(procedures)) {
-            addProcedureToCriteria(c, procedures);
+            predicates.add(procedurePredicate(cb, root, procedures));
         }
-        return c;
+        return predicates;
     }
 
-    private Criteria createCriteriaFor(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Collection<String> offerings, Session session) {
-        final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
+    private List<Predicate> seriesPredicatesFor(CriteriaBuilder cb, Root<DatasetEntity> root,
+            Collection<String> procedures, Collection<String> observedProperties, Collection<String> features,
+            Collection<String> offerings) {
+        List<Predicate> predicates = seriesPredicatesFor(cb, root, procedures, observedProperties, features);
         if (CollectionHelper.isNotEmpty(offerings)) {
-            addOfferingToCriteria(c, offerings);
+            predicates.add(offeringPredicate(cb, root, offerings));
         }
-        c.setFetchMode(DatasetEntity.PROPERTY_PROCEDURE, FetchMode.JOIN);
-        c.setFetchMode(DatasetEntity.PROPERTY_PHENOMENON, FetchMode.JOIN);
-        c.setFetchMode(DatasetEntity.PROPERTY_FEATURE, FetchMode.JOIN);
-        c.setFetchMode(DatasetEntity.PROPERTY_OFFERING, FetchMode.JOIN);
-        return c;
+        return predicates;
     }
 
     /**
-     * Get series query Hibernate Criteria for procedure, observableProperty and featureOfInterest
+     * Build the default series predicates plus procedure/observedProperty/feature restrictions for the supplied
+     * identifiers.
      *
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the dataset query
      * @param procedure
      *            Procedure to get series for
      * @param observedProperty
      *            ObservedProperty to get series for
      * @param feature
      *            AbstractFeatureEntity to get series for
-     * @param session
-     *            Hibernate session
      *
-     * @return Criteria to query series
+     * @return Predicates to query series
      */
-    private Criteria createCriteriaFor(String procedure, String observedProperty, String feature, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
-        if (Strings.isNullOrEmpty(feature)) {
-            addFeatureOfInterestToCriteria(c, feature);
-        }
-        if (Strings.isNullOrEmpty(observedProperty)) {
-            addObservablePropertyToCriteria(c, observedProperty);
-        }
-        if (Strings.isNullOrEmpty(procedure)) {
-            addProcedureToCriteria(c, procedure);
-        }
-        return c;
-    }
-
-    private Criteria createCriteriaFor(String procedure, String observedProperty, Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
-        if (Strings.isNullOrEmpty(observedProperty)) {
-            addObservablePropertyToCriteria(c, observedProperty);
-        }
-        if (Strings.isNullOrEmpty(procedure)) {
-            addProcedureToCriteria(c, procedure);
-        }
-        return c;
-    }
-
-    private Criteria createCriteriaFor(String observedProperty, String offering, Collection<String> features,
-            Session session) {
-        final Criteria c = getDefaultSeriesCriteria(session);
-        if (CollectionHelper.isNotEmpty(features)) {
-            addFeatureOfInterestToCriteria(c, features);
+    private List<Predicate> seriesPredicatesFor(CriteriaBuilder cb, Root<DatasetEntity> root, String procedure,
+            String observedProperty, String feature) {
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
+        if (!Strings.isNullOrEmpty(feature)) {
+            predicates.add(featurePredicate(cb, root, feature));
         }
         if (!Strings.isNullOrEmpty(observedProperty)) {
-            addObservablePropertyToCriteria(c, observedProperty);
+            predicates.add(observablePropertyPredicate(cb, root, observedProperty));
+        }
+        if (!Strings.isNullOrEmpty(procedure)) {
+            predicates.add(procedurePredicate(cb, root, procedure));
+        }
+        return predicates;
+    }
+
+    /**
+     * Build the default series predicates plus procedure/observedProperty restrictions.
+     *
+     * @param cb
+     *            CriteriaBuilder
+     * @param root
+     *            Root of the dataset query
+     * @param procedure
+     *            Procedure to get series for
+     * @param observedProperty
+     *            ObservedProperty to get series for
+     *
+     * @return Predicates to query series
+     */
+    private List<Predicate> seriesPredicatesFor(CriteriaBuilder cb, Root<DatasetEntity> root, String procedure,
+            String observedProperty) {
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
+        if (!Strings.isNullOrEmpty(observedProperty)) {
+            predicates.add(observablePropertyPredicate(cb, root, observedProperty));
+        }
+        if (!Strings.isNullOrEmpty(procedure)) {
+            predicates.add(procedurePredicate(cb, root, procedure));
+        }
+        return predicates;
+    }
+
+    private List<Predicate> seriesPredicatesFor(CriteriaBuilder cb, Root<DatasetEntity> root, String observedProperty,
+            String offering, Collection<String> features) {
+        List<Predicate> predicates = new ArrayList<>(defaultSeriesPredicates(cb, root));
+        if (CollectionHelper.isNotEmpty(features)) {
+            predicates.add(featurePredicate(cb, root, features));
+        }
+        if (!Strings.isNullOrEmpty(observedProperty)) {
+            predicates.add(observablePropertyPredicate(cb, root, observedProperty));
         }
         if (!Strings.isNullOrEmpty(offering)) {
-            addOfferingToCriteria(c, offering);
+            predicates.add(offeringPredicate(cb, root, offering));
         }
-        return c;
+        return predicates;
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request,
-            SubQueryIdentifier identifier, Session session) throws OwsExceptionReport {
+    protected Predicate checkAndAddResultFilterCriterion(CriteriaBuilder cb, CriteriaQuery<?> query,
+            Root<DatasetEntity> root, GetDataAvailabilityRequest request, SubQueryIdentifier identifier,
+            Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
-            addResultfilter(c, request.getResultFilter(), identifier);
+            return getResultFilterPredicate(cb, query, root, request.getResultFilter(), identifier);
         }
+        return null;
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
-            SubQueryIdentifier identifier, Session session) throws OwsExceptionReport {
+    protected Predicate checkAndAddResultFilterCriterion(CriteriaBuilder cb, CriteriaQuery<?> query,
+            Root<DatasetEntity> root, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
+            throws OwsExceptionReport {
         if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
-            addResultfilter(c, (ComparisonFilter) request.getResultFilter(), identifier);
+            return getResultFilterPredicate(cb, query, root, (ComparisonFilter) request.getResultFilter(),
+                    identifier);
         }
+        return null;
     }
 
-    private void addResultfilter(Criteria c, Filter<?> resultFilter, SubQueryIdentifier identifier)
-            throws CodedException {
-        Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
-                getResultFilterClasses(), DatasetEntity.PROPERTY_ID, DataEntity.PROPERTY_DATASET, identifier);
-        if (resultFilterExpression != null) {
-            c.add(resultFilterExpression);
-        }
+    private Predicate getResultFilterPredicate(CriteriaBuilder cb, CriteriaQuery<?> query, Root<DatasetEntity> root,
+            Filter<?> resultFilter, SubQueryIdentifier identifier) throws CodedException {
+        return ResultFilterRestrictions.getResultFilterExpression(cb, query, root, resultFilter,
+                getResultFilterClasses(), DatasetEntity.PROPERTY_ID, DataEntity.PROPERTY_DATASET_ID, identifier);
     }
 
-    protected void checkAndAddSpatialFilterCriterion(Criteria c, GetDataAvailabilityRequest request, Session session)
+    protected Predicate checkAndAddSpatialFilterCriterion(CriteriaBuilder cb, CriteriaQuery<?> query,
+            Root<DatasetEntity> root, GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
             Geometry geometry = getDaoFactory().getGeometryHandler()
                     .switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
-                DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
-                dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),
-                        geometry));
-                dc.setProjection(Projections.property(DataEntity.PROPERTY_DATASET));
-                c.add(Subqueries.propertyIn(DatasetEntity.PROPERTY_ID, dc));
-            } else {
-                if (request.isSetFeaturesOfInterest()) {
-                    c.add(SpatialRestrictions.filter("foi." + AbstractFeatureEntity.GEOMETRY, filter.getOperator(),
-                            geometry));
-                } else {
-                    c.createCriteria(DatasetEntity.PROPERTY_FEATURE).add(SpatialRestrictions
-                            .filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(), geometry));
-                }
+                return observationGeometrySubqueryPredicate(cb, query, root, filter.getOperator(), geometry);
             }
+            Join<DatasetEntity, AbstractFeatureEntity> featureJoin = root.join(DatasetEntity.PROPERTY_FEATURE);
+            return SpatialRestrictions.filter(cb, featureJoin.<Geometry>get(AbstractFeatureEntity.GEOMETRY),
+                    filter.getOperator(), geometry);
         }
+        return null;
     }
 
-    protected void checkAndAddSpatialFilterCriterion(Criteria c, GetObservationRequest request, Session session)
-            throws OwsExceptionReport {
+    protected Predicate checkAndAddSpatialFilterCriterion(CriteriaBuilder cb, CriteriaQuery<?> query,
+            Root<DatasetEntity> root, GetObservationRequest request, Session session) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
             Geometry geometry = getDaoFactory().getGeometryHandler()
                     .switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
-                DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
-                dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),
-                        geometry));
-                dc.setProjection(Projections.property(DataEntity.PROPERTY_DATASET));
-                c.add(Subqueries.propertyIn(DatasetEntity.PROPERTY_ID, dc));
+                return observationGeometrySubqueryPredicate(cb, query, root, filter.getOperator(), geometry);
             }
         }
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Predicate observationGeometrySubqueryPredicate(CriteriaBuilder cb, CriteriaQuery<?> query,
+            Root<DatasetEntity> root, SpatialOperator operator, Geometry geometry) throws OwsExceptionReport {
+        Subquery<Long> subquery = query.subquery(Long.class);
+        Root<? extends DataEntity> dataRoot = subquery.from(getObservationFactory().observationClass());
+        subquery.select(dataRoot.<Long>get(DataEntity.PROPERTY_DATASET_ID));
+        subquery.where(SpatialRestrictions.filter(cb, dataRoot.<Geometry>get(DataEntity.PROPERTY_GEOMETRY_ENTITY),
+                operator, geometry));
+        return cb.in(root.get(DatasetEntity.PROPERTY_ID)).value(subquery);
     }
 
     public ResultFilterClasses getResultFilterClasses() {
@@ -1324,15 +1386,15 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 dataset.getOffering().getChildren().stream().map(o -> o.getIdentifier()).collect(Collectors.toSet());
 
         if (CollectionHelper.isNotEmpty(offerings)) {
-            Criteria c = session.createCriteria(getSeriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, dataset.getObservableProperty()))
-                    .add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, dataset.getProcedure()))
-                    .add(Restrictions.eq(DatasetEntity.HIDDEN_CHILD, true));
-            c.createCriteria(DatasetEntity.PROPERTY_OFFERING)
-                    .add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
-            LOGGER.trace("QUERY updateSeries(observationConstellation, observationType): {}",
-                    HibernateHelper.getSqlString(c));
-            List<DatasetEntity> hiddenChildObsConsts = c.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+            Root<DatasetEntity> root = query.from(seriesEntityClass());
+            Join<DatasetEntity, OfferingEntity> offeringJoin = root.join(DatasetEntity.PROPERTY_OFFERING);
+            query.where(cb.equal(root.get(DatasetEntity.PROPERTY_PHENOMENON), dataset.getObservableProperty()),
+                    cb.equal(root.get(DatasetEntity.PROPERTY_PROCEDURE), dataset.getProcedure()),
+                    cb.equal(root.get(DatasetEntity.HIDDEN_CHILD), true),
+                    offeringJoin.get(OfferingEntity.IDENTIFIER).in(offerings));
+            List<DatasetEntity> hiddenChildObsConsts = session.createQuery(query).list();
             for (DatasetEntity hiddenChildObsConst : hiddenChildObsConsts) {
                 hiddenChildObsConst.setOmObservationType(obsType);
                 session.saveOrUpdate(hiddenChildObsConst);
@@ -1341,14 +1403,15 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     }
 
-    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeriesForOfferings(PhenomenonEntity phenomenon, HashSet<OfferingEntity> offerings,
             Session session) throws OwsExceptionReport {
-        return session.createCriteria(getSeriesImpl().getClass())
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
-                .add(Restrictions.in(DatasetEntity.PROPERTY_OFFERING, offerings))
-                .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, phenomenon)).list();
-
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        query.where(cb.equal(root.get(DatasetEntity.PROPERTY_DELETED), false),
+                root.get(DatasetEntity.PROPERTY_OFFERING).in(offerings),
+                cb.equal(root.get(DatasetEntity.PROPERTY_PHENOMENON), phenomenon));
+        return session.createQuery(query).list();
     }
 
     /**
@@ -1392,9 +1455,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     public List<DatasetEntity> delete(ProcedureEntity procedure, Session session) {
-        Criteria c = getDefaultAllSeriesCriteria(session);
-        addProcedureToCriteria(c, procedure);
-        List<DatasetEntity> datasets = c.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DatasetEntity> query = cb.createQuery(seriesEntityClass());
+        Root<DatasetEntity> root = query.from(seriesEntityClass());
+        query.where(procedurePredicate(cb, root, procedure));
+        List<DatasetEntity> datasets = session.createQuery(query).list();
         if (datasets != null && !datasets.isEmpty()) {
             deleteDatastream(datasets, session);
             StringBuilder builder = new StringBuilder();

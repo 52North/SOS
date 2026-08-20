@@ -167,7 +167,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             session = getSession();
             ValueQueryContext valueQueryContext = new ValueQueryContext(request, dataset, session)
-                    .setTemporalFilterCriterion(temporalFilterCriterion).setChunkSize(chunkSize)
+                    .setTemporalFilters(temporalFilters).setChunkSize(chunkSize)
                     .setCurrentRow(currentRow);
             Collection<DataEntity<?>> resutltValues = seriesValueDAO.getStreamingSeriesValuesFor(valueQueryContext);
             currentRow += chunkSize;

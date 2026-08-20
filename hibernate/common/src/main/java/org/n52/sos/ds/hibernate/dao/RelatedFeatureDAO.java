@@ -30,18 +30,18 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -53,8 +53,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class RelatedFeatureDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelatedFeatureDAO.class);
 
     private final DaoFactory daoFactory;
 
@@ -71,28 +69,16 @@ public class RelatedFeatureDAO {
      *            Hibernate session
      * @return Related feature objects
      */
-    @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatureForOffering(final String offering, final Session session) {
-        final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        criteria.createCriteria(RelatedFeatureEntity.OFFERINGS)
-                .add(Restrictions.eq(OfferingEntity.PROPERTY_IDENTIFIER, offering));
-        LOGGER.trace("QUERY getRelatedFeatureForOffering(offering): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<RelatedFeatureEntity> query = cb.createQuery(RelatedFeatureEntity.class);
+        Root<RelatedFeatureEntity> root = query.from(RelatedFeatureEntity.class);
+        Join<RelatedFeatureEntity, OfferingEntity> offerings = root.join(RelatedFeatureEntity.OFFERINGS);
+        query.where(cb.equal(offerings.get(OfferingEntity.PROPERTY_IDENTIFIER), offering));
+        return session.createQuery(query)
+                .list();
     }
 
-    /**
-     * Get all related feature objects
-     *
-     * @param session
-     *            Hibernate session
-     * @return Related feature objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<RelatedFeatureEntity> getRelatedFeatureObjects(final Session session) {
-        final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        LOGGER.trace("QUERY getRelatedFeatureObjects(): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
 
     /**
      * Get related feature objects for target identifier
@@ -103,13 +89,15 @@ public class RelatedFeatureDAO {
      *            Hibernate session
      * @return Related feature objects
      */
-    @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatures(final String targetIdentifier, final Session session) {
-        final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        criteria.createCriteria(RelatedFeatureEntity.FEATURE_OF_INTEREST)
-                .add(Restrictions.eq(AbstractFeatureEntity.PROPERTY_IDENTIFIER, targetIdentifier));
-        LOGGER.trace("QUERY getRelatedFeatures(targetIdentifier): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<RelatedFeatureEntity> query = cb.createQuery(RelatedFeatureEntity.class);
+        Root<RelatedFeatureEntity> root = query.from(RelatedFeatureEntity.class);
+        Join<RelatedFeatureEntity, AbstractFeatureEntity> feature =
+                root.join(RelatedFeatureEntity.FEATURE_OF_INTEREST);
+        query.where(cb.equal(feature.get(AbstractFeatureEntity.PROPERTY_IDENTIFIER), targetIdentifier));
+        return session.createQuery(query)
+                .list();
     }
 
     /**
@@ -144,7 +132,7 @@ public class RelatedFeatureDAO {
             }
             relFeat.setFeature(daoFactory.getFeatureOfInterestDAO().getOrInsert(identifier, url, session));
             relFeat.setRole(role);
-            session.save(relFeat);
+            session.persist(relFeat);
             session.flush();
             relFeats.add(relFeat);
         }

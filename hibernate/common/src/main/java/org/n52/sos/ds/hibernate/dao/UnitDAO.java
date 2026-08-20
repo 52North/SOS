@@ -27,20 +27,18 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.series.db.beans.i18n.I18nUnitEntity;
 import org.n52.shetland.ogc.UoM;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for unit
@@ -49,10 +47,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class UnitDAO {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UnitDAO.class);
-
-    private static final String QUERY_UNIT_TEMPLATE = "QUERY getUnit(): {}";
 
     /**
      * Get unit object for unit
@@ -64,10 +58,12 @@ public class UnitDAO {
      * @return Unit object
      */
     public UnitEntity getUnit(String unit, Session session) {
-        Criteria criteria =
-                session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit));
-        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
-        return (UnitEntity) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<UnitEntity> query = cb.createQuery(UnitEntity.class);
+        Root<UnitEntity> root = query.from(UnitEntity.class);
+        query.where(cb.equal(root.get(UnitEntity.PROPERTY_UNIT), unit));
+        return session.createQuery(query)
+                .uniqueResult();
     }
 
     /**
@@ -80,10 +76,7 @@ public class UnitDAO {
      * @return Unit object
      */
     public UnitEntity getUnit(UoM unit, Session session) {
-        Criteria criteria =
-                session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit.getUom()));
-        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
-        return (UnitEntity) criteria.uniqueResult();
+        return getUnit(unit.getUom(), session);
     }
 
     /**
@@ -119,7 +112,7 @@ public class UnitDAO {
             if (unit.isSetLink()) {
                 result.setLink(unit.getLink());
             }
-            session.save(result);
+            session.persist(result);
             session.flush();
             session.refresh(result);
         }
@@ -130,7 +123,7 @@ public class UnitDAO {
         UnitEntity result = getUnit(unit.getIdentifier(), session);
         if (result == null) {
             result = unit;
-            session.save(result);
+            session.persist(result);
             session.flush();
             session.refresh(result);
             if (unit.hasTranslations()) {
@@ -144,7 +137,7 @@ public class UnitDAO {
             Session session) {
         for (I18nEntity<? extends Describable> i18nEntity : translations) {
             ((I18nUnitEntity) i18nEntity).setEntity(result);
-            session.save(i18nEntity);
+            session.persist(i18nEntity);
             session.flush();
             session.refresh(i18nEntity);
         }

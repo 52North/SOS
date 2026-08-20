@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee              http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+<taglib version="3.1" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_1.xsd">
     <tlib-version>2.0</tlib-version>
     <short-name>sos</short-name>
     <uri>http://52north.org/communities/sensorweb/sos/tags</uri>
     <function>
         <name>configurated</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
-        <function-signature>boolean configurated(javax.servlet.ServletContext)</function-signature>
+        <function-signature>boolean configurated(jakarta.servlet.ServletContext)</function-signature>
     </function>
     <function>
         <name>hasClient</name>
@@ -31,7 +31,7 @@
     <function>
         <name>supportsEReporting</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
-        <function-signature>boolean supportsEReporting(java.lang.String, javax.servlet.ServletContext)</function-signature>
+        <function-signature>boolean supportsEReporting(java.lang.String, jakarta.servlet.ServletContext)</function-signature>
     </function>
     <!-- 
     <function>
@@ -48,17 +48,17 @@
     <function>
         <name>viewExists</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
-        <function-signature>boolean viewExists(javax.servlet.ServletContext, java.lang.String)</function-signature>
+        <function-signature>boolean viewExists(jakarta.servlet.ServletContext, java.lang.String)</function-signature>
     </function>
     <function>
         <name>staticExtensionExists</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
-        <function-signature>boolean staticExtensionExists(javax.servlet.ServletContext, java.lang.String)</function-signature>
+        <function-signature>boolean staticExtensionExists(jakarta.servlet.ServletContext, java.lang.String)</function-signature>
     </function>
     <function>
         <name>documentExtensionExists</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
-        <function-signature>boolean documentExtensionExists(javax.servlet.ServletContext, java.lang.String)</function-signature>
+        <function-signature>boolean documentExtensionExists(jakarta.servlet.ServletContext, java.lang.String)</function-signature>
     </function>
     <function>
         <name>mapToJson</name>

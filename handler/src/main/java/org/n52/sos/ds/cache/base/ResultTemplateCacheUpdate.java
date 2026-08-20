@@ -29,7 +29,11 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.List;
 
-import org.hibernate.FetchMode;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.n52.iceland.util.action.Action;
 import org.n52.series.db.beans.ResultTemplateEntity;
@@ -76,10 +80,13 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
 
     private List<ResultTemplateEntity> getResultTemplateObjects() {
         Session session = getSession();
-        return session.createCriteria(ResultTemplateEntity.class)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<ResultTemplateEntity> query = cb.createQuery(ResultTemplateEntity.class);
+        Root<ResultTemplateEntity> root = query.from(ResultTemplateEntity.class);
+        root.fetch(ResultTemplateEntity.PROPERTY_OFFERING, JoinType.LEFT);
+        root.fetch(ResultTemplateEntity.PROPERTY_PHENOMENON, JoinType.LEFT);
+        root.fetch(ResultTemplateEntity.PROPERTY_FEATURE, JoinType.LEFT);
+        return session.createQuery(query).list();
     }
 
 }

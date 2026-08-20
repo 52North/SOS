@@ -29,8 +29,9 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.sql.Timestamp;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -70,21 +71,21 @@ public abstract class TimeCreator {
     }
 
     /**
-     * Add min/max projection to criteria
+     * Build a min/max projection expression over the given property
      *
-     * @param criteria Hibernate Criteria to add projection
+     * @param cb CriteriaBuilder to build the expression with
      * @param minMax Min/Max identifier
-     * @param property Property to apply projection to
+     * @param property Property to apply the projection to
+     *
+     * @return Expression selecting the min or max of the property
      */
-    public void addMinMaxProjection(Criteria criteria, MinMax minMax, String property) {
-        // TODO move this to a better location, maybe with Java 8 in an own Interface with Multiple Inheritance
+    public <Y extends Comparable<? super Y>> Expression<Y> minMaxProjection(CriteriaBuilder cb, MinMax minMax,
+            Expression<Y> property) {
         switch (minMax) {
             case MIN:
-                criteria.setProjection(Projections.min(property));
-                break;
+                return cb.least(property);
             case MAX:
-                criteria.setProjection(Projections.max(property));
-                break;
+                return cb.greatest(property);
             default:
                 throw new Error();
         }

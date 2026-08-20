@@ -64,6 +64,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -74,6 +76,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate
         implements ApiQueryHelper, DatabaseQueryHelper, DatasourceCacheUpdateHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertiesCacheUpdate.class);
 
     private final Long offeringId;
 
@@ -104,7 +108,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     private void init(Session session) {
-        this.offering = session.load(OfferingEntity.class, offeringId);
+        this.offering = session.getReference(OfferingEntity.class, offeringId);
         this.identifier = offering.getIdentifier();
         if (datasets != null) {
             DatasetDao<DatasetEntity> dao = new DatasetDao<>(session);
@@ -115,12 +119,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             DbQuery initQuery = createDbQuery(IoParameters.createFromSingleValueMap(map));
             map.clear();
 
-
             map.put(IoParameters.EXPANDED, "true");
             DbQuery expandedQuery = createDbQuery(IoParameters.createFromSingleValueMap(map));
 
             // Two-Stage requesting to avoid unnecessary joins
             for (DatasetEntity ds : dao.get(initQuery)) {
+                LOGGER.error("Running for offering:" + offeringId + " with dataset" + ds.toString());
                 this.datasets.add(dao.getInstance(ds.getId(), expandedQuery));
             }
         }
@@ -129,10 +133,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
         init(session);
         // process all offering updates here (in multiple threads) which have
-        // the potential to perform large
-        // queries that aren't able to be loaded all at once. many (but not all)
-        // of these can be avoided
-        // if ObservationConstellation is supported
+        // the potential to perform large queries that aren't able to be loaded all at once. many (but not all)
+        // of these can be avoided if ObservationConstellation is supported
 
         // NOTE: Don't perform queries or load obecjts here unless you have to,
         // since they are performed once per offering
@@ -280,14 +282,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return allProcedures;
     }
 
-    protected Collection<String> getValidFeaturesOfInterestFrom(Collection<String> featureOfInterestIdentifiers) {
-        Set<String> features = new HashSet<>(featureOfInterestIdentifiers.size());
-        for (String featureIdentifier : featureOfInterestIdentifiers) {
-            features.add(featureIdentifier);
-        }
-        return features;
-    }
-
     protected Set<String> getObservablePropertyIdentifier() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(datasets)) {
             return getAllObservablePropertyIdentifiersFromDatasets(datasets);
@@ -320,13 +314,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected Collection<String> getRelatedFeatures(Set<RelatedFeatureEntity> relatedFeatures) {
         return relatedFeatures.stream().map(rf -> rf.getFeature().getIdentifier()).collect(Collectors.toSet());
-    }
-
-    private DbQuery createDatasetDbQuery(Long offering) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.OFFERINGS, Long.toString(offering));
-        map.put(IoParameters.EXPANDED, "true");
-        return createDbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @Override

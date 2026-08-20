@@ -27,7 +27,10 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.hibernate.criterion.Criterion;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+
 import org.locationtech.jts.geom.Geometry;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -35,12 +38,17 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 
 /**
+ * Builds spatial {@link Predicate Predicates} via the {@code st_*} functions
+ * that both supported dialects (PostGIS, H2GIS) register in Hibernate 6,
+ * mirroring the approach taken by dao-impl's
+ * {@code FeatureQuerySpecifications#matchesSpatially()}.
+ *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public final class SpatialRestrictions {
-    private static final int DWITHIN_DISTANCE = 10;
+    private static final double DWITHIN_DISTANCE = 10;
 
     private SpatialRestrictions() {
     }
@@ -48,111 +56,101 @@ public final class SpatialRestrictions {
     /**
      * Get the spatial restriction for the supplied filter.
      *
-     * @param propertyName the column to apply the filter to
-     * @param filter       the filter
+     * @param cb       the criteria builder
+     * @param property the geometry path to apply the filter to
+     * @param filter   the filter
      *
-     * @return the criterion
+     * @return the predicate
      *
      * @throws OwsExceptionReport if the spatial filter is not supported
      */
-    public static Criterion filter(String propertyName, SpatialFilter filter) throws OwsExceptionReport {
-        return filter(propertyName, filter.getOperator(), filter.getGeometry().toGeometry());
+    public static Predicate filter(CriteriaBuilder cb, Path<Geometry> property, SpatialFilter filter)
+            throws OwsExceptionReport {
+        return filter(cb, property, filter.getOperator(), filter.getGeometry().toGeometry());
     }
 
     /**
      * Get spatial filter restrictions.
      *
-     * @param propertyName column name
-     * @param operator     Spatial filter
-     * @param geometry     the geometry
+     * @param cb       the criteria builder
+     * @param property the geometry path to apply the filter to
+     * @param operator Spatial filter
+     * @param geometry the geometry
      *
-     * @return filter restriction
+     * @return the predicate
      *
      * @throws OwsExceptionReport If the spatial filter is not supported
      */
-    public static Criterion filter(String propertyName, SpatialOperator operator, Geometry geometry)
-            throws OwsExceptionReport {
+    public static Predicate filter(CriteriaBuilder cb, Path<Geometry> property, SpatialOperator operator,
+            Geometry geometry) throws OwsExceptionReport {
         switch (operator) {
             case BBOX:
-                return within(propertyName, geometry);
+                return within(cb, property, geometry);
             case Contains:
-                return contains(propertyName, geometry);
+                return contains(cb, property, geometry);
             case Crosses:
-                return crosses(propertyName, geometry);
+                return crosses(cb, property, geometry);
             case Disjoint:
-                return disjoint(propertyName, geometry);
+                return disjoint(cb, property, geometry);
             case DWithin:
-                return distanceWithin(propertyName, geometry, DWITHIN_DISTANCE);
+                return distanceWithin(cb, property, geometry, DWITHIN_DISTANCE);
             case Equals:
-                return eq(propertyName, geometry);
+                return eq(cb, property, geometry);
             case Intersects:
-                return intersects(propertyName, geometry);
+                return intersects(cb, property, geometry);
             case Overlaps:
-                return overlaps(propertyName, geometry);
+                return overlaps(cb, property, geometry);
             case Touches:
-                return touches(propertyName, geometry);
+                return touches(cb, property, geometry);
             case Within:
-                return within(propertyName, geometry);
+                return within(cb, property, geometry);
             case Beyond:
             default:
                 throw new UnsupportedOperatorException(operator);
         }
     }
 
-    public static Criterion eq(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.eq(propertyName, value);
+    public static Predicate eq(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_equals", property, value);
     }
 
-    public static Criterion within(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.within(propertyName, value);
+    public static Predicate within(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_within", property, value);
     }
 
-    public static Criterion contains(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.contains(propertyName, value);
+    public static Predicate contains(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_contains", property, value);
     }
 
-    public static Criterion crosses(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.crosses(propertyName, value);
+    public static Predicate crosses(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_crosses", property, value);
     }
 
-    public static Criterion disjoint(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.disjoint(propertyName, value);
+    public static Predicate disjoint(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_disjoint", property, value);
     }
 
-    public static Criterion intersects(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.intersects(propertyName, value);
+    public static Predicate intersects(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_intersects", property, value);
     }
 
-    public static Criterion overlaps(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.overlaps(propertyName, value);
+    public static Predicate overlaps(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_overlaps", property, value);
     }
 
-    public static Criterion touches(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.touches(propertyName, value);
+    public static Predicate touches(CriteriaBuilder cb, Path<Geometry> property, Geometry value) {
+        return spatialFunction(cb, "st_touches", property, value);
     }
 
-    public static Criterion distanceWithin(String propertyName, Geometry value, double distance) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.distanceWithin(propertyName,
-                                                                                  value,
-                                                                                  distance);
+    public static Predicate distanceWithin(CriteriaBuilder cb, Path<Geometry> property, Geometry value,
+            double distance) {
+        return cb.equal(cb.function("st_dwithin", Boolean.class, property, cb.literal(value), cb.literal(distance)),
+                true);
     }
 
-    public static Criterion havingSRID(String propertyName, int srid) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.havingSRID(propertyName, srid);
-    }
-
-    public static Criterion isEmpty(String propertyName) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.isEmpty(propertyName);
-    }
-
-    public static Criterion isNotEmpty(String propertyName) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.isNotEmpty(propertyName);
-    }
-
-    public static Criterion spatialRestriction(int relation, String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.spatialRestriction(relation,
-                                                                                      propertyName,
-                                                                                      value);
+    private static Predicate spatialFunction(CriteriaBuilder cb, String function, Path<Geometry> property,
+            Geometry value) {
+        return cb.equal(cb.function(function, Boolean.class, property, cb.literal(value)), true);
     }
 
 }

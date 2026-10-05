@@ -41,9 +41,14 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <ignoredUnusedDeclaredDependencies>
-                        <ignoredUnusedDeclaredDependency>org.n52.sensorweb-server.dao-impl:dao-impl-webapp:war
-                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>org.n52.sensorweb-server.dao-impl:dao-impl-webapp:war</ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>org.springframework.boot:spring-boot</ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>org.springframework.boot:spring-boot-autoconfigure</ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>jakarta.inject:jakarta.inject-api</ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
+                    <ignoredNonTestScopedDependencies>
+                        <ignoredNonTestScopedDependency>jakarta.persistence:jakarta.persistence-api</ignoredNonTestScopedDependency>
+                    </ignoredNonTestScopedDependencies>
                 </configuration>
                 <executions>
                     <execution>
@@ -53,9 +58,6 @@
                             <goal>unpack</goal>
                         </goals>
                         <configuration>
-                            <usedDependencies>
-                                <usedDependency>org.springframework:spring-core</usedDependency>
-                            </usedDependencies>
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -1293,21 +1295,6 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-slf4j-impl</artifactId>
                     <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>oracle</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>sos-hibernate-datasource-oracle</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.oracle.database.jdbc</groupId>
-                    <artifactId>ojdbc8</artifactId>
-                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
